@@ -1,8 +1,8 @@
 ---
 description: >-
-  Component Factory EPCI. Crée de nouveaux composants (skills, commands,
-  subagents) en suivant les standards EPCI. Dispatcher vers le skill
-  creator approprié.
+  EPCI Component Factory. Creates new components (skills, commands,
+  subagents) following EPCI standards. Dispatches to the appropriate
+  creator skill.
 argument-hint: skill|command|agent <name>
 allowed-tools: [Read, Write, Glob, Bash]
 ---
@@ -11,8 +11,8 @@ allowed-tools: [Read, Write, Glob, Bash]
 
 ## Overview
 
-Commande dispatcher pour créer de nouveaux composants EPCI.
-Route vers le skill creator approprié selon le type demandé.
+Dispatcher command to create new EPCI components.
+Routes to the appropriate creator skill based on requested type.
 
 ## Usage
 
@@ -20,14 +20,14 @@ Route vers le skill creator approprié selon le type demandé.
 /epci:create <type> <name>
 ```
 
-| Argument | Description | Exemples |
+| Argument | Description | Examples |
 |----------|-------------|----------|
-| `type` | Type de composant | `skill`, `command`, `agent` |
-| `name` | Nom du composant (kebab-case) | `my-new-skill` |
+| `type` | Component type | `skill`, `command`, `agent` |
+| `name` | Component name (kebab-case) | `my-new-skill` |
 
 ## Routing
 
-| Type | Skill invoqué | Output |
+| Type | Invoked Skill | Output |
 |------|---------------|--------|
 | `skill` | `skills-creator` | `skills/<category>/<name>/SKILL.md` |
 | `command` | `commands-creator` | `commands/<name>.md` |
@@ -35,77 +35,77 @@ Route vers le skill creator approprié selon le type demandé.
 
 ## Process
 
-### 1. Validation des arguments
+### 1. Argument Validation
 
 ```
-Si type manquant → Erreur + usage
-Si name manquant → Erreur + usage
-Si name pas kebab-case → Erreur + format attendu
-Si composant existe déjà → Erreur + suggestion
+If type missing → Error + usage
+If name missing → Error + usage
+If name not kebab-case → Error + expected format
+If component exists → Error + suggestion
 ```
 
-### 2. Routing vers le skill creator
+### 2. Routing to Creator Skill
 
 ```
 switch (type):
     case "skill":
-        → Invoquer skill `skills-creator`
+        → Invoke skill `skills-creator`
     case "command":
-        → Invoquer skill `commands-creator`
+        → Invoke skill `commands-creator`
     case "agent":
-        → Invoquer skill `subagents-creator`
+        → Invoke skill `subagents-creator`
     default:
-        → Erreur: type inconnu
+        → Error: unknown type
 ```
 
-### 3. Phase interactive (gérée par le skill)
+### 3. Interactive Phase (handled by skill)
 
-Le skill creator invoqué guide l'utilisateur à travers :
-- Questions sur le composant
-- Génération du template
-- Personnalisation
+The invoked creator skill guides the user through:
+- Questions about the component
+- Template generation
+- Customization
 - Validation
 - Tests
 
-## Exemples
+## Examples
 
-### Créer un skill
+### Create a Skill
 
 ```
 > /epci:create skill api-monitoring
 
-→ Invoque skills-creator
-→ Questions interactives sur le skill
-→ Génère skills/custom/api-monitoring/SKILL.md
-→ Valide avec validate_skill.py
-→ Teste le triggering
+→ Invokes skills-creator
+→ Interactive questions about the skill
+→ Generates skills/custom/api-monitoring/SKILL.md
+→ Validates with validate_skill.py
+→ Tests triggering
 ```
 
-### Créer une commande
+### Create a Command
 
 ```
 > /epci:create command deploy
 
-→ Invoque commands-creator
-→ Questions sur la commande
-→ Génère commands/deploy.md
-→ Valide avec validate_command.py
+→ Invokes commands-creator
+→ Questions about the command
+→ Generates commands/deploy.md
+→ Validates with validate_command.py
 ```
 
-### Créer un subagent
+### Create a Subagent
 
 ```
 > /epci:create agent perf-analyzer
 
-→ Invoque subagents-creator
-→ Questions sur le subagent
-→ Génère agents/perf-analyzer.md
-→ Valide avec validate_subagent.py
+→ Invokes subagents-creator
+→ Questions about the subagent
+→ Generates agents/perf-analyzer.md
+→ Validates with validate_subagent.py
 ```
 
 ## Validation
 
-Après création, le script de validation approprié est exécuté :
+After creation, the appropriate validation script is executed:
 
 | Type | Script |
 |------|--------|
@@ -113,51 +113,51 @@ Après création, le script de validation approprié est exécuté :
 | command | `python scripts/validate_command.py <path>` |
 | agent | `python scripts/validate_subagent.py <path>` |
 
-## Conventions de nommage
+## Naming Conventions
 
-| Élément | Convention | Exemple |
+| Element | Convention | Example |
 |---------|------------|---------|
-| Nom | kebab-case | `my-component` |
-| Longueur | ≤ 64 caractères | - |
-| Caractères | a-z, 0-9, - | - |
+| Name | kebab-case | `my-component` |
+| Length | ≤ 64 characters | - |
+| Characters | a-z, 0-9, - | - |
 
-## Erreurs courantes
+## Common Errors
 
-### Type invalide
-
-```
-❌ Type 'service' non reconnu.
-
-Types supportés :
-- skill    → Crée un nouveau skill
-- command  → Crée une nouvelle commande
-- agent    → Crée un nouveau subagent
-
-Usage : /epci:create <type> <name>
-```
-
-### Nom invalide
+### Invalid Type
 
 ```
-❌ Nom 'MySkill' invalide.
+❌ Type 'service' not recognized.
 
-Le nom doit être en kebab-case :
-- Uniquement minuscules, chiffres et tirets
-- Pas de tiret au début ou à la fin
-- Maximum 64 caractères
+Supported types:
+- skill    → Creates a new skill
+- command  → Creates a new command
+- agent    → Creates a new subagent
 
-Exemple correct : my-skill
+Usage: /epci:create <type> <name>
 ```
 
-### Composant existant
+### Invalid Name
 
 ```
-❌ Le skill 'api-monitoring' existe déjà.
+❌ Name 'MySkill' invalid.
 
-Options :
-1. Choisir un autre nom
-2. Modifier le skill existant : skills/custom/api-monitoring/SKILL.md
-3. Supprimer l'existant d'abord
+Name must be kebab-case:
+- Only lowercase, digits and hyphens
+- No hyphen at start or end
+- Maximum 64 characters
+
+Correct example: my-skill
+```
+
+### Existing Component
+
+```
+❌ Skill 'api-monitoring' already exists.
+
+Options:
+1. Choose another name
+2. Modify existing skill: skills/custom/api-monitoring/SKILL.md
+3. Delete existing first
 ```
 
 ## Output
@@ -165,19 +165,19 @@ Options :
 ```
 ✅ **COMPONENT CREATED**
 
-Type : [skill | command | agent]
-Nom : [name]
-Fichier : [path]
+Type: [skill | command | agent]
+Name: [name]
+File: [path]
 
-Validation : ✅ PASSED (X/Y checks)
+Validation: ✅ PASSED (X/Y checks)
 
-Prochaines étapes :
-1. Personnaliser le contenu
-2. Tester le composant
-3. Documenter l'usage
+Next steps:
+1. Customize the content
+2. Test the component
+3. Document usage
 ```
 
-## Arborescence des skills factory
+## Factory Skills Tree
 
 ```
 skills/factory/
@@ -209,7 +209,7 @@ skills/factory/
     └── SKILL.md
 ```
 
-## Skills chargés
+## Skills Loaded
 
-- `component-advisor` (détection passive des opportunités)
-- `[creator-skill]` (selon le type demandé)
+- `component-advisor` (passive opportunity detection)
+- `[creator-skill]` (based on requested type)

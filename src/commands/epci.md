@@ -1,107 +1,107 @@
 ---
 description: >-
-  Workflow EPCI complet en 3 phases pour features STANDARD et LARGE.
-  Phase 1: Analyse et planification. Phase 2: Implémentation TDD.
-  Phase 3: Finalisation et documentation. Inclut breakpoints entre phases.
+  Complete EPCI workflow in 3 phases for STANDARD and LARGE features.
+  Phase 1: Analysis and planning. Phase 2: TDD implementation.
+  Phase 3: Finalization and documentation. Includes breakpoints between phases.
 argument-hint: "[--large] [--continue]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
-# EPCI — Workflow Complet
+# EPCI — Complete Workflow
 
 ## Overview
 
-Workflow structuré en 3 phases avec validation à chaque étape.
-Génère un Feature Document comme fil rouge de traçabilité.
+Structured workflow in 3 phases with validation at each step.
+Generates a Feature Document as traceability thread.
 
 ## Arguments
 
 | Argument | Description |
 |----------|-------------|
-| `--large` | Active le mode LARGE (thinking renforcé, tous subagents obligatoires) |
-| `--continue` | Continue depuis la dernière phase (reprise après interruption) |
+| `--large` | Activates LARGE mode (enhanced thinking, all subagents mandatory) |
+| `--continue` | Continue from last phase (resume after interruption) |
 
 ## Feature Document
 
-Créer/mettre à jour le fichier : `docs/features/<feature-slug>.md`
+Create/update file: `docs/features/<feature-slug>.md`
 
 ```markdown
-# Feature Document — [Titre]
+# Feature Document — [Title]
 
-## §1 — Brief Fonctionnel
-[Copié depuis /epci-brief ou généré ici]
+## §1 — Functional Brief
+[Copied from /epci-brief or generated here]
 
-## §2 — Plan d'Implémentation
-[Généré en Phase 1]
+## §2 — Implementation Plan
+[Generated in Phase 1]
 
-## §3 — Implémentation
-[Mis à jour en Phase 2]
+## §3 — Implementation
+[Updated in Phase 2]
 
-## §4 — Finalisation
-[Complété en Phase 3]
+## §4 — Finalization
+[Completed in Phase 3]
 ```
 
 ---
 
-## Phase 1 : Analyse et Planification
+## Phase 1: Analysis and Planning
 
 ### Configuration
 
-| Élément | Valeur |
-|---------|--------|
+| Element | Value |
+|---------|-------|
 | **Thinking** | `think hard` |
 | **Skills** | epci-core, architecture-patterns, [stack] |
-| **Subagents** | @Plan (natif), @plan-validator |
+| **Subagents** | @Plan (native), @plan-validator |
 
 ### Process
 
-1. **Réception du brief**
-   - Vérifier que le brief est complet (vient de `/epci-brief`)
-   - Si incomplet → suggérer `/epci-brief` d'abord
+1. **Brief reception**
+   - Verify brief is complete (comes from `/epci-brief`)
+   - If incomplete → suggest `/epci-brief` first
 
-2. **Analyse technique** (via @Plan)
-   - Identifier les fichiers impactés
-   - Analyser les dépendances
-   - Évaluer les risques techniques
+2. **Technical analysis** (via @Plan)
+   - Identify impacted files
+   - Analyze dependencies
+   - Evaluate technical risks
 
-3. **Génération du plan**
-   - Découper en tâches atomiques (2-15 min chacune)
-   - Ordonner par dépendances
-   - Prévoir un test pour chaque tâche
+3. **Plan generation**
+   - Break down into atomic tasks (2-15 min each)
+   - Order by dependencies
+   - Plan a test for each task
 
 4. **Validation** (via @plan-validator)
-   - Soumettre le plan au validateur
-   - Si NEEDS_REVISION → corriger et re-soumettre
-   - Si APPROVED → passer au breakpoint
+   - Submit plan to validator
+   - If NEEDS_REVISION → correct and resubmit
+   - If APPROVED → proceed to breakpoint
 
 ### Output §2
 
 ```markdown
-## §2 — Plan d'implémentation
+## §2 — Implementation Plan
 
-### Fichiers impactés
-| Fichier | Action | Risque |
-|---------|--------|--------|
-| src/Service/X.php | Modifier | Moyen |
-| src/Entity/Y.php | Créer | Faible |
-| tests/Unit/XTest.php | Créer | Faible |
+### Impacted Files
+| File | Action | Risk |
+|------|--------|------|
+| src/Service/X.php | Modify | Medium |
+| src/Entity/Y.php | Create | Low |
+| tests/Unit/XTest.php | Create | Low |
 
-### Tâches
-1. [ ] **Créer l'entité Y** (5 min)
-   - Fichier : `src/Entity/Y.php`
-   - Test : `tests/Unit/Entity/YTest.php`
+### Tasks
+1. [ ] **Create entity Y** (5 min)
+   - File: `src/Entity/Y.php`
+   - Test: `tests/Unit/Entity/YTest.php`
 
-2. [ ] **Modifier le service X** (10 min)
-   - Fichier : `src/Service/X.php`
-   - Test : `tests/Unit/Service/XTest.php`
+2. [ ] **Modify service X** (10 min)
+   - File: `src/Service/X.php`
+   - Test: `tests/Unit/Service/XTest.php`
 
-### Risques
-| Risque | Probabilité | Mitigation |
-|--------|-------------|------------|
-| Breaking change | Moyenne | Tests de régression |
+### Risks
+| Risk | Probability | Mitigation |
+|------|-------------|------------|
+| Breaking change | Medium | Regression tests |
 
 ### Validation
-- **@plan-validator** : APPROVED
+- **@plan-validator**: APPROVED
 ```
 
 ### ⏸️ BREAKPOINT
@@ -110,69 +110,69 @@ Créer/mettre à jour le fichier : `docs/features/<feature-slug>.md`
 ---
 ⏸️ **BREAKPOINT PHASE 1**
 
-Plan complet et validé.
-- @plan-validator : APPROVED
-- Tâches : X tâches identifiées
-- Fichiers : Y fichiers impactés
+Plan complete and validated.
+- @plan-validator: APPROVED
+- Tasks: X tasks identified
+- Files: Y files impacted
 
-Feature Document §2 mis à jour.
+Feature Document §2 updated.
 
-**Attendre confirmation :** "Continue" ou "Plan validé"
+**Awaiting confirmation:** "Continue" or "Plan validated"
 ---
 ```
 
 ---
 
-## Phase 2 : Implémentation
+## Phase 2: Implementation
 
 ### Configuration
 
-| Élément | Valeur |
-|---------|--------|
+| Element | Value |
+|---------|-------|
 | **Thinking** | `think` |
 | **Skills** | testing-strategy, code-conventions, [stack] |
-| **Subagents** | @code-reviewer (obligatoire), @security-auditor*, @qa-reviewer* |
+| **Subagents** | @code-reviewer (mandatory), @security-auditor*, @qa-reviewer* |
 
-### Subagents conditionnels
+### Conditional Subagents
 
-**@security-auditor** si détection de :
-- Fichiers : `**/auth/**`, `**/security/**`, `**/api/**`, `**/password/**`
-- Mots-clés : `password`, `secret`, `api_key`, `jwt`, `oauth`
+**@security-auditor** if detection of:
+- Files: `**/auth/**`, `**/security/**`, `**/api/**`, `**/password/**`
+- Keywords: `password`, `secret`, `api_key`, `jwt`, `oauth`
 
-**@qa-reviewer** si :
-- Plus de 5 fichiers de test créés/modifiés
-- Tests d'intégration ou E2E impliqués
-- Mocking complexe détecté
+**@qa-reviewer** if:
+- More than 5 test files created/modified
+- Integration or E2E tests involved
+- Complex mocking detected
 
 ### Process
 
-Pour chaque tâche du plan :
+For each task in the plan:
 
 ```
-1. RED — Écrire le test qui échoue
-2. Exécuter → confirmer l'échec
-3. GREEN — Implémenter le code minimal
-4. Exécuter → confirmer le passage
-5. REFACTOR — Améliorer si nécessaire
-6. Cocher la tâche ✓
+1. RED — Write the failing test
+2. Execute → confirm failure
+3. GREEN — Implement minimal code
+4. Execute → confirm passing
+5. REFACTOR — Improve if necessary
+6. Check off the task ✓
 ```
 
-Après toutes les tâches :
-1. Exécuter la suite de tests complète
-2. Invoquer @code-reviewer
-3. Invoquer @security-auditor (si applicable)
-4. Invoquer @qa-reviewer (si applicable)
-5. Corriger les issues Critical/Important
+After all tasks:
+1. Run complete test suite
+2. Invoke @code-reviewer
+3. Invoke @security-auditor (if applicable)
+4. Invoke @qa-reviewer (if applicable)
+5. Fix Critical/Important issues
 
 ### Output §3
 
 ```markdown
-## §3 — Implémentation
+## §3 — Implementation
 
-### Progression
-- [x] Tâche 1 — Créer l'entité Y
-- [x] Tâche 2 — Modifier le service X
-- [x] Tâche 3 — Ajouter la validation
+### Progress
+- [x] Task 1 — Create entity Y
+- [x] Task 2 — Modify service X
+- [x] Task 3 — Add validation
 
 ### Tests
 ```bash
@@ -181,14 +181,14 @@ OK (47 tests, 156 assertions)
 ```
 
 ### Reviews
-- **@code-reviewer** : APPROVED (0 Critical, 2 Minor)
-- **@security-auditor** : APPROVED
-- **@qa-reviewer** : N/A
+- **@code-reviewer**: APPROVED (0 Critical, 2 Minor)
+- **@security-auditor**: APPROVED
+- **@qa-reviewer**: N/A
 
-### Déviations
-| Tâche | Déviation | Justification |
-|-------|-----------|---------------|
-| #3 | +1 fichier | Extraction de helper |
+### Deviations
+| Task | Deviation | Justification |
+|------|-----------|---------------|
+| #3 | +1 file | Helper extraction |
 ```
 
 ### ⏸️ BREAKPOINT
@@ -197,54 +197,54 @@ OK (47 tests, 156 assertions)
 ---
 ⏸️ **BREAKPOINT PHASE 2**
 
-Code implémenté et validé.
-- Tests : X/X passing
-- @code-reviewer : APPROVED
+Code implemented and validated.
+- Tests: X/X passing
+- @code-reviewer: APPROVED
 
-Feature Document §3 mis à jour.
+Feature Document §3 updated.
 
-**Attendre confirmation :** "Continue" ou "Code validé"
+**Awaiting confirmation:** "Continue" or "Code validated"
 ---
 ```
 
 ---
 
-## Phase 3 : Finalisation
+## Phase 3: Finalization
 
 ### Configuration
 
-| Élément | Valeur |
-|---------|--------|
+| Element | Value |
+|---------|-------|
 | **Thinking** | `think` |
 | **Skills** | git-workflow |
 | **Subagents** | @doc-generator |
 
 ### Process
 
-1. **Commit structuré**
+1. **Structured commit**
    ```
-   feat(scope): description courte
+   feat(scope): short description
 
-   - Détail 1
-   - Détail 2
+   - Detail 1
+   - Detail 2
 
    Refs: docs/features/<slug>.md
    ```
 
 2. **Documentation** (via @doc-generator)
-   - Générer/mettre à jour README si nouveau composant
-   - Documenter changements d'API si applicable
-   - Mettre à jour CHANGELOG
+   - Generate/update README if new component
+   - Document API changes if applicable
+   - Update CHANGELOG
 
-3. **Préparation PR**
-   - Créer la branche si pas fait
-   - Préparer le template PR
-   - Lister les reviewers
+3. **PR preparation**
+   - Create branch if not done
+   - Prepare PR template
+   - List reviewers
 
 ### Output §4
 
 ```markdown
-## §4 — Finalisation
+## §4 — Finalization
 
 ### Commit
 ```
@@ -258,15 +258,15 @@ Refs: docs/features/user-email-validation.md
 ```
 
 ### Documentation
-- **@doc-generator** : 2 fichiers mis à jour
-  - README.md (section Configuration)
+- **@doc-generator**: 2 files updated
+  - README.md (Configuration section)
   - CHANGELOG.md (v1.2.0)
 
 ### PR Ready
-- Branche : `feature/user-email-validation`
-- Tests : ✅ Tous passent
-- Lint : ✅ Clean
-- Docs : ✅ À jour
+- Branch: `feature/user-email-validation`
+- Tests: ✅ All passing
+- Lint: ✅ Clean
+- Docs: ✅ Up to date
 ```
 
 ### ✅ COMPLETION
@@ -275,25 +275,25 @@ Refs: docs/features/user-email-validation.md
 ---
 ✅ **FEATURE COMPLETE**
 
-Feature Document finalisé : docs/features/<slug>.md
-- Phase 1 : Plan validé
-- Phase 2 : Code implémenté et reviewé
-- Phase 3 : Commit et documentation
+Feature Document finalized: docs/features/<slug>.md
+- Phase 1: Plan validated
+- Phase 2: Code implemented and reviewed
+- Phase 3: Commit and documentation
 
-**Prochaine étape :** Créer la PR ou merger
+**Next step:** Create PR or merge
 ---
 ```
 
 ---
 
-## Mode --large
+## --large Mode
 
-En mode `--large`, les différences sont :
+In `--large` mode, the differences are:
 
 | Aspect | Standard | Large |
 |--------|----------|-------|
 | Thinking P1 | `think hard` | `ultrathink` |
-| @security-auditor | Conditionnel | Obligatoire |
-| @qa-reviewer | Conditionnel | Obligatoire |
-| Breakpoints | Confirmation simple | Validation explicite |
-| Feature Document | Standard | Étendu avec sections risques |
+| @security-auditor | Conditional | Mandatory |
+| @qa-reviewer | Conditional | Mandatory |
+| Breakpoints | Simple confirmation | Explicit validation |
+| Feature Document | Standard | Extended with risk sections |
