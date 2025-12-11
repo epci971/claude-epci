@@ -14,6 +14,10 @@ description: >-
 Passive skill that detects opportunities for new EPCI component creation
 based on usage pattern analysis.
 
+**Reference Documents:**
+- [Detection Patterns](references/detection-patterns.md) — Scoring criteria and thresholds
+- [Suggestion Examples](references/suggestion-examples.md) — Real-world suggestion templates
+
 ## Automatic Detection
 
 ### New Skill Indicators

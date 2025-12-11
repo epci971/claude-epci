@@ -10,7 +10,31 @@ description: >-
 
 ## Overview
 
-Guides new skill creation with automatic validation.
+Guides new skill creation with automatic validation. Provides templates,
+validation checklist, and triggering tests for production-ready skills.
+
+## Quick Decision Tree
+
+```
+Need to create a skill?
+          │
+    ┌─────┴─────┐
+    ▼           ▼
+ Domain      Factory
+ Skill?      Skill?
+    │           │
+    ▼           ▼
+ Use         Use
+ domain      creator
+ templates   templates
+```
+
+**Reference Documents:**
+- [YAML Rules](references/yaml-rules.md) — Frontmatter syntax validation
+- [Description Formulas](references/description-formulas.md) — Triggering patterns
+- [Best Practices](references/best-practices.md) — Complete methodology
+- [Validation Checklist](references/validation-checklist.md) — 40-point verification
+- [Domain Templates](references/domain-templates.md) — Pre-configured patterns
 
 ## 6-Phase Workflow
 
@@ -38,11 +62,19 @@ allowed-tools: [Read, Write, ...]  # If needed
 ---
 ```
 
-**Required description formula:**
+**Master Description Formula:**
 ```
-[What the skill does]. Use when: [activation conditions].
-Not for: [clear exclusions].
+[CAPABILITIES] + [USE CASES] + [TRIGGERS] + [BOUNDARIES]
 ```
+
+| Component | Content | Example |
+|-----------|---------|---------|
+| **Capabilities** | Action verbs + objects | "Extract text, fill forms" |
+| **Use cases** | Usage contexts | "Use when working with PDFs" |
+| **Triggers** | Keywords | "forms, extraction, merge" |
+| **Boundaries** | Exclusions | "Not for image-only PDFs" |
+
+→ See [Description Formulas](references/description-formulas.md) for patterns
 
 ### Phase 3: Content
 
@@ -88,6 +120,15 @@ skills/<category>/<name>/
     └── reference-2.md
 ```
 
+**Progressive Disclosure Pattern:**
+| Level | Content | Tokens | Loading |
+|-------|---------|--------|---------|
+| 1 | Frontmatter | ~100 | Always |
+| 2 | SKILL.md body | <5000 | On trigger |
+| 3 | References | Variable | On demand |
+
+→ See [Best Practices](references/best-practices.md) for structure guidelines
+
 ### Phase 5: Validation
 
 Run validation script:
@@ -96,13 +137,16 @@ Run validation script:
 python src/scripts/validate_skill.py src/skills/<category>/<name>/
 ```
 
-**Criteria:**
+**Quick Criteria (6 checks):**
 - [ ] Valid YAML frontmatter
 - [ ] Kebab-case name ≤ 64 chars
 - [ ] Description with "Use when:" and "Not for:"
 - [ ] Description ≤ 1024 chars
 - [ ] Content < 5000 tokens
 - [ ] References exist if mentioned
+
+**Full Validation:** 40-point checklist with minimum ≥36/40 for approval
+→ See [Validation Checklist](references/validation-checklist.md) for complete verification
 
 ### Phase 6: Triggering Test
 

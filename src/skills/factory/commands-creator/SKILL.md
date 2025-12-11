@@ -10,7 +10,13 @@ description: >-
 
 ## Overview
 
-Guides new command creation with automatic validation.
+Guides new command creation with automatic validation. Provides templates,
+frontmatter specifications, and tool guidance for production-ready commands.
+
+**Reference Documents:**
+- [Frontmatter Guide](references/frontmatter-guide.md) — YAML specification
+- [Semantic Tags](references/semantic-tags.md) — Content structure patterns
+- [Tools Reference](references/tools-reference.md) — Available tools guide
 
 ## Workflow
 

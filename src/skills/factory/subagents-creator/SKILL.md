@@ -13,6 +13,11 @@ description: >-
 Guides new subagent creation with automatic validation.
 Focus on least privilege principle and single mission.
 
+**Reference Documents:**
+- [Least Privilege Guide](references/least-privilege-guide.md) — Tool restriction principles
+- [Output Patterns](references/output-patterns.md) — Standardized report formats
+- [Invocation Guide](references/invocation-guide.md) — When and how to invoke agents
+
 ## Key Concepts
 
 ### What is a subagent?
