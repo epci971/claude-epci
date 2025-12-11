@@ -1,0 +1,19 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 2. Dependencies & Environment
+
+- **PHP**: 8.1+
+- **Symfony**: 7.1+
+- **Dependency Management**: Composer
+- **ORM**: Doctrine
+- **Templating**: Twig
+- **Other recommended components**:
+  - Symfony Cache (Redis, Memcached)
+  - Symfony Messenger
+  - Symfony Validator
+  - Symfony Security
+  - Monolog for logging
+  - API Platform (for APIs)

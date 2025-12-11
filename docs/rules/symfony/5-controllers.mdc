@@ -1,0 +1,13 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 5. Controllers
+
+- Controllers must be `final` and stateless (read-only).
+- Keep them **thin**: no business logic, delegate to services.
+- Use **constructor injection** for dependencies.
+- Return `Response` or `JsonResponse`.
+- Define routes using **attributes**, not YAML/XML.
+- Organize related controllers using sub-namespaces and route prefixes.

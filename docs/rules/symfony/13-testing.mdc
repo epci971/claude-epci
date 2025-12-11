@@ -1,0 +1,13 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 13. Testing
+
+- Store tests in `tests/`.
+- Use **PHPUnit** for unit and functional tests.
+- Follow the **AAA pattern** (Arrange-Act-Assert).
+- Use **Panther** or **BrowserKit** for E2E or HTTP-level tests.
+- Create and use fixtures for consistent test environments.
+- **Mock external services** (e.g., APIs, mailers) in unit tests.

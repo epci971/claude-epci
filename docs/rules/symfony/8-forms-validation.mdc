@@ -1,0 +1,11 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 8. Forms & Validation
+
+- Place Form classes in `src/Form/`.
+- Use **FormType** classes for form definitions.
+- Use Symfony's **Validation Component** for form and request validation.
+- Prefer **DTOs** as form data objects instead of binding to entities.

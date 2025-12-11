@@ -1,0 +1,43 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 4. Project Structure
+
+- Use the Symfony binary to generate projects.
+- Follow the default directory structure:
+  - Place code in `src/` organized **by type**, not by feature or bundle.
+  - Use PascalCase for folders and class names.
+
+### Example Folders:
+
+| Type       | Description                                                  | Folder             |
+|------------|--------------------------------------------------------------|--------------------|
+| Controller | Handles HTTP request/response                                | `Controller/`      |
+| Entity     | Domain object, Doctrine-mapped                               | `Entity/`          |
+| Repository | Query logic for entities                                     | `Repository/`      |
+| Service    | Stateless domain or technical logic                          | `Service/`         |
+| DTO        | Data Transfer Object, no business logic                      | `Dto/`             |
+| FormType   | Symfony Form definitions                                     | `Form/Type/`       |
+| Event      | Domain or system events                                      | `Event/`           |
+| Listener   | Responds to a specific event                                 | `EventListener/`   |
+| Subscriber | Subscribes to multiple events                                | `EventSubscriber/` |
+| Voter      | Access control decisions                                     | `Security/Voter/`  |
+| Command    | CLI commands (Symfony Console)                               | `Command/`         |
+| Twig       | Custom Twig filters/functions                                | `Twig/Extension/`  |
+| Handler    | Manages use-case-oriented processes                          | `Handler/`         |
+| Manager    | Encapsulates business logic per entity                       | `Manager/`         |
+| Provider   | Supplies external or internal data                           | `Provider/`        |
+| Decorator  | Adds responsibilities dynamically to services                | `Decorator/`       |
+| Bridge     | Integrates third-party SDKs or APIs                          | `Bridge/`          |
+| Factory    | Creates configured complex objects                           | `Factory/`         |
+| Normalizer | Transforms entities for serialization                        | `Normalizer/`      |
+| Transformer| Converts internal data formats                               | `Transformer/`     |
+| Mailer     | Email creation and dispatching                               | `Mail/`            |
+| PDF        | PDF generation from templates                                | `PDF/`             |
+| Excel      | Excel file export/import                                     | `Excel/`           |
+| Constraint | Custom Symfony validation rules                              | `Validator/Constraint/` |
+| Facade     | Simplified API over complex subsystems                       | `Facade/`          |
+| Helper     | Utility classes (static or injectable)                       | `Helper/`          |
+| Security   | Auth providers, firewalls, roles, etc.                       | `Security/`        |
