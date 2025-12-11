@@ -1,194 +1,194 @@
 ---
 name: component-advisor
 description: >-
-  Détection passive d'opportunités de création de composants EPCI. Identifie
-  les patterns répétitifs qui pourraient devenir des skills, commandes ou
-  subagents. Use when: analyse de workflow, détection de patterns récurrents.
-  Not for: création active de composants (utiliser /epci:create).
+  Passive detection of EPCI component creation opportunities. Identifies
+  repetitive patterns that could become skills, commands or subagents.
+  Use when: workflow analysis, recurring pattern detection.
+  Not for: active component creation (use /epci:create).
 ---
 
 # Component Advisor
 
 ## Overview
 
-Skill passif qui détecte les opportunités de création de nouveaux composants
-EPCI basé sur l'analyse des patterns d'utilisation.
+Passive skill that detects opportunities for new EPCI component creation
+based on usage pattern analysis.
 
-## Détection automatique
+## Automatic Detection
 
-### Indicateurs de nouveau Skill
+### New Skill Indicators
 
-| Signal | Score | Exemple |
+| Signal | Score | Example |
 |--------|-------|---------|
-| Pattern répété 3+ fois | +3 | Même validation dans plusieurs commandes |
-| Domaine technique non couvert | +2 | Nouvelle stack non supportée |
-| Documentation fréquemment consultée | +2 | Recherches répétées sur même sujet |
-| Copier-coller de guidelines | +1 | Mêmes conventions appliquées |
+| Pattern repeated 3+ times | +3 | Same validation in multiple commands |
+| Technical domain not covered | +2 | New unsupported stack |
+| Documentation frequently consulted | +2 | Repeated searches on same topic |
+| Copy-paste of guidelines | +1 | Same conventions applied |
 
-**Seuil de suggestion :** Score ≥ 4
+**Suggestion threshold:** Score ≥ 4
 
-### Indicateurs de nouvelle Commande
+### New Command Indicators
 
-| Signal | Score | Exemple |
+| Signal | Score | Example |
 |--------|-------|---------|
-| Séquence d'actions répétée | +3 | Même workflow manuel récurrent |
-| Combinaison de skills fréquente | +2 | Toujours les mêmes skills ensemble |
-| Process documenté mais non automatisé | +2 | Guide suivi manuellement |
-| Demande utilisateur explicite | +3 | "J'aimerais une commande pour..." |
+| Repeated action sequence | +3 | Same recurring manual workflow |
+| Frequent skill combination | +2 | Always the same skills together |
+| Documented but not automated process | +2 | Guide followed manually |
+| Explicit user request | +3 | "I'd like a command for..." |
 
-**Seuil de suggestion :** Score ≥ 4
+**Suggestion threshold:** Score ≥ 4
 
-### Indicateurs de nouveau Subagent
+### New Subagent Indicators
 
-| Signal | Score | Exemple |
+| Signal | Score | Example |
 |--------|-------|---------|
-| Validation spécialisée répétée | +3 | Check de sécurité spécifique |
-| Review manuelle récurrente | +2 | Même checklist appliquée |
-| Expertise domaine pointue | +2 | Connaissance spécialisée requise |
-| Format de rapport standardisé | +1 | Même structure de rapport |
+| Repeated specialized validation | +3 | Specific security check |
+| Recurring manual review | +2 | Same checklist applied |
+| Narrow domain expertise | +2 | Specialized knowledge required |
+| Standardized report format | +1 | Same report structure |
 
-**Seuil de suggestion :** Score ≥ 4
+**Suggestion threshold:** Score ≥ 4
 
-## Format de suggestion
+## Suggestion Format
 
-Quand un seuil est atteint :
+When a threshold is reached:
 
 ```markdown
 💡 **COMPONENT OPPORTUNITY DETECTED**
 
-### Type suggéré : [Skill | Command | Subagent]
+### Suggested Type: [Skill | Command | Subagent]
 
-**Pattern identifié :**
-[Description du pattern détecté]
+**Identified pattern:**
+[Description of detected pattern]
 
-**Occurrences :**
+**Occurrences:**
 - [Occurrence 1]
 - [Occurrence 2]
 - [Occurrence 3]
 
-**Bénéfices estimés :**
-- [Bénéfice 1]
-- [Bénéfice 2]
+**Estimated benefits:**
+- [Benefit 1]
+- [Benefit 2]
 
-**Proposition :**
+**Proposal:**
 ```
 /epci:create [type] [suggested-name]
 ```
 
-**Score de confiance :** [X/10]
+**Confidence score:** [X/10]
 
 ---
-*Suggestion automatique - Ignorer si non pertinent*
+*Automatic suggestion - Ignore if not relevant*
 ```
 
-## Patterns surveillés
+## Monitored Patterns
 
-### Pour Skills
+### For Skills
 
-| Pattern | Domaine potentiel |
+| Pattern | Potential Domain |
+|---------|------------------|
+| Repeated searches on a tech | New stack skill |
+| Manually applied conventions | Conventions skill |
+| Often cited best practices | Patterns skill |
+| Frequently used external tools | Integration skill |
+
+### For Commands
+
+| Pattern | Potential Command |
 |---------|-------------------|
-| Recherches répétées sur une techno | Nouveau skill stack |
-| Conventions appliquées manuellement | Skill conventions |
-| Best practices citées souvent | Skill patterns |
-| Outils externes fréquemment utilisés | Skill intégration |
+| Repeated tool sequence | Composite command |
+| Manual multi-step workflow | Automation command |
+| Process with breakpoints | Structured command |
+| Action + validation + report | Workflow command |
 
-### Pour Commandes
+### For Subagents
 
-| Pattern | Commande potentielle |
-|---------|---------------------|
-| Séquence d'outils répétée | Commande composite |
-| Workflow multi-étapes manuel | Commande automatisation |
-| Process avec breakpoints | Commande structurée |
-| Action + validation + rapport | Commande workflow |
-
-### Pour Subagents
-
-| Pattern | Subagent potentiel |
+| Pattern | Potential Subagent |
 |---------|-------------------|
-| Validation récurrente | Validator agent |
-| Analyse spécialisée | Analyzer agent |
-| Review avec checklist | Reviewer agent |
-| Génération formatée | Generator agent |
+| Recurring validation | Validator agent |
+| Specialized analysis | Analyzer agent |
+| Review with checklist | Reviewer agent |
+| Formatted generation | Generator agent |
 
 ## Configuration
 
-### Activer/Désactiver
+### Enable/Disable
 
-Le component-advisor est passif par défaut.
-Il observe et suggère sans interrompre le workflow.
+The component-advisor is passive by default.
+It observes and suggests without interrupting workflow.
 
-### Seuils personnalisables
+### Customizable Thresholds
 
 ```yaml
 component_advisor:
   skill_threshold: 4
   command_threshold: 4
   subagent_threshold: 4
-  suggestion_frequency: "on_pattern_detected"  # ou "end_of_session"
+  suggestion_frequency: "on_pattern_detected"  # or "end_of_session"
 ```
 
-## Exemples de détection
+## Detection Examples
 
-### Exemple 1 : Nouveau Skill détecté
+### Example 1: New Skill Detected
 
 ```
 💡 COMPONENT OPPORTUNITY: Skill
 
-Pattern : Documentation Kubernetes consultée 5 fois
-         Même structure de deployment appliquée 3 fois
+Pattern: Kubernetes documentation consulted 5 times
+         Same deployment structure applied 3 times
 
-Suggestion : /epci:create skill kubernetes-patterns
+Suggestion: /epci:create skill kubernetes-patterns
 
-Bénéfices :
-- Auto-détection projets K8s
-- Patterns standardisés
-- Réduction temps de recherche
+Benefits:
+- Auto-detection of K8s projects
+- Standardized patterns
+- Reduced search time
 ```
 
-### Exemple 2 : Nouvelle Commande détectée
+### Example 2: New Command Detected
 
 ```
 💡 COMPONENT OPPORTUNITY: Command
 
-Pattern : Séquence répétée
+Pattern: Repeated sequence
          1. Lint → 2. Test → 3. Build → 4. Deploy
 
-Suggestion : /epci:create command ci-pipeline
+Suggestion: /epci:create command ci-pipeline
 
-Bénéfices :
-- Automatisation du process
-- Cohérence entre projets
-- Gain de temps
+Benefits:
+- Process automation
+- Consistency across projects
+- Time savings
 ```
 
-### Exemple 3 : Nouveau Subagent détecté
+### Example 3: New Subagent Detected
 
 ```
 💡 COMPONENT OPPORTUNITY: Subagent
 
-Pattern : Checklist accessibilité appliquée 4 fois
-         Même format de rapport généré
+Pattern: Accessibility checklist applied 4 times
+         Same report format generated
 
-Suggestion : /epci:create agent a11y-auditor
+Suggestion: /epci:create agent a11y-auditor
 
-Bénéfices :
-- Audit automatique
-- Rapport standardisé
-- Pas d'oubli de critères
+Benefits:
+- Automatic audit
+- Standardized report
+- No missed criteria
 ```
 
-## Métriques
+## Metrics
 
-| Métrique | Description |
-|----------|-------------|
-| Patterns détectés | Nombre de patterns identifiés |
-| Suggestions émises | Nombre de suggestions proposées |
-| Suggestions acceptées | Composants effectivement créés |
-| Taux d'adoption | % suggestions → composants |
+| Metric | Description |
+|--------|-------------|
+| Patterns detected | Number of patterns identified |
+| Suggestions issued | Number of suggestions proposed |
+| Suggestions accepted | Components actually created |
+| Adoption rate | % suggestions → components |
 
 ## Limitations
 
-- Détection basée sur la session courante
-- Pas de mémoire entre sessions (sauf si contexte fourni)
-- Suggestions indicatives, pas prescriptives
-- Nécessite patterns répétés pour détecter
+- Detection based on current session
+- No memory between sessions (unless context provided)
+- Suggestions are indicative, not prescriptive
+- Requires repeated patterns to detect

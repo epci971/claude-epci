@@ -1,87 +1,87 @@
 ---
 name: subagents-creator
 description: >-
-  Création guidée de nouveaux subagents Claude Code. Workflow avec templates,
-  validation et principe de moindre privilège. Use when: /epci:create agent
-  invoqué. Not for: skills ou commandes, subagents natifs Claude Code.
+  Guided creation of new Claude Code subagents. Workflow with templates,
+  validation and least privilege principle. Use when: /epci:create agent
+  invoked. Not for: skills or commands, native Claude Code subagents.
 ---
 
 # Subagents Creator
 
 ## Overview
 
-Guide la création de nouveaux subagents avec validation automatique.
-Focus sur le principe de moindre privilège et la mission unique.
+Guides new subagent creation with automatic validation.
+Focus on least privilege principle and single mission.
 
-## Concepts clés
+## Key Concepts
 
-### Qu'est-ce qu'un subagent ?
+### What is a subagent?
 
-Un subagent est un agent spécialisé avec :
-- **Mission unique** — Un seul objectif bien défini
-- **Outils restreints** — Minimum nécessaire
-- **Modèle adapté** — Haiku (rapide) ou Sonnet (complex)
-- **Format de sortie** — Structuré et prévisible
+A subagent is a specialized agent with:
+- **Single mission** — One well-defined objective
+- **Restricted tools** — Minimum necessary
+- **Adapted model** — Haiku (fast) or Sonnet (complex)
+- **Output format** — Structured and predictable
 
-### Subagents natifs vs Custom
+### Native vs Custom Subagents
 
-| Type | Exemples | Usage |
+| Type | Examples | Usage |
 |------|----------|-------|
-| **Natifs** | @Explore, @Plan | Fournis par Claude Code |
-| **Custom** | @code-reviewer, @security-auditor | Créés par EPCI |
+| **Native** | @Explore, @Plan | Provided by Claude Code |
+| **Custom** | @code-reviewer, @security-auditor | Created by EPCI |
 
 ## Workflow
 
-### Phase 1 : Qualification
+### Phase 1: Qualification
 
-Questions pour définir le subagent :
+Questions to define the subagent:
 
-1. **Mission** : Quelle est la tâche unique ?
-2. **Invocation** : Quand est-il appelé ?
-3. **Input** : Que reçoit-il en entrée ?
-4. **Output** : Que produit-il ?
-5. **Outils** : De quels outils a-t-il besoin ?
+1. **Mission**: What is the single task?
+2. **Invocation**: When is it called?
+3. **Input**: What does it receive?
+4. **Output**: What does it produce?
+5. **Tools**: What tools does it need?
 
-### Phase 2 : Définition du frontmatter
+### Phase 2: Frontmatter Definition
 
 ```yaml
 ---
 name: [kebab-case]
 description: >-
-  [Mission en 1-2 phrases]. [Quand il est invoqué].
-  [Ce qu'il produit comme output].
-model: claude-sonnet-4-20250514  # ou haiku pour tâches simples
-allowed-tools: [Read, Grep]  # MINIMUM NÉCESSAIRE
+  [Mission in 1-2 sentences]. [When it's invoked].
+  [What it produces as output].
+model: claude-sonnet-4-20250514  # or haiku for simple tasks
+allowed-tools: [Read, Grep]  # MINIMUM NECESSARY
 ---
 ```
 
-### Phase 3 : Structure du contenu
+### Phase 3: Content Structure
 
 ```markdown
-# [Nom] Agent
+# [Name] Agent
 
 ## Mission
-[Description claire de la mission unique]
+[Clear description of single mission]
 
-## Conditions d'invocation
-[Quand ce subagent est appelé]
+## Invocation Conditions
+[When this subagent is called]
 
 ## Checklist
-### [Catégorie 1]
-- [ ] Critère 1
-- [ ] Critère 2
+### [Category 1]
+- [ ] Criterion 1
+- [ ] Criterion 2
 
-### [Catégorie 2]
-- [ ] Critère 3
+### [Category 2]
+- [ ] Criterion 3
 
-## Niveaux de sévérité
-| Niveau | Critères | Action |
-|--------|----------|--------|
+## Severity Levels
+| Level | Criteria | Action |
+|-------|----------|--------|
 | 🔴 Critical | ... | Must fix |
 | 🟠 Important | ... | Should fix |
 | 🟡 Minor | ... | Nice to have |
 
-## Format de sortie
+## Output Format
 ```markdown
 ## [Output Report Title]
 
@@ -96,36 +96,36 @@ allowed-tools: [Read, Grep]  # MINIMUM NÉCESSAIRE
 ```
 ```
 
-### Phase 4 : Validation
+### Phase 4: Validation
 
 ```bash
-python scripts/validate_subagent.py agents/[name].md
+python src/scripts/validate_subagent.py src/agents/[name].md
 ```
 
-**Critères :**
-- [ ] Fichier .md existe
-- [ ] YAML frontmatter valide
-- [ ] Nom kebab-case ≤ 64 chars
-- [ ] Description claire
-- [ ] Outils restrictifs (principe de moindre privilège)
-- [ ] Contenu focalisé (< 2000 tokens)
+**Criteria:**
+- [ ] .md file exists
+- [ ] Valid YAML frontmatter
+- [ ] Kebab-case name ≤ 64 chars
+- [ ] Clear description
+- [ ] Restrictive tools (least privilege principle)
+- [ ] Focused content (< 2000 tokens)
 
-## Principe de moindre privilège
+## Least Privilege Principle
 
-### Outils par type de mission
+### Tools by Mission Type
 
-| Mission | Outils recommandés |
+| Mission | Recommended Tools |
 |---------|-------------------|
-| Lecture/Analyse | `Read`, `Grep`, `Glob` |
+| Reading/Analysis | `Read`, `Grep`, `Glob` |
 | Validation | `Read`, `Grep` |
-| Génération | `Read`, `Write` |
-| Exécution | `Read`, `Bash` |
+| Generation | `Read`, `Write` |
+| Execution | `Read`, `Bash` |
 
-### ⚠️ Outils à éviter sauf nécessité
+### ⚠️ Tools to Avoid Unless Necessary
 
-- `Write` — Éviter si le subagent n'a pas besoin de créer des fichiers
-- `Edit` — Éviter si le subagent ne modifie pas de fichiers
-- `Bash` — Éviter si pas d'exécution de commandes nécessaire
+- `Write` — Avoid if subagent doesn't need to create files
+- `Edit` — Avoid if subagent doesn't modify files
+- `Bash` — Avoid if no command execution needed
 
 ## Template
 
@@ -133,8 +133,8 @@ python scripts/validate_subagent.py agents/[name].md
 ---
 name: [name]
 description: >-
-  [Mission unique et claire]. [Contexte d'invocation].
-  [Output produit].
+  [Clear single mission]. [Invocation context].
+  [Output produced].
 model: claude-sonnet-4-20250514
 allowed-tools: [Read, Grep]
 ---
@@ -143,115 +143,115 @@ allowed-tools: [Read, Grep]
 
 ## Mission
 
-[Description de la mission unique en 2-3 phrases.
-Ce que le subagent fait et pourquoi.]
+[Single mission description in 2-3 sentences.
+What the subagent does and why.]
 
-## Conditions d'invocation
+## Invocation Conditions
 
-Invoqué automatiquement si :
+Automatically invoked if:
 - [Condition 1]
 - [Condition 2]
 
-OU invoqué manuellement par :
-- [Commande/contexte]
+OR manually invoked by:
+- [Command/context]
 
-## Input attendu
+## Expected Input
 
 - [Input 1] — [Description]
 - [Input 2] — [Description]
 
 ## Checklist
 
-### [Catégorie 1]
-- [ ] Critère vérifiable 1
-- [ ] Critère vérifiable 2
-- [ ] Critère vérifiable 3
+### [Category 1]
+- [ ] Verifiable criterion 1
+- [ ] Verifiable criterion 2
+- [ ] Verifiable criterion 3
 
-### [Catégorie 2]
-- [ ] Critère vérifiable 4
-- [ ] Critère vérifiable 5
+### [Category 2]
+- [ ] Verifiable criterion 4
+- [ ] Verifiable criterion 5
 
-## Niveaux de sévérité
+## Severity Levels
 
-| Niveau | Critères | Action requise |
-|--------|----------|----------------|
-| 🔴 Critical | [Définition] | Must fix |
-| 🟠 Important | [Définition] | Should fix |
-| 🟡 Minor | [Définition] | Nice to have |
+| Level | Criteria | Required Action |
+|-------|----------|-----------------|
+| 🔴 Critical | [Definition] | Must fix |
+| 🟠 Important | [Definition] | Should fix |
+| 🟡 Minor | [Definition] | Nice to have |
 
-## Format de sortie
+## Output Format
 
 ```markdown
 ## [Report Title]
 
 ### Summary
-[1-2 phrases résumant le résultat]
+[1-2 sentences summarizing result]
 
-### [Section principale]
-[Détails structurés]
+### [Main Section]
+[Structured details]
 
-### Issues (si applicable)
+### Issues (if applicable)
 
 #### 🔴 Critical
-1. **[Titre]**
-   - **Location** : [file:line]
-   - **Issue** : [Description]
-   - **Fix** : [Solution suggérée]
+1. **[Title]**
+   - **Location**: [file:line]
+   - **Issue**: [Description]
+   - **Fix**: [Suggested solution]
 
 ### Verdict
 **[APPROVED | NEEDS_FIXES | REJECTED]**
 
-**Reasoning:** [Justification technique]
+**Reasoning:** [Technical justification]
 ```
 
 ## Process
 
-1. [Étape 1]
-2. [Étape 2]
-3. [Étape 3]
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
 ```
 
-## Bonnes pratiques
+## Best Practices
 
 ### Mission
 
-| Faire | Éviter |
-|-------|--------|
-| Mission unique | Multi-tâches |
-| Verbe d'action | Description vague |
-| Scope limité | "Tout vérifier" |
+| Do | Avoid |
+|----|-------|
+| Single mission | Multi-task |
+| Action verb | Vague description |
+| Limited scope | "Check everything" |
 
-### Outils
+### Tools
 
-| Faire | Éviter |
-|-------|--------|
-| Minimum nécessaire | Tous les outils |
-| Read-only si possible | Write sans raison |
-| Justifier chaque outil | Copier d'autres agents |
+| Do | Avoid |
+|----|-------|
+| Minimum necessary | All tools |
+| Read-only if possible | Write without reason |
+| Justify each tool | Copy from other agents |
 
 ### Output
 
-| Faire | Éviter |
-|-------|--------|
-| Format structuré | Texte libre |
-| Verdicts clairs | Ambiguïté |
-| Preuves/locations | Affirmations sans preuve |
+| Do | Avoid |
+|----|-------|
+| Structured format | Free text |
+| Clear verdicts | Ambiguity |
+| Evidence/locations | Claims without proof |
 
 ## Output
 
 ```markdown
 ✅ **SUBAGENT CREATED**
 
-Agent : [name]
-Fichier : agents/[name].md
+Agent: [name]
+File: src/agents/[name].md
 
-Validation : ✅ PASSED (5/5 checks)
-- Mission : Unique et claire
-- Outils : Restrictifs (X outils)
-- Contenu : < 2000 tokens
+Validation: ✅ PASSED (5/5 checks)
+- Mission: Single and clear
+- Tools: Restrictive (X tools)
+- Content: < 2000 tokens
 
-Prochaines étapes :
-1. Personnaliser la checklist
-2. Définir les niveaux de sévérité
-3. Tester avec des cas réels
+Next steps:
+1. Customize the checklist
+2. Define severity levels
+3. Test with real cases
 ```

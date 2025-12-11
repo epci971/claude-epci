@@ -1,232 +1,232 @@
 ---
 name: commands-creator
 description: >-
-  Création guidée de nouvelles commandes Claude Code. Workflow avec templates,
-  validation du frontmatter et structure. Use when: /epci:create command invoqué.
-  Not for: modification de commandes existantes, skills ou subagents.
+  Guided creation of new Claude Code commands. Workflow with templates,
+  frontmatter validation and structure. Use when: /epci:create command invoked.
+  Not for: modifying existing commands, skills or subagents.
 ---
 
 # Commands Creator
 
 ## Overview
 
-Guide la création de nouvelles commandes avec validation automatique.
+Guides new command creation with automatic validation.
 
 ## Workflow
 
-### Phase 1 : Qualification
+### Phase 1: Qualification
 
-Questions pour définir la commande :
+Questions to define the command:
 
-1. **Objectif** : Que fait cette commande ?
-2. **Arguments** : Quels arguments accepte-t-elle ?
-3. **Outils** : Quels outils sont nécessaires ?
-4. **Output** : Quel est le résultat attendu ?
-5. **Intégrations** : Quels skills/subagents utilise-t-elle ?
+1. **Objective**: What does this command do?
+2. **Arguments**: What arguments does it accept?
+3. **Tools**: What tools are needed?
+4. **Output**: What is the expected result?
+5. **Integrations**: What skills/subagents does it use?
 
-### Phase 2 : Définition du frontmatter
+### Phase 2: Frontmatter Definition
 
 ```yaml
 ---
 description: >-
-  [Action en infinitif]. [Contexte d'usage]. [Résultat attendu].
-  [Contraintes ou limitations éventuelles].
+  [Action in infinitive]. [Usage context]. [Expected result].
+  [Constraints or limitations if any].
 argument-hint: [arg1] [arg2] [--flag]
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 ```
 
-### Phase 3 : Structure du contenu
+### Phase 3: Content Structure
 
 ```markdown
-# [Nom de la commande]
+# [Command Name]
 
 ## Overview
-[Description en 2-3 phrases]
+[Description in 2-3 sentences]
 
 ## Arguments
-| Argument | Description | Défaut |
-|----------|-------------|--------|
+| Argument | Description | Default |
+|----------|-------------|---------|
 | `arg1` | Description | - |
 | `--flag` | Description | false |
 
 ## Process
-### Étape 1 : [Nom]
-[Description détaillée]
+### Step 1: [Name]
+[Detailed description]
 
-### Étape 2 : [Nom]
-[Description détaillée]
+### Step 2: [Name]
+[Detailed description]
 
-## Skills chargés
-- `skill-1` (raison)
-- `skill-2` (raison)
+## Loaded Skills
+- `skill-1` (reason)
+- `skill-2` (reason)
 
-## Subagents invoqués
-- `@subagent-1` — Rôle
+## Invoked Subagents
+- `@subagent-1` — Role
 
 ## Output
-[Format de sortie attendu]
+[Expected output format]
 
-## Exemples
-[Exemples d'utilisation]
+## Examples
+[Usage examples]
 ```
 
-### Phase 4 : Validation
+### Phase 4: Validation
 
 ```bash
-python scripts/validate_command.py commands/[name].md
+python src/scripts/validate_command.py src/commands/[name].md
 ```
 
-**Critères :**
-- [ ] Fichier .md existe
-- [ ] YAML frontmatter valide
-- [ ] Description présente et claire
-- [ ] allowed-tools valides
-- [ ] Structure avec headers
+**Criteria:**
+- [ ] .md file exists
+- [ ] Valid YAML frontmatter
+- [ ] Description present and clear
+- [ ] Valid allowed-tools
+- [ ] Structure with headers
 
 ## Template
 
 ```markdown
 ---
 description: >-
-  [Action principale de la commande]. [Contexte d'utilisation].
-  [Ce que la commande produit comme résultat].
-argument-hint: [arguments-et-flags]
+  [Main action of the command]. [Usage context].
+  [What the command produces as result].
+argument-hint: [arguments-and-flags]
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
-# [Nom de la Commande]
+# [Command Name]
 
 ## Overview
 
-[Description de la commande en 2-3 phrases. Inclure le cas d'usage
-principal et le type de projet/contexte où elle est utile.]
+[Command description in 2-3 sentences. Include main use case
+and type of project/context where it's useful.]
 
 ## Arguments
 
-| Argument | Description | Requis | Défaut |
-|----------|-------------|--------|--------|
-| `[arg]` | Description | Oui/Non | - |
-| `--[flag]` | Description | Non | false |
+| Argument | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `[arg]` | Description | Yes/No | - |
+| `--[flag]` | Description | No | false |
 
 ## Process
 
-### 1. [Première étape]
+### 1. [First step]
 
-[Description de l'étape]
+[Step description]
 
 ```
-[Code ou pseudo-code si applicable]
+[Code or pseudo-code if applicable]
 ```
 
-### 2. [Deuxième étape]
+### 2. [Second step]
 
-[Description de l'étape]
+[Step description]
 
-### 3. [Troisième étape]
+### 3. [Third step]
 
-[Description de l'étape]
+[Step description]
 
-## Skills chargés
+## Loaded Skills
 
-- `[skill-1]` — [Raison du chargement]
-- `[skill-2]` — [Raison du chargement]
+- `[skill-1]` — [Loading reason]
+- `[skill-2]` — [Loading reason]
 
-## Subagents invoqués
+## Invoked Subagents
 
-| Subagent | Condition | Rôle |
+| Subagent | Condition | Role |
 |----------|-----------|------|
-| `@[name]` | [Quand] | [Ce qu'il fait] |
+| `@[name]` | [When] | [What it does] |
 
 ## Output
 
-[Description du format de sortie]
+[Output format description]
 
 ```markdown
-[Exemple de sortie]
+[Output example]
 ```
 
-## Exemples
+## Examples
 
-### Exemple 1 : [Cas d'usage]
-
-```
-> /[commande] [arguments]
-
-[Résultat attendu]
-```
-
-### Exemple 2 : [Autre cas]
+### Example 1: [Use case]
 
 ```
-> /[commande] --[flag] [arguments]
+> /[command] [arguments]
 
-[Résultat attendu]
+[Expected result]
 ```
 
-## Erreurs courantes
+### Example 2: [Another case]
 
-| Erreur | Cause | Solution |
-|--------|-------|----------|
-| [Erreur 1] | [Cause] | [Solution] |
+```
+> /[command] --[flag] [arguments]
 
-## Voir aussi
-
-- `/[commande-liée]` — [Relation]
+[Expected result]
 ```
 
-## Bonnes pratiques
+## Common Errors
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| [Error 1] | [Cause] | [Solution] |
+
+## See Also
+
+- `/[related-command]` — [Relationship]
+```
+
+## Best Practices
 
 ### Description
 
-| Faire | Éviter |
-|-------|--------|
-| Verbe à l'infinitif | Forme passive |
-| Concis (< 200 chars) | Description trop longue |
-| Contexte clair | Jargon technique |
+| Do | Avoid |
+|----|-------|
+| Infinitive verb | Passive form |
+| Concise (< 200 chars) | Too long description |
+| Clear context | Technical jargon |
 
 ### Arguments
 
-| Faire | Éviter |
-|-------|--------|
-| Noms explicites | Abréviations cryptiques |
-| Valeurs par défaut | Tous obligatoires |
-| Documentation complète | Args sans description |
+| Do | Avoid |
+|----|-------|
+| Explicit names | Cryptic abbreviations |
+| Default values | All required |
+| Complete documentation | Args without description |
 
 ### Process
 
-| Faire | Éviter |
-|-------|--------|
-| Étapes numérotées | Flux confus |
-| Conditions claires | Logique implicite |
-| Exemples concrets | Descriptions abstraites |
+| Do | Avoid |
+|----|-------|
+| Numbered steps | Confusing flow |
+| Clear conditions | Implicit logic |
+| Concrete examples | Abstract descriptions |
 
 ## Output
 
 ```markdown
 ✅ **COMMAND CREATED**
 
-Commande : [name]
-Fichier : commands/[name].md
+Command: [name]
+File: src/commands/[name].md
 
-Validation : ✅ PASSED (5/5 checks)
+Validation: ✅ PASSED (5/5 checks)
 
-Prochaines étapes :
-1. Personnaliser le process
-2. Ajouter des exemples
-3. Tester la commande
+Next steps:
+1. Customize the process
+2. Add examples
+3. Test the command
 ```
 
-## Outils disponibles
+## Available Tools
 
-| Outil | Usage |
-|-------|-------|
-| `Read` | Lecture de fichiers |
-| `Write` | Création de fichiers |
-| `Edit` | Modification de fichiers |
-| `Bash` | Commandes shell |
-| `Grep` | Recherche dans le code |
-| `Glob` | Pattern matching fichiers |
-| `Task` | Invocation de subagents |
-| `WebFetch` | Requêtes HTTP |
-| `TodoRead/Write` | Gestion des tâches |
+| Tool | Usage |
+|------|-------|
+| `Read` | File reading |
+| `Write` | File creation |
+| `Edit` | File modification |
+| `Bash` | Shell commands |
+| `Grep` | Code search |
+| `Glob` | File pattern matching |
+| `Task` | Subagent invocation |
+| `WebFetch` | HTTP requests |
+| `TodoRead/Write` | Task management |
