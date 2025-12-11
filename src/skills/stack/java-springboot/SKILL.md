@@ -1,27 +1,27 @@
 ---
 name: java-springboot
 description: >-
-  Patterns et conventions pour Java/Spring Boot. Inclut Spring Data JPA,
-  Spring Security, JUnit 5, Lombok. Use when: développement Spring Boot,
-  pom.xml ou build.gradle avec spring-boot détecté. Not for: Jakarta EE, Quarkus.
+  Patterns and conventions for Java/Spring Boot. Includes Spring Data JPA,
+  Spring Security, JUnit 5, Lombok. Use when: Spring Boot development,
+  pom.xml or build.gradle with spring-boot detected. Not for: Jakarta EE, Quarkus.
 ---
 
 # Java/Spring Boot Development Patterns
 
 ## Overview
 
-Patterns et conventions pour le développement Spring Boot moderne.
+Patterns and conventions for modern Spring Boot development.
 
-## Auto-détection
+## Auto-detection
 
-Chargé automatiquement si détection de :
-- `pom.xml` contenant `spring-boot`
-- `build.gradle` contenant `spring-boot`
-- Fichiers `@SpringBootApplication`, `application.yml`
+Automatically loaded if detection of:
+- `pom.xml` containing `spring-boot`
+- `build.gradle` containing `spring-boot`
+- Files `@SpringBootApplication`, `application.yml`
 
-## Architecture Spring Boot
+## Spring Boot Architecture
 
-### Structure standard
+### Standard Structure
 
 ```
 project/
@@ -49,20 +49,20 @@ project/
 └── README.md
 ```
 
-### Conventions de nommage
+### Naming Conventions
 
-| Élément | Convention | Exemple |
+| Element | Convention | Example |
 |---------|------------|---------|
 | Controllers | `*Controller` | `UserController` |
 | Services | `*Service` | `UserService` |
 | Repositories | `*Repository` | `UserRepository` |
-| Entities | Singulier, PascalCase | `User` |
+| Entities | Singular, PascalCase | `User` |
 | DTOs | `*Request`, `*Response` | `CreateUserRequest` |
 | Tests | `*Test` | `UserServiceTest` |
 
 ## Entity Patterns
 
-### JPA Entity avec Lombok
+### JPA Entity with Lombok
 
 ```java
 @Entity
@@ -116,7 +116,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 ## Service Patterns
 
-### Service avec transactions
+### Service with Transactions
 
 ```java
 @Service
@@ -209,7 +209,7 @@ public class UserController {
 }
 ```
 
-### DTO avec validation
+### DTO with Validation
 
 ```java
 @Data
@@ -365,7 +365,7 @@ class UserControllerIntegrationTest {
 }
 ```
 
-## Commandes utiles
+## Useful Commands
 
 ```bash
 # Maven
@@ -381,15 +381,15 @@ mvn test -Dtest=UserServiceTest
 ./gradlew test --tests UserServiceTest
 ```
 
-## Bonnes pratiques Spring Boot
+## Spring Boot Best Practices
 
-| Pratique | Faire | Éviter |
-|----------|-------|--------|
-| Injection | Constructor injection | @Autowired sur champs |
-| Transactions | @Transactional sur service | Transaction sur controller |
-| DTO | Séparés Request/Response | Entity dans API |
-| Validation | @Valid + annotations | Validation manuelle |
-| Logs | SLF4J + paramètres | Concaténation de strings |
+| Practice | Do | Avoid |
+|----------|-----|-------|
+| Injection | Constructor injection | @Autowired on fields |
+| Transactions | @Transactional on service | Transaction on controller |
+| DTO | Separate Request/Response | Entity in API |
+| Validation | @Valid + annotations | Manual validation |
+| Logs | SLF4J + parameters | String concatenation |
 
 ## Security Config
 

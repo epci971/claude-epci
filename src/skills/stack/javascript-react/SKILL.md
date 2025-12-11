@@ -1,40 +1,40 @@
 ---
 name: javascript-react
 description: >-
-  Patterns et conventions pour JavaScript/React. Inclut hooks, TypeScript,
-  state management, testing avec Jest/RTL. Use when: développement React,
-  package.json avec react détecté. Not for: Vue, Angular, Node backend.
+  Patterns and conventions for JavaScript/React. Includes hooks, TypeScript,
+  state management, testing with Jest/RTL. Use when: React development,
+  package.json with react detected. Not for: Vue, Angular, Node backend.
 ---
 
 # JavaScript/React Development Patterns
 
 ## Overview
 
-Patterns et conventions pour le développement React moderne avec TypeScript.
+Patterns and conventions for modern React development with TypeScript.
 
-## Auto-détection
+## Auto-detection
 
-Chargé automatiquement si détection de :
-- `package.json` contenant `react`
-- Fichiers `*.tsx`, `*.jsx`
+Automatically loaded if detection of:
+- `package.json` containing `react`
+- Files `*.tsx`, `*.jsx`
 - Structure `src/components/`, `src/hooks/`
 
-## Architecture React
+## React Architecture
 
-### Structure standard
+### Standard Structure
 
 ```
 project/
 ├── src/
-│   ├── components/        # Composants réutilisables
-│   │   ├── ui/           # Composants UI basiques
-│   │   └── features/     # Composants feature-specific
+│   ├── components/        # Reusable components
+│   │   ├── ui/           # Basic UI components
+│   │   └── features/     # Feature-specific components
 │   ├── hooks/            # Custom hooks
 │   ├── contexts/         # React contexts
 │   ├── services/         # API calls, external services
 │   ├── utils/            # Helpers, utilities
 │   ├── types/            # TypeScript types
-│   └── pages/            # Page components (si routing)
+│   └── pages/            # Page components (if routing)
 ├── tests/
 │   ├── __mocks__/
 │   └── setup.ts
@@ -42,9 +42,9 @@ project/
 └── package.json
 ```
 
-### Conventions de nommage
+### Naming Conventions
 
-| Élément | Convention | Exemple |
+| Element | Convention | Example |
 |---------|------------|---------|
 | Components | PascalCase | `UserCard.tsx` |
 | Hooks | `use*` | `useAuth.ts` |
@@ -55,7 +55,7 @@ project/
 
 ## Component Patterns
 
-### Functional Component avec TypeScript
+### Functional Component with TypeScript
 
 ```tsx
 interface UserCardProps {
@@ -78,7 +78,7 @@ export function UserCard({ user, onSelect, className }: UserCardProps) {
 }
 ```
 
-### Component avec état local
+### Component with Local State
 
 ```tsx
 interface CounterProps {
@@ -143,7 +143,7 @@ export function useApi<T>(url: string): UseApiResult<T> {
 }
 ```
 
-### Hook avec contexte
+### Hook with Context
 
 ```tsx
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -179,7 +179,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 ## State Management Patterns
 
-### useReducer pour état complexe
+### useReducer for Complex State
 
 ```tsx
 type State = {
@@ -264,10 +264,10 @@ describe('useApi', () => {
 });
 ```
 
-## Commandes utiles
+## Useful Commands
 
 ```bash
-# Développement
+# Development
 npm run dev
 npm run build
 npm run lint
@@ -279,35 +279,35 @@ npm test -- --watch
 npm test -- --coverage
 npm test -- UserCard.test.tsx
 
-# Dépendances
+# Dependencies
 npm install <package>
 npm install -D <package>  # dev dependency
 ```
 
-## Bonnes pratiques React
+## React Best Practices
 
-| Pratique | Faire | Éviter |
-|----------|-------|--------|
+| Practice | Do | Avoid |
+|----------|-----|-------|
 | State | useState/useReducer | Class state |
-| Effects | useEffect avec cleanup | componentDidMount |
-| Memoization | useMemo/useCallback si besoin | Memoize tout |
+| Effects | useEffect with cleanup | componentDidMount |
+| Memoization | useMemo/useCallback if needed | Memoize everything |
 | Props | Destructuring | `props.xxx` |
 | Types | TypeScript strict | `any` |
-| Keys | IDs uniques | Index comme key |
+| Keys | Unique IDs | Index as key |
 
 ## Performance
 
 ```tsx
-// Memoization de composant
+// Component memoization
 const MemoizedComponent = memo(ExpensiveComponent);
 
-// Memoization de valeur
+// Value memoization
 const sortedItems = useMemo(() =>
   items.sort((a, b) => a.name.localeCompare(b.name)),
   [items]
 );
 
-// Memoization de callback
+// Callback memoization
 const handleClick = useCallback((id: string) => {
   setSelected(id);
 }, []);
@@ -316,7 +316,7 @@ const handleClick = useCallback((id: string) => {
 const LazyComponent = lazy(() => import('./HeavyComponent'));
 ```
 
-## Accessibilité
+## Accessibility
 
 ```tsx
 // ARIA labels

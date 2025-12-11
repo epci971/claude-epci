@@ -1,34 +1,34 @@
 ---
 name: php-symfony
 description: >-
-  Patterns et conventions pour PHP/Symfony. Inclut Doctrine ORM, PHPUnit,
-  Twig, services et bundles. Use when: développement Symfony, composer.json
-  avec symfony détecté. Not for: Laravel, plain PHP, autres frameworks.
+  Patterns and conventions for PHP/Symfony. Includes Doctrine ORM, PHPUnit,
+  Twig, services and bundles. Use when: Symfony development, composer.json
+  with symfony detected. Not for: Laravel, plain PHP, other frameworks.
 ---
 
 # PHP/Symfony Development Patterns
 
 ## Overview
 
-Patterns et conventions pour le développement Symfony moderne.
+Patterns and conventions for modern Symfony development.
 
-## Auto-détection
+## Auto-detection
 
-Chargé automatiquement si détection de :
-- `composer.json` contenant `symfony/`
-- Fichiers `config/packages/*.yaml`
+Automatically loaded if detection of:
+- `composer.json` containing `symfony/`
+- Files `config/packages/*.yaml`
 - Structure `src/Controller/`, `src/Entity/`
 
-## Architecture Symfony
+## Symfony Architecture
 
-### Structure standard
+### Standard Structure
 
 ```
 project/
 ├── config/
-│   ├── packages/          # Configuration par bundle
-│   ├── routes/            # Routes par context
-│   └── services.yaml      # Services DI
+│   ├── packages/          # Configuration per bundle
+│   ├── routes/            # Routes per context
+│   └── services.yaml      # DI services
 ├── src/
 │   ├── Controller/        # HTTP controllers
 │   ├── Entity/            # Doctrine entities
@@ -44,14 +44,14 @@ project/
     └── index.php          # Front controller
 ```
 
-### Conventions de nommage Symfony
+### Symfony Naming Conventions
 
-| Élément | Convention | Exemple |
+| Element | Convention | Example |
 |---------|------------|---------|
 | Controller | `*Controller` | `UserController` |
-| Entity | Singulier, PascalCase | `User`, `OrderItem` |
+| Entity | Singular, PascalCase | `User`, `OrderItem` |
 | Repository | `*Repository` | `UserRepository` |
-| Service | Nom descriptif | `EmailNotifier` |
+| Service | Descriptive name | `EmailNotifier` |
 | Command | `app:*` | `app:user:create` |
 
 ## Doctrine Patterns
@@ -80,7 +80,7 @@ class User
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    // Getters... (pas de setters publics si possible)
+    // Getters... (no public setters if possible)
 }
 ```
 
@@ -146,7 +146,7 @@ class UserController extends AbstractController
     #[Route('', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        // Validation et création
+        // Validation and creation
         return $this->json($user, Response::HTTP_CREATED);
     }
 }
@@ -154,7 +154,7 @@ class UserController extends AbstractController
 
 ## Service Patterns
 
-### Service avec injection
+### Service with Injection
 
 ```php
 class UserService
@@ -179,7 +179,7 @@ class UserService
 }
 ```
 
-### Configuration services.yaml
+### services.yaml Configuration
 
 ```yaml
 services:
@@ -194,7 +194,7 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # Services explicites si nécessaire
+    # Explicit services if needed
     App\Service\ExternalApiClient:
         arguments:
             $apiKey: '%env(API_KEY)%'
@@ -250,10 +250,10 @@ class UserControllerTest extends WebTestCase
 }
 ```
 
-## Commandes utiles
+## Useful Commands
 
 ```bash
-# Développement
+# Development
 php bin/console make:entity
 php bin/console make:controller
 php bin/console make:migration
@@ -273,20 +273,20 @@ php bin/phpunit --coverage-html coverage/
 php bin/console cache:clear
 ```
 
-## Bonnes pratiques Symfony
+## Symfony Best Practices
 
-| Pratique | Faire | Éviter |
-|----------|-------|--------|
+| Practice | Do | Avoid |
+|----------|-----|-------|
 | Injection | Constructor injection | `$container->get()` |
-| Entities | Immutables si possible | Setters publics |
-| Controllers | Thin, déléguer aux services | Logique métier |
-| Config | Variables d'environnement | Valeurs en dur |
-| Validation | Constraints + Validator | Validation manuelle |
+| Entities | Immutable if possible | Public setters |
+| Controllers | Thin, delegate to services | Business logic |
+| Config | Environment variables | Hardcoded values |
+| Validation | Constraints + Validator | Manual validation |
 
-## Sécurité Symfony
+## Symfony Security
 
 ```php
-// Voters pour l'autorisation
+// Voters for authorization
 #[IsGranted('ROLE_USER')]
 #[IsGranted(new Expression('is_granted("EDIT", object)'))]
 

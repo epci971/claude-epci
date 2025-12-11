@@ -1,38 +1,38 @@
 ---
 name: python-django
 description: >-
-  Patterns et conventions pour Python/Django. Inclut Django REST Framework,
-  pytest, models, views, serializers. Use when: développement Django,
-  requirements.txt avec django détecté. Not for: Flask, FastAPI, plain Python.
+  Patterns and conventions for Python/Django. Includes Django REST Framework,
+  pytest, models, views, serializers. Use when: Django development,
+  requirements.txt with django detected. Not for: Flask, FastAPI, plain Python.
 ---
 
 # Python/Django Development Patterns
 
 ## Overview
 
-Patterns et conventions pour le développement Django moderne.
+Patterns and conventions for modern Django development.
 
-## Auto-détection
+## Auto-detection
 
-Chargé automatiquement si détection de :
-- `requirements.txt` ou `pyproject.toml` contenant `django`
-- Fichiers `manage.py`, `settings.py`
+Automatically loaded if detection of:
+- `requirements.txt` or `pyproject.toml` containing `django`
+- Files `manage.py`, `settings.py`
 - Structure `apps/`, `models.py`, `views.py`
 
-## Architecture Django
+## Django Architecture
 
-### Structure standard
+### Standard Structure
 
 ```
 project/
-├── config/                # Configuration projet
+├── config/                # Project configuration
 │   ├── settings/
 │   │   ├── base.py
 │   │   ├── development.py
 │   │   └── production.py
 │   ├── urls.py
 │   └── wsgi.py
-├── apps/                  # Applications Django
+├── apps/                  # Django applications
 │   └── users/
 │       ├── models.py
 │       ├── views.py
@@ -42,7 +42,7 @@ project/
 │       └── tests/
 │           ├── test_models.py
 │           └── test_views.py
-├── core/                  # Code partagé
+├── core/                  # Shared code
 │   ├── models.py         # Base models
 │   └── permissions.py
 ├── tests/
@@ -51,20 +51,20 @@ project/
 └── pyproject.toml
 ```
 
-### Conventions de nommage
+### Naming Conventions
 
-| Élément | Convention | Exemple |
+| Element | Convention | Example |
 |---------|------------|---------|
-| Apps | snake_case, pluriel | `users`, `blog_posts` |
-| Models | PascalCase, singulier | `User`, `BlogPost` |
-| Views | `*View` ou `*ViewSet` | `UserDetailView` |
+| Apps | snake_case, plural | `users`, `blog_posts` |
+| Models | PascalCase, singular | `User`, `BlogPost` |
+| Views | `*View` or `*ViewSet` | `UserDetailView` |
 | Serializers | `*Serializer` | `UserSerializer` |
 | URLs | kebab-case | `user-detail` |
 | Tests | `test_*.py` | `test_models.py` |
 
 ## Model Patterns
 
-### Model de base
+### Base Model
 
 ```python
 from django.db import models
@@ -98,7 +98,7 @@ class User(TimeStampedModel):
         return self.name or self.email.split('@')[0]
 ```
 
-### Manager et QuerySet
+### Manager and QuerySet
 
 ```python
 class UserQuerySet(models.QuerySet):
@@ -299,16 +299,16 @@ def admin_user(db):
     )
 ```
 
-## Commandes utiles
+## Useful Commands
 
 ```bash
-# Développement
+# Development
 python manage.py runserver
 python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
 
-# Shell et debug
+# Shell and debug
 python manage.py shell_plus  # django-extensions
 python manage.py dbshell
 
@@ -318,23 +318,23 @@ pytest -v
 pytest --cov=apps
 pytest apps/users/tests/test_models.py
 
-# Qualité
+# Quality
 ruff check .
 mypy .
 black .
 ```
 
-## Bonnes pratiques Django
+## Django Best Practices
 
-| Pratique | Faire | Éviter |
-|----------|-------|--------|
-| Models | Fat models, thin views | Logique dans views |
+| Practice | Do | Avoid |
+|----------|-----|-------|
+| Models | Fat models, thin views | Logic in views |
 | Queries | select_related/prefetch | N+1 queries |
-| Settings | Environnement variables | Secrets en dur |
-| Tests | pytest + factories | setUp verbose |
-| Serializers | Séparés par action | Un seul serializer |
+| Settings | Environment variables | Hardcoded secrets |
+| Tests | pytest + factories | Verbose setUp |
+| Serializers | Separate per action | Single serializer |
 
-## Sécurité Django
+## Django Security
 
 ```python
 # settings.py
@@ -345,7 +345,7 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
-# Permissions DRF
+# DRF Permissions
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 class IsOwner(permissions.BasePermission):
@@ -353,7 +353,7 @@ class IsOwner(permissions.BasePermission):
         return obj.user == request.user
 ```
 
-## Configuration pytest
+## pytest Configuration
 
 ```ini
 # pytest.ini
