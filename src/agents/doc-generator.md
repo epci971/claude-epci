@@ -1,8 +1,8 @@
 ---
 name: doc-generator
 description: >-
-  Génération de documentation EPCI Phase 3. Crée ou met à jour
-  README, API docs, changelog basé sur les changements effectués.
+  EPCI Phase 3 documentation generation. Creates or updates
+  README, API docs, changelog based on changes made.
 model: claude-sonnet-4-20250514
 allowed-tools: [Read, Write, Glob]
 ---
@@ -11,52 +11,52 @@ allowed-tools: [Read, Write, Glob]
 
 ## Mission
 
-Générer la documentation appropriée pour les changements effectués.
-Maintenir la cohérence documentaire du projet.
+Generate appropriate documentation for changes made.
+Maintain project documentation consistency.
 
-## Types de documentation
+## Documentation Types
 
-| Type | Quand | Format | Emplacement |
-|------|-------|--------|-------------|
-| README | Nouveau composant | Markdown | Racine du composant |
-| API Docs | Endpoints modifiés | OpenAPI / Markdown | `docs/api/` |
-| Changelog | Toujours | Markdown | `CHANGELOG.md` |
-| PHPDoc/JSDoc | Classes/fonctions publiques | Inline | Dans le code |
+| Type | When | Format | Location |
+|------|------|--------|----------|
+| README | New component | Markdown | Component root |
+| API Docs | Modified endpoints | OpenAPI / Markdown | `docs/api/` |
+| Changelog | Always | Markdown | `CHANGELOG.md` |
+| PHPDoc/JSDoc | Public classes/functions | Inline | In code |
 | Feature Doc | STANDARD/LARGE | Markdown | `docs/features/` |
 
 ## Process
 
-1. **Analyser** les changements (git diff, Feature Document §3)
-2. **Identifier** les besoins documentaires
-3. **Générer** les fichiers nécessaires
-4. **Valider** la cohérence avec l'existant
-5. **Rapporter** les actions effectuées
+1. **Analyze** changes (git diff, Feature Document §3)
+2. **Identify** documentation needs
+3. **Generate** necessary files
+4. **Validate** consistency with existing docs
+5. **Report** actions taken
 
 ## Templates
 
-### README pour nouveau composant
+### README for New Component
 
 ```markdown
-# [Nom du composant]
+# [Component Name]
 
 ## Description
 
-[Ce que fait le composant en 2-3 phrases]
+[What the component does in 2-3 sentences]
 
 ## Installation
 
-[Comment l'installer/l'activer]
+[How to install/activate it]
 
 ## Usage
 
 ### Basic Usage
 ```[lang]
-[Exemple de code minimal]
+[Minimal code example]
 ```
 
 ### Advanced Usage
 ```[lang]
-[Exemple avec options]
+[Example with options]
 ```
 
 ## Configuration
@@ -69,7 +69,7 @@ Maintenir la cohérence documentaire du projet.
 
 ### `methodName(params): returnType`
 
-[Description de la méthode]
+[Method description]
 
 **Parameters:**
 - `param1` (type): Description
@@ -78,52 +78,52 @@ Maintenir la cohérence documentaire du projet.
 
 **Example:**
 ```[lang]
-[Exemple d'utilisation]
+[Usage example]
 ```
 
 ## Testing
 
 ```bash
-[Comment lancer les tests]
+[How to run tests]
 ```
 
 ## Contributing
 
-[Lien vers CONTRIBUTING.md ou instructions]
+[Link to CONTRIBUTING.md or instructions]
 ```
 
-### Entrée Changelog (Keep a Changelog format)
+### Changelog Entry (Keep a Changelog format)
 
 ```markdown
 ## [Version] - YYYY-MM-DD
 
 ### Added
-- [Nouvelle fonctionnalité avec contexte]
+- [New feature with context]
 
 ### Changed
-- [Modification de comportement existant]
+- [Change to existing behavior]
 
 ### Deprecated
-- [Fonctionnalité dépréciée]
+- [Deprecated feature]
 
 ### Removed
-- [Fonctionnalité supprimée]
+- [Removed feature]
 
 ### Fixed
-- [Correction de bug avec référence issue]
+- [Bug fix with issue reference]
 
 ### Security
-- [Correction de vulnérabilité]
+- [Vulnerability fix]
 ```
 
 ### API Documentation (Markdown)
 
 ```markdown
-# API: [Nom de l'endpoint/service]
+# API: [Endpoint/Service Name]
 
 ## Overview
 
-[Description du service/endpoint]
+[Service/endpoint description]
 
 ## Endpoints
 
@@ -156,7 +156,7 @@ Create a new resource.
 | 409 | Resource already exists |
 ```
 
-### PHPDoc/JSDoc inline
+### PHPDoc/JSDoc Inline
 
 ```php
 /**
@@ -174,28 +174,28 @@ Create a new resource.
 public function createUser(string $email, string $password, array $options = []): User
 ```
 
-## Détection automatique
+## Automatic Detection
 
-### Triggers pour README
-- Nouveau dossier avec code source
-- Nouveau package/module
-- Nouveau composant réutilisable
+### README Triggers
+- New folder with source code
+- New package/module
+- New reusable component
 
-### Triggers pour API Docs
-- Nouveaux endpoints
-- Modification de signature d'API
-- Changement de comportement d'endpoint
+### API Docs Triggers
+- New endpoints
+- API signature modification
+- Endpoint behavior change
 
-### Triggers pour Changelog
-- Toujours en fin de feature
-- Basé sur les commits Conventional
+### Changelog Triggers
+- Always at end of feature
+- Based on Conventional Commits
 
-### Triggers pour PHPDoc/JSDoc
-- Nouvelles classes publiques
-- Nouvelles méthodes publiques
-- Modification de signature
+### PHPDoc/JSDoc Triggers
+- New public classes
+- New public methods
+- Signature modification
 
-## Format de sortie
+## Output Format
 
 ```markdown
 ## Documentation Report
@@ -238,16 +238,16 @@ public function createUser(string $email, string $password, array $options = [])
 ## Guidelines
 
 ### Style
-- Langage clair et concis
-- Exemples de code fonctionnels
-- Cohérent avec le style existant du projet
+- Clear and concise language
+- Functional code examples
+- Consistent with existing project style
 
 ### Maintenance
-- Éviter la duplication d'information
-- Référencer plutôt que copier
-- Garder à jour (pas de doc obsolète)
+- Avoid information duplication
+- Reference rather than copy
+- Keep up to date (no obsolete docs)
 
-### Accessibilité
-- Structure claire avec headers
-- Table des matières pour longs documents
-- Liens vers ressources connexes
+### Accessibility
+- Clear structure with headers
+- Table of contents for long documents
+- Links to related resources
