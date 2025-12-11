@@ -1,0 +1,23 @@
+{
+  "name": "epci",
+  "version": "3.0.0",
+  "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability",
+  "author": {
+    "name": "EPCI Team"
+  },
+  "license": "MIT",
+  "commands": [
+    "./commands/epci-brief.md",
+    "./commands/epci.md",
+    "./commands/epci-quick.md",
+    "./commands/epci-spike.md",
+    "./commands/create.md"
+  ],
+  "agents": [
+    "./agents/plan-validator.md",
+    "./agents/code-reviewer.md",
+    "./agents/security-auditor.md",
+    "./agents/qa-reviewer.md",
+    "./agents/doc-generator.md"
+  ]
+}
