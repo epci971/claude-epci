@@ -1,364 +1,194 @@
 ---
 name: python-django
 description: >-
-  Patterns and conventions for Python/Django. Includes Django REST Framework,
-  pytest, models, views, serializers. Use when: Django development,
-  requirements.txt with django detected. Not for: Flask, FastAPI, plain Python.
+  Patterns for Python/Django with service layer architecture. Includes DRF,
+  pytest, Celery, HTMX/React integration. Use when: Django development,
+  requirements.txt or pyproject.toml with django detected. Not for: Flask,
+  FastAPI, plain Python scripts.
 ---
 
 # Python/Django Development Patterns
 
 ## Overview
 
-Patterns and conventions for modern Django development.
+Modern Django patterns emphasizing service layer architecture, optimized ORM usage, and clean separation of concerns. See `references/` for detailed examples.
 
 ## Auto-detection
 
-Automatically loaded if detection of:
+Loaded when detecting:
 - `requirements.txt` or `pyproject.toml` containing `django`
-- Files `manage.py`, `settings.py`
-- Structure `apps/`, `models.py`, `views.py`
+- Files: `manage.py`, `settings.py`, `wsgi.py`
+- Structure: `apps/`, `models.py`, `views.py`
 
-## Django Architecture
+## Architecture
 
-### Standard Structure
+### Project Structure
 
 ```
-project/
-├── config/                # Project configuration
-│   ├── settings/
-│   │   ├── base.py
-│   │   ├── development.py
-│   │   └── production.py
+backend/
+├── config/
+│   ├── settings/{base,dev,test,prod}.py
 │   ├── urls.py
 │   └── wsgi.py
-├── apps/                  # Django applications
-│   └── users/
-│       ├── models.py
-│       ├── views.py
-│       ├── serializers.py
-│       ├── urls.py
-│       ├── admin.py
+├── apps/
+│   └── <domain>/
+│       ├── models/
+│       ├── services/{usecases,domain,integrations,etl}/
+│       ├── api/{serializers,viewsets,routers}.py
+│       ├── views/
+│       ├── forms/
+│       ├── tasks/
 │       └── tests/
-│           ├── test_models.py
-│           └── test_views.py
-├── core/                  # Shared code
-│   ├── models.py         # Base models
-│   └── permissions.py
-├── tests/
-├── manage.py
-├── requirements.txt
-└── pyproject.toml
+└── shared/
 ```
 
-### Naming Conventions
+→ See `references/architecture.md` for complete structure
 
-| Element | Convention | Example |
-|---------|------------|---------|
-| Apps | snake_case, plural | `users`, `blog_posts` |
-| Models | PascalCase, singular | `User`, `BlogPost` |
-| Views | `*View` or `*ViewSet` | `UserDetailView` |
-| Serializers | `*Serializer` | `UserSerializer` |
-| URLs | kebab-case | `user-detail` |
-| Tests | `test_*.py` | `test_models.py` |
+### Service Layer Pattern
 
-## Model Patterns
+```python
+# apps/production/services/usecases/cloturer_campagne.py
+from django.db import transaction
+
+@transaction.atomic
+def cloturer_campagne(campagne_id: int, user) -> Result:
+    """Use case: orchestrates business logic."""
+    campagne = Campagne.objects.select_for_update().get(id=campagne_id)
+    # Delegate to domain services, persist changes
+    return Result(campagne=campagne, bilan=bilan)
+```
+
+| Layer | Purpose | I/O |
+|-------|---------|-----|
+| `usecases/` | Orchestration | Yes |
+| `domain/` | Pure business rules | No |
+| `integrations/` | External APIs | Yes |
+| `etl/` | Data pipelines | Yes |
+
+## Models & ORM
 
 ### Base Model
 
 ```python
-from django.db import models
-from django.utils import timezone
-
-
 class TimeStampedModel(models.Model):
-    """Abstract base model with created/updated timestamps."""
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
-
-
-class User(TimeStampedModel):
-    email = models.EmailField(unique=True)
-    name = models.CharField(max_length=255)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        db_table = 'users'
-        ordering = ['-created_at']
-
-    def __str__(self) -> str:
-        return self.email
-
-    @property
-    def display_name(self) -> str:
-        return self.name or self.email.split('@')[0]
 ```
 
-### Manager and QuerySet
+### N+1 Prevention (Critical)
 
 ```python
-class UserQuerySet(models.QuerySet):
-    def active(self):
-        return self.filter(is_active=True)
+# BAD - N+1 queries
+for lot in Lot.objects.all():
+    print(lot.campagne.nom)  # 1 query per lot!
 
-    def by_email(self, email: str):
-        return self.filter(email__iexact=email)
+# GOOD - select_related for FK/OneToOne
+lots = Lot.objects.select_related('campagne', 'operateur')
 
-
-class UserManager(models.Manager):
-    def get_queryset(self) -> UserQuerySet:
-        return UserQuerySet(self.model, using=self._db)
-
-    def active(self):
-        return self.get_queryset().active()
-
-    def create_user(self, email: str, password: str, **extra_fields):
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+# GOOD - prefetch_related for M2M/Reverse FK
+campagnes = Campagne.objects.prefetch_related('lots')
 ```
 
-## Django REST Framework Patterns
+→ See `references/models-orm.md` for QuerySets, bulk operations, constraints
 
-### Serializer
+## Django REST Framework
 
-```python
-from rest_framework import serializers
-
-
-class UserSerializer(serializers.ModelSerializer):
-    display_name = serializers.ReadOnlyField()
-
-    class Meta:
-        model = User
-        fields = ['id', 'email', 'name', 'display_name', 'created_at']
-        read_only_fields = ['id', 'created_at']
-
-
-class UserCreateSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, min_length=8)
-
-    class Meta:
-        model = User
-        fields = ['email', 'name', 'password']
-
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
-```
-
-### ViewSet
+### Read/Write Serializers
 
 ```python
-from rest_framework import viewsets, permissions, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
+class LotReadSerializer(serializers.ModelSerializer):
+    campagne = CampagneSerializer(read_only=True)
 
+class LotWriteSerializer(serializers.ModelSerializer):
+    campagne_id = serializers.PrimaryKeyRelatedField(
+        queryset=Campagne.objects.all(), source='campagne'
+    )
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
-
+class LotViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
-        if self.action == 'create':
-            return UserCreateSerializer
-        return UserSerializer
-
-    def get_queryset(self):
-        return User.objects.active()
-
-    @action(detail=False, methods=['get'])
-    def me(self, request):
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['post'])
-    def deactivate(self, request, pk=None):
-        user = self.get_object()
-        user.is_active = False
-        user.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if self.action in ['create', 'update', 'partial_update']:
+            return LotWriteSerializer
+        return LotReadSerializer
 ```
 
-### URLs
+→ See `references/api-drf.md` for filters, permissions, authentication
+
+## Testing
 
 ```python
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-
-router = DefaultRouter()
-router.register(r'users', UserViewSet)
-
-urlpatterns = [
-    path('api/v1/', include(router.urls)),
-]
-```
-
-## Testing Patterns (pytest)
-
-### Model Test
-
-```python
-import pytest
-from django.core.exceptions import ValidationError
-from apps.users.models import User
-
-
+# pytest + factory_boy
 @pytest.mark.django_db
-class TestUser:
-    def test_create_user(self):
-        user = User.objects.create_user(
-            email='test@example.com',
-            password='securepassword'
-        )
-
-        assert user.email == 'test@example.com'
-        assert user.check_password('securepassword')
-        assert user.is_active
-
-    def test_email_must_be_unique(self):
-        User.objects.create_user(email='test@example.com', password='pass')
-
-        with pytest.raises(Exception):
-            User.objects.create_user(email='test@example.com', password='pass')
-
-    def test_display_name_returns_name_if_set(self):
-        user = User(email='test@example.com', name='John Doe')
-        assert user.display_name == 'John Doe'
-
-    def test_display_name_returns_email_prefix_if_no_name(self):
-        user = User(email='test@example.com')
-        assert user.display_name == 'test'
+class TestCloturerCampagne:
+    def test_success(self, user, campagne):
+        result = cloturer_campagne(campagne.id, user)
+        assert result.campagne.status == 'TERMINE'
 ```
 
-### API Test
+→ See `references/testing.md` for fixtures, API tests, coverage
 
-```python
-import pytest
-from rest_framework.test import APIClient
-from rest_framework import status
-
-
-@pytest.fixture
-def api_client():
-    return APIClient()
-
-
-@pytest.fixture
-def authenticated_client(api_client, user):
-    api_client.force_authenticate(user=user)
-    return api_client
-
-
-@pytest.mark.django_db
-class TestUserAPI:
-    def test_list_users_requires_auth(self, api_client):
-        response = api_client.get('/api/v1/users/')
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-
-    def test_list_users_authenticated(self, authenticated_client):
-        response = authenticated_client.get('/api/v1/users/')
-        assert response.status_code == status.HTTP_200_OK
-
-    def test_create_user(self, api_client):
-        data = {
-            'email': 'new@example.com',
-            'name': 'New User',
-            'password': 'securepass123'
-        }
-        response = api_client.post('/api/v1/users/', data)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert response.data['email'] == 'new@example.com'
-```
-
-### Fixtures (conftest.py)
-
-```python
-import pytest
-from apps.users.models import User
-
-
-@pytest.fixture
-def user(db):
-    return User.objects.create_user(
-        email='test@example.com',
-        password='testpassword',
-        name='Test User'
-    )
-
-
-@pytest.fixture
-def admin_user(db):
-    return User.objects.create_superuser(
-        email='admin@example.com',
-        password='adminpassword'
-    )
-```
-
-## Useful Commands
+## Commands
 
 ```bash
 # Development
 python manage.py runserver
-python manage.py makemigrations
-python manage.py migrate
-python manage.py createsuperuser
+python manage.py makemigrations && python manage.py migrate
 
-# Shell and debug
-python manage.py shell_plus  # django-extensions
-python manage.py dbshell
-
-# Tests
-pytest
-pytest -v
-pytest --cov=apps
-pytest apps/users/tests/test_models.py
+# Testing
+pytest --cov=apps --cov-fail-under=70
 
 # Quality
-ruff check .
-mypy .
-black .
+ruff check apps/
+black apps/
+
+# Production
+python manage.py check --deploy
+python manage.py collectstatic --noinput
 ```
 
-## Django Best Practices
+## Quick Reference
 
-| Practice | Do | Avoid |
-|----------|-----|-------|
-| Models | Fat models, thin views | Logic in views |
-| Queries | select_related/prefetch | N+1 queries |
-| Settings | Environment variables | Hardcoded secrets |
-| Tests | pytest + factories | Verbose setUp |
-| Serializers | Separate per action | Single serializer |
+| Task | Pattern |
+|------|---------|
+| Business logic | `services/usecases/` |
+| Pure calculations | `services/domain/` |
+| External API | `services/integrations/` |
+| FK access | `select_related()` |
+| M2M/Reverse FK | `prefetch_related()` |
+| Bulk insert | `bulk_create(batch_size=1000)` |
+| Read API | `*ReadSerializer` |
+| Write API | `*WriteSerializer` |
+| Async task | Celery task → service |
+| Settings | `env('VAR')` from environment |
 
-## Django Security
+## Common Patterns
 
-```python
-# settings.py
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
+| Pattern | Example |
+|---------|---------|
+| Thin views | View calls service, returns response |
+| Fat services | Business logic in services, not models |
+| Atomic transactions | `@transaction.atomic` on use cases |
+| Custom QuerySet | `Lot.objects.actifs().avec_relations()` |
+| API versioning | `/api/v1/`, `/api/v2/` |
+| Environment settings | `base.py` + `{dev,test,prod}.py` |
+| Domain permissions | `apps/<app>/permissions.py` |
+| Test factories | `factory_boy` + `conftest.py` |
 
-# DRF Permissions
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+## Anti-patterns
 
-class IsOwner(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return obj.user == request.user
-```
+| Anti-pattern | Why Avoid | Alternative |
+|--------------|-----------|-------------|
+| Logic in views | Hard to test, violates SRP | Services |
+| Logic in models | Coupling, testing issues | Domain services |
+| N+1 queries | Performance disaster | `select/prefetch_related` |
+| `FloatField` for money | Precision loss | `DecimalField` |
+| Hardcoded secrets | Security risk | `env('SECRET')` |
+| `DEBUG=True` in prod | Security risk | `check --deploy` |
+| Heavy work in signals | Hard to debug | Celery tasks |
+| `*` imports | Namespace pollution | Explicit imports |
+| No `related_name` | Unclear reverse relations | Always specify |
+| Test without `@pytest.mark.django_db` | No database | Add marker |
 
-## pytest Configuration
-
-```ini
-# pytest.ini
-[pytest]
-DJANGO_SETTINGS_MODULE = config.settings.test
-python_files = test_*.py
-addopts = -v --tb=short
-```
+→ See `references/production.md` for security, logging, deployment

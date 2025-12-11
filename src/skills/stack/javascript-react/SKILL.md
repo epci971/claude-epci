@@ -1,338 +1,245 @@
 ---
 name: javascript-react
 description: >-
-  Patterns and conventions for JavaScript/React. Includes hooks, TypeScript,
-  state management, testing with Jest/RTL. Use when: React development,
-  package.json with react detected. Not for: Vue, Angular, Node backend.
+  Patterns for React islands in Django. Includes TypeScript, Vite, Zustand,
+  React Query, Tailwind, accessibility. Use when: React development, package.json
+  with react detected. Not for: Vue, Angular, SPA routing, Node backend.
 ---
 
 # JavaScript/React Development Patterns
 
 ## Overview
 
-Patterns and conventions for modern React development with TypeScript.
+React islands architecture for Django applications. React enhances interactive zones within server-rendered pages. See `references/` for detailed examples.
 
 ## Auto-detection
 
-Automatically loaded if detection of:
+Loaded when detecting:
 - `package.json` containing `react`
-- Files `*.tsx`, `*.jsx`
-- Structure `src/components/`, `src/hooks/`
+- Files: `*.tsx`, `*.jsx`, `vite.config.ts`
+- Structure: `src/components/`, `src/hooks/`
 
-## React Architecture
+## Islands Architecture
 
-### Standard Structure
+### Philosophy
 
+Django renders pages → React enhances interactive zones. **Not an SPA.**
+
+| Benefit | Description |
+|---------|-------------|
+| Single deployment | One Docker, one CI/CD |
+| Django handles auth | Sessions, permissions, CSRF |
+| No CORS issues | Same origin |
+| SEO-friendly | Server-rendered HTML |
+
+→ See `references/islands-architecture.md` for full patterns
+
+### Component Mounting
+
+```html
+<!-- Django template -->
+<div
+    data-react-component="DataTable"
+    data-react-props='{"endpoint": "/api/v1/lots/"}'
+></div>
 ```
-project/
-├── src/
-│   ├── components/        # Reusable components
-│   │   ├── ui/           # Basic UI components
-│   │   └── features/     # Feature-specific components
-│   ├── hooks/            # Custom hooks
-│   ├── contexts/         # React contexts
-│   ├── services/         # API calls, external services
-│   ├── utils/            # Helpers, utilities
-│   ├── types/            # TypeScript types
-│   └── pages/            # Page components (if routing)
-├── tests/
-│   ├── __mocks__/
-│   └── setup.ts
-├── public/
-└── package.json
-```
-
-### Naming Conventions
-
-| Element | Convention | Example |
-|---------|------------|---------|
-| Components | PascalCase | `UserCard.tsx` |
-| Hooks | `use*` | `useAuth.ts` |
-| Contexts | `*Context` | `AuthContext.tsx` |
-| Utils | camelCase | `formatDate.ts` |
-| Types | PascalCase | `User.ts` |
-| Tests | `*.test.tsx` | `UserCard.test.tsx` |
-
-## Component Patterns
-
-### Functional Component with TypeScript
 
 ```tsx
-interface UserCardProps {
-  user: User;
-  onSelect?: (user: User) => void;
-  className?: string;
+// main.tsx - Component Registry
+const COMPONENTS = { DataTable, KpiChart, LotForm };
+
+document.querySelectorAll('[data-react-component]').forEach((el) => {
+  const name = el.getAttribute('data-react-component')!;
+  const props = JSON.parse(el.getAttribute('data-react-props') || '{}');
+  createRoot(el).render(<COMPONENTS[name] {...props} />);
+});
+```
+
+### Vite Configuration
+
+```typescript
+// vite.config.ts
+export default defineConfig({
+  base: '/static/assets/',           // Match Django STATIC_URL
+  build: {
+    outDir: '../backend/static/assets',
+    manifest: true,
+  },
+});
+```
+
+## CSRF Token (Critical)
+
+**All POST/PUT/DELETE to Django require CSRF token.**
+
+```typescript
+// utils/csrf.ts
+export function getCsrfToken(): string {
+  return document.cookie
+    .split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1] || '';
 }
 
-export function UserCard({ user, onSelect, className }: UserCardProps) {
-  const handleClick = () => {
-    onSelect?.(user);
-  };
-
-  return (
-    <div className={cn('user-card', className)} onClick={handleClick}>
-      <h3>{user.name}</h3>
-      <p>{user.email}</p>
-    </div>
-  );
+// Usage with fetch
+headers: {
+  'Content-Type': 'application/json',
+  'X-CSRFToken': getCsrfToken(),
 }
 ```
 
-### Component with Local State
+→ See `references/state-data.md` for React Query integration
+
+## State Management
+
+### Decision Matrix
+
+| Scope | Solution |
+|-------|----------|
+| Component local | `useState` |
+| Complex local | `useReducer` |
+| Island shared | React Context |
+| Cross-component | **Zustand** |
+| Server state | **React Query** |
+
+### Zustand Pattern
+
+```typescript
+import { create } from 'zustand';
+
+export const useLotStore = create((set) => ({
+  selectedLots: [],
+  selectLot: (lot) => set((s) => ({
+    selectedLots: [...s.selectedLots, lot]
+  })),
+}));
+```
+
+### React Query Pattern
+
+```typescript
+const { data, isLoading } = useQuery({
+  queryKey: ['lots'],
+  queryFn: () => fetch('/api/v1/lots/').then(r => r.json()),
+});
+
+const mutation = useMutation({
+  mutationFn: (data) => fetch('/api/v1/lots/', {
+    method: 'POST',
+    headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }),
+});
+```
+
+## Components
+
+### TypeScript Props
 
 ```tsx
-interface CounterProps {
-  initialValue?: number;
-  onChange?: (value: number) => void;
+interface ButtonProps {
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary' | 'danger';
+  onClick?: () => void;
+  disabled?: boolean;
 }
 
-export function Counter({ initialValue = 0, onChange }: CounterProps) {
-  const [count, setCount] = useState(initialValue);
-
-  const increment = () => {
-    const newValue = count + 1;
-    setCount(newValue);
-    onChange?.(newValue);
-  };
-
-  return (
-    <div>
-      <span>{count}</span>
-      <button onClick={increment}>+</button>
-    </div>
-  );
+export function Button({ children, variant = 'primary', ...props }: ButtonProps) {
+  return <button className={cn(baseClasses, variantClasses[variant])} {...props}>{children}</button>;
 }
 ```
 
-## Hooks Patterns
+→ See `references/components-ui.md` for Tailwind, shadcn, accessibility
 
-### Custom Hook
-
-```tsx
-interface UseApiResult<T> {
-  data: T | null;
-  loading: boolean;
-  error: Error | null;
-  refetch: () => void;
-}
-
-export function useApi<T>(url: string): UseApiResult<T> {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(url);
-      const json = await response.json();
-      setData(json);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, [url]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-```
-
-### Hook with Context
+## Testing
 
 ```tsx
-const AuthContext = createContext<AuthContextValue | null>(null);
+// Vitest + React Testing Library
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
-}
-
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-
-  const login = async (credentials: Credentials) => {
-    const user = await authService.login(credentials);
-    setUser(user);
-  };
-
-  const logout = () => {
-    authService.logout();
-    setUser(null);
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-```
-
-## State Management Patterns
-
-### useReducer for Complex State
-
-```tsx
-type State = {
-  items: Item[];
-  loading: boolean;
-  error: string | null;
-};
-
-type Action =
-  | { type: 'FETCH_START' }
-  | { type: 'FETCH_SUCCESS'; payload: Item[] }
-  | { type: 'FETCH_ERROR'; payload: string }
-  | { type: 'ADD_ITEM'; payload: Item };
-
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case 'FETCH_START':
-      return { ...state, loading: true, error: null };
-    case 'FETCH_SUCCESS':
-      return { ...state, loading: false, items: action.payload };
-    case 'FETCH_ERROR':
-      return { ...state, loading: false, error: action.payload };
-    case 'ADD_ITEM':
-      return { ...state, items: [...state.items, action.payload] };
-    default:
-      return state;
-  }
-}
-```
-
-## Testing Patterns (Jest + RTL)
-
-### Component Test
-
-```tsx
-import { render, screen, fireEvent } from '@testing-library/react';
-import { UserCard } from './UserCard';
-
-describe('UserCard', () => {
-  const mockUser = { id: '1', name: 'John', email: 'john@example.com' };
-
-  it('renders user information', () => {
-    render(<UserCard user={mockUser} />);
-
-    expect(screen.getByText('John')).toBeInTheDocument();
-    expect(screen.getByText('john@example.com')).toBeInTheDocument();
-  });
-
-  it('calls onSelect when clicked', () => {
-    const onSelect = jest.fn();
-    render(<UserCard user={mockUser} onSelect={onSelect} />);
-
-    fireEvent.click(screen.getByText('John'));
-
-    expect(onSelect).toHaveBeenCalledWith(mockUser);
+describe('Button', () => {
+  it('calls onClick when clicked', async () => {
+    const onClick = vi.fn();
+    render(<Button onClick={onClick}>Click</Button>);
+    await userEvent.click(screen.getByRole('button'));
+    expect(onClick).toHaveBeenCalled();
   });
 });
 ```
 
-### Hook Test
+→ See `references/testing.md` for hooks, React Query, mocking
 
-```tsx
-import { renderHook, act, waitFor } from '@testing-library/react';
-import { useApi } from './useApi';
-
-describe('useApi', () => {
-  it('fetches data successfully', async () => {
-    const mockData = { id: 1, name: 'Test' };
-    global.fetch = jest.fn().mockResolvedValue({
-      json: () => Promise.resolve(mockData),
-    });
-
-    const { result } = renderHook(() => useApi('/api/data'));
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
-    });
-
-    expect(result.current.data).toEqual(mockData);
-    expect(result.current.error).toBeNull();
-  });
-});
-```
-
-## Useful Commands
+## Commands
 
 ```bash
 # Development
-npm run dev
-npm run build
-npm run lint
-npm run type-check
+npm run dev         # Vite dev server with HMR
+npm run build       # Production build
+npm run preview     # Preview production build
 
-# Tests
-npm test
-npm test -- --watch
+# Testing
+npm test            # Run all tests
+npm test -- --watch # Watch mode
 npm test -- --coverage
-npm test -- UserCard.test.tsx
 
-# Dependencies
-npm install <package>
-npm install -D <package>  # dev dependency
+# Quality
+npm run lint        # ESLint
+npm run type-check  # TypeScript
 ```
 
-## React Best Practices
+## Quick Reference
 
-| Practice | Do | Avoid |
-|----------|-----|-------|
-| State | useState/useReducer | Class state |
-| Effects | useEffect with cleanup | componentDidMount |
-| Memoization | useMemo/useCallback if needed | Memoize everything |
-| Props | Destructuring | `props.xxx` |
-| Types | TypeScript strict | `any` |
-| Keys | Unique IDs | Index as key |
+| Task | Pattern |
+|------|---------|
+| Mount component | `data-react-component` + registry |
+| Pass props | `data-react-props='{"key": "value"}'` |
+| CSRF token | `X-CSRFToken: getCsrfToken()` |
+| Client state | Zustand store |
+| Server state | React Query |
+| Styling | Tailwind + cn() utility |
+| Forms | react-hook-form + zod |
+| Animation | Framer Motion |
+| Icons | Lucide React |
 
-## Performance
+## Common Patterns
 
-```tsx
-// Component memoization
-const MemoizedComponent = memo(ExpensiveComponent);
+| Pattern | Example |
+|---------|---------|
+| Component registry | `const COMPONENTS = { ... }` in main.tsx |
+| Conditional mount | `if (el) createRoot(el).render(...)` |
+| Props from Django | `{{ data\|safe }}` in template |
+| Error boundary | Wrap islands in `<ErrorBoundary>` |
+| Loading states | `{ isLoading ? <Spinner /> : <Content /> }` |
+| Optimistic updates | React Query `onMutate` |
+| Form validation | zod schema + zodResolver |
+| Accessibility | Radix UI primitives |
 
-// Value memoization
-const sortedItems = useMemo(() =>
-  items.sort((a, b) => a.name.localeCompare(b.name)),
-  [items]
-);
+## Anti-patterns
 
-// Callback memoization
-const handleClick = useCallback((id: string) => {
-  setSelected(id);
-}, []);
+| Anti-pattern | Why Avoid | Alternative |
+|--------------|-----------|-------------|
+| React Router SPA | Django handles routing | Islands pattern |
+| Global Redux | Overkill for islands | Zustand per-feature |
+| Inline styles | Hard to maintain | Tailwind classes |
+| `any` types | No type safety | Explicit interfaces |
+| Mix HTMX + React zones | Zone conflicts | Separate zones |
+| Forget CSRF | 403 errors on mutations | Always include token |
+| `getByTestId` first | Bad accessibility | `getByRole`, `getByLabelText` |
+| Direct DOM manipulation | React state conflicts | Use React state |
+| Hardcoded API URLs | Breaks environments | Pass via props |
+| Skip error handling | Silent failures | Error boundaries + toasts |
 
-// Lazy loading
-const LazyComponent = lazy(() => import('./HeavyComponent'));
+## Zone Separation
+
+**Critical**: Never mix HTMX and React on same element.
+
+```html
+<!-- HTMX zone -->
+<div hx-get="/partials/notifications" hx-trigger="every 30s"></div>
+
+<!-- React zone (separate) -->
+<div data-react-component="DataTable"></div>
 ```
 
-## Accessibility
-
-```tsx
-// ARIA labels
-<button aria-label="Close dialog" onClick={onClose}>×</button>
-
-// Semantic HTML
-<nav aria-label="Main navigation">
-  <ul role="list">
-    <li><a href="/">Home</a></li>
-  </ul>
-</nav>
-
-// Focus management
-useEffect(() => {
-  if (isOpen) {
-    dialogRef.current?.focus();
-  }
-}, [isOpen]);
-```
+→ See `references/islands-architecture.md` for decision matrix
