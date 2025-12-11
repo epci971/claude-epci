@@ -1,16 +1,16 @@
 ---
 name: git-workflow
 description: >-
-  Workflow Git et conventions de commit. Branching strategy, Conventional
-  Commits, PR workflow. Use when: Phase 3 finalisation, commit, préparation PR.
-  Not for: commandes git basiques.
+  Git workflow and commit conventions. Branching strategy, Conventional
+  Commits, PR workflow. Use when: Phase 3 finalization, commit, PR preparation.
+  Not for: basic git commands.
 ---
 
 # Git Workflow
 
 ## Overview
 
-Workflow Git standardisé pour une collaboration efficace.
+Standardized Git workflow for efficient collaboration.
 
 ## Branching Strategy
 
@@ -24,18 +24,18 @@ feature/x ──────────┘               │
 feature/y ──────────────────────────┘
 ```
 
-### Types de branches
+### Branch Types
 
-| Type | Convention | Base | Merge vers |
-|------|------------|------|------------|
+| Type | Convention | Base | Merge to |
+|------|------------|------|----------|
 | main | `main` | - | - |
 | develop | `develop` | main | main |
-| feature | `feature/nom-court` | develop | develop |
-| bugfix | `bugfix/nom-court` | develop | develop |
-| hotfix | `hotfix/nom-court` | main | main + develop |
+| feature | `feature/short-name` | develop | develop |
+| bugfix | `bugfix/short-name` | develop | develop |
+| hotfix | `hotfix/short-name` | main | main + develop |
 | release | `release/vX.Y.Z` | develop | main + develop |
 
-### Nommage des branches
+### Branch Naming
 
 ```
 feature/add-user-authentication
@@ -58,28 +58,28 @@ release/v2.1.0
 
 ### Types
 
-| Type | Usage | Exemple |
+| Type | Usage | Example |
 |------|-------|---------|
-| `feat` | Nouvelle fonctionnalité | `feat(auth): add JWT refresh` |
-| `fix` | Correction de bug | `fix(api): handle null response` |
+| `feat` | New feature | `feat(auth): add JWT refresh` |
+| `fix` | Bug fix | `fix(api): handle null response` |
 | `docs` | Documentation | `docs(readme): add install guide` |
-| `style` | Formatage (pas de code) | `style: fix indentation` |
+| `style` | Formatting (no code) | `style: fix indentation` |
 | `refactor` | Refactoring | `refactor(user): extract validator` |
 | `test` | Tests | `test(auth): add login tests` |
 | `chore` | Maintenance | `chore(deps): update lodash` |
 | `perf` | Performance | `perf(query): optimize user fetch` |
 | `ci` | CI/CD | `ci: add github actions` |
 
-### Règles
+### Rules
 
-1. **Type obligatoire** — Toujours commencer par le type
-2. **Scope optionnel** — Contexte entre parenthèses
-3. **Description impérative** — "add" pas "added"
-4. **Ligne < 72 chars** — Pour la lisibilité
-5. **Body optionnel** — Détails si nécessaire
-6. **Footer pour refs** — `Closes #123`, `BREAKING CHANGE:`
+1. **Type required** — Always start with type
+2. **Scope optional** — Context in parentheses
+3. **Imperative description** — "add" not "added"
+4. **Line < 72 chars** — For readability
+5. **Body optional** — Details if needed
+6. **Footer for refs** — `Closes #123`, `BREAKING CHANGE:`
 
-### Exemples
+### Examples
 
 ```
 feat(auth): add JWT token refresh
@@ -109,41 +109,41 @@ Previously accepted emails like "user@localhost" are no longer valid.
 
 ## PR Workflow
 
-### Avant de créer la PR
+### Before Creating PR
 
-- [ ] Rebase sur develop récent
-- [ ] Tous les tests passent
-- [ ] Lint clean (pas d'erreurs)
-- [ ] Commits squashés si nécessaire
-- [ ] Feature Document à jour (STANDARD/LARGE)
+- [ ] Rebase on recent develop
+- [ ] All tests pass
+- [ ] Lint clean (no errors)
+- [ ] Commits squashed if needed
+- [ ] Feature Document updated (STANDARD/LARGE)
 
-### Template PR
+### PR Template
 
 ```markdown
 ## Description
-[Résumé des changements en 2-3 phrases]
+[Summary of changes in 2-3 sentences]
 
-## Type de changement
+## Type of Change
 - [ ] Bug fix (non-breaking)
-- [ ] Nouvelle feature (non-breaking)
+- [ ] New feature (non-breaking)
 - [ ] Breaking change
-- [ ] Refactoring (pas de changement fonctionnel)
+- [ ] Refactoring (no functional change)
 
 ## Tests
-- [ ] Tests unitaires ajoutés/modifiés
-- [ ] Tests d'intégration ajoutés/modifiés
-- [ ] Tests manuels effectués
+- [ ] Unit tests added/modified
+- [ ] Integration tests added/modified
+- [ ] Manual tests performed
 
 ## Checklist
-- [ ] Code auto-reviewé
-- [ ] Documentation mise à jour
-- [ ] Pas de console.log/var_dump
-- [ ] Feature Document complété (si applicable)
+- [ ] Code self-reviewed
+- [ ] Documentation updated
+- [ ] No console.log/var_dump
+- [ ] Feature Document completed (if applicable)
 
-## Screenshots (si UI)
-[Avant/Après si applicable]
+## Screenshots (if UI)
+[Before/After if applicable]
 
-## Liens
+## Links
 - Feature Document: docs/features/xxx.md
 - Issue: #123
 ```
@@ -151,60 +151,60 @@ Previously accepted emails like "user@localhost" are no longer valid.
 ### Review Workflow
 
 ```
-1. Créer PR → Draft si WIP
+1. Create PR → Draft if WIP
 2. Auto-assign reviewers
-3. CI/CD checks passent
-4. Review par pairs
-5. Résoudre commentaires
+3. CI/CD checks pass
+4. Peer review
+5. Resolve comments
 6. Approval (min 1)
 7. Squash & Merge
 ```
 
-## Commandes utiles
+## Useful Commands
 
-### Workflow quotidien
+### Daily Workflow
 
 ```bash
-# Nouvelle feature
+# New feature
 git checkout develop
 git pull
-git checkout -b feature/ma-feature
+git checkout -b feature/my-feature
 
 # Commit
 git add .
 git commit -m "feat(scope): description"
 
-# Push et PR
-git push -u origin feature/ma-feature
+# Push and PR
+git push -u origin feature/my-feature
 ```
 
 ### Maintenance
 
 ```bash
-# Rebase sur develop
+# Rebase on develop
 git fetch origin
 git rebase origin/develop
 
 # Squash commits
 git rebase -i HEAD~3
 
-# Amend dernier commit
+# Amend last commit
 git commit --amend
 ```
 
-## Git Hooks recommandés
+## Recommended Git Hooks
 
 | Hook | Action |
 |------|--------|
 | pre-commit | Lint, format |
-| commit-msg | Valide Conventional Commit |
-| pre-push | Tests unitaires |
+| commit-msg | Validate Conventional Commit |
+| pre-push | Unit tests |
 
-## Checklist Phase 3 EPCI
+## EPCI Phase 3 Checklist
 
-- [ ] Commits suivent Conventional Commits
-- [ ] Branche nommée correctement
-- [ ] Rebase sur develop récent
-- [ ] PR template complété
-- [ ] Feature Document finalisé
-- [ ] CI/CD passe
+- [ ] Commits follow Conventional Commits
+- [ ] Branch named correctly
+- [ ] Rebase on recent develop
+- [ ] PR template completed
+- [ ] Feature Document finalized
+- [ ] CI/CD passes

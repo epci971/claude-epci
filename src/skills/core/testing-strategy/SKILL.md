@@ -1,58 +1,58 @@
 ---
 name: testing-strategy
 description: >-
-  Stratégies et patterns de test. Pyramide de tests, TDD, mocking, fixtures.
-  Use when: Phase 2 implémentation, définir stratégie de test, review QA.
-  Not for: outils spécifiques stack (→ skills stack).
+  Testing strategies and patterns. Test pyramid, TDD, mocking, fixtures.
+  Use when: Phase 2 implementation, defining test strategy, QA review.
+  Not for: stack-specific tools (→ stack skills).
 ---
 
 # Testing Strategy
 
 ## Overview
 
-Guide des stratégies de test pour un code fiable et maintenable.
+Guide to testing strategies for reliable and maintainable code.
 
-## Pyramide de tests
+## Test Pyramid
 
 ```
          /\
-        /E2E\        Peu, lents, coûteux
+        /E2E\        Few, slow, expensive
        /──────\
-      /Integra-\     Quelques-uns, moyens
+      /Integra-\     Some, moderate
      /──tion────\
     /────────────\
-   /    Unit      \  Beaucoup, rapides, peu coûteux
+   /    Unit      \  Many, fast, cheap
   /────────────────\
 ```
 
-| Niveau | Quantité | Vitesse | Coût | Focus |
-|--------|----------|---------|------|-------|
-| Unit | 70% | < 10ms | Faible | Logique isolée |
-| Integration | 20% | < 1s | Moyen | Composants ensemble |
-| E2E | 10% | > 1s | Élevé | Flux utilisateur |
+| Level | Quantity | Speed | Cost | Focus |
+|-------|----------|-------|------|-------|
+| Unit | 70% | < 10ms | Low | Isolated logic |
+| Integration | 20% | < 1s | Medium | Components together |
+| E2E | 10% | > 1s | High | User flows |
 
 ## Test-Driven Development (TDD)
 
-### Cycle RED-GREEN-REFACTOR
+### RED-GREEN-REFACTOR Cycle
 
 ```
 ┌─────────┐     ┌─────────┐     ┌─────────┐
 │   RED   │────►│  GREEN  │────►│REFACTOR │
-│(test    │     │(code    │     │(amélio- │
-│ échoue) │     │ minimal)│     │ rer)    │
+│(test    │     │(minimal │     │(improve)│
+│ fails)  │     │ code)   │     │         │
 └─────────┘     └─────────┘     └────┬────┘
      ▲                               │
      └───────────────────────────────┘
 ```
 
-### Règles TDD
+### TDD Rules
 
-1. **Test AVANT le code** — Toujours
-2. **Un seul test à la fois** — Focus
-3. **Code minimal** — Juste pour faire passer le test
-4. **Refactor si vert** — Jamais sur rouge
+1. **Test BEFORE code** — Always
+2. **One test at a time** — Focus
+3. **Minimal code** — Just enough to pass the test
+4. **Refactor when green** — Never on red
 
-## Patterns de test
+## Test Patterns
 
 ### Arrange-Act-Assert (AAA)
 
@@ -73,24 +73,24 @@ public function testUserValidation(): void
 ### Given-When-Then (BDD)
 
 ```gherkin
-Given un utilisateur avec email valide
-When je valide l'utilisateur
-Then la validation réussit
+Given a user with valid email
+When I validate the user
+Then validation succeeds
 ```
 
-## Couverture de tests
+## Test Coverage
 
-### Ce qu'il faut tester
+### What to Test
 
-| Priorité | Type | Exemple |
+| Priority | Type | Example |
 |----------|------|---------|
-| Haute | Happy path | Création réussie |
-| Haute | Edge cases | Limites, null, empty |
-| Haute | Error cases | Exceptions attendues |
-| Moyenne | Boundary | Min, max, overflow |
-| Basse | Corner cases | Combinaisons rares |
+| High | Happy path | Successful creation |
+| High | Edge cases | Limits, null, empty |
+| High | Error cases | Expected exceptions |
+| Medium | Boundary | Min, max, overflow |
+| Low | Corner cases | Rare combinations |
 
-### Matrice de couverture
+### Coverage Matrix
 
 ```
                     Input
@@ -104,66 +104,66 @@ Output  OK    │   ✅  │   ❌   │
 
 ## Mocking
 
-### Quand mocker ✅
+### When to Mock ✅
 
-- Dépendances externes (API, DB, filesystem)
-- Comportements lents ou coûteux
-- Cas difficiles à reproduire (erreurs réseau)
-- Services tiers non contrôlables
+- External dependencies (API, DB, filesystem)
+- Slow or expensive behaviors
+- Hard to reproduce cases (network errors)
+- Uncontrollable third-party services
 
-### Quand NE PAS mocker ❌
+### When NOT to Mock ❌
 
-- Le code qu'on teste (SUT)
-- Les value objects
-- Les logiques simples
-- Les dépendances internes stables
+- The code being tested (SUT)
+- Value objects
+- Simple logic
+- Stable internal dependencies
 
-### Types de test doubles
+### Types of Test Doubles
 
-| Type | Usage | Exemple |
+| Type | Usage | Example |
 |------|-------|---------|
-| Dummy | Remplit paramètre | `new NullLogger()` |
-| Stub | Retourne valeur fixe | `$mock->willReturn(42)` |
-| Spy | Enregistre les appels | `$mock->expects($this->once())` |
-| Mock | Vérifie comportement | `$mock->expects(...)->with(...)` |
-| Fake | Implémentation simplifiée | `InMemoryRepository` |
+| Dummy | Fills parameter | `new NullLogger()` |
+| Stub | Returns fixed value | `$mock->willReturn(42)` |
+| Spy | Records calls | `$mock->expects($this->once())` |
+| Mock | Verifies behavior | `$mock->expects(...)->with(...)` |
+| Fake | Simplified implementation | `InMemoryRepository` |
 
-## Fixtures et Factories
+## Fixtures and Factories
 
 ### Fixtures
 
 ```php
-// Données statiques, prévisibles
+// Static, predictable data
 $user = $this->fixtures->getReference('user-admin');
 ```
 
 ### Factories
 
 ```php
-// Données dynamiques, flexibles
+// Dynamic, flexible data
 $user = UserFactory::new()
     ->admin()
     ->verified()
     ->create();
 ```
 
-## Anti-patterns à éviter
+## Anti-patterns to Avoid
 
-| Anti-pattern | Problème | Solution |
-|--------------|----------|----------|
-| Test du mock | Teste l'implémentation | Tester le comportement |
-| Test flaky | Passe/échoue aléatoirement | Éliminer dépendances temporelles |
-| Test couplé | Dépend d'autres tests | Tests isolés |
-| Test lent | Suite > 10 min | Plus de unit, moins d'E2E |
-| Test fragile | Casse pour rien | Tester les contrats, pas l'implémentation |
-| Over-mocking | Mock de tout | Préférer les vrais objets simples |
+| Anti-pattern | Problem | Solution |
+|--------------|---------|----------|
+| Mock testing | Tests implementation | Test behavior |
+| Flaky test | Passes/fails randomly | Eliminate time dependencies |
+| Coupled test | Depends on other tests | Isolated tests |
+| Slow test | Suite > 10 min | More unit, less E2E |
+| Fragile test | Breaks for nothing | Test contracts, not implementation |
+| Over-mocking | Mocks everything | Prefer simple real objects |
 
-## Checklist avant merge
+## Checklist Before Merge
 
-- [ ] Tests pour le happy path
-- [ ] Tests pour les edge cases
-- [ ] Tests pour les erreurs attendues
-- [ ] Pas de tests qui dépendent d'autres tests
-- [ ] Pas de tests flaky
-- [ ] Tous les tests passent
-- [ ] Coverage acceptable (>80% pour code critique)
+- [ ] Tests for happy path
+- [ ] Tests for edge cases
+- [ ] Tests for expected errors
+- [ ] No tests depending on other tests
+- [ ] No flaky tests
+- [ ] All tests pass
+- [ ] Acceptable coverage (>80% for critical code)

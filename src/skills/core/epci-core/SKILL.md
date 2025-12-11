@@ -1,61 +1,61 @@
 ---
 name: epci-core
 description: >-
-  Concepts fondamentaux du workflow EPCI. Définit les phases (Explore, Plan,
-  Code, Inspect), les catégories de complexité, le Feature Document et les
-  breakpoints. Use when: tout workflow EPCI, comprendre la méthodologie.
-  Not for: création de composants (utiliser /epci:create).
+  Fundamental concepts of the EPCI workflow. Defines phases (Explore, Plan,
+  Code, Inspect), complexity categories, Feature Document and breakpoints.
+  Use when: any EPCI workflow, understanding the methodology.
+  Not for: component creation (use /epci:create).
 ---
 
 # EPCI Core
 
 ## Overview
 
-EPCI (Explore → Plan → Code → Inspect) est une méthodologie de développement
-structurée en phases avec validation à chaque étape.
+EPCI (Explore → Plan → Code → Inspect) is a structured development methodology
+with validation at each phase.
 
-## Les 4 Phases
+## The 4 Phases
 
-| Phase | Objectif | Output |
-|-------|----------|--------|
-| **Explore** | Comprendre le besoin et l'existant | Brief fonctionnel |
-| **Plan** | Concevoir la solution | Plan d'implémentation |
-| **Code** | Implémenter avec tests | Code + tests |
-| **Inspect** | Valider et finaliser | PR prête |
+| Phase | Objective | Output |
+|-------|-----------|--------|
+| **Explore** | Understand needs and existing code | Functional brief |
+| **Plan** | Design the solution | Implementation plan |
+| **Code** | Implement with tests | Code + tests |
+| **Inspect** | Validate and finalize | PR ready |
 
-## Catégories de complexité
+## Complexity Categories
 
-| Catégorie | Fichiers | LOC | Risque | Workflow |
-|-----------|----------|-----|--------|----------|
-| TINY | 1 | <50 | Aucun | /epci-quick |
-| SMALL | 2-3 | <200 | Faible | /epci-quick |
-| STANDARD | 4-10 | <1000 | Moyen | /epci |
-| LARGE | 10+ | 1000+ | Élevé | /epci |
-| SPIKE | ? | ? | Inconnu | /epci-spike |
+| Category | Files | LOC | Risk | Workflow |
+|----------|-------|-----|------|----------|
+| TINY | 1 | <50 | None | /epci-quick |
+| SMALL | 2-3 | <200 | Low | /epci-quick |
+| STANDARD | 4-10 | <1000 | Medium | /epci |
+| LARGE | 10+ | 1000+ | High | /epci |
+| SPIKE | ? | ? | Unknown | /epci-spike |
 
 ## Feature Document
 
-Document central de traçabilité pour chaque feature STANDARD/LARGE.
+Central traceability document for each STANDARD/LARGE feature.
 
 ### Structure
 
 ```markdown
 # Feature Document — [ID]
 
-## §1 — Brief Fonctionnel
-[Contexte, critères d'acceptation, contraintes]
+## §1 — Functional Brief
+[Context, acceptance criteria, constraints]
 
-## §2 — Plan d'Implémentation
-[Tâches, fichiers, risques]
+## §2 — Implementation Plan
+[Tasks, files, risks]
 
-## §3 — Implémentation
-[Progression, tests, reviews]
+## §3 — Implementation
+[Progress, tests, reviews]
 
-## §4 — Finalisation
+## §4 — Finalization
 [Commit, documentation, PR]
 ```
 
-### Emplacement
+### Location
 
 ```
 docs/features/<feature-slug>.md
@@ -63,44 +63,44 @@ docs/features/<feature-slug>.md
 
 ## Breakpoints
 
-Points de synchronisation obligatoires :
+Mandatory synchronization points:
 
-| Breakpoint | Après | Condition de passage |
-|------------|-------|---------------------|
-| BP1 | Phase 1 | Plan validé par @plan-validator |
-| BP2 | Phase 2 | Code reviewé par @code-reviewer |
+| Breakpoint | After | Pass Condition |
+|------------|-------|----------------|
+| BP1 | Phase 1 | Plan validated by @plan-validator |
+| BP2 | Phase 2 | Code reviewed by @code-reviewer |
 
-## Subagents EPCI
+## EPCI Subagents
 
-| Subagent | Rôle | Phase |
+| Subagent | Role | Phase |
 |----------|------|-------|
-| @plan-validator | Valide le plan technique | Phase 1 → BP1 |
-| @code-reviewer | Revue qualité code | Phase 2 → BP2 |
-| @security-auditor | Audit sécurité OWASP | Phase 2 (conditionnel) |
-| @qa-reviewer | Revue tests | Phase 2 (conditionnel) |
-| @doc-generator | Génère documentation | Phase 3 |
+| @plan-validator | Validates technical plan | Phase 1 → BP1 |
+| @code-reviewer | Code quality review | Phase 2 → BP2 |
+| @security-auditor | OWASP security audit | Phase 2 (conditional) |
+| @qa-reviewer | Test review | Phase 2 (conditional) |
+| @doc-generator | Generates documentation | Phase 3 |
 
 ## Routing
 
 ```
-Brief utilisateur
-      │
-      ▼
-  /epci-brief (évaluation)
-      │
-      ├─► TINY/SMALL ──► /epci-quick
-      │
-      ├─► STANDARD ────► /epci
-      │
-      ├─► LARGE ───────► /epci --large
-      │
-      └─► Incertain ───► /epci-spike
+User brief
+    │
+    ▼
+/epci-brief (evaluation)
+    │
+    ├─► TINY/SMALL ──► /epci-quick
+    │
+    ├─► STANDARD ────► /epci
+    │
+    ├─► LARGE ───────► /epci --large
+    │
+    └─► Uncertain ───► /epci-spike
 ```
 
-## Principes EPCI
+## EPCI Principles
 
-1. **Traçabilité** — Tout est documenté dans le Feature Document
-2. **Validation** — Chaque phase a une gate de sortie
-3. **Itération** — Les phases peuvent être revisitées si nécessaire
-4. **Adaptation** — Le workflow s'adapte à la complexité
-5. **Automatisation** — Les subagents automatisent les reviews
+1. **Traceability** — Everything is documented in the Feature Document
+2. **Validation** — Each phase has an exit gate
+3. **Iteration** — Phases can be revisited if needed
+4. **Adaptation** — Workflow adapts to complexity
+5. **Automation** — Subagents automate reviews

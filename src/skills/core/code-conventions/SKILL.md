@@ -1,144 +1,144 @@
 ---
 name: code-conventions
 description: >-
-  Conventions de code génériques et bonnes pratiques. Nommage, structure de
-  fichiers, commentaires, gestion d'erreurs. Use when: implémentation Phase 2,
-  review de code. Not for: conventions spécifiques stack (→ skills stack).
+  Generic code conventions and best practices. Naming, file structure,
+  comments, error handling. Use when: Phase 2 implementation, code review.
+  Not for: stack-specific conventions (→ stack skills).
 ---
 
 # Code Conventions
 
 ## Overview
 
-Conventions de code universelles pour un code lisible et maintenable.
+Universal code conventions for readable and maintainable code.
 
-## Nommage
+## Naming
 
-| Élément | Convention | Exemple |
+| Element | Convention | Example |
 |---------|------------|---------|
 | Classes | PascalCase | `UserService` |
-| Méthodes | camelCase | `getUserById()` |
+| Methods | camelCase | `getUserById()` |
 | Variables | camelCase | `$userName` |
-| Constantes | UPPER_SNAKE | `MAX_RETRY_COUNT` |
-| Fichiers | kebab-case ou PascalCase | `user-service.ts` |
-| Bases de données | snake_case | `user_accounts` |
+| Constants | UPPER_SNAKE | `MAX_RETRY_COUNT` |
+| Files | kebab-case or PascalCase | `user-service.ts` |
+| Databases | snake_case | `user_accounts` |
 
-### Règles de nommage
+### Naming Rules
 
-| Règle | Bon | Mauvais |
-|-------|-----|---------|
-| Explicite | `getUserEmailById` | `get` |
-| Pas d'abbréviations | `configuration` | `cfg` |
-| Verbes pour actions | `calculateTotal()` | `total()` |
-| Noms pour données | `userCount` | `countUser` |
-| Booléens avec is/has | `isActive`, `hasPermission` | `active`, `permission` |
+| Rule | Good | Bad |
+|------|------|-----|
+| Explicit | `getUserEmailById` | `get` |
+| No abbreviations | `configuration` | `cfg` |
+| Verbs for actions | `calculateTotal()` | `total()` |
+| Nouns for data | `userCount` | `countUser` |
+| Booleans with is/has | `isActive`, `hasPermission` | `active`, `permission` |
 
-## Structure de fichier
+## File Structure
 
-### Ordre dans une classe
+### Order in a Class
 
 ```
-1. Constantes
-2. Propriétés statiques
-3. Propriétés d'instance
-4. Constructeur
-5. Méthodes publiques
-6. Méthodes protégées
-7. Méthodes privées
+1. Constants
+2. Static properties
+3. Instance properties
+4. Constructor
+5. Public methods
+6. Protected methods
+7. Private methods
 ```
 
-### Limites de taille
+### Size Limits
 
-| Élément | Idéal | Maximum |
+| Element | Ideal | Maximum |
 |---------|-------|---------|
-| Fonction | < 20 lignes | 50 lignes |
-| Classe | < 200 lignes | 400 lignes |
-| Fichier | < 300 lignes | 500 lignes |
-| Paramètres | ≤ 3 | 5 |
-| Niveaux d'indentation | ≤ 3 | 4 |
+| Function | < 20 lines | 50 lines |
+| Class | < 200 lines | 400 lines |
+| File | < 300 lines | 500 lines |
+| Parameters | ≤ 3 | 5 |
+| Indentation levels | ≤ 3 | 4 |
 
-## Gestion d'erreurs
+## Error Handling
 
 ### DO ✅
 
 ```
-- Fail fast (valider en entrée)
-- Exceptions typées et spécifiques
-- Messages d'erreur explicites avec contexte
-- Logging structuré des erreurs
-- Recovery strategy quand possible
+- Fail fast (validate at entry)
+- Typed and specific exceptions
+- Explicit error messages with context
+- Structured error logging
+- Recovery strategy when possible
 ```
 
 ### DON'T ❌
 
 ```
-- Catch vide (swallow exceptions)
-- Exception générique partout
-- Retourner null pour les erreurs
-- Ignorer les erreurs
-- Log sans contexte
+- Empty catch (swallow exceptions)
+- Generic exception everywhere
+- Return null for errors
+- Ignore errors
+- Log without context
 ```
 
-### Pattern de gestion
+### Handling Pattern
 
 ```
 try {
-    // Code à risque
+    // Risky code
 } catch (SpecificException $e) {
-    // Log avec contexte
+    // Log with context
     $this->logger->error('Operation failed', [
         'operation' => 'create_user',
         'error' => $e->getMessage(),
         'context' => $context
     ]);
-    // Rethrow ou recover
+    // Rethrow or recover
     throw new DomainException('User creation failed', 0, $e);
 }
 ```
 
-## Commentaires
+## Comments
 
-| Type | Quand | Format |
-|------|-------|--------|
-| Doc | API publique | `/** @param ... @return ... */` |
-| TODO | Amélioration future | `// TODO: [ticket] description` |
-| FIXME | Bug connu | `// FIXME: [ticket] description` |
-| Inline | Logique complexe uniquement | `// Explication du pourquoi` |
+| Type | When | Format |
+|------|------|--------|
+| Doc | Public API | `/** @param ... @return ... */` |
+| TODO | Future improvement | `// TODO: [ticket] description` |
+| FIXME | Known bug | `// FIXME: [ticket] description` |
+| Inline | Complex logic only | `// Explanation of why` |
 
-### Règles commentaires
+### Comment Rules
 
-- **Commenter le POURQUOI**, pas le QUOI
-- Éviter les commentaires évidents
-- Mettre à jour les commentaires avec le code
-- Préférer un code auto-documenté
+- **Comment the WHY**, not the WHAT
+- Avoid obvious comments
+- Update comments with the code
+- Prefer self-documenting code
 
-## Principes DRY, KISS, YAGNI
+## DRY, KISS, YAGNI Principles
 
-| Principe | Signification | Check |
-|----------|---------------|-------|
-| **DRY** | Don't Repeat Yourself | Pas de copier-coller |
-| **KISS** | Keep It Simple, Stupid | Solution la plus simple |
-| **YAGNI** | You Aren't Gonna Need It | Pas de code "au cas où" |
+| Principle | Meaning | Check |
+|-----------|---------|-------|
+| **DRY** | Don't Repeat Yourself | No copy-paste |
+| **KISS** | Keep It Simple, Stupid | Simplest solution |
+| **YAGNI** | You Aren't Gonna Need It | No "just in case" code |
 
 ## Quick Reference Checklist
 
-| Règle | ✅ Check |
-|-------|---------|
-| Nommage explicite | Pas de `x`, `data`, `temp` |
-| Une responsabilité | Fonction = 1 chose |
-| Pas de magic numbers | Constantes nommées |
-| Pas de duplication | Factoriser si > 2 occurrences |
-| Gestion d'erreurs | Pas de catch vide |
-| Taille raisonnable | Fonctions < 50 lignes |
-| Indentation limitée | Max 4 niveaux |
+| Rule | ✅ Check |
+|------|---------|
+| Explicit naming | No `x`, `data`, `temp` |
+| Single responsibility | Function = 1 thing |
+| No magic numbers | Named constants |
+| No duplication | Factor if > 2 occurrences |
+| Error handling | No empty catch |
+| Reasonable size | Functions < 50 lines |
+| Limited indentation | Max 4 levels |
 
-## Code Smells à éviter
+## Code Smells to Avoid
 
-| Smell | Symptôme | Solution |
-|-------|----------|----------|
-| Long Method | > 50 lignes | Extract Method |
-| Large Class | > 400 lignes | Extract Class |
-| Feature Envy | Utilise trop une autre classe | Move Method |
-| Data Clumps | Mêmes params répétés | Extract Class/DTO |
-| Primitive Obsession | Trop de primitives | Value Objects |
-| Switch Statements | Switch sur types | Polymorphisme |
+| Smell | Symptom | Solution |
+|-------|---------|----------|
+| Long Method | > 50 lines | Extract Method |
+| Large Class | > 400 lines | Extract Class |
+| Feature Envy | Uses another class too much | Move Method |
+| Data Clumps | Same params repeated | Extract Class/DTO |
+| Primitive Obsession | Too many primitives | Value Objects |
+| Switch Statements | Switch on types | Polymorphism |

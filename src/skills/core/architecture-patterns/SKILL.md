@@ -1,58 +1,58 @@
 ---
 name: architecture-patterns
 description: >-
-  Patterns d'architecture logicielle courants. Inclut DDD, Clean Architecture,
-  CQRS, Event Sourcing, Microservices patterns. Use when: évaluer complexité,
-  choisir une architecture, refactoring structurel. Not for: conventions de code
-  (→ code-conventions), patterns spécifiques stack (→ skills stack).
+  Common software architecture patterns. Includes DDD, Clean Architecture,
+  CQRS, Event Sourcing, Microservices patterns. Use when: evaluating complexity,
+  choosing an architecture, structural refactoring. Not for: code conventions
+  (→ code-conventions), stack-specific patterns (→ stack skills).
 ---
 
 # Architecture Patterns
 
 ## Overview
 
-Catalogue de patterns d'architecture pour guider les décisions de design.
+Catalog of architecture patterns to guide design decisions.
 
 ## SOLID Principles
 
-| Principe | Description | Violation typique |
-|----------|-------------|-------------------|
-| **S**ingle Responsibility | Une classe = une raison de changer | God class |
-| **O**pen/Closed | Ouvert à l'extension, fermé à la modification | Switch sur types |
-| **L**iskov Substitution | Sous-types substituables | Héritage cassant le contrat |
-| **I**nterface Segregation | Interfaces spécifiques > interfaces générales | Interface fourre-tout |
-| **D**ependency Inversion | Dépendre d'abstractions | Couplage fort aux implémentations |
+| Principle | Description | Typical Violation |
+|-----------|-------------|-------------------|
+| **S**ingle Responsibility | One class = one reason to change | God class |
+| **O**pen/Closed | Open for extension, closed for modification | Type switch |
+| **L**iskov Substitution | Subtypes must be substitutable | Inheritance breaking contract |
+| **I**nterface Segregation | Specific interfaces > general interfaces | Catch-all interface |
+| **D**ependency Inversion | Depend on abstractions | Tight coupling to implementations |
 
-## Patterns par niveau
+## Patterns by Level
 
 ### Application Level
 
-| Pattern | Quand utiliser | Complexité |
-|---------|----------------|------------|
-| MVC | Apps web classiques | Faible |
-| Clean Architecture | Logique métier complexe | Moyenne |
-| Hexagonal | Ports & Adapters | Moyenne |
-| CQRS | Read/Write séparés | Élevée |
+| Pattern | When to Use | Complexity |
+|---------|-------------|------------|
+| MVC | Classic web apps | Low |
+| Clean Architecture | Complex business logic | Medium |
+| Hexagonal | Ports & Adapters | Medium |
+| CQRS | Separate Read/Write | High |
 
 ### Domain Level (DDD)
 
-| Pattern | Quand utiliser |
-|---------|----------------|
-| Entity | Objet avec identité propre |
-| Value Object | Objet immuable sans identité |
-| Aggregate | Groupe cohérent d'entités |
-| Repository | Abstraction de persistance |
-| Domain Service | Logique métier sans état |
-| Domain Event | Notification de changement métier |
+| Pattern | When to Use |
+|---------|-------------|
+| Entity | Object with own identity |
+| Value Object | Immutable object without identity |
+| Aggregate | Coherent group of entities |
+| Repository | Persistence abstraction |
+| Domain Service | Stateless business logic |
+| Domain Event | Business change notification |
 
 ### Integration Level
 
-| Pattern | Quand utiliser |
-|---------|----------------|
-| API Gateway | Point d'entrée unique |
-| Event-Driven | Découplage asynchrone |
-| Saga | Transactions distribuées |
-| Circuit Breaker | Résilience aux pannes |
+| Pattern | When to Use |
+|---------|-------------|
+| API Gateway | Single entry point |
+| Event-Driven | Asynchronous decoupling |
+| Saga | Distributed transactions |
+| Circuit Breaker | Fault resilience |
 
 ## Clean Architecture
 
@@ -68,7 +68,7 @@ Catalogue de patterns d'architecture pour guider les décisions de design.
 └─────────────────────────────────────────┘
 ```
 
-**Règle de dépendance** : Les dépendances pointent vers l'intérieur.
+**Dependency Rule**: Dependencies point inward.
 
 ## Hexagonal Architecture
 
@@ -84,31 +84,31 @@ Catalogue de patterns d'architecture pour guider les décisions de design.
 
 ## Quick Reference
 
-| Besoin | Pattern recommandé |
-|--------|-------------------|
-| Séparation UI/Métier | Clean Architecture |
-| Testabilité maximale | Hexagonal (Ports & Adapters) |
-| Scalabilité lecture | CQRS |
-| Découplage services | Event-Driven |
-| Transactions multi-services | Saga |
-| Logique métier complexe | DDD |
+| Need | Recommended Pattern |
+|------|---------------------|
+| UI/Business separation | Clean Architecture |
+| Maximum testability | Hexagonal (Ports & Adapters) |
+| Read scalability | CQRS |
+| Service decoupling | Event-Driven |
+| Multi-service transactions | Saga |
+| Complex business logic | DDD |
 
-## Anti-patterns à éviter
+## Anti-patterns to Avoid
 
-| Anti-pattern | Symptôme | Solution |
-|--------------|----------|----------|
-| Big Ball of Mud | Pas de structure visible | Refactor progressif vers Clean Arch |
-| God Class | Classe > 500 lignes | Single Responsibility |
-| Anemic Domain | Entités sans logique | Domain-Driven Design |
-| Distributed Monolith | Micro mais couplé | Event-Driven ou monolithe |
-| Leaky Abstraction | Détails qui fuient | Meilleure encapsulation |
+| Anti-pattern | Symptom | Solution |
+|--------------|---------|----------|
+| Big Ball of Mud | No visible structure | Progressive refactor to Clean Arch |
+| God Class | Class > 500 lines | Single Responsibility |
+| Anemic Domain | Entities without logic | Domain-Driven Design |
+| Distributed Monolith | Micro but coupled | Event-Driven or monolith |
+| Leaky Abstraction | Details leaking out | Better encapsulation |
 
-## Décision de complexité
+## Complexity Decision
 
 ```
-Complexité = f(domaine, intégrations, scalabilité, équipe)
+Complexity = f(domain, integrations, scalability, team)
 
-Score 1-3 → MVC simple
+Score 1-3 → Simple MVC
 Score 4-6 → Clean/Hexagonal
 Score 7-9 → CQRS/Event-Driven
 Score 10+ → Microservices
