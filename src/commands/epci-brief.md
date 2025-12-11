@@ -1,135 +1,135 @@
 ---
 description: >-
-  Point d'entrée EPCI. Analyse le brief brut, clarifie les ambiguïtés via
-  questions itératives, évalue la complexité et route vers le workflow
-  approprié (/epci-quick, /epci, /epci-spike).
+  EPCI entry point. Analyzes raw brief, clarifies ambiguities through
+  iterative questions, evaluates complexity and routes to appropriate
+  workflow (/epci-quick, /epci, /epci-spike).
 allowed-tools: [Read, Glob, Grep, Bash, Task]
 ---
 
-# EPCI Brief — Point d'entrée
+# EPCI Brief — Entry Point
 
 ## Overview
 
-Cette commande est le point d'entrée unique du workflow EPCI.
-Elle transforme un brief brut en brief structuré et oriente vers le workflow approprié.
+This command is the single entry point for the EPCI workflow.
+It transforms a raw brief into a structured brief and routes to the appropriate workflow.
 
 ## Process
 
-### Étape 1 : Analyse initiale
+### Step 1: Initial Analysis
 
-**Invoquer @Explore** (niveau medium) pour :
-- Scanner la structure du projet
-- Identifier les technologies utilisées
-- Estimer la complexité architecturale
+**Invoke @Explore** (medium level) to:
+- Scan project structure
+- Identify technologies used
+- Estimate architectural complexity
 
-Analyser le brief pour identifier :
-- Les éléments clairs et exploitables
-- Les ambiguïtés et zones d'ombre
-- Les informations manquantes critiques
-- Les incohérences éventuelles
+Analyze the brief to identify:
+- Clear and actionable elements
+- Ambiguities and unclear areas
+- Critical missing information
+- Potential inconsistencies
 
-### Étape 2 : Boucle de clarification
+### Step 2: Clarification Loop
 
-Si des ambiguïtés sont détectées, poser des questions ciblées (max 3 itérations) :
+If ambiguities are detected, ask targeted questions (max 3 iterations):
 
-| Catégorie | Questions types |
-|-----------|-----------------|
-| **Business/Valeur** | Pourquoi ? Pour qui ? Quel impact métier ? |
-| **Scope** | Qu'est-ce qui est inclus/exclus ? Quelles limites ? |
-| **Contraintes** | Techniques ? Temps ? Budget ? Dépendances ? |
-| **Priorité** | Criticité ? Deadline ? Bloquant pour quoi ? |
+| Category | Example Questions |
+|----------|-------------------|
+| **Business/Value** | Why? For whom? What business impact? |
+| **Scope** | What's included/excluded? What limits? |
+| **Constraints** | Technical? Time? Budget? Dependencies? |
+| **Priority** | Criticality? Deadline? Blocking what? |
 
-**Règles :**
-- Maximum 5 questions par itération
-- Maximum 3 itérations de clarification
-- Prioriser les questions bloquantes
+**Rules:**
+- Maximum 5 questions per iteration
+- Maximum 3 clarification iterations
+- Prioritize blocking questions
 
-### Étape 3 : Suggestions IA
+### Step 3: AI Suggestions
 
-Proposer des améliorations basées sur l'analyse @Explore :
-- Suggestions de design (basées sur architecture-patterns)
-- Bonnes pratiques de la stack détectée
-- Points d'attention spécifiques au contexte
-- Risques potentiels identifiés
+Propose improvements based on @Explore analysis:
+- Design suggestions (based on architecture-patterns)
+- Best practices for detected stack
+- Context-specific attention points
+- Identified potential risks
 
-### Étape 4 : Évaluation de complexité
+### Step 4: Complexity Evaluation
 
-| Critère | TINY | SMALL | STANDARD | LARGE | SPIKE |
-|---------|------|-------|----------|-------|-------|
-| Fichiers | 1 | 2-3 | 4-10 | 10+ | ? |
-| LOC estimé | <50 | <200 | <1000 | 1000+ | ? |
-| Risque | Aucun | Faible | Moyen | Élevé | Inconnu |
-| Tests requis | Non | Optionnel | Oui | Oui+ | N/A |
-| Archi impactée | Non | Non | Possible | Oui | ? |
+| Criteria | TINY | SMALL | STANDARD | LARGE | SPIKE |
+|----------|------|-------|----------|-------|-------|
+| Files | 1 | 2-3 | 4-10 | 10+ | ? |
+| Estimated LOC | <50 | <200 | <1000 | 1000+ | ? |
+| Risk | None | Low | Medium | High | Unknown |
+| Tests required | No | Optional | Yes | Yes+ | N/A |
+| Arch impacted | No | No | Possible | Yes | ? |
 
-### Étape 5 : Routage
+### Step 5: Routing
 
-| Catégorie | Commande | Justification |
-|-----------|----------|---------------|
-| TINY | `/epci-quick` | Exécution immédiate, pas de plan formel |
-| SMALL | `/epci-quick` | Plan léger intégré |
-| STANDARD | `/epci` | Workflow complet 3 phases |
-| LARGE | `/epci --large` | Thinking renforcé, tous subagents |
-| SPIKE | `/epci-spike` | Exploration time-boxée |
+| Category | Command | Justification |
+|----------|---------|---------------|
+| TINY | `/epci-quick` | Immediate execution, no formal plan |
+| SMALL | `/epci-quick` | Lightweight integrated plan |
+| STANDARD | `/epci` | Complete 3-phase workflow |
+| LARGE | `/epci --large` | Enhanced thinking, all subagents |
+| SPIKE | `/epci-spike` | Time-boxed exploration |
 
 ## Output
 
-Générer le brief structuré :
+Generate the structured brief:
 
 ```markdown
-# Brief Fonctionnel — [Titre]
+# Functional Brief — [Title]
 
-## Contexte
-[Résumé du besoin en 2-3 phrases]
+## Context
+[Summary of the need in 2-3 sentences]
 
-## Stack détectée
-[Stack identifiée par @Explore : framework, langage, versions]
+## Detected Stack
+[Stack identified by @Explore: framework, language, versions]
 
-## Critères d'acceptation
-- [ ] Critère 1 (mesurable)
-- [ ] Critère 2 (mesurable)
-- [ ] Critère 3 (mesurable)
+## Acceptance Criteria
+- [ ] Criterion 1 (measurable)
+- [ ] Criterion 2 (measurable)
+- [ ] Criterion 3 (measurable)
 
-## Contraintes
-- [Contrainte technique identifiée]
-- [Contrainte temps/budget si applicable]
+## Constraints
+- [Identified technical constraint]
+- [Time/budget constraint if applicable]
 
-## Hors périmètre
-- [Exclusion explicite 1]
-- [Exclusion explicite 2]
+## Out of Scope
+- [Explicit exclusion 1]
+- [Explicit exclusion 2]
 
-## Évaluation
-- **Catégorie** : [TINY|SMALL|STANDARD|LARGE|SPIKE]
-- **Fichiers estimés** : X
-- **LOC estimés** : ~Y
-- **Risque** : [Aucun|Faible|Moyen|Élevé|Inconnu]
-- **Justification** : [Raison de la catégorisation]
+## Evaluation
+- **Category**: [TINY|SMALL|STANDARD|LARGE|SPIKE]
+- **Estimated files**: X
+- **Estimated LOC**: ~Y
+- **Risk**: [None|Low|Medium|High|Unknown]
+- **Justification**: [Reason for categorization]
 
-## Recommandation
-→ Utiliser `/epci-quick` | `/epci` | `/epci --large` | `/epci-spike`
+## Recommendation
+→ Use `/epci-quick` | `/epci` | `/epci --large` | `/epci-spike`
 ```
 
-## Skills chargés
+## Skills Loaded
 
-- `epci-core` (concepts EPCI)
-- `architecture-patterns` (évaluation complexité)
-- `[stack-skill]` (auto-détecté selon projet)
+- `epci-core` (EPCI concepts)
+- `architecture-patterns` (complexity evaluation)
+- `[stack-skill]` (auto-detected based on project)
 
 ## Transition
 
-Après génération du brief :
-1. Présenter le brief structuré à l'utilisateur
-2. Attendre confirmation avant de router
-3. Proposer de lancer la commande recommandée
+After brief generation:
+1. Present structured brief to user
+2. Wait for confirmation before routing
+3. Propose launching the recommended command
 
 ```
 ---
-📋 **BRIEF COMPLET**
+📋 **BRIEF COMPLETE**
 
-Brief fonctionnel généré et validé.
-Catégorie : [CATEGORY]
-Workflow recommandé : [COMMAND]
+Functional brief generated and validated.
+Category: [CATEGORY]
+Recommended workflow: [COMMAND]
 
-**Prochaine étape :** Lancer `[COMMAND]` ?
+**Next step:** Launch `[COMMAND]`?
 ---
 ```
