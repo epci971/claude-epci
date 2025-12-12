@@ -296,7 +296,7 @@ description: >-
 
 ```markdown
 ## Validation
-Pour les règles complètes, voir [filtres-obligatoires.md](references/filtres-obligatoires.md).
+Pour les règles complètes, voir [filtres-obligatoires.md](skills-web/filtres-obligatoires.md).
 
 ## Schémas
 Consultez [schemas.md](references/schemas.md) pour les tables et relations.
