@@ -1,0 +1,12 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 6. Services & Dependency Injection
+
+- Register services in `services.yaml` (autowiring & autoconfiguration).
+- Prefer **constructor injection** over setter injection.
+- Use service **tags** for specific behavior (e.g., `messenger.message_handler`).
+- Make services `final` and immutable where applicable.
+- Services must be **private** by default unless explicitly needed.

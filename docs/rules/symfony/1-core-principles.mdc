@@ -1,0 +1,14 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 1. Core Principles
+
+### Clean Code & Architecture
+- Prioritize **SOLID principles** and clean, decoupled architecture.
+- Design systems for **scalability**, **modularity**, and **maintainability**.
+- Promote **code reuse** via iteration and modularization rather than duplication.
+- Ensure consistency by following **Symfony and PHP best practices**.
+- Prefer short, descriptive, and **self-documenting code** with proper naming conventions.
+- Maintain **strict typing**: always declare `declare(strict_types=1)`.

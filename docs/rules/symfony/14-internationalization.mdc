@@ -1,0 +1,10 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 14. Internationalization
+
+- Store translations in `translations/`.
+- Use Symfony's **Translation Component** with domain and locale.
+- Avoid hardcoded strings in templates and PHP.

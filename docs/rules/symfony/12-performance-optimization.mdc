@@ -1,0 +1,12 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 12. Performance & Optimization
+
+- Use Symfony **Cache Component** with Redis or Memcached.
+- Prefer **lazy-loading** services where beneficial.
+- Use Doctrine **batch processing** for large data sets.
+- Avoid N+1 problems and optimize queries using joins and partials.
+- Profile performance using the **Symfony Profiler**.

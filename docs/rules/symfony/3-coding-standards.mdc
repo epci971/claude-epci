@@ -1,0 +1,26 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 3. Coding Standards
+
+### PHP & Symfony Standards
+- Follow **PSR-12** coding standards.
+- Use PHP 8.1+ features:
+  - Typed properties
+  - Constructor property promotion
+  - Match expressions
+  - Enums
+  - Readonly classes and properties
+- Apply **explicit type declarations** for:
+  - Method parameters
+  - Return types
+  - Class properties
+- Avoid magic values: use **constants** or enums.
+- One class per file; one responsibility per class.
+- Maintain the following code metrics:
+  - Max 30 lines per function
+  - Max 5 function parameters
+  - Max 300 lines per file
+  - Max 10 sub-files per folder

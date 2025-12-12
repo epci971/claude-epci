@@ -1,0 +1,17 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 7. Entities & Doctrine
+
+- Place entities in `src/Entity/`.
+- Entities should be `final` and use **typed properties**.
+- Use PHP attributes (preferred) or annotations for Doctrine mapping.
+- Use **Value Objects** for complex types.
+- Perform queries through custom **repositories** using:
+  - DQL
+  - Query Builder
+  - Native queries only when strictly necessary
+- Create and maintain Doctrine **migrations**.
+- Ensure proper **indexing** and query optimization.

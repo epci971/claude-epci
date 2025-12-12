@@ -1,0 +1,10 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 15. Frontend & Assets
+
+- Use the `assets/` directory for JS, CSS, images, etc.
+- Prefer **AssetMapper** or Webpack Encore (depending on Symfony setup).
+- Avoid complex logic in Twig templates.

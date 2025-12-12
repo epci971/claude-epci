@@ -1,0 +1,12 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 11. Security
+
+- Configure firewalls, roles, and encoders in `security.yaml`.
+- Use Symfony **Voters** for fine-grained access control.
+- Ensure **password hashing** uses Argon2i or bcrypt.
+- Implement CSRF protection, XSS prevention, and sanitization.
+- Use `isGranted()` and security expressions in controllers or templates.

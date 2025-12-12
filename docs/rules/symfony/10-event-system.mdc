@@ -1,0 +1,11 @@
+---
+description: 
+globs: src/**/*.php
+alwaysApply: false
+---
+## 10. Event System
+
+- Use **events** for decoupled, cross-cutting concerns.
+- Create **domain events** for significant business actions.
+- Handle events using **subscribers** or **listeners**.
+- Use **Symfony Messenger** for event-driven and CQRS-style architectures.
