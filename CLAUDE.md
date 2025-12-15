@@ -87,6 +87,12 @@ tools-claude-code-epci/
     │   ├── epci-spike.md       # Exploration time-boxed
     │   └── epci.md             # Workflow complet 3 phases
     │
+    ├── hooks/                   # Système de hooks (v3.1)
+    │   ├── README.md           # Documentation utilisateur
+    │   ├── runner.py           # Moteur d'exécution
+    │   ├── examples/           # Exemples de hooks
+    │   └── active/             # Hooks actifs (symlinks)
+    │
     ├── scripts/                 # Validation
     │   ├── validate_all.py     # Orchestrateur
     │   ├── validate_command.py
@@ -265,6 +271,57 @@ docs/features/<slug>.md
 | `commands-creator` | Création de commandes | `/epci:create command` |
 | `subagents-creator` | Création de subagents | `/epci:create agent` |
 | `component-advisor` | Détection opportunités création | Passif (auto) |
+
+### 3.6 Système de Hooks (v3.1+)
+
+Le système de hooks permet d'exécuter des scripts personnalisés à des points précis du workflow EPCI.
+
+#### Points de Hook
+
+| Hook Type | Déclencheur | Usage |
+|-----------|-------------|-------|
+| `pre-phase-1` | Avant Phase 1 | Charger contexte, vérifier prérequis |
+| `post-phase-1` | Après validation plan | Notifier équipe, créer tickets |
+| `pre-phase-2` | Avant Phase 2 | Exécuter linters, setup environnement |
+| `post-phase-2` | Après code review | Tests additionnels, coverage |
+| `pre-phase-3` | Avant Phase 3 | Vérifier tests passent |
+| `post-phase-3` | Après finalisation | Déployer, notifier, métriques |
+| `on-breakpoint` | À chaque breakpoint | Logging, collecte métriques |
+
+#### Structure des Fichiers
+
+```
+hooks/
+├── README.md           # Documentation utilisateur
+├── runner.py           # Moteur d'exécution (~300 LOC)
+├── examples/           # Exemples de hooks
+│   ├── pre-phase-2-lint.sh
+│   ├── post-phase-3-notify.py
+│   └── on-breakpoint-log.sh
+└── active/             # Hooks actifs (symlinks vers examples/)
+```
+
+#### Format d'un Hook
+
+Les hooks reçoivent un contexte JSON via stdin et retournent un résultat JSON:
+
+```python
+#!/usr/bin/env python3
+import sys, json
+context = json.loads(sys.stdin.read())
+# Logic here
+print(json.dumps({"status": "success", "message": "Hook completed"}))
+```
+
+#### Configuration
+
+| Paramètre | Défaut | Description |
+|-----------|--------|-------------|
+| `enabled` | `true` | Activer/désactiver les hooks |
+| `timeout_seconds` | `30` | Timeout par hook |
+| `fail_on_error` | `false` | Stopper le workflow si erreur |
+
+Voir `hooks/README.md` pour la documentation complète.
 
 ---
 

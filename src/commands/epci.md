@@ -43,6 +43,28 @@ Create/update file: `docs/features/<feature-slug>.md`
 
 ---
 
+## Hooks Integration
+
+User-defined hooks can be executed at specific points in the workflow.
+See `hooks/README.md` for configuration and examples.
+
+**Hook Points:**
+
+| Hook Type | Trigger Point | Use Case |
+|-----------|--------------|----------|
+| `pre-phase-1` | Before Phase 1 starts | Load context, check prerequisites |
+| `post-phase-1` | After plan validation | Notify team, create tickets |
+| `pre-phase-2` | Before coding starts | Run linters, setup environment |
+| `post-phase-2` | After code review | Additional tests, coverage checks |
+| `pre-phase-3` | Before finalization | Verify all tests pass |
+| `post-phase-3` | After completion | Deploy, notify, collect metrics |
+| `on-breakpoint` | At each breakpoint | Logging, metrics collection |
+
+**Execution:** If hooks are configured in `hooks/active/`, they run automatically.
+On error with `fail_on_error: false` (default), workflow continues with warning.
+
+---
+
 ## Phase 1: Analysis and Planning
 
 ### Configuration
@@ -54,6 +76,8 @@ Create/update file: `docs/features/<feature-slug>.md`
 | **Subagents** | @Plan (native), @plan-validator |
 
 ### Process
+
+**🪝 Execute `pre-phase-1` hooks** (if configured)
 
 1. **Brief reception**
    - Verify brief is complete (comes from `/epci-brief`)
@@ -104,7 +128,11 @@ Create/update file: `docs/features/<feature-slug>.md`
 - **@plan-validator**: APPROVED
 ```
 
+**🪝 Execute `post-phase-1` hooks** (if configured)
+
 ### ⏸️ BREAKPOINT (Enriched)
+
+**🪝 Execute `on-breakpoint` hooks** (if configured)
 
 Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
@@ -176,6 +204,8 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 ### Process
 
+**🪝 Execute `pre-phase-2` hooks** (if configured)
+
 For each task in the plan:
 
 ```
@@ -221,7 +251,11 @@ OK (47 tests, 156 assertions)
 | #3 | +1 file | Helper extraction |
 ```
 
+**🪝 Execute `post-phase-2` hooks** (if configured)
+
 ### ⏸️ BREAKPOINT (Enriched)
+
+**🪝 Execute `on-breakpoint` hooks** (if configured)
 
 Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
@@ -284,6 +318,8 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 ### Process
 
+**🪝 Execute `pre-phase-3` hooks** (if configured)
+
 1. **Structured commit**
    ```
    feat(scope): short description
@@ -331,6 +367,8 @@ Refs: docs/features/user-email-validation.md
 - Lint: ✅ Clean
 - Docs: ✅ Up to date
 ```
+
+**🪝 Execute `post-phase-3` hooks** (if configured)
 
 ### ✅ COMPLETION
 

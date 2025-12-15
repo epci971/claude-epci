@@ -1,0 +1,1 @@
+../examples/pre-phase-2-lint.sh
