@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **F02: Système de Hooks** - Extensibility system for EPCI workflow with:
+  - 7 hook points: pre/post-phase-1/2/3, on-breakpoint
+  - Python runner (`hooks/runner.py`) with subprocess execution, timeout, JSON I/O
+  - Safe interpreter whitelist for shebang security
+  - 3 example hooks: linter, notification, logging
+  - Full documentation in `hooks/README.md`
+  - Integration with `/epci` command at all phase transitions
+
 - **F03: Enriched Breakpoints** - Enhanced `/epci` workflow breakpoints with:
   - Complexity scoring algorithm (files×0.3 + LOC×0.3 + deps×0.2 + risk×0.2)
   - Time estimation heuristics (TINY=15min, SMALL=1h, STANDARD=3h, LARGE=8h+)
