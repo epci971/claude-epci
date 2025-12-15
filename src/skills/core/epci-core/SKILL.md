@@ -70,6 +70,20 @@ Mandatory synchronization points:
 | BP1 | Phase 1 | Plan validated by @plan-validator |
 | BP2 | Phase 2 | Code reviewed by @code-reviewer |
 
+### Enriched Breakpoint Format (v3.1+)
+
+Breakpoints display a decision dashboard with:
+
+| Section | Content | Source |
+|---------|---------|--------|
+| **Métriques** | Complexity, files, time, risk | Scoring algorithm |
+| **Validations** | Agent verdicts, skills loaded | Subagents |
+| **Preview** | Next phase tasks (3-5) | Plan §2 |
+| **Liens** | Feature Document path | File system |
+| **Options** | Interactive choices | Text instructions |
+
+See `breakpoint-metrics` skill for scoring algorithm and templates.
+
 ## EPCI Subagents
 
 | Subagent | Role | Phase |

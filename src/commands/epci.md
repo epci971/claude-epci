@@ -104,22 +104,52 @@ Create/update file: `docs/features/<feature-slug>.md`
 - **@plan-validator**: APPROVED
 ```
 
-### ⏸️ BREAKPOINT
+### ⏸️ BREAKPOINT (Enriched)
+
+Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 ```
----
-⏸️ **BREAKPOINT PHASE 1**
-
-Plan complete and validated.
-- @plan-validator: APPROVED
-- Tasks: X tasks identified
-- Files: Y files impacted
-
-Feature Document §2 updated.
-
-**Awaiting confirmation:** "Continue" or "Plan validated"
----
+┌─────────────────────────────────────────────────────────────────────┐
+│ ⏸️  BREAKPOINT PHASE 1 — Plan Validé                                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ 📊 MÉTRIQUES                                                        │
+│ ├── Complexité: {CATEGORY} (score: {SCORE})                        │
+│ ├── Fichiers impactés: {FILE_COUNT}                                │
+│ ├── Temps estimé: {TIME_ESTIMATE}                                  │
+│ └── Risque: {RISK_LEVEL} ({RISK_DESCRIPTION})                      │
+│                                                                     │
+│ ✅ VALIDATIONS                                                      │
+│ ├── @plan-validator: {VERDICT}                                     │
+│ │   ├── Completeness: {STATUS}                                     │
+│ │   ├── Consistency: {STATUS}                                      │
+│ │   ├── Feasibility: {STATUS}                                      │
+│ │   └── Quality: {STATUS}                                          │
+│ └── Skills chargés: {SKILLS_LIST}                                  │
+│                                                                     │
+│ 📋 PREVIEW PHASE 2                                                  │
+│ ├── Tâche 1: {TASK_1} ({TIME})                                     │
+│ ├── Tâche 2: {TASK_2} ({TIME})                                     │
+│ ├── Tâche 3: {TASK_3} ({TIME})                                     │
+│ └── ... ({N} tâches restantes)                                     │
+│                                                                     │
+│ 🔗 Feature Document: docs/features/{slug}.md                       │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Options:                                                            │
+│   • Tapez "Continuer" → Passer à Phase 2 (Implémentation)         │
+│   • Tapez "Modifier le plan" → Réviser le plan                     │
+│   • Tapez "Voir détails" → Afficher Feature Document complet       │
+│   • Tapez "Annuler" → Abandonner le workflow                       │
+└─────────────────────────────────────────────────────────────────────┘
 ```
+
+**Metrics Calculation** (from `breakpoint-metrics` skill):
+- Complexity score: `files×0.3 + LOC×0.3 + deps×0.2 + risk×0.2`
+- Time estimate: Based on category heuristic (TINY=15min, SMALL=1h, STANDARD=3h, LARGE=8h+)
+- Risk: Derived from identified risks in plan
+
+**Awaiting confirmation:** User must type "Continuer" to proceed
 
 ---
 
@@ -191,21 +221,54 @@ OK (47 tests, 156 assertions)
 | #3 | +1 file | Helper extraction |
 ```
 
-### ⏸️ BREAKPOINT
+### ⏸️ BREAKPOINT (Enriched)
+
+Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 ```
----
-⏸️ **BREAKPOINT PHASE 2**
-
-Code implemented and validated.
-- Tests: X/X passing
-- @code-reviewer: APPROVED
-
-Feature Document §3 updated.
-
-**Awaiting confirmation:** "Continue" or "Code validated"
----
+┌─────────────────────────────────────────────────────────────────────┐
+│ ⏸️  BREAKPOINT PHASE 2 — Code Implémenté                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ 📊 MÉTRIQUES                                                        │
+│ ├── Tâches: {COMPLETED}/{TOTAL} complétées                         │
+│ ├── Tests: {TEST_COUNT} {TEST_STATUS}                              │
+│ ├── Coverage: {COVERAGE}%                                          │
+│ └── Déviations: {DEVIATION_STATUS}                                 │
+│                                                                     │
+│ ✅ VALIDATIONS                                                      │
+│ ├── @code-reviewer: {CR_VERDICT} ({CR_SUMMARY})                    │
+│ ├── @security-auditor: {SA_VERDICT}                                │
+│ └── @qa-reviewer: {QA_VERDICT}                                     │
+│                                                                     │
+│ 📋 PREVIEW PHASE 3                                                  │
+│ ├── Commit structuré avec message conventionnel                    │
+│ ├── Génération documentation (@doc-generator)                      │
+│ └── Préparation PR                                                 │
+│                                                                     │
+│ 🔗 Feature Document: docs/features/{slug}.md                       │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Options:                                                            │
+│   • Tapez "Continuer" → Passer à Phase 3 (Finalisation)           │
+│   • Tapez "Corriger issues" → Adresser les problèmes signalés     │
+│   • Tapez "Voir rapports" → Afficher rapports des agents          │
+│   • Tapez "Annuler" → Abandonner le workflow                       │
+└─────────────────────────────────────────────────────────────────────┘
 ```
+
+**Metrics Collection**:
+- Tasks: From §3 Progress checklist
+- Tests: From test execution results
+- Coverage: From test coverage report (if available)
+- Agent verdicts: From review reports
+
+**Conditional Agents Display**:
+- @security-auditor: Show only if invoked (auth/security files detected)
+- @qa-reviewer: Show only if invoked (complex tests detected)
+- In `--large` mode: All agents shown as mandatory
+
+**Awaiting confirmation:** User must type "Continuer" to proceed
 
 ---
 
