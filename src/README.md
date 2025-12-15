@@ -151,14 +151,14 @@ docs/features/<feature-slug>.md
 - Skills : `epci-core`, `architecture-patterns`, stack auto-détecté
 - Agents : `@Plan`, `@plan-validator`
 - Output : §2 Plan d'Implémentation
-- **BREAKPOINT** : Confirmation utilisateur
+- **BREAKPOINT ENRICHI** : Tableau de bord décisionnel avec métriques, verdicts agents, preview Phase 2
 
 **Phase 2 — Implémentation TDD**
 - Thinking : `think`
 - Skills : `testing-strategy`, `code-conventions`, stack auto-détecté
 - Agents : `@code-reviewer` (toujours), `@security-auditor` (conditionnel), `@qa-reviewer` (conditionnel)
 - Output : §3 Rapport d'Implémentation
-- **BREAKPOINT** : Confirmation utilisateur
+- **BREAKPOINT ENRICHI** : Tableau de bord décisionnel avec métriques, verdicts agents, preview Phase 3
 
 **Phase 3 — Finalisation**
 - Thinking : `think`
@@ -280,21 +280,72 @@ Crée des composants EPCI avec validation automatique.
 | `NEEDS_REVISION` | Corrections requises |
 | `REJECTED` | Problèmes critiques |
 
+### Breakpoints Enrichis
+
+À partir de la v3.1, les breakpoints du workflow `/epci` affichent un tableau de bord décisionnel complet :
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    🔄 EPCI BREAKPOINT — PHASE 1→2               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  📊 MÉTRIQUES                                                    │
+│  ├─ Complexité    : 6.2/10 (STANDARD)                          │
+│  ├─ Fichiers      : 7 impactés, 3 nouveaux                     │
+│  ├─ Temps estimé  : ~3h 15min                                   │
+│  └─ Risque        : MOYEN (auth + API externe)                  │
+│                                                                  │
+│  ✅ AGENTS VERDICTS                                             │
+│  ├─ @plan-validator    : APPROVED                               │
+│  └─ @Plan              : APPROVED_WITH_NOTES                    │
+│                                                                  │
+│  🎯 PREVIEW PHASE 2 (Implémentation TDD)                       │
+│  ├─ 1. Créer User entity avec validation                       │
+│  ├─ 2. Tests unitaires UserService                             │
+│  ├─ 3. Endpoint POST /api/users                                │
+│  ├─ 4. Tests intégration API                                   │
+│  └─ 5. Validation sécurité JWT...                              │
+│                                                                  │
+│  🤔 OPTIONS                                                     │
+│  ├─ [C] Continuer la Phase 2                                   │
+│  ├─ [R] Réviser le plan (retour Phase 1)                       │
+│  ├─ [P] Pause (sauvegarder l'état)                             │
+│  └─ [A] Abandon (nettoyer et sortir)                           │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+Votre choix ? [C/R/P/A] :
+```
+
+**Composants des Breakpoints Enrichis :**
+
+| Élément | Description |
+|---------|-------------|
+| **Métriques** | Scoring complexité, estimation temps, analyse risque |
+| **Verdicts Agents** | Status des subagents avec codes couleur |
+| **Preview** | Aperçu des 3-5 premières tâches de la phase suivante |
+| **Options** | Choix interactifs documentés |
+
+**Skills associés :**
+- `breakpoint-metrics` : Calcul scoring et estimation temps
+- `epci-core` : Format et documentation des breakpoints
+
 ---
 
 ## Skills
 
-### Core Skills (5)
+### Core Skills (6)
 
 Skills fondamentaux chargés selon le contexte du workflow.
 
 | Skill | Domaine | Chargé par |
 |-------|---------|------------|
-| `epci-core` | Concepts EPCI, Feature Document | Toutes commandes |
+| `epci-core` | Concepts EPCI, Feature Document, Breakpoints | Toutes commandes |
 | `architecture-patterns` | SOLID, DDD, Clean Architecture | `/epci-brief`, Phase 1 |
 | `code-conventions` | Naming, structure, DRY/KISS | Phase 2 |
 | `testing-strategy` | TDD, coverage, mocking | Phase 2 |
 | `git-workflow` | Conventional Commits, branching | Phase 3 |
+| `breakpoint-metrics` | Scoring complexité, estimation temps | Breakpoints enrichis |
 
 ### Stack Skills (4)
 
@@ -388,13 +439,14 @@ src/
 │   ├── qa-reviewer.md
 │   └── doc-generator.md
 │
-├── skills/                      # 13 skills
-│   ├── core/                   # 5 skills fondamentaux
+├── skills/                      # 14 skills
+│   ├── core/                   # 6 skills fondamentaux
 │   │   ├── epci-core/
 │   │   ├── architecture-patterns/
 │   │   ├── code-conventions/
 │   │   ├── testing-strategy/
-│   │   └── git-workflow/
+│   │   ├── git-workflow/
+│   │   └── breakpoint-metrics/
 │   │
 │   ├── stack/                  # 4 skills auto-détectés
 │   │   ├── php-symfony/
