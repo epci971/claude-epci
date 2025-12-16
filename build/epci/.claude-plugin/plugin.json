@@ -1,7 +1,7 @@
 {
   "name": "epci",
-  "version": "3.0.0",
-  "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability",
+  "version": "3.5.0",
+  "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability and project memory",
   "author": {
     "name": "EPCI Team"
   },
@@ -11,6 +11,7 @@
     "../commands/epci.md",
     "../commands/epci-quick.md",
     "../commands/epci-spike.md",
+    "../commands/epci-memory.md",
     "../commands/create.md"
   ],
   "agents": [
@@ -25,8 +26,10 @@
       "../skills/core/epci-core/SKILL.md",
       "../skills/core/architecture-patterns/SKILL.md",
       "../skills/core/code-conventions/SKILL.md",
+      "../skills/core/flags-system/SKILL.md",
       "../skills/core/testing-strategy/SKILL.md",
-      "../skills/core/git-workflow/SKILL.md"
+      "../skills/core/git-workflow/SKILL.md",
+      "../skills/core/project-memory/SKILL.md"
     ],
     "stack": [
       "../skills/stack/php-symfony/SKILL.md",

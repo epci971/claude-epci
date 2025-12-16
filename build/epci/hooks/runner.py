@@ -64,6 +64,13 @@ class HookContext:
     test_results: Dict[str, Any] = field(default_factory=dict)
     breakpoint_type: str = ""
     timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat() + "Z")
+    # Flags support (v3.1+)
+    active_flags: List[str] = field(default_factory=list)
+    flag_sources: Dict[str, str] = field(default_factory=dict)  # flag -> "auto"|"explicit"|"alias"
+    # Project memory support (v3.5+)
+    project_memory: Dict[str, Any] = field(default_factory=dict)  # context, conventions
+    detected_stack: str = ""  # php-symfony, javascript-react, etc.
+    detected_conventions: Dict[str, Any] = field(default_factory=dict)  # naming, structure
     extra: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
@@ -76,6 +83,11 @@ class HookContext:
             'test_results': self.test_results,
             'breakpoint_type': self.breakpoint_type,
             'timestamp': self.timestamp,
+            'active_flags': self.active_flags,
+            'flag_sources': self.flag_sources,
+            'project_memory': self.project_memory,
+            'detected_stack': self.detected_stack,
+            'detected_conventions': self.detected_conventions,
             **self.extra
         }
 

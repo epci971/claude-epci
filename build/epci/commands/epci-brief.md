@@ -18,7 +18,7 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think hard` (default) / `ultrathink` (LARGE or high uncertainty) |
-| **Skills** | epci-core, architecture-patterns, [stack-skill auto-detected] |
+| **Skills** | epci-core, architecture-patterns, flags-system, [stack-skill auto-detected] |
 | **Subagents** | @Explore (thorough) |
 
 **Thinking mode selection:**
@@ -81,7 +81,27 @@ Propose improvements based on @Explore analysis:
 | Estimated LOC | <50 | <200 | <1000 | 1000+ | ? |
 | Risk | None | Low | Medium | High | Unknown |
 | Tests required | No | Optional | Yes | Yes+ | N/A |
-| Arch impacted | No | No | Possible | Yes | ? |
+| Arch impacted | No | No | Possible | Yes | ?
+
+### Step 4b: Flag Auto-Activation
+
+Based on the exploration and complexity evaluation, detect flags to auto-activate:
+
+| Condition | Threshold | Flag |
+|-----------|-----------|------|
+| Files impacted | 3-10 | `--think` |
+| Files impacted | >10 | `--think-hard` |
+| Refactoring/migration detected | true | `--think-hard` |
+| Sensitive file patterns | any match | `--safe` |
+| Complexity score | >0.7 | `--wave` |
+
+**Sensitive file patterns:**
+```
+**/auth/**  **/security/**  **/payment/**
+**/password/**  **/api/v*/admin/**
+```
+
+**Output:** List of suggested flags with source (auto/recommended)
 
 ### Step 5: Génération Output
 
@@ -108,6 +128,9 @@ Generate a structured brief in the response (no file created):
 - [ ] Criterion 2 (measurable)
 
 ## Category: [TINY|SMALL]
+
+## Suggested Flags
+- [flag] (auto/recommended) — if any detected
 
 → Launch `/epci-quick`
 ```
@@ -160,6 +183,13 @@ Create file `docs/features/<slug>.md`:
 - **Risk**: [Low|Medium|High]
 - **Justification**: [Reason for categorization]
 
+### Suggested Flags
+| Flag | Source | Reason |
+|------|--------|--------|
+| `--think-hard` | auto | >10 files impacted |
+| `--safe` | auto | auth files detected |
+| `--wave` | auto | complexity > 0.7 |
+
 ---
 
 ## §2 — Implementation Plan
@@ -182,13 +212,15 @@ Generate inline brief with exploration focus (no Feature Document).
 
 ### Step 6: Routing
 
-| Category | Command | Output |
-|----------|---------|--------|
-| TINY | `/epci-quick` | Inline brief |
-| SMALL | `/epci-quick` | Inline brief |
-| STANDARD | `/epci` | Feature Document created |
-| LARGE | `/epci --large` | Feature Document created |
-| SPIKE | `/epci-spike` | Inline brief |
+| Category | Command | Output | Typical Flags |
+|----------|---------|--------|---------------|
+| TINY | `/epci-quick` | Inline brief | (none or `--fast`) |
+| SMALL | `/epci-quick` | Inline brief | `--think` if 3+ files |
+| STANDARD | `/epci` | Feature Document | `--think` or `--think-hard` |
+| LARGE | `/epci --large` | Feature Document | `--think-hard --wave` |
+| SPIKE | `/epci-spike` | Inline brief | `--think-hard` if complex |
+
+**Note:** `--large` is an alias for `--think-hard --wave`. Both forms are accepted.
 
 ## Transition
 
@@ -205,8 +237,9 @@ After output generation:
 [STANDARD/LARGE] Feature Document created: docs/features/<slug>.md
 
 Category: [CATEGORY]
-Recommended workflow: [COMMAND]
+Suggested flags: [FLAGS] (source: auto/explicit)
+Recommended workflow: [COMMAND] [FLAGS]
 
-**Next step:** Launch `[COMMAND]`?
+**Next step:** Launch `[COMMAND] [FLAGS]`?
 ---
 ```

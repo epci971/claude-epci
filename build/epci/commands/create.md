@@ -212,4 +212,13 @@ skills/factory/
 ## Skills Loaded
 
 - `component-advisor` (passive opportunity detection)
+- `flags-system` (ensures new components are flags-aware)
 - `[creator-skill]` (based on requested type)
+
+## Flags Support
+
+Components created by this command are automatically flags-aware:
+
+- **Commands**: Include `argument-hint` with relevant flags
+- **Skills**: Reference `flags-system` skill when applicable
+- **Agents**: Receive active flags via `HookContext`

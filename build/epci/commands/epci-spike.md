@@ -3,7 +3,7 @@ description: >-
   Time-boxed exploration for technical uncertainties. Generates a Spike Report
   with GO/NO-GO/MORE_RESEARCH verdict. No production code, focus on
   learning and uncertainty reduction.
-argument-hint: "[duration] [question]"
+argument-hint: "[duration] [question] [--think-hard]"
 allowed-tools: [Read, Glob, Grep, Bash, Task, WebFetch]
 ---
 
@@ -20,6 +20,15 @@ A spike is a time-limited exploration to reduce technical uncertainty.
 |----------|-------------|---------|
 | `duration` | Maximum time (e.g., 30min, 1h, 2h) | 1h |
 | `question` | Technical question to resolve | Required |
+
+## Supported Flags
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--think-hard` | Deep analysis for complex spikes | Complex question detected |
+| `--uc` | Compressed Spike Report | context > 75% |
+
+**Note:** `--safe`, `--fast`, `--wave` flags are not applicable to spikes (exploration only).
 
 ## When to Use a Spike
 
@@ -189,6 +198,7 @@ Verdict: NO-GO
 ## Skills Loaded
 
 - `architecture-patterns` (approach evaluation)
+- `flags-system` (flag handling)
 - `[stack-skill]` (auto-detected)
 
 ## Differences with Other Workflows
