@@ -1,6 +1,6 @@
 # Meeting Plans Reference
 
-> Structured plans for different meeting types
+> 7 structured plans by meeting type + adaptation guidelines
 
 ---
 
@@ -9,174 +9,217 @@
 ```
 1. Scan content for type indicators
 2. Match to closest plan type
-3. If no clear match → use Generic plan
-4. Adapt sections based on actual content (skip empty, add if needed)
+3. If no clear match → Generic plan
+4. Adapt sections to actual content
+5. Apply v2.0.0 enhancements (diagrams, insights, glossary)
 ```
 
 ---
 
 ## Plan 1: Steering / Decision Meeting
 
-**Indicators**: "décision", "valider", "arbitrer", "budget", "deadline", "go/no-go", "validation"
+**Indicators**: "decision", "validate", "arbitrate", "budget", "deadline", "go/no-go", "approval"
 
 ### Structure
 
 ```markdown
-## 📌 Contexte
-[Why this meeting, what needs to be decided]
+## 📌 Context
+[Why this meeting, what needs decision]
 
-## 🎯 Problématique
-[Core issue or question requiring decision]
+## 🎯 Problem Statement
+[Core issue requiring decision]
 
-## 💡 Solutions discutées
-[Options presented and analyzed]
+## 💡 Solutions Discussed
+[Options analyzed]
 
-## ✅ Décisions prises
-[Clear list of what was decided]
+## ✅ Decisions Made
+[Clear decisions]
 
-## 📝 Actions à mener
-| Responsable | Action | Échéance |
-|-------------|--------|----------|
+## 📝 Action Items
+| Owner | Action | Deadline | Status |
 
-## ⚠️ Points de vigilance
-[Risks, dependencies, blockers identified]
+## ⚠️ Watch Points
+[Risks, dependencies, blockers]
 ```
+
+**Diagram opportunities**: Decision trees, approval workflows
 
 ---
 
 ## Plan 2: Information Meeting
 
-**Indicators**: "informer", "présenter", "update", "point", "avancement", announcement language
+**Indicators**: "inform", "present", "update", "status", "progress", "announcement"
 
 ### Structure
 
 ```markdown
-## 📌 Contexte
-[Meeting purpose and scope]
+## 📌 Context
+[Purpose and scope]
 
-## 📢 Informations clés
-[Main announcements and updates, organized by topic]
+## 📢 Key Information
+[Announcements and updates by topic]
 
-## ⚠️ Points de vigilance
-[Items requiring attention or follow-up]
+## ⚠️ Watch Points
+[Items requiring attention]
 
-## ❓ Questions ouvertes
-[Unresolved questions raised during meeting]
+## ❓ Open Questions
+[Unresolved questions]
 
-## 📝 Actions à mener
-| Responsable | Action | Échéance |
-|-------------|--------|----------|
+## 📝 Action Items
+| Owner | Action | Deadline | Status |
 ```
+
+**Diagram opportunities**: Timelines, progress flows
 
 ---
 
 ## Plan 3: Brainstorming
 
-**Indicators**: "idées", "propositions", "explorer", "brainstorm", creative/exploratory language
+**Indicators**: "ideas", "proposals", "explore", "brainstorm", "creative", "what if"
 
 ### Structure
 
 ```markdown
-## 📌 Contexte
-[Topic being explored, objectives]
+## 📌 Context
+[Topic being explored]
 
-## 💡 Idées évoquées
-[All ideas mentioned, grouped thematically if possible]
+## 💡 Ideas Discussed
+[All ideas, grouped thematically]
 
-## ⭐ Pistes retenues
-[Ideas selected for further exploration]
+## ⭐ Selected Leads
+[Ideas for further exploration]
 
-## 🚫 Pistes écartées
-[Ideas dismissed and why, if discussed]
+## 🚫 Discarded Leads
+[Dismissed ideas and why]
 
-## 📝 Prochaines étapes
-| Responsable | Action | Échéance |
-|-------------|--------|----------|
+## 📝 Next Steps
+| Owner | Action | Deadline | Status |
 ```
+
+**Diagram opportunities**: Mind maps, concept relationships
 
 ---
 
 ## Plan 4: Training / Workshop
 
-**Indicators**: "formation", "atelier", "exercice", "apprendre", learning objectives, pedagogical structure
+**Indicators**: "training", "workshop", "exercise", "learn", "formation", "atelier"
 
 ### Structure
 
 ```markdown
-## 🎯 Objectifs de la session
-[Learning goals, expected outcomes]
+## 🎯 Session Objectives
+[Learning goals]
 
-## 📚 Contenu traité
-[Topics covered, organized by section]
+## 📚 Content Covered
+[Topics by section]
 
-## ❓ Questions posées
-[Questions from participants with answers if provided]
+## ❓ Questions Asked
+[Participant questions with answers]
 
-## 📌 Points clés à retenir
-[Key takeaways, summary of learning]
+## 📌 Key Takeaways
+[Summary of learning]
 
-## 📝 Prochaines étapes
-| Responsable | Action | Échéance |
-|-------------|--------|----------|
+## 📝 Next Steps
+| Owner | Action | Deadline | Status |
 ```
+
+**Diagram opportunities**: Process demonstrations, procedures
 
 ---
 
 ## Plan 5: Individual Review / 1:1
 
-**Indicators**: One-on-one context, "feedback", "évaluation", "objectifs", performance language
+**Indicators**: One-on-one, "feedback", "evaluation", "objectives", "performance", "1:1"
 
 ### Structure
 
 ```markdown
-## 📌 Contexte
-[Purpose of the review, period covered]
+## 📌 Context
+[Purpose, period covered]
 
-## 💬 Feedback échangé
-[Key feedback points discussed]
+## 💬 Feedback Exchanged
+[Key feedback]
 
-## ⭐ Points forts
-[Strengths identified]
+## ⭐ Strengths
+[Identified strengths]
 
-## 📈 Axes d'amélioration
-[Areas for development]
+## 📈 Areas for Improvement
+[Development areas]
 
-## 🎯 Objectifs définis
-[Goals set for next period]
+## 🎯 Defined Objectives
+[Goals for next period]
 
-## 📝 Actions à mener
-| Responsable | Action | Échéance |
-|-------------|--------|----------|
+## 📝 Action Items
+| Owner | Action | Deadline | Status |
 ```
+
+**Diagram opportunities**: Development paths, skill maps
 
 ---
 
-## Plan 6: Generic (Fallback)
+## Plan 6: Technical / Architecture Meeting
 
-**Use when**: No clear meeting type detected, mixed content, or unusual format
+**Indicators**: "architecture", "design", "workflow", "API", "database", "ETL", "integration", "service", "component"
 
 ### Structure
 
 ```markdown
-## 📌 Contexte
-[Meeting background and purpose]
+## 📌 Context
+[Technical problem or design challenge]
 
-## 💬 Points abordés
-[Topics discussed, organized logically]
+## 🏗️ Architecture Discussed
+[Systems, components, layers]
 
-## ✅ Décisions prises
-[Any decisions made]
+## 🔄 Flows & Processes
+[Data flows, workflows, sequences]
 
-## 📝 Actions à mener
-| Responsable | Action | Échéance |
-|-------------|--------|----------|
+## ⚙️ Technical Decisions
+[Technology choices, patterns]
 
-## ⚠️ Points de vigilance
-[Issues flagged, concerns raised]
+## ⚠️ Technical Risks
+[Identified risks, dependencies]
 
-## ❓ Questions ouvertes
+## 📝 Action Items
+| Owner | Action | Deadline | Status |
+```
+
+**Diagram opportunities (HIGH PRIORITY)**:
+- System architecture (flowchart)
+- Sequence diagrams for integrations
+- ER diagrams for data models
+- State diagrams for lifecycles
+- Class diagrams for services
+- Package structures
+
+---
+
+## Plan 7: Generic (Fallback)
+
+**Use when**: No clear type, mixed content, unusual format
+
+### Structure
+
+```markdown
+## 📌 Context
+[Background and purpose]
+
+## 💬 Topics Discussed
+[Organized logically]
+
+## ✅ Decisions Made
+[Any decisions]
+
+## 📝 Action Items
+| Owner | Action | Deadline | Status |
+
+## ⚠️ Watch Points
+[Issues, concerns]
+
+## ❓ Open Questions
 [Unresolved items]
 ```
+
+**Diagram opportunities**: Any detected flows
 
 ---
 
@@ -184,55 +227,76 @@
 
 ### Adding Sections
 
-Add sections if content warrants:
-- **💬 Verbatims clés**: If notable quotes were made
-- **📊 Chiffres mentionnés**: If specific numbers/metrics discussed
-- **📅 Dates clés**: If timeline discussed
-- **👥 Parties prenantes**: If stakeholder mapping relevant
+Add if content warrants:
+- **💬 Key Quotes**: Notable statements
+- **📊 Figures Mentioned**: Specific metrics
+- **📅 Key Dates**: Timeline discussed
+- **👥 Stakeholders**: Stakeholder mapping
 
-### Removing Sections
+### Handling Empty Sections
 
-Skip sections that would be empty:
-- Don't include "Questions ouvertes" if none were raised
-- Don't include "Points de vigilance" if none identified
-- Never skip "Actions à mener" — include even if empty with note "Aucune action identifiée"
+- Display "[No items identified]" or "[All resolved]"
+- **Never skip Action Items** — show "No actions identified" if empty
 
 ### Merging Sections
 
-Combine sections if content overlaps:
-- "Décisions" + "Actions" can merge if decisions directly imply actions
-- "Points de vigilance" + "Questions ouvertes" can merge into "Points d'attention"
+If content overlaps:
+- "Decisions" + "Actions" if decisions imply actions
+- "Watch Points" + "Open Questions" → "Points of Attention"
 
 ---
 
 ## Action Item Extraction Rules
 
-### What Counts as an Action Item
+### Include ✅
 
-✅ Include:
-- Explicit assignments: "Jean va faire X"
-- Commitments: "Je m'en occupe"
-- Deadlines mentioned: "pour vendredi"
-- Requests: "Peux-tu vérifier Y?"
-- Implicit tasks: If someone says "il faudrait que..." and context implies they'll do it
+- Explicit: "Jean will do X"
+- Commitments: "I'll handle it"
+- Deadlines: "by Friday"
+- Requests: "Can you check Y?"
+- Implicit: "we should..." with implied owner
+- Follow-ups: "I'll send you..."
 
-❌ Exclude:
-- Vague intentions without ownership: "On devrait penser à..."
-- Past actions: "J'ai déjà fait X"
-- Questions without assignment: "Qui pourrait s'en charger?" (unless answered)
+### Exclude ❌
 
-### Deadline Handling
+- Vague: "We should think about..." (no owner)
+- Past: "I already did X"
+- Unassigned questions: "Who could...?" (unless answered)
+
+### Deadline Format
 
 | Mentioned | Format |
 |-----------|--------|
-| Specific date | "15 décembre" |
-| Relative | "Demain", "Semaine prochaine" |
-| Vague | "Rapidement", "Dès que possible" |
-| None | "-" (dash, not empty) |
+| Specific | "December 15" |
+| Relative | "Tomorrow", "Next week" |
+| Vague | "Soon", "ASAP" |
+| None | "-" |
 
-### Responsibility Attribution
+### Owner Attribution
 
-- Use names when clearly stated
-- Use role if name unknown: "Responsable technique"
-- Use "Équipe" for collective actions
-- Use "À définir" if unassigned
+- Name if stated
+- Role if unknown: "Tech lead"
+- "Team" for collective
+- "TBD" if unassigned
+
+### Status Assignment
+
+| Condition | Status |
+|-----------|--------|
+| Owner AND deadline | 🟢 |
+| Owner OR deadline | 🟡 |
+| Neither | 🔴 |
+
+---
+
+## v2.0.0 Enhancements (All Plans)
+
+Always apply:
+1. ✅ Detect and generate Mermaid diagrams
+2. ✅ Generate proactive insights section
+3. ✅ Extract glossary
+4. ✅ Calculate action completeness score
+5. ✅ Suggest next meeting topics
+6. ✅ Flag technical debt
+7. ✅ Include YAML metadata
+8. ✅ Output as downloadable `.md` artifact

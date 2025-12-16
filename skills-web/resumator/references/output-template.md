@@ -1,299 +1,194 @@
-# Output Template Reference
+# Output Template Reference v2.0.0
 
-> Complete Markdown template for meeting minutes output
+> Complete Markdown template for all output types
 
 ---
 
-## Full Template — Meeting Transcription
+## Meeting Transcription Template (Primary)
 
 ```markdown
-# 📋 Compte-rendu — [Titre/Sujet/Date]
+---
+type: meeting-report
+date: [YYYY-MM-DD]
+project: [Project name if identifiable]
+participants: [List]
+tags: [Relevant tags]
+version: resumator-v2.0.0
+---
 
-**Type** : [Type de réunion détecté]  
-**Participants** : [Liste des intervenants identifiés]
+# 📋 Meeting Report — [YYYY-MM-DD]
+
+**Object**: [Intelligent one-liner < 80 chars]
+**Type**: [Detected meeting type]  
+**Participants**: [List of speakers]
+**Duration**: [If detectable]
 
 ---
 
-## 🎯 Synthèse exécutive
+## 🎯 Executive Summary
 
-- [Point essentiel 1]
-- [Point essentiel 2]
-- [Point essentiel 3]
-- [Point essentiel 4 si pertinent]
-- [Point essentiel 5 si pertinent]
-
----
-
-## 📌 Contexte
-
-[Description du contexte de la réunion : pourquoi elle a lieu, quel est le cadre, les enjeux. 2-4 phrases.]
+- [Most important point]
+- [Point 2]
+- [Point 3]
+- [Point 4]
+- [Point 5]
 
 ---
 
-## 💬 Points abordés
+## 📌 Context
 
-### [Sujet 1]
-
-[Développement exhaustif du premier sujet discuté. Inclure les positions exprimées, les échanges clés, les nuances.]
-
-### [Sujet 2]
-
-[Développement exhaustif du deuxième sujet...]
-
-### [Sujet N]
-
-[Continuer pour chaque sujet majeur abordé]
+[Exhaustive description: why this meeting, framework, stakes, 
+links to previous meetings. 3-6 sentences.]
 
 ---
 
-## ✅ Décisions prises
+## 💬 Topics Discussed
 
-- [Décision 1 - claire et actionnable]
-- [Décision 2]
-- [Décision N]
+### [Topic 1]
 
----
+[Exhaustive development. Positions, exchanges, nuances.
+Cover ALL substantive points. Exclude only greetings/small talk.]
 
-## 📝 Actions à mener
-
-| Responsable | Action | Échéance |
-|-------------|--------|----------|
-| [Nom] | [Description claire et complète de l'action] | [Date ou -] |
-| [Nom] | [Action 2] | [Date ou -] |
-| [Nom] | [Action N] | [Date ou -] |
-
-> ⚠️ Cette section doit être la plus exhaustive possible. Chaque engagement évoqué doit y figurer.
-
----
-
-## ⚠️ Points de vigilance
-
-- [Risque ou blocage potentiel 1]
-- [Sujet sensible 2]
-- [Dépendance critique 3]
-
----
-
-## ❓ Questions ouvertes
-
-- [Question non résolue 1]
-- [Sujet à approfondir 2]
-- [Point nécessitant clarification 3]
-
----
-
-## 💬 Verbatims clés
-
-> "[Citation importante mot pour mot]" — [Nom du participant]
-
-> "[Autre citation notable]" — [Nom]
-
----
+```mermaid
+[Contextual diagram if flow detected]
 ```
+> 💡 *Detected from: "[source quote]"*
+> ⚠️ *Completed by skill: [if applicable]*
+
+### [Topic 2]
+
+[Exhaustive development...]
+
+### [Topic N]
+
+[...]
 
 ---
 
-## Template Variations
+## ✅ Decisions Made
 
-### Concise Version (on request)
+- [Decision 1 — clear and actionable]
+- [Decision 2]
+- [Decision N]
 
-```markdown
-# 📋 [Titre] — [Date]
+---
 
-**Participants** : [Liste]
+## 📝 Action Items
 
-## 🎯 Synthèse
-[3-5 bullet points]
+| Owner | Action | Deadline | Status |
+|-------|--------|----------|--------|
+| [Name] | [Clear description] | [Date/-] | 🟢/🟡/🔴 |
 
-## 📝 Actions
-| Qui | Quoi | Quand |
-|-----|------|-------|
+> 📊 **Completeness**: X% of actions have owner AND deadline
 
-## ⚠️ Points d'attention
-[Si pertinent]
+**Legend**: 🟢 Both | 🟡 One missing | 🔴 Neither
+
+---
+
+## 📊 Diagrams — Recap
+
+### [Diagram 1 title]
+
+```mermaid
+[Diagram code]
 ```
+> 💡 *Source: Topics > [Section name]*
 
-### Detailed Version (on request)
+### [Diagram N]
 
-Use full template + add:
-- Timestamps if available
-- Extended quotes
-- Detailed participant contributions
-- Cross-references to previous meetings
+[...]
+
+> 📝 *[N] diagram(s) generated*
 
 ---
 
-## Section Guidelines
+## 💡 Insights & Leads
 
-### 🎯 Synthèse exécutive
+### 🔧 Improvement Suggestions
 
-**Purpose**: Allow reader to understand meeting outcomes in 30 seconds
+- **[Title]**: [Proactive suggestion]
 
-**Rules**:
-- 3-5 bullet points maximum
-- Start with most important outcome
-- Include key decisions and critical actions
-- No details, just headlines
-- Written for someone who won't read the rest
+### 💭 Ideas to Explore
 
-**Example**:
-```markdown
-## 🎯 Synthèse exécutive
+- 💭 [Idea mentioned but not actioned] ([attribution])
 
-- Budget Q1 validé à 150K€ avec réserve de 10%
-- Lancement prévu le 15 janvier, go/no-go le 10
-- Marie pilote le workstream technique, Pierre la comm
-- Risque identifié sur les délais fournisseur
-- Prochaine réunion de suivi le 20 décembre
+### 🔶 Technical Debt Detected
+
+- 🔶 "[Quote]" — [Impact]
+
+### 🌐 Skill Enrichments
+
+- 🌐 *[Web research info]* — Source: [URL]
+- ⚠️ *[Diagram completion info]*
+
+---
+
+## ⚠️ Watch Points
+
+- [Risk or blocker]
+- [Critical dependency]
+- [Sensitive topic]
+
+---
+
+## ❓ Open Questions
+
+- [Unresolved question]
+- [Pending clarification]
+- [Decision awaiting info]
+
+---
+
+## 🔜 Next Meeting Suggestions
+
+- [ ] [Based on open questions]
+- [ ] [Action follow-up]
+- [ ] [Decision to finalize]
+
+---
+
+## 📚 Glossary
+
+| Term | Definition |
+|------|------------|
+| **[Acronym]** | [Definition] |
+| **[Technical term]** | [Explanation] |
+| **[Tool/Library]** | [Description in context] |
+
+---
+
+## 💬 Key Quotes
+
+> "[Important quote]" — [Name]
+
+> "[Notable quote]" — [Name]
+
+---
+
+*Generated by resumator v2.0.0 — Ready for Notion or /docs*
 ```
-
----
-
-### 📌 Contexte
-
-**Purpose**: Frame the meeting for future readers
-
-**Include**:
-- Why this meeting happened
-- Key stakeholders involved
-- Relevant background
-- Link to previous discussions if applicable
-
-**Length**: 2-4 sentences
-
----
-
-### 💬 Points abordés
-
-**Purpose**: Comprehensive record of discussion
-
-**Rules**:
-- Use subheadings for distinct topics
-- Be exhaustive — don't summarize away important nuances
-- Include different viewpoints expressed
-- Note disagreements or debates
-- Preserve the flow of discussion when relevant
-
----
-
-### ✅ Décisions prises
-
-**Purpose**: Clear record of what was agreed
-
-**Rules**:
-- One decision per bullet
-- Use active, clear language
-- Include conditions if any ("sous réserve de...")
-- Note who made or approved the decision if relevant
-
----
-
-### 📝 Actions à mener
-
-**Purpose**: Actionable task list for follow-up
-
-**Rules**:
-- **CRITICAL**: Capture EVERY action mentioned
-- One action per row
-- Clear ownership (name, not "someone")
-- Specific description (not "handle the thing")
-- Deadline or "-" if none specified
-- Include implicit commitments
-
-**Table format**:
-```markdown
-| Responsable | Action | Échéance |
-|-------------|--------|----------|
-```
-
----
-
-### ⚠️ Points de vigilance
-
-**Purpose**: Flag risks and concerns
-
-**Include**:
-- Explicit risks mentioned
-- Dependencies identified
-- Concerns raised by participants
-- Potential blockers
-- Sensitive topics requiring care
-
-**Skip if**: Nothing was flagged
-
----
-
-### ❓ Questions ouvertes
-
-**Purpose**: Track unresolved items
-
-**Include**:
-- Questions asked but not answered
-- Topics deferred for later
-- Items needing research
-- Decisions pending external input
-
-**Skip if**: All questions were resolved
-
----
-
-### 💬 Verbatims clés
-
-**Purpose**: Preserve important exact quotes
-
-**When to include**:
-- Strong statements that matter
-- Commitments that need exact wording
-- Notable insights or concerns
-- Potentially controversial statements
-
-**Format**: Always attribute with participant name
-
-**Skip if**: No particularly notable quotes
-
----
-
-## Formatting Rules
-
-### Markdown Hygiene
-
-- Use `##` for main sections, `###` for subsections
-- Blank line before and after headers
-- Blank line before and after tables
-- Consistent emoji usage (one per section header)
-- No trailing spaces
-
-### Table Formatting
-
-```markdown
-| Column 1 | Column 2 | Column 3 |
-|----------|----------|----------|
-| Data | Data | Data |
-```
-
-- Align pipes visually when possible
-- Use `-` for empty cells, not blank
-
-### Lists
-
-- Use `-` for unordered lists
-- Consistent indentation
-- No numbered lists except for explicit sequences
 
 ---
 
 ## URL/Article Template
 
 ```markdown
-# 📄 Résumé — [Article Title]
+---
+type: article-summary
+date: [YYYY-MM-DD]
+source: [URL]
+version: resumator-v2.0.0
+---
 
-**Source** : [URL]  
-**Date** : [Publication date if available]  
-**Auteur** : [Author if available]
+# 📄 Summary — [Article Title]
+
+**Source**: [URL]  
+**Date**: [Publication date]  
+**Author**: [Author]
 
 ---
 
-## 🎯 Points clés
+## 🎯 Key Points
 
 - [Key point 1]
 - [Key point 2]
@@ -301,27 +196,61 @@ Use full template + add:
 
 ---
 
-## 📌 Contexte
+## 📌 Context
 
 [What the article is about, why it matters]
 
 ---
 
-## 💬 Contenu détaillé
+## 💬 Detailed Content
 
 ### [Section 1]
-[Summary of section]
+
+[Summary]
+
+```mermaid
+[Diagram if flow detected]
+```
 
 ### [Section 2]
-[Summary of section]
+
+[Summary]
 
 ---
 
-## 💡 À retenir
+## 📊 Diagrams — Recap
 
-[Key takeaways, implications, relevance]
+[If any]
 
 ---
+
+## 💡 Insights
+
+### 🔧 Practical Applications
+
+- [How to apply]
+
+### 🌐 Enrichments
+
+- 🌐 *[Related info]* — Source: [URL]
+
+---
+
+## 📚 Glossary
+
+| Term | Definition |
+|------|------------|
+| ... | ... |
+
+---
+
+## 💡 Key Takeaways
+
+[Implications, relevance]
+
+---
+
+*resumator v2.0.0*
 ```
 
 ---
@@ -329,38 +258,183 @@ Use full template + add:
 ## PDF/Document Template
 
 ```markdown
-# 📄 Résumé — [Document Title]
+---
+type: document-summary
+date: [YYYY-MM-DD]
+document: [Document name]
+version: resumator-v2.0.0
+---
 
-**Type** : [Document type: rapport, présentation, spec...]  
-**Pages** : [Number if relevant]
+# 📄 Summary — [Document Title]
+
+**Type**: [Report, presentation, spec...]  
+**Pages**: [If relevant]
 
 ---
 
-## 🎯 Synthèse
+## 🎯 Summary
 
-[3-5 bullet points summarizing the document]
-
----
-
-## 📌 Objectif du document
-
-[What the document aims to achieve]
+[3-5 bullet points]
 
 ---
 
-## 💬 Contenu principal
+## 📌 Document Purpose
+
+[What it aims to achieve]
+
+---
+
+## 💬 Main Content
 
 ### [Section 1]
+
 [Summary]
+
+```mermaid
+[Diagram if flow detected]
+```
 
 ### [Section 2]
+
 [Summary]
 
 ---
 
-## 📝 Éléments actionnables
+## 📊 Diagrams — Recap
 
-[If the document contains action items, recommendations, or next steps]
+[If any]
 
 ---
+
+## 📝 Actionable Elements
+
+[Action items, recommendations, next steps if present]
+
+---
+
+## 💡 Insights
+
+[Proactive suggestions]
+
+---
+
+## 📚 Glossary
+
+| Term | Definition |
+|------|------------|
+| ... | ... |
+
+---
+
+*resumator v2.0.0*
 ```
+
+---
+
+## Concise Template (--concise flag)
+
+```markdown
+---
+type: meeting-report
+date: [YYYY-MM-DD]
+version: resumator-v2.0.0
+---
+
+# 📋 [Title] — [Date]
+
+**Object**: [One-liner]
+**Participants**: [List]
+
+## 🎯 Summary
+
+[3-5 bullet points]
+
+## 📝 Action Items
+
+| Owner | Action | Deadline | Status |
+|-------|--------|----------|--------|
+| ... | ... | ... | ... |
+
+## ⚠️ Watch Points
+
+[If relevant]
+
+---
+
+*resumator v2.0.0 — concise mode*
+```
+
+---
+
+## Section Guidelines
+
+### Executive Summary
+- 3-5 bullets max
+- Most important outcome first
+- For someone who won't read the rest
+
+### Context
+- 3-6 sentences
+- Why, who, background, links to previous
+
+### Topics Discussed
+- Be EXHAUSTIVE
+- Include all viewpoints and debates
+- Contextual diagrams where relevant
+- Exclude only greetings/small talk
+
+### Decisions Made
+- One per bullet
+- Clear, actionable language
+- Include conditions ("subject to...")
+
+### Action Items
+- **CRITICAL**: Capture EVERY action
+- One per row, clear ownership
+- Deadline or "-" if none
+- Status indicator required
+
+### Diagrams Recap
+- All diagrams centralized
+- Reference source section
+- Max 5-6
+
+### Insights & Leads
+- Mark skill additions clearly
+- Be specific, not generic
+- Use 🔧, 💭, 🔶, 🌐 indicators
+
+### Watch Points
+- Explicit risks
+- Dependencies
+- Blockers
+- Display "[None identified]" if empty
+
+### Open Questions
+- Unresolved items
+- Deferred topics
+- Display "[All resolved]" if empty
+
+### Next Meeting Suggestions
+- Based on open questions
+- Checkbox format
+
+### Glossary
+- Acronyms + terms + tools
+- 1-2 sentence definitions
+- Context when project-specific
+
+### Key Quotes
+- Impactful statements only
+- Always attribute
+- Display "[None notable]" if empty
+
+---
+
+## Formatting Rules
+
+- `##` for main sections, `###` for subsections
+- Blank lines before/after headers, tables, code blocks
+- Consistent emoji per section
+- Use `-` for empty table cells
+- Triple backticks with `mermaid` for diagrams
