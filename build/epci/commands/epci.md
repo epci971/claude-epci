@@ -23,13 +23,13 @@ Generates a Feature Document as traceability thread.
 
 ## Feature Document
 
-Create/update file: `docs/features/<feature-slug>.md`
+The Feature Document is created by `/epci-brief` at: `docs/features/<feature-slug>.md`
 
 ```markdown
 # Feature Document — [Title]
 
 ## §1 — Functional Brief
-[Copied from /epci-brief or generated here]
+[Created by /epci-brief with thorough exploration]
 
 ## §2 — Implementation Plan
 [Generated in Phase 1]
@@ -40,6 +40,8 @@ Create/update file: `docs/features/<feature-slug>.md`
 ## §4 — Finalization
 [Completed in Phase 3]
 ```
+
+**Prerequisite:** Feature Document with §1 completed must exist before running `/epci`.
 
 ---
 
@@ -65,7 +67,7 @@ On error with `fail_on_error: false` (default), workflow continues with warning.
 
 ---
 
-## Phase 1: Analysis and Planning
+## Phase 1: Planification
 
 ### Configuration
 
@@ -73,27 +75,26 @@ On error with `fail_on_error: false` (default), workflow continues with warning.
 |---------|-------|
 | **Thinking** | `think hard` |
 | **Skills** | epci-core, architecture-patterns, [stack] |
-| **Subagents** | @Plan (native), @plan-validator |
+| **Subagents** | @plan-validator |
+
+**Note**: @Plan is no longer invoked — exploration has been done by `/epci-brief`.
 
 ### Process
 
 **🪝 Execute `pre-phase-1` hooks** (if configured)
 
-1. **Brief reception**
-   - Verify brief is complete (comes from `/epci-brief`)
-   - If incomplete → suggest `/epci-brief` first
+1. **Read Feature Document**
+   - Read `docs/features/<slug>.md` (created by `/epci-brief`)
+   - Verify §1 is complete (if incomplete → error, suggest `/epci-brief` first)
+   - Extract from §1: identified files, stack, constraints, acceptance criteria
 
-2. **Technical analysis** (via @Plan)
-   - Identify impacted files
-   - Analyze dependencies
-   - Evaluate technical risks
-
-3. **Plan generation**
+2. **Direct planning**
+   - Use the files already identified in §1
    - Break down into atomic tasks (2-15 min each)
    - Order by dependencies
    - Plan a test for each task
 
-4. **Validation** (via @plan-validator)
+3. **Validation** (via @plan-validator)
    - Submit plan to validator
    - If NEEDS_REVISION → correct and resubmit
    - If APPROVED → proceed to breakpoint

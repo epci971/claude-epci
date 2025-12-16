@@ -35,23 +35,28 @@ No formal Feature Document, no breakpoints.
 | Duration | 15-60 minutes |
 | Examples | Small feature, local refactor |
 
+## Configuration
+
+| Element | Value |
+|---------|-------|
+| **Thinking** | `think` (standard) |
+| **Skills** | epci-core, code-conventions, [stack] |
+| **Subagents** | @code-reviewer (light mode, SMALL only) |
+
 ## Process
 
-### 1. Mode Detection
+### 1. Brief Reception
 
-```
-If brief mentions:
-- 1 file only + simple modification → TINY
-- 2-3 files OR tests requested → SMALL
-```
+The structured brief is provided by `/epci-brief`.
+It already contains:
+- Target files identified
+- Detected stack
+- Mode (TINY/SMALL) determined
+- Acceptance criteria
 
-### 2. Quick Analysis
+**If brief is absent or incomplete** → Suggest `/epci-brief` first.
 
-- Identify file(s) to modify
-- Check direct dependencies
-- Estimate impact
-
-### 3. Implementation
+### 2. Direct Implementation
 
 #### TINY Mode
 
@@ -76,7 +81,7 @@ If brief mentions:
 5. Quick review if needed
 ```
 
-### 4. Review (optional)
+### 3. Review (optional)
 
 For SMALL only, invoke @code-reviewer in light mode:
 - Focus on obvious bugs
@@ -85,7 +90,7 @@ For SMALL only, invoke @code-reviewer in light mode:
 
 **No architecture or optimization review.**
 
-### 5. Commit
+### 4. Commit
 
 Simplified Conventional Commits format:
 
@@ -157,33 +162,10 @@ Ready to commit.
 → Commit: feat(user): add isActive method
 ```
 
-## Mode Decision
-
-```
-                    ┌─────────────┐
-                    │ Brief received │
-                    └──────┬──────┘
-                           │
-                    ┌──────▼──────┐
-                    │  How many   │
-                    │   files?    │
-                    └──────┬──────┘
-                           │
-           ┌───────────────┼───────────────┐
-           │               │               │
-      ┌────▼────┐    ┌────▼────┐    ┌────▼────┐
-      │    1    │    │   2-3   │    │   4+    │
-      └────┬────┘    └────┬────┘    └────┬────┘
-           │               │               │
-      ┌────▼────┐    ┌────▼────┐    ┌────▼────┐
-      │  TINY   │    │  SMALL  │    │→ /epci  │
-      └─────────┘    └─────────┘    └─────────┘
-```
-
 ## When to Escalate to /epci
 
-Escalate if during implementation:
-- More than 3 impacted files discovered
+**Note**: Mode detection is now done by `/epci-brief`. However, escalate if during implementation you discover:
+- More than 3 impacted files
 - Regression risk identified
 - Underestimated complexity
 - Integration tests needed
@@ -197,12 +179,6 @@ The modification is more complex than anticipated:
 
 Recommendation: Switch to `/epci` for structured workflow.
 ```
-
-## Skills Loaded
-
-- `epci-core` (base concepts)
-- `code-conventions` (standards)
-- `[stack-skill]` (auto-detected)
 
 ## Differences with /epci
 
