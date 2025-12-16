@@ -114,7 +114,7 @@ Resumator transforms raw content (meeting transcriptions, articles, documents) i
 
 ### 🟡 IMPORTANT
 
-7. **Contextual diagrams**: Place in relevant sections + recap at end.
+7. **Contextual diagrams**: Place in relevant sections where flows are discussed.
 8. **Inter-diagram coherence**: Same names/conventions across related diagrams.
 9. **Action completeness score**: Calculate and display % with 🟢/🟡/🔴 indicators.
 10. **Exhaustive glossary**: Acronyms + technical terms + tools mentioned.
@@ -180,21 +180,19 @@ Extracts and defines: acronyms, technical terms, tools/libraries, domain-specifi
 See [output-template.md](references/output-template.md) for complete template.
 
 **Sections** (all required):
-1. YAML Metadata
-2. Header (Object, Type, Participants, Duration)
-3. 🎯 Executive Summary
-4. 📌 Context
-5. 💬 Topics Discussed (with contextual diagrams)
-6. ✅ Decisions Made
-7. 📝 Action Items (with status indicators)
-8. 📊 Diagrams — Recap
-9. 💡 Insights & Leads
-10. ⚠️ Watch Points
-11. ❓ Open Questions
-12. 🔜 Next Meeting Suggestions
-13. 📚 Glossary
-14. 💬 Key Quotes
-15. Footer
+1. Header (Object, Type, Participants, Duration)
+2. 🎯 Executive Summary
+3. 📌 Context
+4. 💬 Topics Discussed (with contextual diagrams)
+5. ✅ Decisions Made
+6. 📝 Action Items (with status indicators)
+7. 💡 Insights & Leads
+8. ⚠️ Watch Points
+9. ❓ Open Questions
+10. 🔜 Next Meeting Suggestions
+11. 📚 Glossary
+12. 💬 Key Quotes
+13. Footer
 
 **File naming**: `CR_[YYYY-MM-DD]_[slug-from-object].md`
 
@@ -275,7 +273,7 @@ This skill does NOT:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2025-12-10 | Initial release |
-| 2.0.0 | 2025-12-16 | Added: Auto Mermaid diagrams, proactive insights, glossary extraction, action status indicators (🟢/🟡/🔴), completeness score, YAML metadata, next meeting suggestions, technical debt detection, web enrichment, artifact output |
+| 2.0.0 | 2025-12-16 | Added: Auto Mermaid diagrams, proactive insights, glossary extraction, action status indicators (🟢/🟡/🔴), completeness score, next meeting suggestions, technical debt detection, web enrichment, artifact output |
 
 ## Current: v2.0.0
 

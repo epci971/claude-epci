@@ -7,15 +7,6 @@
 ## Meeting Transcription Template (Primary)
 
 ```markdown
----
-type: meeting-report
-date: [YYYY-MM-DD]
-project: [Project name if identifiable]
-participants: [List]
-tags: [Relevant tags]
-version: resumator-v2.0.0
----
-
 # 📋 Meeting Report — [YYYY-MM-DD]
 
 **Object**: [Intelligent one-liner < 80 chars]
@@ -82,23 +73,6 @@ Cover ALL substantive points. Exclude only greetings/small talk.]
 > 📊 **Completeness**: X% of actions have owner AND deadline
 
 **Legend**: 🟢 Both | 🟡 One missing | 🔴 Neither
-
----
-
-## 📊 Diagrams — Recap
-
-### [Diagram 1 title]
-
-```mermaid
-[Diagram code]
-```
-> 💡 *Source: Topics > [Section name]*
-
-### [Diagram N]
-
-[...]
-
-> 📝 *[N] diagram(s) generated*
 
 ---
 
@@ -173,13 +147,6 @@ Cover ALL substantive points. Exclude only greetings/small talk.]
 ## URL/Article Template
 
 ```markdown
----
-type: article-summary
-date: [YYYY-MM-DD]
-source: [URL]
-version: resumator-v2.0.0
----
-
 # 📄 Summary — [Article Title]
 
 **Source**: [URL]  
@@ -218,12 +185,6 @@ version: resumator-v2.0.0
 
 ---
 
-## 📊 Diagrams — Recap
-
-[If any]
-
----
-
 ## 💡 Insights
 
 ### 🔧 Practical Applications
@@ -258,13 +219,6 @@ version: resumator-v2.0.0
 ## PDF/Document Template
 
 ```markdown
----
-type: document-summary
-date: [YYYY-MM-DD]
-document: [Document name]
-version: resumator-v2.0.0
----
-
 # 📄 Summary — [Document Title]
 
 **Type**: [Report, presentation, spec...]  
@@ -300,12 +254,6 @@ version: resumator-v2.0.0
 
 ---
 
-## 📊 Diagrams — Recap
-
-[If any]
-
----
-
 ## 📝 Actionable Elements
 
 [Action items, recommendations, next steps if present]
@@ -334,12 +282,6 @@ version: resumator-v2.0.0
 ## Concise Template (--concise flag)
 
 ```markdown
----
-type: meeting-report
-date: [YYYY-MM-DD]
-version: resumator-v2.0.0
----
-
 # 📋 [Title] — [Date]
 
 **Object**: [One-liner]
@@ -393,11 +335,6 @@ version: resumator-v2.0.0
 - One per row, clear ownership
 - Deadline or "-" if none
 - Status indicator required
-
-### Diagrams Recap
-- All diagrams centralized
-- Reference source section
-- Max 5-6
 
 ### Insights & Leads
 - Mark skill additions clearly
