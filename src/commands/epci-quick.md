@@ -3,6 +3,7 @@ description: >-
   Condensed EPCI workflow for TINY and SMALL features. Single-pass without
   formal Feature Document. TINY mode: <50 LOC, 1 file, no tests.
   SMALL mode: <200 LOC, 2-3 files, optional tests.
+argument-hint: "[--fast] [--uc]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
@@ -35,13 +36,22 @@ No formal Feature Document, no breakpoints.
 | Duration | 15-60 minutes |
 | Examples | Small feature, local refactor |
 
+## Supported Flags
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--fast` | Skip optional checks | Never |
+| `--uc` | Compressed output | context > 75% |
+
+**Note:** Thinking flags (`--think-hard`, `--ultrathink`) trigger escalation to `/epci`.
+
 ## Configuration
 
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think` (standard) |
-| **Skills** | epci-core, code-conventions, [stack] |
-| **Subagents** | @code-reviewer (light mode, SMALL only) |
+| **Skills** | epci-core, code-conventions, flags-system, [stack] |
+| **Subagents** | @code-reviewer (light mode, SMALL only)
 
 ## Process
 
@@ -110,6 +120,7 @@ feat(scope): short description
 
 ```markdown
 ✅ **TINY COMPLETE**
+FLAGS: [active flags if any] | (none)
 
 Modification applied to `path/to/file.ext`
 - Change: [description]
@@ -122,6 +133,7 @@ Ready to commit.
 
 ```markdown
 ✅ **SMALL COMPLETE**
+FLAGS: [active flags if any] | (none)
 
 Modified files:
 - `path/to/file1.ext` (+X / -Y)

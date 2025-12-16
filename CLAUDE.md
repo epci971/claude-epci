@@ -96,15 +96,20 @@ tools-claude-code-epci/
     ├── scripts/                 # Validation
     │   ├── validate_all.py     # Orchestrateur
     │   ├── validate_command.py
+    │   ├── validate_flags.py   # Validation système flags (v3.1)
     │   ├── validate_skill.py
     │   ├── validate_subagent.py
     │   └── test_triggering.py
     │
-    └── skills/                  # 13 skills
-        ├── core/               # Skills fondamentaux (5)
+    ├── settings/                # Configuration (v3.1)
+    │   └── flags.md            # Documentation flags universels
+    │
+    └── skills/                  # 14 skills
+        ├── core/               # Skills fondamentaux (6)
         │   ├── architecture-patterns/SKILL.md
         │   ├── code-conventions/SKILL.md
         │   ├── epci-core/SKILL.md
+        │   ├── flags-system/SKILL.md  # Système flags universels (v3.1)
         │   ├── git-workflow/SKILL.md
         │   └── testing-strategy/SKILL.md
         │
@@ -342,6 +347,47 @@ print(json.dumps({"status": "success", "message": "Hook completed"}))
 
 Voir `hooks/README.md` pour la documentation complète.
 
+### 3.7 Système de Flags Universels (v3.1+)
+
+Le système de flags permet un contrôle fin du comportement des workflows EPCI.
+
+#### Catégories de Flags
+
+| Catégorie | Flags | Usage |
+|-----------|-------|-------|
+| **Thinking** | `--think`, `--think-hard`, `--ultrathink` | Profondeur d'analyse |
+| **Compression** | `--uc`, `--verbose` | Gestion tokens |
+| **Workflow** | `--safe`, `--fast`, `--dry-run` | Contrôle exécution |
+| **Wave** | `--wave`, `--wave-strategy` | Orchestration multi-vagues |
+| **Legacy** | `--large`, `--continue` | Rétrocompatibilité |
+
+#### Auto-Activation
+
+Les flags peuvent être auto-activés selon le contexte:
+
+| Condition | Seuil | Flag |
+|-----------|-------|------|
+| Fichiers impactés | 3-10 | `--think` |
+| Fichiers impactés | >10 | `--think-hard` |
+| Context window | >75% | `--uc` |
+| Fichiers sensibles | auth, security, payment | `--safe` |
+| Complexité | >0.7 | `--wave` |
+
+#### Règles de Précédence
+
+1. Flags explicites > Auto-activation
+2. `--safe` > `--fast` (safety first)
+3. `--ultrathink` > `--think-hard` > `--think`
+4. `--verbose` explicit > `--uc` auto
+
+#### Migration depuis v3.0
+
+| v3.0 | v3.1 équivalent |
+|------|-----------------|
+| `--large` | `--think-hard --wave` |
+
+Voir `src/settings/flags.md` pour la documentation complète.
+
 ---
 
 ## 4. Component Reference
@@ -524,13 +570,14 @@ allowed-tools: [Read, Write, Glob]
 
 ### 4.3 Skills Catalog
 
-#### Core Skills
+#### Core Skills (6)
 
 | Skill | Fichier | Description |
 |-------|---------|-------------|
 | epci-core | `skills/core/epci-core/SKILL.md` | Workflow EPCI, Feature Document, phases |
 | architecture-patterns | `skills/core/architecture-patterns/SKILL.md` | SOLID, DDD, Clean Architecture |
 | code-conventions | `skills/core/code-conventions/SKILL.md` | Naming, formatting, structure |
+| flags-system | `skills/core/flags-system/SKILL.md` | Flags universels, auto-activation, précédence (v3.1) |
 | testing-strategy | `skills/core/testing-strategy/SKILL.md` | TDD, BDD, coverage, mocking |
 | git-workflow | `skills/core/git-workflow/SKILL.md` | Conventional Commits, branching |
 

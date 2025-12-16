@@ -3,7 +3,7 @@ description: >-
   Complete EPCI workflow in 3 phases for STANDARD and LARGE features.
   Phase 1: Analysis and planning. Phase 2: TDD implementation.
   Phase 3: Finalization and documentation. Includes breakpoints between phases.
-argument-hint: "[--large] [--continue]"
+argument-hint: "[--large] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--uc] [--dry-run] [--continue]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
@@ -16,10 +16,44 @@ Generates a Feature Document as traceability thread.
 
 ## Arguments
 
+### Workflow Control
+
 | Argument | Description |
 |----------|-------------|
-| `--large` | Activates LARGE mode (enhanced thinking, all subagents mandatory) |
+| `--large` | Alias for `--think-hard --wave` (backward compatible) |
 | `--continue` | Continue from last phase (resume after interruption) |
+| `--dry-run` | Simulate workflow without making changes |
+
+### Thinking Flags
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--think` | Standard analysis (~4K tokens) | 3-10 files |
+| `--think-hard` | Deep analysis (~10K tokens) | >10 files, refactoring |
+| `--ultrathink` | Critical analysis (~32K tokens) | Never (explicit only) |
+
+### Safety Flags
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--safe` | Maximum validations, extra confirmations | Sensitive files |
+| `--fast` | Skip optional validations | Never |
+
+### Output Flags
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--uc` | Ultra-compressed output (30-50% reduction) | context > 75% |
+| `--verbose` | Full detailed output | Never |
+
+### Orchestration Flags
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--wave` | Enable multi-wave execution | complexity > 0.7 |
+| `--wave-strategy` | `progressive` (default) or `systematic` | With --wave |
+
+**Flag Reference:** See `src/settings/flags.md` for complete documentation.
 
 ## Feature Document
 
@@ -73,9 +107,15 @@ On error with `fail_on_error: false` (default), workflow continues with warning.
 
 | Element | Value |
 |---------|-------|
-| **Thinking** | `think hard` |
-| **Skills** | epci-core, architecture-patterns, [stack] |
+| **Thinking** | Based on flags: `think` (default), `think hard` (--think-hard), `ultrathink` (--ultrathink) |
+| **Skills** | epci-core, architecture-patterns, flags-system, [stack] |
 | **Subagents** | @plan-validator |
+
+**Flag effects on Phase 1:**
+- `--think-hard` or `--large`: Use `think hard` mode
+- `--ultrathink`: Use `ultrathink` mode (extended analysis)
+- `--safe`: Additional validation checks in plan
+- `--dry-run`: Show what would be planned without writing
 
 **Note**: @Plan is no longer invoked — exploration has been done by `/epci-brief`.
 
@@ -141,6 +181,8 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ⏸️  BREAKPOINT PHASE 1 — Plan Validé                                │
 ├─────────────────────────────────────────────────────────────────────┤
+│ FLAGS: {FLAG1} ({source}) | {FLAG2} ({source}) | ...               │
+├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │ 📊 MÉTRIQUES                                                        │
 │ ├── Complexité: {CATEGORY} (score: {SCORE})                        │
@@ -173,6 +215,8 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+**Flag sources:** `(auto)` = auto-activated, `(explicit)` = user-specified, `(alias)` = expanded from --large
+
 **Metrics Calculation** (from `breakpoint-metrics` skill):
 - Complexity score: `files×0.3 + LOC×0.3 + deps×0.2 + risk×0.2`
 - Time estimate: Based on category heuristic (TINY=15min, SMALL=1h, STANDARD=3h, LARGE=8h+)
@@ -188,9 +232,15 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 | Element | Value |
 |---------|-------|
-| **Thinking** | `think` |
-| **Skills** | testing-strategy, code-conventions, [stack] |
+| **Thinking** | Based on flags: `think` (default), `think hard` (--think-hard) |
+| **Skills** | testing-strategy, code-conventions, flags-system, [stack] |
 | **Subagents** | @code-reviewer (mandatory), @security-auditor*, @qa-reviewer* |
+
+**Flag effects on Phase 2:**
+- `--safe`: All conditional subagents become mandatory
+- `--fast`: Skip optional reviews (only @code-reviewer)
+- `--uc`: Compressed output in progress reports
+- `--dry-run`: Show what would be implemented without writing
 
 ### Conditional Subagents
 
@@ -263,6 +313,8 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ⏸️  BREAKPOINT PHASE 2 — Code Implémenté                            │
+├─────────────────────────────────────────────────────────────────────┤
+│ FLAGS: {FLAG1} ({source}) | {FLAG2} ({source}) | ...               │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │ 📊 MÉTRIQUES                                                        │
@@ -390,12 +442,30 @@ Feature Document finalized: docs/features/<slug>.md
 
 ## --large Mode
 
-In `--large` mode, the differences are:
+The `--large` flag is an alias for `--think-hard --wave`. When used:
 
-| Aspect | Standard | Large |
-|--------|----------|-------|
-| Thinking P1 | `think hard` | `ultrathink` |
-| @security-auditor | Conditional | Mandatory |
-| @qa-reviewer | Conditional | Mandatory |
-| Breakpoints | Simple confirmation | Explicit validation |
-| Feature Document | Standard | Extended with risk sections |
+| Aspect | Standard | Large (`--think-hard --wave`) |
+|--------|----------|-------------------------------|
+| Thinking P1 | `think` | `think hard` |
+| Thinking P2 | `think` | `think hard` |
+| @security-auditor | Conditional | Conditional (use `--safe` for mandatory) |
+| @qa-reviewer | Conditional | Conditional (use `--safe` for mandatory) |
+| Wave orchestration | Off | Enabled |
+
+**Note:** To get the previous v2.7 `--large` behavior with all subagents mandatory, use:
+```
+/epci --large --safe
+```
+
+This expands to `--think-hard --wave --safe`.
+
+## Flag Compatibility Matrix
+
+| Combination | Result |
+|-------------|--------|
+| `--safe` + `--fast` | **Error** (incompatible) |
+| `--think` + `--think-hard` | `--think-hard` wins |
+| `--uc` + `--verbose` | Explicit wins |
+| `--large` + `--ultrathink` | `--ultrathink` wins |
+| `--wave` + `--safe` | Both active |
+| `--dry-run` + any | Both active |

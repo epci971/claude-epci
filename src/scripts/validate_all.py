@@ -27,15 +27,18 @@ class ValidationSummary:
     agents_failed: int = 0
     triggering_passed: int = 0
     triggering_failed: int = 0
+    flags_passed: bool = False
     errors: list = field(default_factory=list)
 
     @property
     def total_passed(self):
-        return self.skills_passed + self.commands_passed + self.agents_passed + self.triggering_passed
+        flags_count = 1 if self.flags_passed else 0
+        return self.skills_passed + self.commands_passed + self.agents_passed + self.triggering_passed + flags_count
 
     @property
     def total_failed(self):
-        return self.skills_failed + self.commands_failed + self.agents_failed + self.triggering_failed
+        flags_count = 0 if self.flags_passed else 1
+        return self.skills_failed + self.commands_failed + self.agents_failed + self.triggering_failed + flags_count
 
     @property
     def is_valid(self):
@@ -50,6 +53,8 @@ class ValidationSummary:
         print(f"Commands:    {self.commands_passed} passed, {self.commands_failed} failed")
         print(f"Agents:      {self.agents_passed} passed, {self.agents_failed} failed")
         print(f"Triggering:  {self.triggering_passed} passed, {self.triggering_failed} failed")
+        flags_status = "passed" if self.flags_passed else "failed"
+        print(f"Flags:       {flags_status}")
         print()
 
         if self.errors:
@@ -244,6 +249,40 @@ def validate_all(verbose: bool = False) -> int:
         print("[INFO] No skills to test")
     else:
         print(f"[WARNING] test_triggering.py not found at {test_triggering_script}")
+
+    # ===== VALIDATION FLAGS SYSTEM =====
+    print(f"\n{'─'*40}")
+    print("VALIDATING FLAGS SYSTEM...")
+    print(f"{'─'*40}")
+
+    validate_flags_script = scripts_path / "validate_flags.py"
+    if validate_flags_script.exists():
+        try:
+            result = subprocess.run(
+                [sys.executable, str(validate_flags_script)],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+
+            if verbose:
+                if result.stdout:
+                    print(result.stdout)
+                if result.stderr:
+                    print(result.stderr, file=sys.stderr)
+
+            if result.returncode == 0:
+                print("  Flags system: ✅")
+                summary.flags_passed = True
+            else:
+                print("  Flags system: ❌")
+                summary.errors.append("Flags system validation failed")
+        except Exception as e:
+            print(f"  Flags system: ❌ ({e})")
+            summary.errors.append(f"Flags validation error: {e}")
+    else:
+        print(f"[WARNING] validate_flags.py not found at {validate_flags_script}")
+        summary.flags_passed = True  # Don't fail if script not present
 
     # ===== RÉSUMÉ =====
     return summary.print_summary()

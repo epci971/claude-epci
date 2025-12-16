@@ -169,6 +169,22 @@ process.stdin.on('end', () => {
 | `test_results` | object | Test results (if available) |
 | `breakpoint_type` | string | Breakpoint identifier (for on-breakpoint) |
 | `timestamp` | string | ISO 8601 timestamp |
+| `active_flags` | array | List of active flags (v3.1+) |
+| `flag_sources` | object | Map of flag → source ("auto", "explicit", "alias") |
+
+### Flags Example (v3.1+)
+
+```json
+{
+  "phase": "phase-2",
+  "active_flags": ["--think-hard", "--safe", "--wave"],
+  "flag_sources": {
+    "--think-hard": "alias",
+    "--safe": "auto",
+    "--wave": "alias"
+  }
+}
+```
 
 ---
 
