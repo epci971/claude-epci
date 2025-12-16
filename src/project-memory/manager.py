@@ -514,6 +514,109 @@ class ProjectMemoryManager:
             return []
         return [f.stem for f in features_dir.glob("*.json")]
 
+    def get_all_feature_metadata(self) -> List[Dict[str, Any]]:
+        """
+        Get metadata for all features (for similarity matching).
+
+        Returns:
+            List of dicts with slug, title, complexity, files_modified.
+            Empty list if Project Memory unavailable (graceful degradation).
+        """
+        try:
+            features = []
+            for slug in self.list_features():
+                feature = self.load_feature_history(slug)
+                if feature:
+                    features.append({
+                        'slug': feature.slug,
+                        'title': feature.title,
+                        'complexity': feature.complexity,
+                        'files_modified': feature.files_modified,
+                        'completed_at': feature.completed_at,
+                    })
+            return features
+        except Exception:
+            # Graceful degradation
+            return []
+
+    def find_similar_features(
+        self,
+        keywords: List[str],
+        threshold: float = 0.3
+    ) -> List[Dict[str, Any]]:
+        """
+        Find features similar to given keywords.
+
+        Uses Jaccard similarity on feature titles and slugs.
+
+        Args:
+            keywords: List of keywords from brief analysis.
+            threshold: Minimum similarity score (default 0.3).
+
+        Returns:
+            List of similar features with scores.
+            Empty list if no matches or Project Memory unavailable.
+        """
+        try:
+            from .similarity_matcher import find_similar_features as _find_similar
+
+            features = self.get_all_feature_metadata()
+            if not features:
+                return []
+
+            matches = _find_similar(features, keywords, threshold)
+            return [
+                {
+                    'slug': m.slug,
+                    'title': m.title,
+                    'score': m.score,
+                    'matched_keywords': m.matched_keywords,
+                    'complexity': m.complexity,
+                    'files_modified': m.files_modified,
+                }
+                for m in matches
+            ]
+        except Exception:
+            # Graceful degradation
+            return []
+
+    def get_patterns_for_domain(self, domain: str) -> List[str]:
+        """
+        Get detected patterns relevant to a domain.
+
+        Args:
+            domain: Domain name (auth, api, ui, data, etc.).
+
+        Returns:
+            List of pattern names.
+            Empty list if unavailable (graceful degradation).
+        """
+        try:
+            patterns_file = self.memory_dir / "patterns" / "detected.json"
+            if not patterns_file.exists():
+                return []
+
+            data = self._read_json(patterns_file)
+            all_patterns = data.get('patterns', [])
+
+            # Domain-pattern mapping
+            domain_patterns = {
+                'auth': ['mvc', 'service', 'repository'],
+                'api': ['mvc', 'rest', 'dto', 'service'],
+                'ui': ['component', 'mvc', 'state'],
+                'data': ['repository', 'entity', 'ddd'],
+                'infra': ['config', 'pipeline'],
+                'notification': ['event-driven', 'queue', 'observer'],
+                'payment': ['service', 'gateway', 'facade'],
+                'search': ['repository', 'index', 'query'],
+            }
+
+            relevant = domain_patterns.get(domain, [])
+            return [p for p in all_patterns if any(r in p.lower() for r in relevant)]
+        except Exception:
+            # Graceful degradation
+            return []
+
     def _load_file(self, relative_path: str, dataclass_type):
         """Generic file loader with graceful degradation."""
         file_path = self.memory_dir / relative_path
