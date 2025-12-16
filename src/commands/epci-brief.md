@@ -1,9 +1,9 @@
 ---
 description: >-
-  EPCI entry point. Analyzes raw brief, clarifies ambiguities through
-  iterative questions, evaluates complexity and routes to appropriate
-  workflow (/epci-quick, /epci, /epci-spike).
-allowed-tools: [Read, Glob, Grep, Bash, Task]
+  EPCI entry point. Performs thorough exploration, clarifies ambiguities,
+  evaluates complexity, generates output (inline brief or Feature Document),
+  and routes to appropriate workflow (/epci-quick, /epci, /epci-spike).
+allowed-tools: [Read, Write, Glob, Grep, Bash, Task]
 ---
 
 # EPCI Brief — Entry Point
@@ -13,14 +13,35 @@ allowed-tools: [Read, Glob, Grep, Bash, Task]
 This command is the single entry point for the EPCI workflow.
 It transforms a raw brief into a structured brief and routes to the appropriate workflow.
 
+## Configuration
+
+| Element | Value |
+|---------|-------|
+| **Thinking** | `think hard` (default) / `ultrathink` (LARGE or high uncertainty) |
+| **Skills** | epci-core, architecture-patterns, [stack-skill auto-detected] |
+| **Subagents** | @Explore (thorough) |
+
+**Thinking mode selection:**
+- `think hard`: Default for most briefs
+- `ultrathink`: When complexity appears LARGE or technical uncertainty is high
+
 ## Process
 
-### Step 1: Initial Analysis
+### Step 1: Exploration Complète
 
-**Invoke @Explore** (medium level) to:
-- Scan project structure
-- Identify technologies used
-- Estimate architectural complexity
+**Invoke @Explore** (thorough level) to:
+- Scan complete project structure
+- Identify all technologies, frameworks, versions
+- Map architectural patterns (Repository, Service, Controller, etc.)
+- Identify files potentially impacted by the brief
+- Estimate dependencies and coupling
+- Detect existing test patterns
+
+**Internal outputs** (for use in subsequent steps):
+- List of candidate files with probable action (Create/Modify/Delete)
+- Detailed technical stack
+- Detected architectural patterns
+- Identified risks
 
 Analyze the brief to identify:
 - Clear and actionable elements
@@ -62,19 +83,13 @@ Propose improvements based on @Explore analysis:
 | Tests required | No | Optional | Yes | Yes+ | N/A |
 | Arch impacted | No | No | Possible | Yes | ? |
 
-### Step 5: Routing
+### Step 5: Génération Output
 
-| Category | Command | Justification |
-|----------|---------|---------------|
-| TINY | `/epci-quick` | Immediate execution, no formal plan |
-| SMALL | `/epci-quick` | Lightweight integrated plan |
-| STANDARD | `/epci` | Complete 3-phase workflow |
-| LARGE | `/epci --large` | Enhanced thinking, all subagents |
-| SPIKE | `/epci-spike` | Time-boxed exploration |
+Based on complexity evaluation, generate the appropriate output:
 
-## Output
+#### If TINY or SMALL → Inline Brief
 
-Generate the structured brief:
+Generate a structured brief in the response (no file created):
 
 ```markdown
 # Functional Brief — [Title]
@@ -83,50 +98,112 @@ Generate the structured brief:
 [Summary of the need in 2-3 sentences]
 
 ## Detected Stack
-[Stack identified by @Explore: framework, language, versions]
+[Stack identified by @Explore]
+
+## Target Files
+- `path/to/file.ext` (action: Create/Modify)
 
 ## Acceptance Criteria
 - [ ] Criterion 1 (measurable)
 - [ ] Criterion 2 (measurable)
-- [ ] Criterion 3 (measurable)
 
-## Constraints
-- [Identified technical constraint]
-- [Time/budget constraint if applicable]
+## Category: [TINY|SMALL]
 
-## Out of Scope
+→ Launch `/epci-quick`
+```
+
+#### If STANDARD or LARGE → Feature Document
+
+Create file `docs/features/<slug>.md`:
+
+```markdown
+# Feature Document — [Title]
+
+> **Slug**: `<slug>`
+> **Category**: [STANDARD|LARGE]
+> **Date**: [YYYY-MM-DD]
+
+---
+
+## §1 — Functional Brief
+
+### Context
+[Summary of the need]
+
+### Detected Stack
+- **Framework**: [detected]
+- **Language**: [detected]
+- **Patterns**: [detected patterns]
+
+### Identified Files
+| File | Action | Risk |
+|------|--------|------|
+| path/to/file | Modify | Medium |
+| path/to/other | Create | Low |
+
+### Acceptance Criteria
+- [ ] Criterion 1 (measurable)
+- [ ] Criterion 2 (measurable)
+
+### Constraints
+- [Technical constraint]
+- [Other constraint if applicable]
+
+### Out of Scope
 - [Explicit exclusion 1]
 - [Explicit exclusion 2]
 
-## Evaluation
-- **Category**: [TINY|SMALL|STANDARD|LARGE|SPIKE]
+### Evaluation
+- **Category**: [STANDARD|LARGE]
 - **Estimated files**: X
 - **Estimated LOC**: ~Y
-- **Risk**: [None|Low|Medium|High|Unknown]
+- **Risk**: [Low|Medium|High]
 - **Justification**: [Reason for categorization]
 
-## Recommendation
-→ Use `/epci-quick` | `/epci` | `/epci --large` | `/epci-spike`
+---
+
+## §2 — Implementation Plan
+[To be completed by /epci Phase 1]
+
+---
+
+## §3 — Implementation
+[To be completed by /epci Phase 2]
+
+---
+
+## §4 — Finalization
+[To be completed by /epci Phase 3]
 ```
 
-## Skills Loaded
+#### If SPIKE → Inline Brief for Exploration
 
-- `epci-core` (EPCI concepts)
-- `architecture-patterns` (complexity evaluation)
-- `[stack-skill]` (auto-detected based on project)
+Generate inline brief with exploration focus (no Feature Document).
+
+### Step 6: Routing
+
+| Category | Command | Output |
+|----------|---------|--------|
+| TINY | `/epci-quick` | Inline brief |
+| SMALL | `/epci-quick` | Inline brief |
+| STANDARD | `/epci` | Feature Document created |
+| LARGE | `/epci --large` | Feature Document created |
+| SPIKE | `/epci-spike` | Inline brief |
 
 ## Transition
 
-After brief generation:
-1. Present structured brief to user
-2. Wait for confirmation before routing
+After output generation:
+1. Present brief (inline) or confirm Feature Document creation
+2. Wait for user confirmation
 3. Propose launching the recommended command
 
 ```
 ---
 📋 **BRIEF COMPLETE**
 
-Functional brief generated and validated.
+[TINY/SMALL] Inline brief generated.
+[STANDARD/LARGE] Feature Document created: docs/features/<slug>.md
+
 Category: [CATEGORY]
 Recommended workflow: [COMMAND]
 

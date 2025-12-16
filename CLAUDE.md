@@ -167,19 +167,27 @@ Explore → Plan → Code → Inspect
                 └────────┬─────────┘
                          │
                          ▼
-                ┌──────────────────┐
-                │   /epci-brief    │
-                │   (Évaluation)   │
-                └────────┬─────────┘
+        ┌────────────────────────────────┐
+        │         /epci-brief            │
+        │  • @Explore (thorough)         │
+        │  • Clarification               │
+        │  • Évaluation complexité       │
+        │  • Génération output           │
+        └────────────────┬───────────────┘
                          │
        ┌─────────────────┼─────────────────┐
        │                 │                 │
        ▼                 ▼                 ▼
 ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
 │ TINY/SMALL  │   │ STD/LARGE   │   │   SPIKE     │
+│ Brief inline│   │Feature Doc  │   │ Brief inline│
 │ /epci-quick │   │   /epci     │   │ /epci-spike │
 └─────────────┘   └─────────────┘   └─────────────┘
 ```
+
+**Note :** `/epci-brief` effectue l'exploration complète et génère :
+- Brief inline pour TINY/SMALL (pas de fichier)
+- Feature Document avec §1 rempli pour STANDARD/LARGE
 
 | Catégorie | Critères | Workflow | Durée |
 |-----------|----------|----------|-------|
@@ -197,18 +205,28 @@ Chaque feature STANDARD/LARGE génère un Feature Document unique :
 docs/features/<slug>.md
 ```
 
+**Cycle de vie :**
+
+| Section | Créé par | Contenu |
+|---------|----------|---------|
+| §1 | `/epci-brief` | Brief fonctionnel, stack, fichiers identifiés, critères |
+| §2 | `/epci` Phase 1 | Plan d'implémentation, tâches, risques |
+| §3 | `/epci` Phase 2 | Rapport d'implémentation, tests, reviews |
+| §4 | `/epci` Phase 3 | Commits, documentation, finalisation |
+
 **Structure :**
 
 ```markdown
-# Feature: [Titre]
+# Feature Document — [Titre]
 
 ## §1 — Brief Fonctionnel
-[Généré par /epci-brief]
-- Contexte, critères d'acceptation, contraintes
+[Créé par /epci-brief avec exploration complète]
+- Contexte, stack détecté, fichiers identifiés
+- Critères d'acceptation, contraintes, hors scope
 
 ## §2 — Plan d'Implémentation
-[Généré par /epci Phase 1]
-- Fichiers impactés, tâches, risques
+[Généré par /epci Phase 1 - planification directe]
+- Tâches atomiques basées sur §1
 - Validation @plan-validator
 
 ## §3 — Rapport d'Implémentation
@@ -228,9 +246,10 @@ docs/features/<slug>.md
 
 | Subagent | Model | Mode | Usage EPCI |
 |----------|-------|------|------------|
-| **@Explore** | Haiku | Read-only | Analyse codebase |
-| **@Plan** | Sonnet | Research | Recherche avant plan |
+| **@Explore** | Haiku | Read-only | Analyse codebase (invoqué par `/epci-brief`) |
 | **General-purpose** | Sonnet | Read+Write | Implémentation |
+
+**Note :** `@Plan` n'est plus utilisé — l'exploration est centralisée dans `/epci-brief`.
 
 #### Subagents Custom EPCI
 
@@ -334,20 +353,23 @@ Voir `hooks/README.md` pour la documentation complète.
 ```yaml
 ---
 description: >-
-  Point d'entrée EPCI - Analyse le brief, clarifie les ambiguïtés,
-  évalue la complexité et route vers le workflow approprié.
-allowed-tools: [Read, Glob, Grep, Bash, Task]
+  Point d'entrée EPCI - Exploration complète, clarification,
+  évaluation complexité et génération du brief/Feature Document.
+allowed-tools: [Read, Glob, Grep, Bash, Task, Write]
 ---
 ```
 
 **Workflow :**
 1. Réception brief brut
-2. Invocation `@Explore` (medium)
+2. Invocation `@Explore` (thorough) — exploration complète
 3. Boucle clarification (max 3 itérations)
 4. Évaluation complexité
-5. Routage vers `/epci-quick`, `/epci`, ou `/epci-spike`
+5. Génération output selon catégorie
+6. Routage vers `/epci-quick`, `/epci`, ou `/epci-spike`
 
-**Output :** Brief fonctionnel structuré + recommandation
+**Output :**
+- TINY/SMALL → Brief inline structuré
+- STANDARD/LARGE → Feature Document créé (`docs/features/<slug>.md`) avec §1 rempli
 
 #### `/epci` — Workflow complet
 
@@ -364,11 +386,13 @@ allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 
 | Phase | Subagents | Skills | Thinking |
 |-------|-----------|--------|----------|
-| 1 - Analyse | @Plan, @plan-validator | epci-core, architecture-patterns | `think hard` |
+| 1 - Planification | @plan-validator | epci-core, architecture-patterns | `think hard` |
 | 2 - Code | @code-reviewer, @security-auditor*, @qa-reviewer* | testing-strategy, code-conventions | `think` |
 | 3 - Finalize | @doc-generator | git-workflow | `think` |
 
 *= conditionnel
+
+**Note :** Phase 1 lit le §1 du Feature Document (créé par `/epci-brief`) et passe directement à la planification.
 
 **BREAKPOINTS :** Confirmation utilisateur entre chaque phase
 
