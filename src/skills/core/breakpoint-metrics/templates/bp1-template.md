@@ -29,6 +29,9 @@
 │                                                                     │
 │ 🔗 Feature Document: {FEATURE_DOC_PATH}                            │
 │                                                                     │
+│ 💡 SUGGESTIONS PROACTIVES (F06)                                     │
+│ {SUGGESTIONS_SECTION}                                               │
+│                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Options:                                                            │
 │   • Tapez "Continuer" → Passer à Phase 2 (Implémentation)         │
@@ -92,3 +95,33 @@ Add persona information:
 ```
 │ 🎭 Mode: --large (validation renforcée)                            │
 ```
+
+### Suggestions Section (F06)
+
+When proactive suggestions are available, display up to 3:
+
+```
+│ 💡 SUGGESTIONS PROACTIVES                                           │
+│ ├── [P2] 🏗️ Pattern Repository détecté                             │
+│ │   └── Suggestion: Extraire AbstractCrudRepository                │
+│ └── [P3] 📚 Documentation API manquante                            │
+│     └── Suggestion: Ajouter OpenAPI annotations                    │
+│     └── Actions: [Voir détails] [Ignorer]                          │
+```
+
+When no suggestions:
+
+```
+│ 💡 SUGGESTIONS PROACTIVES                                           │
+│ └── Aucune suggestion pour cette phase                             │
+```
+
+**Variables:**
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{SUGGESTIONS_SECTION}` | Formatted suggestions or "Aucune" | See above |
+
+**BP1 suggestion types** (architecture phase):
+- P2: Reusable patterns detected
+- P3: Documentation opportunities

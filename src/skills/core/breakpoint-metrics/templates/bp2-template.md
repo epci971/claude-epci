@@ -18,6 +18,9 @@
 │ ├── @security-auditor: {SA_VERDICT}                                │
 │ └── @qa-reviewer: {QA_VERDICT}                                     │
 │                                                                     │
+│ 💡 SUGGESTIONS PROACTIVES (F06)                                     │
+│ {SUGGESTIONS_SECTION}                                               │
+│                                                                     │
 │ 📋 PREVIEW PHASE 3                                                  │
 │ ├── Commit structuré avec message conventionnel                    │
 │ ├── Génération documentation (@doc-generator)                      │
@@ -122,3 +125,42 @@ All agents shown (not just conditional):
 │ ├── Tests: {TEST_COUNT} ❌ {FAILING_COUNT} failing                 │
 │ └── ⚠️ Tests doivent passer avant continuation                     │
 ```
+
+### Suggestions Section (F06)
+
+When proactive suggestions are available from code review and pattern detection:
+
+```
+│ 💡 SUGGESTIONS PROACTIVES                                           │
+│ ├── [P1] 🔒 Input non validé (src/Controller/User.php:42)          │
+│ │   └── Suggestion: Ajouter validation Assert\Email                │
+│ ├── [P2] ⚡ N+1 Query potentiel (src/Service/Order.php:87)         │
+│ │   └── Suggestion: Utiliser JOIN FETCH                            │
+│ └── [P3] 🧹 Magic number détecté (src/Calculator.php:15)           │
+│     └── Suggestion: Extraire constante DISCOUNT_RATE               │
+│     └── Actions: [Accepter tout] [Voir détails] [Ignorer]          │
+```
+
+When no suggestions:
+
+```
+│ 💡 SUGGESTIONS PROACTIVES                                           │
+│ └── Aucune suggestion détectée                                     │
+```
+
+**Variables:**
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{SUGGESTIONS_SECTION}` | Formatted suggestions from F06 engine | See above |
+
+**BP2 suggestion types** (implementation phase):
+- P1: Security issues (input validation, SQL injection, XSS, CSRF)
+- P2: Performance (N+1, large payload), Quality (god class, long method)
+- P3: Style (magic numbers, dead code)
+
+**Suggestion Actions:**
+- `[Accepter tout]` - Apply all auto-fixable suggestions
+- `[Voir détails]` - Show full suggestion details
+- `[Ignorer]` - Skip suggestions for this session
+- Individual suggestion feedback tracked for learning (F08)
