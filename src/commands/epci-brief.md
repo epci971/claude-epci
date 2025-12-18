@@ -18,7 +18,7 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think hard` (default) / `ultrathink` (LARGE or high uncertainty) |
-| **Skills** | epci-core, architecture-patterns, flags-system, [stack-skill auto-detected] |
+| **Skills** | project-memory-loader, epci-core, architecture-patterns, flags-system, [stack-skill auto-detected] |
 | **Subagents** | @Explore (thorough) |
 
 **Thinking mode selection:**
@@ -26,6 +26,19 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 - `ultrathink`: When complexity appears LARGE or technical uncertainty is high
 
 ## Process
+
+### Step 0: Load Project Memory
+
+**Skill**: `project-memory-loader`
+
+Load project context from `.project-memory/` directory. The skill handles:
+- Reading context, conventions, settings, patterns
+- Loading velocity metrics and feature history
+- Applying defaults and displaying memory status
+
+**If `.project-memory/` does not exist:** Continue without context. Suggest `/epci-memory init` at workflow end.
+
+---
 
 ### Step 1: Exploration Complète
 

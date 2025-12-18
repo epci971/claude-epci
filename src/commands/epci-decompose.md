@@ -28,6 +28,19 @@ executed sequentially or in parallel where dependencies allow.
 | `--min-days <n>` | Minimum effort per sub-spec | No | `1` |
 | `--max-days <n>` | Maximum effort per sub-spec | No | `5` |
 
+## Pre-Workflow: Load Project Memory
+
+**Skill**: `project-memory-loader`
+
+Load project context from `.project-memory/` before analysis. The skill handles:
+- Reading context, conventions, settings, patterns
+- Finding similar past decompositions for reference
+- Applying project-specific naming conventions to generated specs
+
+**If `.project-memory/` does not exist:** Continue with defaults.
+
+---
+
 ## Process
 
 ### Phase 1: Validation
@@ -163,6 +176,7 @@ mkdir -p {output_dir}
 
 | Skill | Phase | Purpose |
 |-------|-------|---------|
+| `project-memory-loader` | Pre-Workflow | Load context and conventions |
 | `architecture-patterns` | Phase 2 | Identify decomposition patterns |
 | `flags-system` | All | Handle --think levels |
 

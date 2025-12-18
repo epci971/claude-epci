@@ -50,8 +50,20 @@ No formal Feature Document, no breakpoints.
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think` (standard) |
-| **Skills** | epci-core, code-conventions, flags-system, [stack] |
+| **Skills** | project-memory-loader, epci-core, code-conventions, flags-system, [stack] |
 | **Subagents** | @code-reviewer (light mode, SMALL only)
+
+## Pre-Workflow: Load Project Memory
+
+**Skill**: `project-memory-loader`
+
+Load project context from `.project-memory/` before implementation. The skill handles:
+- Reading context, conventions, settings, patterns
+- Applying naming/structure/style conventions to all generated code
+
+**If `.project-memory/` does not exist:** Continue with defaults.
+
+---
 
 ## Process
 
