@@ -1,7 +1,7 @@
 # EPCI Hooks System
 
-> **Version**: 1.0.0 (EPCI v3.1)
-> **Date**: 2025-12-15
+> **Version**: 1.1.0 (EPCI v3.7)
+> **Date**: 2025-12-18
 
 ## Overview
 
@@ -165,12 +165,23 @@ process.stdin.on('end', () => {
 | `phase` | string | Current phase (phase-1, phase-2, phase-3) |
 | `hook_type` | string | Hook type being executed |
 | `feature_slug` | string | Feature identifier (e.g., "user-auth") |
+| `feature_title` | string | Human-readable feature title |
 | `files_modified` | array | List of modified file paths |
+| `files_created` | int | Number of files created |
+| `files_updated` | int | Number of files updated |
+| `complexity` | string | TINY, SMALL, STANDARD, or LARGE |
+| `complexity_score` | float | Numeric complexity score (0.0-1.0) |
 | `test_results` | object | Test results (if available) |
 | `breakpoint_type` | string | Breakpoint identifier (for on-breakpoint) |
 | `timestamp` | string | ISO 8601 timestamp |
 | `active_flags` | array | List of active flags (v3.1+) |
 | `flag_sources` | object | Map of flag → source ("auto", "explicit", "alias") |
+| `project_root` | string | Path to project root directory |
+| `feature_document` | string | Path to Feature Document (if STANDARD/LARGE) |
+| `estimated_time` | string | Estimated time (e.g., "2h 30m") |
+| `actual_time` | string | Actual time (e.g., "3h 15m") |
+| `agents_used` | array | List of subagents invoked (e.g., ["code-reviewer"]) |
+| `review_findings` | object | Findings from subagent reviews (for post-phase-2) |
 
 ### Flags Example (v3.1+)
 
@@ -183,6 +194,28 @@ process.stdin.on('end', () => {
     "--safe": "auto",
     "--wave": "alias"
   }
+}
+```
+
+### Post-Phase-3 Context Example
+
+```json
+{
+  "phase": "phase-3",
+  "hook_type": "post-phase-3",
+  "feature_slug": "user-authentication",
+  "feature_title": "User Authentication",
+  "files_modified": ["src/auth.py", "tests/test_auth.py"],
+  "files_created": 2,
+  "files_updated": 1,
+  "complexity": "STANDARD",
+  "complexity_score": 0.6,
+  "estimated_time": "2h",
+  "actual_time": "2h 30m",
+  "agents_used": ["code-reviewer", "security-auditor"],
+  "feature_document": "docs/features/user-authentication.md",
+  "project_root": "/path/to/project",
+  "timestamp": "2025-12-18T10:30:00Z"
 }
 ```
 
@@ -322,11 +355,36 @@ cat epci-breakpoints.log  # If using on-breakpoint-log example
 
 ## Examples Reference
 
-| Example | Type | Purpose |
-|---------|------|---------|
-| `pre-phase-2-lint.sh` | pre-phase-2 | Run linters (npm/composer/flake8) |
-| `post-phase-3-notify.py` | post-phase-3 | Send Slack/Discord notifications |
-| `on-breakpoint-log.sh` | on-breakpoint | Log breakpoint events to file |
+| Example | Type | Purpose | Auto-Active |
+|---------|------|---------|-------------|
+| `pre-phase-2-lint.sh` | pre-phase-2 | Run linters (npm/composer/flake8) | Yes |
+| `post-phase-2-suggestions.py` | post-phase-2 | Generate proactive suggestions | Yes |
+| `post-phase-3-memory-update.py` | post-phase-3 | Save feature to Project Memory | Yes |
+| `post-phase-3-notify.py` | post-phase-3 | Send Slack/Discord notifications | No* |
+| `on-breakpoint-memory-context.py` | on-breakpoint | Load memory context for breakpoint | Yes |
+| `on-breakpoint-log.sh` | on-breakpoint | Log breakpoint events to file | No |
+
+*Requires configuration (webhook URLs via environment variables)
+
+### Project Memory Hooks (v3.7+)
+
+The following hooks integrate with Project Memory for automatic learning:
+
+**`post-phase-3-memory-update.py`** — Saves feature history after Phase 3:
+- Records feature metadata (slug, complexity, files, agents)
+- Updates velocity metrics
+- Triggers calibration (if estimated/actual times provided)
+- Increments features_completed counter
+
+**`on-breakpoint-memory-context.py`** — Loads context at each breakpoint:
+- Provides velocity metrics for display
+- Finds similar features for suggestions
+- Returns learning status
+
+**`post-phase-2-suggestions.py`** — Generates proactive suggestions:
+- Converts subagent findings to suggestions
+- Runs pattern detector on changed files
+- Formats output for breakpoint display
 
 ---
 
@@ -352,6 +410,14 @@ for result in results:
 ---
 
 ## Changelog
+
+### v1.1.0 (2025-12-18)
+
+- Added Project Memory integration hooks
+- New hooks: `post-phase-3-memory-update.py`, `on-breakpoint-memory-context.py`
+- Fixed `importlib` loading for hyphenated module names
+- Extended context fields documentation
+- Updated examples reference table
 
 ### v1.0.0 (2025-12-15)
 

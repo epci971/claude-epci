@@ -20,20 +20,49 @@
 #   - message: Summary message
 # =============================================================================
 
+import importlib.util
 import sys
 import json
 from pathlib import Path
 from typing import Dict, List, Any
 
-# Add project-memory to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "project-memory"))
 
-try:
-    from suggestion_engine import SuggestionEngine, Finding, findings_from_subagent, merge_findings
-    from detector import PatternDetector
-    MODULES_AVAILABLE = True
-except ImportError:
-    MODULES_AVAILABLE = False
+def load_project_memory_modules():
+    """
+    Load project-memory modules using importlib.
+    Handles the hyphenated directory name.
+    """
+    script_dir = Path(__file__).resolve().parent.parent.parent
+    pm_dir = script_dir / "project-memory"
+
+    if not pm_dir.exists():
+        pm_dir = Path.cwd() / "src" / "project-memory"
+
+    if not pm_dir.exists():
+        return None, None
+
+    modules = {}
+
+    # Load suggestion_engine
+    se_file = pm_dir / "suggestion_engine.py"
+    if se_file.exists():
+        spec = importlib.util.spec_from_file_location("suggestion_engine", se_file)
+        modules['suggestion_engine'] = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(modules['suggestion_engine'])
+
+    # Load detector
+    det_file = pm_dir / "detector.py"
+    if det_file.exists():
+        spec = importlib.util.spec_from_file_location("detector", det_file)
+        modules['detector'] = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(modules['detector'])
+
+    return modules.get('suggestion_engine'), modules.get('detector')
+
+
+# Try to load modules
+suggestion_engine_module, detector_module = load_project_memory_modules()
+MODULES_AVAILABLE = suggestion_engine_module is not None
 
 
 def generate_suggestions(context: dict) -> Dict[str, Any]:
@@ -52,6 +81,11 @@ def generate_suggestions(context: dict) -> Dict[str, Any]:
             "message": "Suggestion modules not available",
             "suggestions": [],
         }
+
+    # Get classes from loaded modules
+    SuggestionEngine = suggestion_engine_module.SuggestionEngine
+    Finding = suggestion_engine_module.Finding
+    findings_from_subagent = suggestion_engine_module.findings_from_subagent
 
     # Extract context
     files_changed = context.get('files_changed', [])
@@ -78,8 +112,9 @@ def generate_suggestions(context: dict) -> Dict[str, Any]:
         )
 
     # Run pattern detector on changed files if available
-    if files_changed:
+    if files_changed and detector_module:
         try:
+            PatternDetector = detector_module.PatternDetector
             detector = PatternDetector(Path(project_root))
             file_paths = [Path(project_root) / f for f in files_changed]
             existing_files = [f for f in file_paths if f.exists()]
@@ -95,7 +130,7 @@ def generate_suggestions(context: dict) -> Dict[str, Any]:
                         severity=pf.severity,
                         source='detector',
                     ))
-        except Exception as e:
+        except Exception:
             # Continue without detector findings
             pass
 
