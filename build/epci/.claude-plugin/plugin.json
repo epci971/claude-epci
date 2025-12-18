@@ -1,6 +1,6 @@
 {
   "name": "epci",
-  "version": "3.8.0",
+  "version": "3.8.1",
   "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability and project memory",
   "author": {
     "name": "EPCI Team"
