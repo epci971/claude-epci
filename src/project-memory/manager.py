@@ -755,6 +755,216 @@ class ProjectMemoryManager:
         return self.save_velocity(velocity)
 
     # -------------------------------------------------------------------------
+    # Learning & Calibration (F08)
+    # -------------------------------------------------------------------------
+
+    def get_calibration_manager(self):
+        """
+        Get the CalibrationManager instance.
+
+        Returns:
+            CalibrationManager for calibration operations.
+        """
+        try:
+            from .calibration import CalibrationManager
+            return CalibrationManager(self.memory_dir)
+        except ImportError:
+            return None
+
+    def get_learning_analyzer(self):
+        """
+        Get the LearningAnalyzer instance.
+
+        Returns:
+            LearningAnalyzer for learning operations.
+        """
+        try:
+            from .learning_analyzer import LearningAnalyzer
+            return LearningAnalyzer(self.memory_dir)
+        except ImportError:
+            return None
+
+    def trigger_calibration(self, feature: FeatureHistory) -> bool:
+        """
+        Trigger calibration after feature completion.
+
+        Args:
+            feature: Completed feature with estimated/actual times.
+
+        Returns:
+            True if calibration successful.
+        """
+        try:
+            calibration = self.get_calibration_manager()
+            if not calibration:
+                return False
+
+            # Parse times
+            estimated = self._parse_time_to_minutes(feature.estimated_time)
+            actual = self._parse_time_to_minutes(feature.actual_time)
+
+            if not estimated or not actual:
+                return False
+
+            calibration.calibrate(
+                feature_slug=feature.slug,
+                complexity=feature.complexity,
+                estimated=estimated,
+                actual=actual,
+            )
+            return True
+        except Exception:
+            # Graceful degradation
+            return False
+
+    def record_suggestion_feedback(
+        self,
+        pattern: str,
+        action: str
+    ) -> bool:
+        """
+        Record user feedback on a suggestion.
+
+        Args:
+            pattern: Pattern identifier (e.g., "test-coverage", "n1-query").
+            action: "accepted", "rejected", "ignored", or "disabled"
+
+        Returns:
+            True if recorded successfully.
+        """
+        try:
+            analyzer = self.get_learning_analyzer()
+            if not analyzer:
+                return False
+
+            return analyzer.record_feedback(pattern, action)
+        except Exception:
+            return False
+
+    def record_correction(self, correction: dict) -> bool:
+        """
+        Record a correction for pattern detection.
+
+        Args:
+            correction: Dict with pattern_id, type, severity, reason, etc.
+
+        Returns:
+            True if recorded successfully.
+        """
+        try:
+            analyzer = self.get_learning_analyzer()
+            if not analyzer:
+                return False
+
+            return analyzer.record_correction(correction)
+        except Exception:
+            return False
+
+    def get_learning_status(self) -> dict:
+        """
+        Get combined learning status (calibration + preferences).
+
+        Returns:
+            Dictionary with complete learning status.
+        """
+        status = {
+            'calibration': {},
+            'learning': {},
+            'available': False,
+        }
+
+        try:
+            calibration = self.get_calibration_manager()
+            if calibration:
+                status['calibration'] = calibration.get_status()
+                status['available'] = True
+
+            analyzer = self.get_learning_analyzer()
+            if analyzer:
+                status['learning'] = analyzer.get_status()
+                status['available'] = True
+        except Exception:
+            pass
+
+        return status
+
+    def reset_learning(self, backup: bool = True) -> bool:
+        """
+        Reset all learning data (calibration + preferences).
+
+        Args:
+            backup: Whether to create backups.
+
+        Returns:
+            True if reset successful.
+        """
+        success = True
+
+        try:
+            calibration = self.get_calibration_manager()
+            if calibration:
+                success = calibration.reset(backup) and success
+
+            analyzer = self.get_learning_analyzer()
+            if analyzer:
+                success = analyzer.reset(backup) and success
+        except Exception:
+            success = False
+
+        return success
+
+    def export_learning(self) -> dict:
+        """
+        Export all learning data.
+
+        Returns:
+            Dictionary with all learning data.
+        """
+        export = {
+            'calibration': {},
+            'preferences': {},
+            'corrections': {},
+            'exported_at': datetime.utcnow().isoformat() + "Z",
+        }
+
+        try:
+            calibration = self.get_calibration_manager()
+            if calibration:
+                data = calibration.load()
+                export['calibration'] = data.to_dict()
+
+            analyzer = self.get_learning_analyzer()
+            if analyzer:
+                prefs = analyzer.load_preferences()
+                export['preferences'] = prefs.to_dict()
+
+                corrections = analyzer.load_corrections()
+                export['corrections'] = corrections.to_dict()
+        except Exception:
+            pass
+
+        return export
+
+    def _parse_time_to_minutes(self, time_str: Optional[str]) -> Optional[float]:
+        """Parse time string to minutes."""
+        if not time_str:
+            return None
+
+        try:
+            # Handle "Xh Ym" format
+            if 'h' in time_str:
+                parts = time_str.replace('h', '').replace('m', '').split()
+                hours = float(parts[0])
+                minutes = float(parts[1]) if len(parts) > 1 else 0
+                return hours * 60 + minutes
+            elif 'm' in time_str:
+                return float(time_str.replace('m', '').strip())
+            else:
+                return float(time_str)
+        except (ValueError, IndexError):
+            return None
+
+    # -------------------------------------------------------------------------
     # Internal Helpers
     # -------------------------------------------------------------------------
 

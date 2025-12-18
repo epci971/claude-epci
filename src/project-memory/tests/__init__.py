@@ -1,1 +1,1 @@
-# EPCI Project Memory Tests
+"""Tests for EPCI Project Memory module."""

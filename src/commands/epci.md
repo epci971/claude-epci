@@ -393,6 +393,12 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
    - Prepare PR template
    - List reviewers
 
+4. **Learning update** (F08 - automatic)
+   - Save feature history to `.project-memory/history/features/{slug}.json`
+   - Trigger calibration with estimated vs actual times
+   - Update velocity metrics
+   - Record any corrections for pattern detection
+
 ### Output §4
 
 ```markdown

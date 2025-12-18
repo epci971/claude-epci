@@ -12,6 +12,7 @@
     "./commands/epci-quick.md",
     "./commands/epci-spike.md",
     "./commands/epci-memory.md",
+    "./commands/epci-learn.md",
     "./commands/create.md"
   ],
   "agents": [
@@ -29,6 +30,7 @@
     "./skills/core/testing-strategy/SKILL.md",
     "./skills/core/git-workflow/SKILL.md",
     "./skills/core/project-memory/SKILL.md",
+    "./skills/core/learning-optimizer/SKILL.md",
     "./skills/stack/php-symfony/SKILL.md",
     "./skills/stack/javascript-react/SKILL.md",
     "./skills/stack/python-django/SKILL.md",
