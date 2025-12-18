@@ -418,15 +418,3 @@ public class SecurityConfig {
     }
 }
 ```
-
-## Deep Dive References
-
-For detailed patterns and advanced usage, see:
-
-| Topic | Reference | Description |
-|-------|-----------|-------------|
-| Architecture | @references/architecture.md | Clean/Hexagonal, CQRS, Modular monolith |
-| JPA/Hibernate | @references/jpa-hibernate.md | Entity patterns, N+1, Specifications |
-| Security | @references/security.md | Spring Security 6, JWT, OAuth2 |
-| Testing | @references/testing.md | JUnit 5, TestContainers, ArchUnit |
-| Reactive | @references/reactive.md | WebFlux, R2DBC, Backpressure |
