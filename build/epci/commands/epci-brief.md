@@ -27,6 +27,8 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 
 ## Process
 
+**⚠️ IMPORTANT: Follow ALL steps in sequence. Do NOT skip any step marked MANDATORY.**
+
 ### Step 0: Load Project Memory
 
 **Skill**: `project-memory-loader`
@@ -40,9 +42,11 @@ Load project context from `.project-memory/` directory. The skill handles:
 
 ---
 
-### Step 1: Exploration Complète
+### Step 1: Exploration (MANDATORY)
 
-**Invoke @Explore** (thorough level) to:
+**⚠️ DO NOT SKIP THIS STEP** — Use Task tool with @Explore subagent.
+
+**Action:** Invoke @Explore (thorough level) using the Task tool to:
 - Scan complete project structure
 - Identify all technologies, frameworks, versions
 - Map architectural patterns (Repository, Service, Controller, etc.)
@@ -62,82 +66,77 @@ Analyze the brief to identify:
 - Critical missing information
 - Potential inconsistencies
 
-### Step 2: Clarification Loop (Intelligent)
+### Step 2: Clarification Loop (MANDATORY)
 
-**Skill**: `clarification-intelligente`
+**⚠️ DO NOT SKIP THIS STEP** — Always ask clarification questions before proceeding.
 
-Use the intelligent clarification system (F05) to generate context-aware questions:
+**Action:** Analyze the brief and identify gaps, ambiguities, or missing information.
 
-#### If Project Memory Available
+**Output format — Present to user:**
 
-1. **Analyze Brief**
-   ```python
-   from project_memory.clarification_analyzer import analyze_brief
-   analysis = analyze_brief(brief)
-   # → keywords, domain, gaps
-   ```
+```
+📋 CLARIFICATION
 
-2. **Find Similar Features**
-   ```python
-   similar = manager.find_similar_features(analysis.keywords, threshold=0.3)
-   # → List of similar past features with scores
-   ```
+Based on my analysis, I have the following questions:
 
-3. **Generate Intelligent Questions**
-   ```python
-   from project_memory.question_generator import generate_questions
-   result = generate_questions(brief, context, similar_features, gaps, persona)
-   # → Max 3 targeted questions with suggestions
-   ```
+1. [Question about scope/boundaries]
+   → Suggestion: [Your recommendation based on context]
 
-4. **Present Questions with Context**
-   ```
-   📋 CLARIFICATION (basée sur l'historique projet)
+2. [Question about technical choice]
+   → Suggestion: [Your recommendation]
 
-   [If similar feature found]
-   💡 Feature similaire détectée: `{slug}` (score: {score}%)
+3. [Question about priority/constraints]
+   → Suggestion: [Your recommendation]
 
-   Questions:
-   1. {question_1} (Suggestion: {suggestion_1})
-   2. {question_2} (Suggestion: {suggestion_2})
-   3. {question_3}
-   ```
+Please answer these questions to proceed.
+```
 
-#### If Project Memory Unavailable (Graceful Degradation)
-
-Fall back to generic questions by category:
+**Question categories to consider:**
 
 | Category | Example Questions |
 |----------|-------------------|
-| **Business/Value** | Why? For whom? What business impact? |
-| **Scope** | What's included/excluded? What limits? |
-| **Constraints** | Technical? Time? Budget? Dependencies? |
-| **Priority** | Criticality? Deadline? Blocking what? |
-
-#### Question Types (F05)
-
-| Type | Trigger | Example |
-|------|---------|---------|
-| **REUSE** | Similar feature found | "Feature X uses pattern Y. Reuse?" |
-| **TECHNICAL** | Domain-specific gap | "Which auth method: OAuth, JWT?" |
-| **SCOPE** | Unclear boundaries | "What is included/excluded?" |
-| **INTEGRATION** | Existing components | "Integrate with Messenger?" |
-| **PRIORITY** | Persona-specific | "What reliability guarantee?" |
+| **Scope** | What's included/excluded? What are the boundaries? |
+| **Technical** | Which approach: A or B? Which library/pattern? |
+| **Constraints** | Performance requirements? Security concerns? |
+| **Integration** | How does this interact with existing components? |
 
 **Rules:**
-- Maximum 3 questions per iteration
-- Maximum 3 clarification iterations
-- Prioritize blocking questions
-- Include suggestions based on project history
-- Adapt to active persona (when F09 available)
+- Ask 2-3 focused questions maximum
+- Provide suggestions based on exploration results
+- Wait for user response before proceeding to Step 3
+- If brief is very clear, ask at least 1 confirmation question
 
-### Step 3: AI Suggestions
+### Step 3: AI Suggestions (MANDATORY)
 
-Propose improvements based on @Explore analysis:
-- Design suggestions (based on architecture-patterns)
-- Best practices for detected stack
-- Context-specific attention points
-- Identified potential risks
+**⚠️ DO NOT SKIP THIS STEP** — After receiving clarification answers, provide suggestions.
+
+**Action:** Based on exploration and user answers, propose improvements and recommendations.
+
+**Output format — Present to user:**
+
+```
+💡 AI SUGGESTIONS
+
+Based on my analysis and your answers, here are my recommendations:
+
+**Architecture:**
+- [Suggestion about patterns/structure]
+
+**Implementation:**
+- [Suggestion about approach/methodology]
+
+**Risks to consider:**
+- [Identified risk and mitigation]
+
+**Best practices for {detected_stack}:**
+- [Stack-specific recommendation]
+```
+
+**Categories to cover:**
+- Design patterns appropriate for the task
+- Best practices for the detected stack
+- Potential risks and how to mitigate them
+- Attention points specific to this project
 
 ### Step 4: Complexity Evaluation
 
@@ -169,13 +168,15 @@ Based on the exploration and complexity evaluation, detect flags to auto-activat
 
 **Output:** List of suggested flags with source (auto/recommended)
 
-### Step 5: Génération Output
+### Step 5: Generate Output (MANDATORY)
+
+**⚠️ DO NOT SKIP THIS STEP** — You MUST generate the appropriate output based on complexity.
 
 Based on complexity evaluation, generate the appropriate output:
 
 #### If TINY or SMALL → Inline Brief
 
-Generate a structured brief in the response (no file created):
+Generate a structured brief directly in your response (no file created):
 
 ```markdown
 # Functional Brief — [Title]
@@ -201,9 +202,11 @@ Generate a structured brief in the response (no file created):
 → Launch `/epci-quick`
 ```
 
-#### If STANDARD or LARGE → Feature Document
+#### If STANDARD or LARGE → Feature Document (USE WRITE TOOL)
 
-Create file `docs/features/<slug>.md`:
+**⚠️ MANDATORY:** Use the **Write tool** to create the file `docs/features/<slug>.md`
+
+Create the directory if needed, then write the Feature Document:
 
 ```markdown
 # Feature Document — [Title]

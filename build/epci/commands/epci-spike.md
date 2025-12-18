@@ -53,7 +53,11 @@ Load project context from `.project-memory/` before exploration. The skill handl
 
 ## Process
 
-### 1. Framing (5 min)
+**⚠️ IMPORTANT: Follow ALL steps in sequence. Do NOT skip the Spike Report generation.**
+
+### 1. Framing (MANDATORY — 5 min)
+
+**⚠️ DO NOT SKIP:** Display the Spike Setup to the user before proceeding.
 
 Clearly define:
 - **Question**: What uncertainty do we want to resolve?
@@ -77,7 +81,9 @@ Clearly define:
 - ❌ Excluded: [What we don't explore]
 ```
 
-### 2. Exploration
+### 2. Exploration (MANDATORY)
+
+**⚠️ DO NOT SKIP:** Use Task tool with @Explore subagent.
 
 **Invoke @Explore** (thorough level) to:
 - Search for existing solutions
@@ -96,7 +102,9 @@ Clearly define:
 - 📝 Document discoveries as you go
 - 🎯 Stay focused on the initial question
 
-### 3. Synthesis (10 min)
+### 3. Synthesis (MANDATORY — 10 min)
+
+**⚠️ DO NOT SKIP:** Synthesize findings before generating the report.
 
 At the end of the time-box, synthesize:
 - What was learned
@@ -104,7 +112,11 @@ At the end of the time-box, synthesize:
 - Identified risks
 - Recommendation
 
-## Output: Spike Report
+## Output: Spike Report (USE WRITE TOOL — MANDATORY)
+
+**⚠️ MANDATORY:** Use the **Write tool** to create the file `docs/spikes/<spike-slug>.md`
+
+Create the directory if needed, then write the Spike Report:
 
 ```markdown
 # Spike Report — [Title]

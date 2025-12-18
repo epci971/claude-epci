@@ -67,7 +67,9 @@ Load project context from `.project-memory/` before implementation. The skill ha
 
 ## Process
 
-### 1. Brief Reception
+**⚠️ IMPORTANT: Follow ALL steps in sequence. Do NOT skip the Output step.**
+
+### 1. Brief Reception (MANDATORY)
 
 The structured brief is provided by `/epci-brief`.
 It already contains:
@@ -78,7 +80,9 @@ It already contains:
 
 **If brief is absent or incomplete** → Suggest `/epci-brief` first.
 
-### 2. Direct Implementation
+### 2. Direct Implementation (MANDATORY)
+
+**⚠️ DO NOT SKIP:** Apply changes using Edit tool. Follow the mode-specific steps below.
 
 #### TINY Mode
 
@@ -126,7 +130,9 @@ or
 feat(scope): short description
 ```
 
-## Output
+## Output (MANDATORY)
+
+**⚠️ MANDATORY:** Always display the completion message in this exact format.
 
 ### TINY Mode
 

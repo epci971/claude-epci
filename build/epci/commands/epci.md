@@ -114,7 +114,9 @@ Before starting any phase, load project context from `.project-memory/`. The ski
 
 ---
 
-## Phase 1: Planification
+## Phase 1: Planification (MANDATORY)
+
+**⚠️ ALL steps in this phase are MANDATORY. Do NOT skip any step.**
 
 ### Configuration
 
@@ -152,7 +154,9 @@ Before starting any phase, load project context from `.project-memory/`. The ski
    - If NEEDS_REVISION → correct and resubmit
    - If APPROVED → proceed to breakpoint
 
-### Output §2
+### Output §2 (USE EDIT TOOL — MANDATORY)
+
+**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §2 content.
 
 ```markdown
 ## §2 — Implementation Plan
@@ -184,7 +188,9 @@ Before starting any phase, load project context from `.project-memory/`. The ski
 
 **🪝 Execute `post-phase-1` hooks** (if configured)
 
-### ⏸️ BREAKPOINT (Enriched)
+### ⏸️ BREAKPOINT (MANDATORY — WAIT FOR USER)
+
+**⚠️ MANDATORY:** Display this breakpoint and WAIT for user confirmation before proceeding.
 
 **🪝 Execute `on-breakpoint` hooks** (if configured)
 
@@ -239,7 +245,9 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 ---
 
-## Phase 2: Implementation
+## Phase 2: Implementation (MANDATORY)
+
+**⚠️ ALL steps in this phase are MANDATORY. Do NOT skip any step.**
 
 ### Configuration
 
@@ -306,7 +314,9 @@ After code review, the `proactive-suggestions` skill generates suggestions:
 
 User feedback is recorded for learning (F08) to improve future suggestions.
 
-### Output §3
+### Output §3 (USE EDIT TOOL — MANDATORY)
+
+**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §3 content.
 
 ```markdown
 ## §3 — Implementation
@@ -335,7 +345,9 @@ OK (47 tests, 156 assertions)
 
 **🪝 Execute `post-phase-2` hooks** (if configured)
 
-### ⏸️ BREAKPOINT (Enriched)
+### ⏸️ BREAKPOINT (MANDATORY — WAIT FOR USER)
+
+**⚠️ MANDATORY:** Display this breakpoint and WAIT for user confirmation before proceeding.
 
 **🪝 Execute `on-breakpoint` hooks** (if configured)
 
@@ -390,7 +402,9 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 ---
 
-## Phase 3: Finalization
+## Phase 3: Finalization (MANDATORY)
+
+**⚠️ ALL steps in this phase are MANDATORY. Do NOT skip any step.**
 
 ### Configuration
 
@@ -430,7 +444,9 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
    - Update velocity metrics
    - Record any corrections for pattern detection
 
-### Output §4
+### Output §4 (USE EDIT TOOL — MANDATORY)
+
+**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §4 content.
 
 ```markdown
 ## §4 — Finalization

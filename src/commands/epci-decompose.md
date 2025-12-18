@@ -43,7 +43,9 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 
 ## Process
 
-### Phase 1: Validation
+**⚠️ IMPORTANT: Follow ALL phases in sequence. Do NOT skip the file generation step.**
+
+### Phase 1: Validation (MANDATORY)
 
 **Checks:**
 1. File exists and is readable
@@ -63,7 +65,9 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 └── Status: Valid
 ```
 
-### Phase 2: Structural Analysis
+### Phase 2: Structural Analysis (MANDATORY)
+
+**⚠️ DO NOT SKIP:** Analyze the document structure and detect dependencies.
 
 **Skills loaded:** `architecture-patterns`, `flags-system`
 
@@ -99,7 +103,9 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 - Detect circular dependencies
 - Validate granularity compliance
 
-### Phase 3: Proposal (BREAKPOINT)
+### Phase 3: Proposal (MANDATORY — WAIT FOR USER)
+
+**⚠️ MANDATORY:** Display the breakpoint and WAIT for user validation before proceeding.
 
 Present decomposition proposal for user validation:
 
@@ -150,7 +156,9 @@ Que souhaitez-vous modifier ?
 Votre choix (ou texte libre):
 ```
 
-### Phase 4: Generation
+### Phase 4: Generation (USE WRITE TOOL — MANDATORY)
+
+**⚠️ MANDATORY:** Use the **Write tool** to create all output files.
 
 **Create output directory:**
 ```bash
