@@ -305,7 +305,7 @@ feat(skills): add java-springboot references for Progressive Disclosure (F01)
 Refs: docs/features/f01-java-springboot-references.md
 ```
 
-**Commit hash**: `b8fba05`
+**Commit hash**: `322ddf0`
 
 ### Documentation
 
