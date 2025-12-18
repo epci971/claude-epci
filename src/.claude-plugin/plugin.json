@@ -1,6 +1,6 @@
 {
   "name": "epci",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability and project memory",
   "author": {
     "name": "EPCI Team"
@@ -31,6 +31,9 @@
     "./skills/core/git-workflow/SKILL.md",
     "./skills/core/project-memory/SKILL.md",
     "./skills/core/learning-optimizer/SKILL.md",
+    "./skills/core/breakpoint-metrics/SKILL.md",
+    "./skills/core/clarification-intelligente/SKILL.md",
+    "./skills/core/proactive-suggestions/SKILL.md",
     "./skills/stack/php-symfony/SKILL.md",
     "./skills/stack/javascript-react/SKILL.md",
     "./skills/stack/python-django/SKILL.md",
