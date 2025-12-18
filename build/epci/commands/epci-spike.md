@@ -38,6 +38,19 @@ A spike is a time-limited exploration to reduce technical uncertainty.
 - Integration with undocumented external system
 - Performance or scalability to validate
 
+## Pre-Workflow: Load Project Memory
+
+**Skill**: `project-memory-loader`
+
+Load project context from `.project-memory/` before exploration. The skill handles:
+- Reading context, conventions, settings, patterns
+- Finding similar past spikes or features for reference
+- Applying project-specific patterns to suggestions
+
+**If `.project-memory/` does not exist:** Continue with defaults.
+
+---
+
 ## Process
 
 ### 1. Framing (5 min)
@@ -197,6 +210,7 @@ Verdict: NO-GO
 
 ## Skills Loaded
 
+- `project-memory-loader` (context and conventions)
 - `architecture-patterns` (approach evaluation)
 - `flags-system` (flag handling)
 - `[stack-skill]` (auto-detected)

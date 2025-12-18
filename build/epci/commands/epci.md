@@ -101,6 +101,19 @@ On error with `fail_on_error: false` (default), workflow continues with warning.
 
 ---
 
+## Pre-Workflow: Load Project Memory
+
+**Skill**: `project-memory-loader`
+
+Before starting any phase, load project context from `.project-memory/`. The skill handles:
+- Reading context, conventions, settings, patterns
+- Loading velocity metrics and feature history
+- Applying naming/structure/style conventions to all generated code
+
+**If `.project-memory/` does not exist:** Continue with defaults. Suggest `/epci-memory init` after completion.
+
+---
+
 ## Phase 1: Planification
 
 ### Configuration
@@ -108,7 +121,7 @@ On error with `fail_on_error: false` (default), workflow continues with warning.
 | Element | Value |
 |---------|-------|
 | **Thinking** | Based on flags: `think` (default), `think hard` (--think-hard), `ultrathink` (--ultrathink) |
-| **Skills** | epci-core, architecture-patterns, flags-system, [stack] |
+| **Skills** | project-memory-loader, epci-core, architecture-patterns, flags-system, [stack] |
 | **Subagents** | @plan-validator |
 
 **Flag effects on Phase 1:**
