@@ -514,6 +514,109 @@ class ProjectMemoryManager:
             return []
         return [f.stem for f in features_dir.glob("*.json")]
 
+    def get_all_feature_metadata(self) -> List[Dict[str, Any]]:
+        """
+        Get metadata for all features (for similarity matching).
+
+        Returns:
+            List of dicts with slug, title, complexity, files_modified.
+            Empty list if Project Memory unavailable (graceful degradation).
+        """
+        try:
+            features = []
+            for slug in self.list_features():
+                feature = self.load_feature_history(slug)
+                if feature:
+                    features.append({
+                        'slug': feature.slug,
+                        'title': feature.title,
+                        'complexity': feature.complexity,
+                        'files_modified': feature.files_modified,
+                        'completed_at': feature.completed_at,
+                    })
+            return features
+        except Exception:
+            # Graceful degradation
+            return []
+
+    def find_similar_features(
+        self,
+        keywords: List[str],
+        threshold: float = 0.3
+    ) -> List[Dict[str, Any]]:
+        """
+        Find features similar to given keywords.
+
+        Uses Jaccard similarity on feature titles and slugs.
+
+        Args:
+            keywords: List of keywords from brief analysis.
+            threshold: Minimum similarity score (default 0.3).
+
+        Returns:
+            List of similar features with scores.
+            Empty list if no matches or Project Memory unavailable.
+        """
+        try:
+            from .similarity_matcher import find_similar_features as _find_similar
+
+            features = self.get_all_feature_metadata()
+            if not features:
+                return []
+
+            matches = _find_similar(features, keywords, threshold)
+            return [
+                {
+                    'slug': m.slug,
+                    'title': m.title,
+                    'score': m.score,
+                    'matched_keywords': m.matched_keywords,
+                    'complexity': m.complexity,
+                    'files_modified': m.files_modified,
+                }
+                for m in matches
+            ]
+        except Exception:
+            # Graceful degradation
+            return []
+
+    def get_patterns_for_domain(self, domain: str) -> List[str]:
+        """
+        Get detected patterns relevant to a domain.
+
+        Args:
+            domain: Domain name (auth, api, ui, data, etc.).
+
+        Returns:
+            List of pattern names.
+            Empty list if unavailable (graceful degradation).
+        """
+        try:
+            patterns_file = self.memory_dir / "patterns" / "detected.json"
+            if not patterns_file.exists():
+                return []
+
+            data = self._read_json(patterns_file)
+            all_patterns = data.get('patterns', [])
+
+            # Domain-pattern mapping
+            domain_patterns = {
+                'auth': ['mvc', 'service', 'repository'],
+                'api': ['mvc', 'rest', 'dto', 'service'],
+                'ui': ['component', 'mvc', 'state'],
+                'data': ['repository', 'entity', 'ddd'],
+                'infra': ['config', 'pipeline'],
+                'notification': ['event-driven', 'queue', 'observer'],
+                'payment': ['service', 'gateway', 'facade'],
+                'search': ['repository', 'index', 'query'],
+            }
+
+            relevant = domain_patterns.get(domain, [])
+            return [p for p in all_patterns if any(r in p.lower() for r in relevant)]
+        except Exception:
+            # Graceful degradation
+            return []
+
     def _load_file(self, relative_path: str, dataclass_type):
         """Generic file loader with graceful degradation."""
         file_path = self.memory_dir / relative_path
@@ -650,6 +753,216 @@ class ProjectMemoryManager:
         velocity.last_5_features = velocity.last_5_features[-5:]  # Keep only last 5
 
         return self.save_velocity(velocity)
+
+    # -------------------------------------------------------------------------
+    # Learning & Calibration (F08)
+    # -------------------------------------------------------------------------
+
+    def get_calibration_manager(self):
+        """
+        Get the CalibrationManager instance.
+
+        Returns:
+            CalibrationManager for calibration operations.
+        """
+        try:
+            from .calibration import CalibrationManager
+            return CalibrationManager(self.memory_dir)
+        except ImportError:
+            return None
+
+    def get_learning_analyzer(self):
+        """
+        Get the LearningAnalyzer instance.
+
+        Returns:
+            LearningAnalyzer for learning operations.
+        """
+        try:
+            from .learning_analyzer import LearningAnalyzer
+            return LearningAnalyzer(self.memory_dir)
+        except ImportError:
+            return None
+
+    def trigger_calibration(self, feature: FeatureHistory) -> bool:
+        """
+        Trigger calibration after feature completion.
+
+        Args:
+            feature: Completed feature with estimated/actual times.
+
+        Returns:
+            True if calibration successful.
+        """
+        try:
+            calibration = self.get_calibration_manager()
+            if not calibration:
+                return False
+
+            # Parse times
+            estimated = self._parse_time_to_minutes(feature.estimated_time)
+            actual = self._parse_time_to_minutes(feature.actual_time)
+
+            if not estimated or not actual:
+                return False
+
+            calibration.calibrate(
+                feature_slug=feature.slug,
+                complexity=feature.complexity,
+                estimated=estimated,
+                actual=actual,
+            )
+            return True
+        except Exception:
+            # Graceful degradation
+            return False
+
+    def record_suggestion_feedback(
+        self,
+        pattern: str,
+        action: str
+    ) -> bool:
+        """
+        Record user feedback on a suggestion.
+
+        Args:
+            pattern: Pattern identifier (e.g., "test-coverage", "n1-query").
+            action: "accepted", "rejected", "ignored", or "disabled"
+
+        Returns:
+            True if recorded successfully.
+        """
+        try:
+            analyzer = self.get_learning_analyzer()
+            if not analyzer:
+                return False
+
+            return analyzer.record_feedback(pattern, action)
+        except Exception:
+            return False
+
+    def record_correction(self, correction: dict) -> bool:
+        """
+        Record a correction for pattern detection.
+
+        Args:
+            correction: Dict with pattern_id, type, severity, reason, etc.
+
+        Returns:
+            True if recorded successfully.
+        """
+        try:
+            analyzer = self.get_learning_analyzer()
+            if not analyzer:
+                return False
+
+            return analyzer.record_correction(correction)
+        except Exception:
+            return False
+
+    def get_learning_status(self) -> dict:
+        """
+        Get combined learning status (calibration + preferences).
+
+        Returns:
+            Dictionary with complete learning status.
+        """
+        status = {
+            'calibration': {},
+            'learning': {},
+            'available': False,
+        }
+
+        try:
+            calibration = self.get_calibration_manager()
+            if calibration:
+                status['calibration'] = calibration.get_status()
+                status['available'] = True
+
+            analyzer = self.get_learning_analyzer()
+            if analyzer:
+                status['learning'] = analyzer.get_status()
+                status['available'] = True
+        except Exception:
+            pass
+
+        return status
+
+    def reset_learning(self, backup: bool = True) -> bool:
+        """
+        Reset all learning data (calibration + preferences).
+
+        Args:
+            backup: Whether to create backups.
+
+        Returns:
+            True if reset successful.
+        """
+        success = True
+
+        try:
+            calibration = self.get_calibration_manager()
+            if calibration:
+                success = calibration.reset(backup) and success
+
+            analyzer = self.get_learning_analyzer()
+            if analyzer:
+                success = analyzer.reset(backup) and success
+        except Exception:
+            success = False
+
+        return success
+
+    def export_learning(self) -> dict:
+        """
+        Export all learning data.
+
+        Returns:
+            Dictionary with all learning data.
+        """
+        export = {
+            'calibration': {},
+            'preferences': {},
+            'corrections': {},
+            'exported_at': datetime.utcnow().isoformat() + "Z",
+        }
+
+        try:
+            calibration = self.get_calibration_manager()
+            if calibration:
+                data = calibration.load()
+                export['calibration'] = data.to_dict()
+
+            analyzer = self.get_learning_analyzer()
+            if analyzer:
+                prefs = analyzer.load_preferences()
+                export['preferences'] = prefs.to_dict()
+
+                corrections = analyzer.load_corrections()
+                export['corrections'] = corrections.to_dict()
+        except Exception:
+            pass
+
+        return export
+
+    def _parse_time_to_minutes(self, time_str: Optional[str]) -> Optional[float]:
+        """Parse time string to minutes."""
+        if not time_str:
+            return None
+
+        try:
+            # Handle "Xh Ym" format
+            if 'h' in time_str:
+                parts = time_str.replace('h', '').replace('m', '').split()
+                hours = float(parts[0])
+                minutes = float(parts[1]) if len(parts) > 1 else 0
+                return hours * 60 + minutes
+            elif 'm' in time_str:
+                return float(time_str.replace('m', '').strip())
+            else:
+                return float(time_str)
+        except (ValueError, IndexError):
+            return None
 
     # -------------------------------------------------------------------------
     # Internal Helpers

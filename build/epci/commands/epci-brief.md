@@ -49,9 +49,50 @@ Analyze the brief to identify:
 - Critical missing information
 - Potential inconsistencies
 
-### Step 2: Clarification Loop
+### Step 2: Clarification Loop (Intelligent)
 
-If ambiguities are detected, ask targeted questions (max 3 iterations):
+**Skill**: `clarification-intelligente`
+
+Use the intelligent clarification system (F05) to generate context-aware questions:
+
+#### If Project Memory Available
+
+1. **Analyze Brief**
+   ```python
+   from project_memory.clarification_analyzer import analyze_brief
+   analysis = analyze_brief(brief)
+   # → keywords, domain, gaps
+   ```
+
+2. **Find Similar Features**
+   ```python
+   similar = manager.find_similar_features(analysis.keywords, threshold=0.3)
+   # → List of similar past features with scores
+   ```
+
+3. **Generate Intelligent Questions**
+   ```python
+   from project_memory.question_generator import generate_questions
+   result = generate_questions(brief, context, similar_features, gaps, persona)
+   # → Max 3 targeted questions with suggestions
+   ```
+
+4. **Present Questions with Context**
+   ```
+   📋 CLARIFICATION (basée sur l'historique projet)
+
+   [If similar feature found]
+   💡 Feature similaire détectée: `{slug}` (score: {score}%)
+
+   Questions:
+   1. {question_1} (Suggestion: {suggestion_1})
+   2. {question_2} (Suggestion: {suggestion_2})
+   3. {question_3}
+   ```
+
+#### If Project Memory Unavailable (Graceful Degradation)
+
+Fall back to generic questions by category:
 
 | Category | Example Questions |
 |----------|-------------------|
@@ -60,10 +101,22 @@ If ambiguities are detected, ask targeted questions (max 3 iterations):
 | **Constraints** | Technical? Time? Budget? Dependencies? |
 | **Priority** | Criticality? Deadline? Blocking what? |
 
+#### Question Types (F05)
+
+| Type | Trigger | Example |
+|------|---------|---------|
+| **REUSE** | Similar feature found | "Feature X uses pattern Y. Reuse?" |
+| **TECHNICAL** | Domain-specific gap | "Which auth method: OAuth, JWT?" |
+| **SCOPE** | Unclear boundaries | "What is included/excluded?" |
+| **INTEGRATION** | Existing components | "Integrate with Messenger?" |
+| **PRIORITY** | Persona-specific | "What reliability guarantee?" |
+
 **Rules:**
-- Maximum 5 questions per iteration
+- Maximum 3 questions per iteration
 - Maximum 3 clarification iterations
 - Prioritize blocking questions
+- Include suggestions based on project history
+- Adapt to active persona (when F09 available)
 
 ### Step 3: AI Suggestions
 

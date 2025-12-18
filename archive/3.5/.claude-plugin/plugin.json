@@ -1,0 +1,41 @@
+{
+  "name": "epci",
+  "version": "3.5.0",
+  "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability and project memory",
+  "author": {
+    "name": "EPCI Team"
+  },
+  "license": "MIT",
+  "commands": [
+    "./commands/epci-brief.md",
+    "./commands/epci.md",
+    "./commands/epci-quick.md",
+    "./commands/epci-spike.md",
+    "./commands/epci-memory.md",
+    "./commands/create.md"
+  ],
+  "agents": [
+    "./agents/plan-validator.md",
+    "./agents/code-reviewer.md",
+    "./agents/security-auditor.md",
+    "./agents/qa-reviewer.md",
+    "./agents/doc-generator.md"
+  ],
+  "skills": [
+    "./skills/core/epci-core/SKILL.md",
+    "./skills/core/architecture-patterns/SKILL.md",
+    "./skills/core/code-conventions/SKILL.md",
+    "./skills/core/flags-system/SKILL.md",
+    "./skills/core/testing-strategy/SKILL.md",
+    "./skills/core/git-workflow/SKILL.md",
+    "./skills/core/project-memory/SKILL.md",
+    "./skills/stack/php-symfony/SKILL.md",
+    "./skills/stack/javascript-react/SKILL.md",
+    "./skills/stack/python-django/SKILL.md",
+    "./skills/stack/java-springboot/SKILL.md",
+    "./skills/factory/skills-creator/SKILL.md",
+    "./skills/factory/commands-creator/SKILL.md",
+    "./skills/factory/subagents-creator/SKILL.md",
+    "./skills/factory/component-advisor/SKILL.md"
+  ]
+}

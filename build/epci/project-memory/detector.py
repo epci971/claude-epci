@@ -17,7 +17,7 @@ import json
 import re
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Tuple
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 # =============================================================================
@@ -685,6 +685,333 @@ class ProjectDetector:
                 pass
 
         return result
+
+
+# =============================================================================
+# PATTERN DETECTOR (F06)
+# =============================================================================
+
+@dataclass
+class PatternFinding:
+    """A detected code pattern issue."""
+    pattern_id: str
+    file_path: str
+    line_number: Optional[int] = None
+    message: str = ""
+    severity: str = "minor"
+    context: Dict[str, Any] = field(default_factory=dict)
+    source: str = "detector"
+
+
+class PatternDetector:
+    """
+    Detects code patterns from the F06 catalog.
+
+    Performs static analysis to find security, performance,
+    and quality issues in code files.
+    """
+
+    def __init__(self, project_root: Path):
+        """
+        Initialize pattern detector.
+
+        Args:
+            project_root: Path to project root directory.
+        """
+        self.project_root = Path(project_root)
+        self._file_cache: Dict[str, str] = {}
+
+    def detect_all(self, files: Optional[List[Path]] = None) -> List[PatternFinding]:
+        """
+        Run all pattern detectors on files.
+
+        Args:
+            files: Optional list of files to analyze.
+                   If None, scans relevant project files.
+
+        Returns:
+            List of detected pattern findings.
+        """
+        findings = []
+
+        if files is None:
+            files = self._get_scannable_files()
+
+        for file_path in files:
+            content = self._read_file(file_path)
+            if content is None:
+                continue
+
+            # Run category detectors
+            findings.extend(self._detect_security(file_path, content))
+            findings.extend(self._detect_performance(file_path, content))
+            findings.extend(self._detect_quality(file_path, content))
+
+        return findings
+
+    def _get_scannable_files(self, limit: int = 50) -> List[Path]:
+        """Get files that should be scanned for patterns."""
+        extensions = {'.php', '.py', '.js', '.ts', '.java', '.tsx', '.jsx'}
+        exclude_dirs = {'vendor', 'node_modules', '.git', '__pycache__', 'var', 'cache'}
+
+        files = []
+        for ext in extensions:
+            for f in self.project_root.rglob(f"*{ext}"):
+                # Skip excluded directories
+                if any(d in f.parts for d in exclude_dirs):
+                    continue
+                files.append(f)
+                if len(files) >= limit:
+                    return files
+
+        return files
+
+    def _read_file(self, file_path: Path) -> Optional[str]:
+        """Read file content with caching."""
+        str_path = str(file_path)
+        if str_path in self._file_cache:
+            return self._file_cache[str_path]
+
+        try:
+            content = file_path.read_text(encoding='utf-8', errors='ignore')
+            self._file_cache[str_path] = content
+            return content
+        except Exception:
+            self._file_cache[str_path] = None
+            return None
+
+    # -------------------------------------------------------------------------
+    # Security Pattern Detection (P1)
+    # -------------------------------------------------------------------------
+
+    def _get_relative_path(self, file_path: Path) -> str:
+        """Get relative path from project root, with Python 3.8 compatibility."""
+        try:
+            return str(file_path.relative_to(self.project_root))
+        except ValueError:
+            return str(file_path)
+
+    def _detect_security(self, file_path: Path, content: str) -> List[PatternFinding]:
+        """Detect security-related patterns."""
+        findings = []
+        lines = content.split('\n')
+        rel_path = self._get_relative_path(file_path)
+
+        # Input not validated patterns
+        input_patterns = [
+            (r'\$request->get\([\'"][^\'"]+[\'"]\)', 'PHP request parameter'),
+            (r'\$_GET\[', 'PHP $_GET superglobal'),
+            (r'\$_POST\[', 'PHP $_POST superglobal'),
+            (r'request\.form\[', 'Flask form input'),
+            (r'request\.args\[', 'Flask query args'),
+            (r'request\.GET\.get\(', 'Django GET parameter'),
+            (r'request\.POST\.get\(', 'Django POST parameter'),
+        ]
+
+        for i, line in enumerate(lines, 1):
+            for pattern, desc in input_patterns:
+                if re.search(pattern, line):
+                    findings.append(PatternFinding(
+                        pattern_id="input-not-validated",
+                        file_path=rel_path,
+                        line_number=i,
+                        message=f"{desc} used without visible validation",
+                        severity="critical",
+                    ))
+
+        # SQL injection patterns
+        sql_patterns = [
+            (r'["\']SELECT.*\+.*["\']', 'String concatenation in SELECT'),
+            (r'["\']INSERT.*\+.*["\']', 'String concatenation in INSERT'),
+            (r'["\']UPDATE.*\+.*["\']', 'String concatenation in UPDATE'),
+            (r'["\']DELETE.*\+.*["\']', 'String concatenation in DELETE'),
+            (r'f["\']SELECT.*\{', 'f-string in SQL query'),
+            (r'\.format\(.*SELECT', 'format() in SQL query'),
+            (r'%s.*SELECT|SELECT.*%s', 'String formatting in SQL'),
+        ]
+
+        for i, line in enumerate(lines, 1):
+            for pattern, desc in sql_patterns:
+                if re.search(pattern, line, re.IGNORECASE):
+                    findings.append(PatternFinding(
+                        pattern_id="sql-injection",
+                        file_path=rel_path,
+                        line_number=i,
+                        message=f"Potential SQL injection: {desc}",
+                        severity="critical",
+                    ))
+
+        # XSS patterns
+        xss_patterns = [
+            (r'\{\{.*\|raw\s*\}\}', 'Twig raw filter (unescaped output)'),
+            (r'echo\s+\$(?!.*htmlspecialchars)', 'PHP echo without escaping'),
+            (r'print\s+\$(?!.*htmlspecialchars)', 'PHP print without escaping'),
+            (r'innerHTML\s*=\s*[^"\']*\+', 'innerHTML with concatenation'),
+            (r'v-html\s*=', 'Vue v-html directive'),
+            (r'dangerouslySetInnerHTML', 'React dangerouslySetInnerHTML'),
+        ]
+
+        for i, line in enumerate(lines, 1):
+            for pattern, desc in xss_patterns:
+                if re.search(pattern, line):
+                    findings.append(PatternFinding(
+                        pattern_id="xss-vulnerability",
+                        file_path=rel_path,
+                        line_number=i,
+                        message=f"Potential XSS: {desc}",
+                        severity="critical",
+                    ))
+
+        return findings
+
+    # -------------------------------------------------------------------------
+    # Performance Pattern Detection (P2)
+    # -------------------------------------------------------------------------
+
+    def _detect_performance(self, file_path: Path, content: str) -> List[PatternFinding]:
+        """Detect performance-related patterns."""
+        findings = []
+        lines = content.split('\n')
+        rel_path = self._get_relative_path(file_path)
+
+        # N+1 query patterns (simplified detection)
+        n1_patterns = [
+            (r'foreach.*\{[\s\S]{0,200}->find\(', 'Query in foreach loop'),
+            (r'for\s*\([\s\S]{0,200}->find\(', 'Query in for loop'),
+            (r'\.map\([\s\S]{0,100}\.find\(', 'Query in map callback'),
+            (r'for\s+\w+\s+in\s+[\s\S]{0,100}\.get\(', 'Query in Python for loop'),
+        ]
+
+        # Check multi-line patterns
+        for pattern, desc in n1_patterns:
+            matches = re.finditer(pattern, content, re.MULTILINE)
+            for match in matches:
+                line_num = content[:match.start()].count('\n') + 1
+                findings.append(PatternFinding(
+                    pattern_id="n-plus-one-query",
+                    file_path=rel_path,
+                    line_number=line_num,
+                    message=f"Potential N+1 query: {desc}",
+                    severity="important",
+                ))
+
+        # Large payload patterns
+        payload_patterns = [
+            (r'->findAll\(\s*\)', 'findAll() without pagination'),
+            (r'\.all\(\)(?!.*paginate)', 'all() without pagination'),
+            (r'SELECT\s+\*\s+FROM(?!.*LIMIT)', 'SELECT * without LIMIT'),
+        ]
+
+        for i, line in enumerate(lines, 1):
+            for pattern, desc in payload_patterns:
+                if re.search(pattern, line, re.IGNORECASE):
+                    findings.append(PatternFinding(
+                        pattern_id="large-payload",
+                        file_path=rel_path,
+                        line_number=i,
+                        message=f"Potential large payload: {desc}",
+                        severity="minor",
+                    ))
+
+        return findings
+
+    # -------------------------------------------------------------------------
+    # Quality Pattern Detection (P2-P3)
+    # -------------------------------------------------------------------------
+
+    def _detect_quality(self, file_path: Path, content: str) -> List[PatternFinding]:
+        """Detect quality-related patterns."""
+        findings = []
+        lines = content.split('\n')
+        rel_path = self._get_relative_path(file_path)
+
+        # God class detection (file > 500 lines with single class)
+        if len(lines) > 500:
+            class_count = len(re.findall(r'^\s*class\s+\w+', content, re.MULTILINE))
+            if class_count == 1:
+                findings.append(PatternFinding(
+                    pattern_id="god-class",
+                    file_path=rel_path,
+                    line_number=1,
+                    message=f"File has {len(lines)} lines with single class - consider splitting",
+                    severity="important",
+                ))
+
+        # Long method detection (simplified - looks for function length)
+        method_pattern = r'(function\s+\w+|def\s+\w+|public\s+function|private\s+function|protected\s+function)'
+        method_starts = [(m.start(), m.group()) for m in re.finditer(method_pattern, content)]
+
+        for i, (start, _) in enumerate(method_starts):
+            # Find end of method (next method or end of file)
+            end = method_starts[i + 1][0] if i + 1 < len(method_starts) else len(content)
+            method_content = content[start:end]
+            method_lines = method_content.count('\n')
+
+            if method_lines > 50:
+                line_num = content[:start].count('\n') + 1
+                findings.append(PatternFinding(
+                    pattern_id="long-method",
+                    file_path=rel_path,
+                    line_number=line_num,
+                    message=f"Method has ~{method_lines} lines - consider extracting sub-methods",
+                    severity="minor",
+                ))
+
+        # Magic numbers detection
+        magic_pattern = r'(?<![.\d])[2-9]\d{1,}(?![.\d])'  # Numbers >= 20, not part of decimals
+        for i, line in enumerate(lines, 1):
+            # Skip comments and strings (simplified)
+            if line.strip().startswith(('#', '//', '/*', '*')):
+                continue
+            matches = re.findall(magic_pattern, line)
+            for num in matches:
+                # Skip common non-magic numbers
+                if int(num) in {100, 200, 201, 204, 301, 302, 400, 401, 403, 404, 500}:
+                    continue
+                findings.append(PatternFinding(
+                    pattern_id="magic-numbers",
+                    file_path=rel_path,
+                    line_number=i,
+                    message=f"Magic number {num} - consider extracting to named constant",
+                    severity="minor",
+                ))
+                break  # One per line is enough
+
+        return findings
+
+    # -------------------------------------------------------------------------
+    # Subagent Integration
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    def from_subagent_findings(
+        subagent: str,
+        findings_data: List[Dict[str, Any]]
+    ) -> List[PatternFinding]:
+        """
+        Convert subagent findings to PatternFinding objects.
+
+        Args:
+            subagent: Subagent name (code-reviewer, security-auditor, qa-reviewer).
+            findings_data: List of finding dictionaries from subagent.
+
+        Returns:
+            List of PatternFinding objects.
+        """
+        findings = []
+        for data in findings_data:
+            finding = PatternFinding(
+                pattern_id=data.get('pattern_id', data.get('type', data.get('id', 'unknown'))),
+                file_path=data.get('file', data.get('file_path', '')),
+                line_number=data.get('line', data.get('line_number')),
+                message=data.get('message', data.get('description', '')),
+                severity=data.get('severity', 'minor'),
+                context=data.get('context', {}),
+                source=subagent,
+            )
+            findings.append(finding)
+
+        return findings
 
 
 # =============================================================================

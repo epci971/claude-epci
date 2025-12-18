@@ -274,6 +274,24 @@ After all tasks:
 3. Invoke @security-auditor (if applicable)
 4. Invoke @qa-reviewer (if applicable)
 5. Fix Critical/Important issues
+6. **Generate proactive suggestions (F06)**
+
+### Proactive Suggestions (F06)
+
+After code review, the `proactive-suggestions` skill generates suggestions:
+
+**Sources:**
+- Subagent findings (@code-reviewer, @security-auditor, @qa-reviewer)
+- PatternDetector analysis on changed files
+
+**Priority Order:** P1 (Security) > P2 (Performance/Quality) > P3 (Style)
+
+**Display:** Up to 5 suggestions shown in BP2 breakpoint with actions:
+- `[Accepter tout]` - Apply auto-fixable suggestions
+- `[Voir détails]` - Show full details
+- `[Ignorer]` - Skip for this session
+
+User feedback is recorded for learning (F08) to improve future suggestions.
 
 ### Output §3
 
@@ -392,6 +410,12 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
    - Create branch if not done
    - Prepare PR template
    - List reviewers
+
+4. **Learning update** (F08 - automatic)
+   - Save feature history to `.project-memory/history/features/{slug}.json`
+   - Trigger calibration with estimated vs actual times
+   - Update velocity metrics
+   - Record any corrections for pattern detection
 
 ### Output §4
 

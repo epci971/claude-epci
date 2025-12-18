@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "epci-project-memory-calibration",
+  "title": "EPCI Calibration Data",
+  "description": "Schema for calibration data stored in .project-memory/learning/calibration.json",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "factors": {
+      "type": "object",
+      "description": "Calibration factors by complexity category",
+      "properties": {
+        "TINY": {
+          "$ref": "#/definitions/calibration_factor"
+        },
+        "SMALL": {
+          "$ref": "#/definitions/calibration_factor"
+        },
+        "STANDARD": {
+          "$ref": "#/definitions/calibration_factor"
+        },
+        "LARGE": {
+          "$ref": "#/definitions/calibration_factor"
+        }
+      }
+    },
+    "global": {
+      "type": "object",
+      "description": "Global calibration metrics",
+      "properties": {
+        "total_samples": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total calibration samples collected"
+        },
+        "overall_accuracy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Overall estimation accuracy (0-1)"
+        },
+        "trend": {
+          "type": "string",
+          "enum": ["improving", "stable", "declining"],
+          "description": "Accuracy trend direction"
+        }
+      }
+    },
+    "history": {
+      "type": "array",
+      "maxItems": 20,
+      "description": "Last 20 calibration events",
+      "items": {
+        "type": "object",
+        "properties": {
+          "feature_slug": {
+            "type": "string"
+          },
+          "complexity": {
+            "type": "string"
+          },
+          "estimated": {
+            "type": "number",
+            "description": "Estimated time in minutes"
+          },
+          "actual": {
+            "type": "number",
+            "description": "Actual time in minutes"
+          },
+          "ratio": {
+            "type": "number",
+            "description": "actual/estimated ratio"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "definitions": {
+    "calibration_factor": {
+      "type": "object",
+      "properties": {
+        "factor": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 10.0,
+          "description": "Multiplier to apply to base estimation"
+        },
+        "samples": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of samples used for calibration"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence level based on sample count"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  },
+  "required": ["version"]
+}
