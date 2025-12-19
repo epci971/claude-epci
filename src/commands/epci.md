@@ -100,7 +100,20 @@ See `hooks/README.md` for configuration and examples.
 | `pre-agent` | Before each agent runs | Custom agent setup, logging |
 | `post-agent` | After each agent completes | Process agent results, notifications |
 
-**Execution:** If hooks are configured in `hooks/active/`, they run automatically.
+**Execution:** Hooks must be explicitly invoked using the hook runner.
+
+**⚠️ MANDATORY: Always invoke hooks at the designated points using:**
+
+```bash
+python3 src/hooks/runner.py <hook-type> --context '{
+  "phase": "<phase>",
+  "feature_slug": "<slug>",
+  "complexity": "<TINY|SMALL|STANDARD|LARGE>",
+  "files_modified": ["file1.py", "file2.py"],
+  ...
+}'
+```
+
 On error with `fail_on_error: false` (default), workflow continues with warning.
 
 ---
@@ -224,7 +237,10 @@ Before starting any phase, load project context from `.project-memory/`. The ski
 - **@plan-validator**: APPROVED
 ```
 
-**🪝 Execute `post-phase-1` hooks** (if configured)
+**🪝 Execute `post-phase-1` hooks:**
+```bash
+python3 src/hooks/runner.py post-phase-1 --context '{"phase": "phase-1", "feature_slug": "<slug>", "complexity": "<complexity>"}'
+```
 
 ### ⏸️ BREAKPOINT (MANDATORY — WAIT FOR USER)
 
@@ -381,7 +397,10 @@ OK (47 tests, 156 assertions)
 | #3 | +1 file | Helper extraction |
 ```
 
-**🪝 Execute `post-phase-2` hooks** (if configured)
+**🪝 Execute `post-phase-2` hooks:**
+```bash
+python3 src/hooks/runner.py post-phase-2 --context '{"phase": "phase-2", "feature_slug": "<slug>", "files_modified": [...], "test_results": {...}}'
+```
 
 ### ⏸️ BREAKPOINT (MANDATORY — WAIT FOR USER)
 
@@ -512,7 +531,22 @@ Refs: docs/features/user-email-validation.md
 - Docs: ✅ Up to date
 ```
 
-**🪝 Execute `post-phase-3` hooks** (if configured)
+**🪝 Execute `post-phase-3` hooks** (MANDATORY for Project Memory update)
+
+```bash
+python3 src/hooks/runner.py post-phase-3 --context '{
+  "phase": "phase-3",
+  "feature_slug": "<slug>",
+  "complexity": "<complexity>",
+  "files_modified": [...],
+  "estimated_time": "<estimated>",
+  "actual_time": "<actual>",
+  "commit_hash": "<hash>",
+  "test_results": {"status": "passed", "count": <n>}
+}'
+```
+
+**Important:** This hook updates `.project-memory/` with feature history and velocity metrics.
 
 ### ✅ COMPLETION
 
