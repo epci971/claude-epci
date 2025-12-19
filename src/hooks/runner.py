@@ -17,6 +17,7 @@ Hook Types:
     - pre-phase-2, post-phase-2
     - pre-phase-3, post-phase-3
     - on-breakpoint
+    - pre-agent, post-agent (F07: Multi-Agent Orchestration)
 """
 
 import sys
@@ -73,6 +74,11 @@ class HookContext:
     project_memory: Dict[str, Any] = field(default_factory=dict)  # context, conventions
     detected_stack: str = ""  # php-symfony, javascript-react, etc.
     detected_conventions: Dict[str, Any] = field(default_factory=dict)  # naming, structure
+    # F07: Multi-Agent Orchestration support
+    agent_name: str = ""  # Name of agent being executed (for pre-agent/post-agent)
+    agent_config: Dict[str, Any] = field(default_factory=dict)  # Agent configuration
+    agent_status: str = ""  # Agent execution status (for post-agent)
+    agent_result: Dict[str, Any] = field(default_factory=dict)  # Agent result (for post-agent)
     extra: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
@@ -91,6 +97,11 @@ class HookContext:
             'project_memory': self.project_memory,
             'detected_stack': self.detected_stack,
             'detected_conventions': self.detected_conventions,
+            # F07: Agent orchestration fields
+            'agent_name': self.agent_name,
+            'agent_config': self.agent_config,
+            'agent_status': self.agent_status,
+            'agent_result': self.agent_result,
             **self.extra
         }
 
@@ -131,7 +142,9 @@ VALID_HOOK_TYPES = [
     'pre-phase-1', 'post-phase-1',
     'pre-phase-2', 'post-phase-2',
     'pre-phase-3', 'post-phase-3',
-    'on-breakpoint'
+    'on-breakpoint',
+    # F07: Multi-Agent Orchestration hooks
+    'pre-agent', 'post-agent',
 ]
 
 SUPPORTED_EXTENSIONS = ['.py', '.sh', '.js']

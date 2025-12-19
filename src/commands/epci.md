@@ -3,7 +3,7 @@ description: >-
   Complete EPCI workflow in 3 phases for STANDARD and LARGE features.
   Phase 1: Analysis and planning. Phase 2: TDD implementation.
   Phase 3: Finalization and documentation. Includes breakpoints between phases.
-argument-hint: "[--large] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--uc] [--dry-run] [--continue]"
+argument-hint: "[--large] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--sequential] [--parallel] [--uc] [--dry-run] [--continue]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
@@ -50,8 +50,10 @@ Generates a Feature Document as traceability thread.
 
 | Flag | Effect | Auto-Trigger |
 |------|--------|--------------|
-| `--wave` | Enable multi-wave execution | complexity > 0.7 |
+| `--wave` | Enable multi-wave DAG orchestration | complexity > 0.7 |
 | `--wave-strategy` | `progressive` (default) or `systematic` | With --wave |
+| `--sequential` | Force sequential agent execution | Never |
+| `--parallel` | Force all agents in parallel (ignores DAG) | Never |
 
 **Flag Reference:** See `src/settings/flags.md` for complete documentation.
 
@@ -95,9 +97,45 @@ See `hooks/README.md` for configuration and examples.
 | `pre-phase-3` | Before finalization | Verify all tests pass |
 | `post-phase-3` | After completion | Deploy, notify, collect metrics |
 | `on-breakpoint` | At each breakpoint | Logging, metrics collection |
+| `pre-agent` | Before each agent runs | Custom agent setup, logging |
+| `post-agent` | After each agent completes | Process agent results, notifications |
 
 **Execution:** If hooks are configured in `hooks/active/`, they run automatically.
 On error with `fail_on_error: false` (default), workflow continues with warning.
+
+---
+
+## Multi-Agent Orchestration (F07)
+
+When `--wave` flag is enabled, agents are executed using the DAG-based orchestrator
+for parallel execution of independent agents.
+
+**Orchestration Modes:**
+
+| Mode | Description | Flag |
+|------|-------------|------|
+| Sequential | One agent at a time | `--sequential` |
+| DAG | Respect dependencies, parallelize when possible | default with `--wave` |
+| Parallel | All agents simultaneously (use with caution) | `--parallel` |
+
+**DAG Structure:**
+```
+@plan-validator
+       │
+       ├──────────────┬──────────────┐
+       ▼              ▼              ▼
+@code-reviewer  @security-auditor  @qa-reviewer
+       │              │              │
+       └──────────────┼──────────────┘
+                      ▼
+               @doc-generator
+```
+
+**Performance:** Parallel execution of independent agents (code-reviewer, security-auditor,
+qa-reviewer) reduces validation time by 30-50% for LARGE features.
+
+**Configuration:** Default DAG is defined in `config/dag-default.yaml`. Project-specific
+overrides can be placed in `.project-memory/orchestration.yaml`.
 
 ---
 

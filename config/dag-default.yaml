@@ -1,0 +1,78 @@
+# EPCI Default DAG Configuration
+#
+# Defines the dependency graph for multi-agent orchestration.
+# Agents with satisfied dependencies run in parallel.
+#
+# DAG Structure:
+#                     ┌──────────────────┐
+#                     │ @plan-validator  │
+#                     └────────┬─────────┘
+#                              │
+#               ┌──────────────┼──────────────┐
+#               ▼              ▼              ▼
+#     ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+#     │@code-review │ │@security   │ │@qa-reviewer │
+#     └──────┬──────┘ └──────┬─────┘ └──────┬──────┘
+#            │               │              │
+#            └───────────────┼──────────────┘
+#                            ▼
+#                   ┌─────────────────┐
+#                   │ @doc-generator  │
+#                   └─────────────────┘
+#
+# Version: 1.0.0
+
+orchestration:
+  # Execution mode: sequential | parallel | dag
+  default_mode: "dag"
+
+  # Global timeout in seconds (max 600)
+  timeout_global: 300
+
+  # Agent configurations
+  agents:
+    # Phase 1 validation - must run first
+    plan-validator:
+      depends_on: []
+      timeout: 60
+      required: true
+
+    # Phase 2 reviews - run in parallel after plan-validator
+    code-reviewer:
+      depends_on:
+        - "plan-validator"
+      timeout: 90
+      required: true
+
+    security-auditor:
+      depends_on:
+        - "plan-validator"
+      timeout: 60
+      required: false
+      condition: "has_sensitive_files"
+
+    qa-reviewer:
+      depends_on:
+        - "plan-validator"
+      timeout: 60
+      required: false
+      condition: "complexity >= STANDARD"
+
+    # Phase 3 documentation - runs after all reviews complete
+    doc-generator:
+      depends_on:
+        - "code-reviewer"
+        - "security-auditor"
+        - "qa-reviewer"
+      timeout: 60
+      required: true
+
+# Condition definitions (for reference):
+#
+# has_sensitive_files:
+#   Matches files in: **/auth/**, **/security/**, **/api/**, **/password/**
+#   Or containing: password, secret, api_key, jwt, oauth
+#
+# complexity >= STANDARD:
+#   True when feature complexity is STANDARD or LARGE
+#   Based on file count, LOC estimate, and risk assessment
