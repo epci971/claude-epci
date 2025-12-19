@@ -6,11 +6,17 @@
       "samples": 3,
       "confidence": 0.7737056144690831,
       "last_updated": "2025-12-19T13:45:43.147357Z"
+    },
+    "LARGE": {
+      "factor": 0.6923076923076923,
+      "samples": 1,
+      "confidence": 0.3868528072345416,
+      "last_updated": "2025-12-19T14:22:55.725594Z"
     }
   },
   "global": {
-    "total_samples": 3,
-    "overall_accuracy": 0.575,
+    "total_samples": 4,
+    "overall_accuracy": 0.6101923076923077,
     "trend": "improving"
   },
   "history": [
@@ -37,7 +43,15 @@
       "actual": 25.0,
       "ratio": 1.25,
       "timestamp": "2025-12-19T13:45:43.147357Z"
+    },
+    {
+      "feature_slug": "f07-orchestration-multi-agents",
+      "complexity": "LARGE",
+      "estimated": 260.0,
+      "actual": 180.0,
+      "ratio": 0.6923076923076923,
+      "timestamp": "2025-12-19T14:22:55.725594Z"
     }
   ],
-  "updated_at": "2025-12-19T13:45:43.149373Z"
+  "updated_at": "2025-12-19T14:22:55.726062Z"
 }

@@ -1,0 +1,50 @@
+{
+  "slug": "f07-orchestration-multi-agents",
+  "title": "F07: Orchestration Multi-Agents",
+  "created_at": "2025-12-19T14:32:46.351637Z",
+  "complexity": "LARGE",
+  "completed_at": "2025-12-19T14:32:46.351637Z",
+  "complexity_score": 0.5,
+  "files_modified": [
+    "src/orchestration/__init__.py",
+    "src/orchestration/orchestrator.py",
+    "src/orchestration/dag_builder.py",
+    "src/orchestration/agent_runner.py",
+    "src/orchestration/config.py",
+    "config/dag-default.yaml",
+    "src/scripts/test_orchestration.py",
+    "src/commands/epci.md",
+    "src/hooks/runner.py",
+    "src/.claude-plugin/plugin.json"
+  ],
+  "files_created": 7,
+  "files_updated": 3,
+  "loc_added": 1595,
+  "loc_removed": 4,
+  "tests_created": 26,
+  "test_coverage": null,
+  "estimated_time": "4h20min",
+  "actual_time": null,
+  "phases": {
+    "phase_1": "2025-12-19T14:32:46.351637Z",
+    "phase_2": "2025-12-19T14:32:46.351637Z",
+    "phase_3": "2025-12-19T14:32:46.351637Z"
+  },
+  "agents_used": [
+    "plan-validator",
+    "code-reviewer",
+    "security-auditor",
+    "qa-reviewer",
+    "doc-generator"
+  ],
+  "issues_found": {
+    "critical": 0,
+    "important": 0,
+    "minor": 3,
+    "details": []
+  },
+  "related_features": [],
+  "feature_document": "/home/ed/apps/tools-claude-code-epci/docs/features/f07-orchestration-multi-agents.md",
+  "commit_hash": "fdc8783",
+  "branch": "master"
+}
