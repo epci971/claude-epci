@@ -1,8 +1,8 @@
-# EPCI Plugin v3.0
+# EPCI Plugin v3.8
 
 > **E**xplore → **P**lan → **C**ode → **I**nspect
 
-Workflow structuré pour le développement assisté par IA avec traçabilité complète.
+Workflow structuré pour le développement assisté par IA avec traçabilité complète, mémoire projet persistante et apprentissage continu.
 
 ---
 
@@ -14,10 +14,13 @@ Workflow structuré pour le développement assisté par IA avec traçabilité co
 - [Routing par Complexité](#routing-par-complexité)
 - [Subagents](#subagents)
 - [Skills](#skills)
+- [Project Memory](#project-memory)
+- [Système de Hooks](#système-de-hooks)
+- [Système de Flags](#système-de-flags)
 - [Scripts de Validation](#scripts-de-validation)
 - [Architecture](#architecture)
 - [Extension du Plugin](#extension-du-plugin)
-- [Changelog v2.7 → v3.0](#changelog-v27--v30)
+- [Changelog](#changelog)
 
 ---
 
@@ -122,6 +125,9 @@ docs/features/<feature-slug>.md
 | `/epci` | Workflow complet 3 phases | Features STANDARD et LARGE |
 | `/epci-quick` | Workflow condensé | Features TINY et SMALL |
 | `/epci-spike` | Exploration time-boxée | Incertitude technique |
+| `/epci-decompose` | Décomposition de features | Planification tâches complexes |
+| `/epci-memory` | Gestion mémoire projet | Initialiser, exporter, réinitialiser |
+| `/epci-learn` | Apprentissage projet | Analyser patterns et calibrer |
 | `/epci:create` | Factory de composants | Créer skills/commands/agents |
 
 ### `/epci-brief` — Point d'entrée
@@ -202,6 +208,41 @@ docs/features/<feature-slug>.md
 
 Crée des composants EPCI avec validation automatique.
 
+### `/epci-decompose` — Décomposition de Features
+
+```bash
+/epci-decompose feature.md --output tasks/ --think hard
+/epci-decompose --min-days 2 --max-days 5
+```
+
+Décompose une feature complexe en tâches atomiques :
+- Analyse du Feature Document ou brief
+- Génération de tâches avec estimations
+- Validation via `@decompose-validator`
+- Export au format markdown structuré
+
+### `/epci-memory` — Gestion Mémoire Projet
+
+```bash
+/epci-memory init       # Initialiser la mémoire projet
+/epci-memory status     # Voir l'état actuel
+/epci-memory export     # Exporter la configuration
+/epci-memory reset      # Réinitialiser
+```
+
+Gère la mémoire persistante du projet (conventions, préférences, historique).
+
+### `/epci-learn` — Apprentissage Projet
+
+```bash
+/epci-learn status      # État de l'apprentissage
+/epci-learn calibrate   # Calibrer les estimations
+/epci-learn export      # Exporter les patterns appris
+/epci-learn reset       # Réinitialiser l'apprentissage
+```
+
+Analyse les patterns du projet et optimise les suggestions futures.
+
 ---
 
 ## Routing par Complexité
@@ -250,7 +291,7 @@ Crée des composants EPCI avec validation automatique.
 | `@Explore` | Haiku | Read-only | Analyse codebase |
 | `@Plan` | Sonnet | Research | Recherche avant plan |
 
-### Agents Custom EPCI
+### Agents Custom EPCI (6)
 
 | Agent | Mission | Invocation | Tools |
 |-------|---------|------------|-------|
@@ -259,6 +300,7 @@ Crée des composants EPCI avec validation automatique.
 | `@security-auditor` | Audit OWASP Top 10 | Phase 2 (conditionnel) | Read, Grep |
 | `@qa-reviewer` | Revue tests et couverture | Phase 2 (conditionnel) | Read, Grep, Bash |
 | `@doc-generator` | Génération documentation | Phase 3 | Read, Write, Glob |
+| `@decompose-validator` | Valide la décomposition des tâches | `/epci-decompose` | Read, Grep |
 
 ### Invocation Conditionnelle
 
@@ -334,7 +376,7 @@ Votre choix ? [C/R/P/A] :
 
 ## Skills
 
-### Core Skills (6)
+### Core Skills (12)
 
 Skills fondamentaux chargés selon le contexte du workflow.
 
@@ -346,6 +388,12 @@ Skills fondamentaux chargés selon le contexte du workflow.
 | `testing-strategy` | TDD, coverage, mocking | Phase 2 |
 | `git-workflow` | Conventional Commits, branching | Phase 3 |
 | `breakpoint-metrics` | Scoring complexité, estimation temps | Breakpoints enrichis |
+| `flags-system` | Flags universels, auto-activation | Toutes commandes |
+| `project-memory` | Contexte mémoire projet | `/epci-memory`, workflows |
+| `project-memory-loader` | Chargement et initialisation mémoire | Démarrage workflows |
+| `learning-optimizer` | Optimisation apprentissage | `/epci-learn` |
+| `proactive-suggestions` | Suggestions proactives IA | Phase 2, breakpoints |
+| `clarification-intelligente` | Clarification intelligente | `/epci-brief` |
 
 ### Stack Skills (4)
 
@@ -416,6 +464,134 @@ python scripts/test_triggering.py
 
 ---
 
+## Project Memory
+
+Le système de mémoire projet permet de persister le contexte entre les sessions.
+
+### Composants
+
+```
+project-memory/
+├── manager.py              # Gestion centrale de la mémoire
+├── detector.py             # Détection de patterns
+├── learning_analyzer.py    # Analyse d'apprentissage
+├── calibration.py          # Calibration des estimations
+├── suggestion_engine.py    # Génération de suggestions
+├── clarification_analyzer.py  # Analyse des clarifications
+├── question_generator.py   # Génération de questions
+├── similarity_matcher.py   # Matching de patterns
+├── schemas/                # Schémas JSON (8 fichiers)
+├── templates/              # Templates par défaut (4 fichiers)
+├── patterns/               # Catalogue de patterns
+└── tests/                  # Tests unitaires (8 fichiers)
+```
+
+### Données Persistées
+
+| Type | Description | Fichier |
+|------|-------------|---------|
+| **Contexte** | Stack, architecture, conventions | `context.json` |
+| **Conventions** | Règles de nommage, patterns | `conventions.json` |
+| **Préférences** | Choix utilisateur récurrents | `preferences.json` |
+| **Corrections** | Corrections appliquées | `corrections.json` |
+| **Vélocité** | Métriques de productivité | `velocity.json` |
+| **Historique** | Features développées | `feature-history.json` |
+
+### Commandes
+
+```bash
+/epci-memory init      # Créer .epci-memory/ dans le projet
+/epci-memory status    # Afficher l'état de la mémoire
+/epci-memory export    # Exporter en JSON
+/epci-memory reset     # Réinitialiser
+```
+
+---
+
+## Système de Hooks
+
+Les hooks permettent d'exécuter des scripts personnalisés à des points clés du workflow.
+
+### Points de Hook
+
+| Hook | Déclencheur | Usage |
+|------|-------------|-------|
+| `pre-phase-1` | Avant Phase 1 | Charger contexte, vérifier prérequis |
+| `post-phase-1` | Après validation plan | Notifier équipe, créer tickets |
+| `pre-phase-2` | Avant Phase 2 | Linters, setup environnement |
+| `post-phase-2` | Après code review | Tests additionnels, coverage |
+| `pre-phase-3` | Avant Phase 3 | Vérifier tests passent |
+| `post-phase-3` | Après finalisation | Déployer, notifier |
+| `on-breakpoint` | À chaque breakpoint | Logging, métriques |
+
+### Structure
+
+```
+hooks/
+├── README.md           # Documentation
+├── runner.py           # Moteur d'exécution
+├── examples/           # Exemples de hooks (6)
+│   ├── pre-phase-2-lint.sh
+│   ├── post-phase-3-notify.py
+│   ├── post-phase-3-memory-update.py
+│   ├── on-breakpoint-memory-context.py
+│   ├── on-breakpoint-log.sh
+│   └── post-phase-2-suggestions.py
+└── active/             # Hooks actifs (symlinks)
+```
+
+### Création d'un Hook
+
+```python
+#!/usr/bin/env python3
+import sys, json
+
+# Recevoir le contexte
+context = json.loads(sys.stdin.read())
+
+# Traitement
+result = {"status": "success", "message": "Hook exécuté"}
+
+# Retourner le résultat
+print(json.dumps(result))
+```
+
+---
+
+## Système de Flags
+
+Les flags universels contrôlent le comportement des workflows EPCI.
+
+### Catégories
+
+| Catégorie | Flags | Description |
+|-----------|-------|-------------|
+| **Thinking** | `--think`, `--think-hard`, `--ultrathink` | Profondeur d'analyse |
+| **Compression** | `--uc`, `--verbose` | Gestion des tokens |
+| **Workflow** | `--safe`, `--fast`, `--dry-run` | Contrôle exécution |
+| **Wave** | `--wave`, `--wave-strategy` | Orchestration multi-vagues |
+| **Legacy** | `--large`, `--continue` | Rétrocompatibilité |
+
+### Auto-Activation
+
+Les flags peuvent être activés automatiquement selon le contexte :
+
+| Condition | Seuil | Flag activé |
+|-----------|-------|-------------|
+| Fichiers impactés | 3-10 | `--think` |
+| Fichiers impactés | >10 | `--think-hard` |
+| Context window | >75% | `--uc` |
+| Fichiers sensibles | auth, security, payment | `--safe` |
+| Complexité | >0.7 | `--wave` |
+
+### Précédence
+
+1. Flags explicites > Auto-activation
+2. `--safe` > `--fast` (safety first)
+3. `--ultrathink` > `--think-hard` > `--think`
+
+---
+
 ## Architecture
 
 ### Structure des Dossiers
@@ -423,30 +599,40 @@ python scripts/test_triggering.py
 ```
 src/
 ├── .claude-plugin/
-│   └── plugin.json              # Manifeste v3.0.0
+│   └── plugin.json              # Manifeste v3.8.3
 │
-├── commands/                    # 5 commandes
-│   ├── epci-brief.md           # Point d'entrée
-│   ├── epci.md                 # Workflow complet
-│   ├── epci-quick.md           # Workflow condensé
-│   ├── epci-spike.md           # Exploration
+├── commands/                    # 8 commandes
+│   ├── epci-brief.md           # Point d'entrée + routing
+│   ├── epci.md                 # Workflow complet 3 phases
+│   ├── epci-quick.md           # Workflow condensé TINY/SMALL
+│   ├── epci-spike.md           # Exploration time-boxée
+│   ├── epci-decompose.md       # Décomposition de features
+│   ├── epci-memory.md          # Gestion mémoire projet
+│   ├── epci-learn.md           # Apprentissage projet
 │   └── create.md               # Factory dispatcher
 │
-├── agents/                      # 5 subagents custom
+├── agents/                      # 6 subagents custom
 │   ├── plan-validator.md
 │   ├── code-reviewer.md
 │   ├── security-auditor.md
 │   ├── qa-reviewer.md
-│   └── doc-generator.md
+│   ├── doc-generator.md
+│   └── decompose-validator.md  # Validation décomposition
 │
-├── skills/                      # 14 skills
-│   ├── core/                   # 6 skills fondamentaux
+├── skills/                      # 20 skills
+│   ├── core/                   # 12 skills fondamentaux
 │   │   ├── epci-core/
 │   │   ├── architecture-patterns/
 │   │   ├── code-conventions/
 │   │   ├── testing-strategy/
 │   │   ├── git-workflow/
-│   │   └── breakpoint-metrics/
+│   │   ├── breakpoint-metrics/
+│   │   ├── flags-system/
+│   │   ├── project-memory/
+│   │   ├── project-memory-loader/
+│   │   ├── learning-optimizer/
+│   │   ├── proactive-suggestions/
+│   │   └── clarification-intelligente/
 │   │
 │   ├── stack/                  # 4 skills auto-détectés
 │   │   ├── php-symfony/
@@ -460,14 +646,37 @@ src/
 │       ├── subagents-creator/
 │       └── component-advisor/
 │
-├── scripts/                     # Validation Python
+├── scripts/                     # 7 scripts de validation
+│   ├── validate_all.py         # Orchestrateur
 │   ├── validate_skill.py
 │   ├── validate_command.py
 │   ├── validate_subagent.py
-│   ├── validate_all.py
+│   ├── validate_flags.py       # Validation système flags
+│   ├── validate_memory.py      # Validation mémoire
 │   └── test_triggering.py
 │
-└── hooks/                       # Réservé pour hooks custom
+├── settings/                    # Configuration
+│   └── flags.md                # Documentation flags universels
+│
+├── hooks/                       # Système de hooks
+│   ├── README.md               # Documentation
+│   ├── runner.py               # Moteur d'exécution
+│   ├── examples/               # Exemples (6 hooks)
+│   └── active/                 # Hooks actifs (symlinks)
+│
+└── project-memory/              # Backend mémoire projet
+    ├── manager.py              # Gestion centrale
+    ├── detector.py             # Détection patterns
+    ├── learning_analyzer.py    # Analyse apprentissage
+    ├── calibration.py          # Calibration estimations
+    ├── suggestion_engine.py    # Suggestions
+    ├── clarification_analyzer.py
+    ├── question_generator.py
+    ├── similarity_matcher.py
+    ├── schemas/                # 8 schémas JSON
+    ├── templates/              # 4 templates
+    ├── patterns/               # Catalogue patterns
+    └── tests/                  # 8 tests unitaires
 ```
 
 ### Conventions de Nommage
@@ -544,28 +753,82 @@ Le skill `skills-creator` guide la création en 6 phases :
 
 ---
 
-## Changelog v2.7 → v3.0
+## Changelog
 
-### Simplification
+### v3.8 (Décembre 2024) — Current
+
+**Nouvelles commandes :**
+- `/epci-decompose` — Décomposition de features en tâches
+- `/epci-memory` — Gestion mémoire projet
+- `/epci-learn` — Apprentissage et calibration
+
+**Nouvel agent :**
+- `@decompose-validator` — Validation des décompositions
+
+**Nouveaux skills core :**
+- `project-memory-loader` — Chargement mémoire au démarrage
+- `learning-optimizer` — Optimisation apprentissage
+- `proactive-suggestions` — Suggestions proactives IA
+- `clarification-intelligente` — Clarification intelligente
+
+**Améliorations :**
+- Intégration project-memory dans tous les workflows
+- Breakpoints enrichis avec métriques
+- Instructions de séquence et étapes obligatoires
+
+### v3.7 — Hooks & Memory Backend
+
+**Système de hooks :**
+- Moteur d'exécution (`runner.py`)
+- 7 points de hook (pre/post phases, on-breakpoint)
+- 6 exemples de hooks
+
+**Project Memory backend :**
+- 11 modules Python
+- 8 schémas JSON
+- 8 tests unitaires
+
+### v3.6 — Project Memory
+
+**Nouveau système :**
+- Mémoire projet persistante
+- Skills `project-memory` et `flags-system`
+- Détection de patterns
+- Calibration des estimations
+
+### v3.1 — Flags universels
+
+**Système de flags :**
+- Catégories : Thinking, Compression, Workflow, Wave
+- Auto-activation selon contexte
+- Règles de précédence
+
+**Breakpoints enrichis :**
+- Tableau de bord décisionnel
+- Métriques et verdicts agents
+- Preview phase suivante
+
+### v3.0 — Refonte majeure
+
+**Simplification :**
 
 | Aspect | v2.7 | v3.0 |
 |--------|------|------|
 | Commandes | 12 fichiers | 5 fichiers |
 | Point d'entrée | Multiple | Unique (`/epci-brief`) |
-| Routing | 5 niveaux + pré-stages | 3 workflows |
+| Routing | 5 niveaux | 3 workflows |
 
-### Nouveautés v3.0
-
-- **5 Subagents Custom** : plan-validator, code-reviewer, security-auditor, qa-reviewer, doc-generator
-- **13 Skills Modulaires** : Core, Stack, Factory
-- **Component Factory** : `/epci:create` pour auto-extension
-- **Feature Document** : Traçabilité complète par feature
-- **Validation Automatique** : Scripts Python pour chaque composant
+**Nouveautés :**
+- 5 Subagents Custom
+- 13 Skills Modulaires
+- Component Factory
+- Feature Document
+- Validation Automatique
 
 ### Migration depuis v2.7
 
-| Commande v2.7 | Équivalent v3.0 |
-|---------------|-----------------|
+| Commande v2.7 | Équivalent actuel |
+|---------------|-------------------|
 | `/epci-discover` | `/epci-brief` |
 | `/epci-0-briefing` | `/epci-brief` |
 | `/epci-micro` | `/epci-quick` (TINY) |
