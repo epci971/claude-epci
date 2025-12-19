@@ -64,6 +64,8 @@ class HookContext:
     test_results: Dict[str, Any] = field(default_factory=dict)
     breakpoint_type: str = ""
     timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat() + "Z")
+    # Project root for hooks that need to access .project-memory/
+    project_root: str = ""
     # Flags support (v3.1+)
     active_flags: List[str] = field(default_factory=list)
     flag_sources: Dict[str, str] = field(default_factory=dict)  # flag -> "auto"|"explicit"|"alias"
@@ -83,6 +85,7 @@ class HookContext:
             'test_results': self.test_results,
             'breakpoint_type': self.breakpoint_type,
             'timestamp': self.timestamp,
+            'project_root': self.project_root,
             'active_flags': self.active_flags,
             'flag_sources': self.flag_sources,
             'project_memory': self.project_memory,
@@ -260,6 +263,7 @@ def build_context(
     files_modified: List[str] = None,
     test_results: Dict[str, Any] = None,
     breakpoint_type: str = "",
+    project_root: str = "",
     **extra
 ) -> HookContext:
     """Build context object for hooks."""
@@ -270,6 +274,7 @@ def build_context(
         files_modified=files_modified or [],
         test_results=test_results or {},
         breakpoint_type=breakpoint_type,
+        project_root=project_root,
         extra=extra
     )
 
@@ -451,6 +456,23 @@ def run_hooks(
 
     # Build context
     context_dict = context_dict or {}
+    # Get project_root from context or detect from git/cwd
+    project_root = context_dict.get('project_root', '')
+    if not project_root:
+        # Try to detect project root from git
+        try:
+            result = subprocess.run(
+                ['git', 'rev-parse', '--show-toplevel'],
+                capture_output=True, text=True, timeout=5
+            )
+            if result.returncode == 0:
+                project_root = result.stdout.strip()
+        except Exception:
+            pass
+        # Fallback to cwd if git detection failed
+        if not project_root:
+            project_root = os.getcwd()
+
     context = build_context(
         phase=context_dict.get('phase', ''),
         hook_type=hook_type,
@@ -458,8 +480,9 @@ def run_hooks(
         files_modified=context_dict.get('files_modified', []),
         test_results=context_dict.get('test_results', {}),
         breakpoint_type=context_dict.get('breakpoint_type', ''),
+        project_root=project_root,
         **{k: v for k, v in context_dict.items()
-           if k not in ['phase', 'feature_slug', 'files_modified', 'test_results', 'breakpoint_type']}
+           if k not in ['phase', 'feature_slug', 'files_modified', 'test_results', 'breakpoint_type', 'project_root']}
     )
 
     results = []

@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  "factors": {
+    "SMALL": {
+      "factor": 1.4249999999999998,
+      "samples": 3,
+      "confidence": 0.7737056144690831,
+      "last_updated": "2025-12-19T13:45:43.147357Z"
+    }
+  },
+  "global": {
+    "total_samples": 3,
+    "overall_accuracy": 0.575,
+    "trend": "improving"
+  },
+  "history": [
+    {
+      "feature_slug": "test-debug-feature",
+      "complexity": "SMALL",
+      "estimated": 30.0,
+      "actual": 45.0,
+      "ratio": 1.5,
+      "timestamp": "2025-12-19T13:45:43.144975Z"
+    },
+    {
+      "feature_slug": "calibration-test-feature",
+      "complexity": "SMALL",
+      "estimated": 30.0,
+      "actual": 45.0,
+      "ratio": 1.5,
+      "timestamp": "2025-12-19T13:45:43.145529Z"
+    },
+    {
+      "feature_slug": "runner-test-feature",
+      "complexity": "SMALL",
+      "estimated": 20.0,
+      "actual": 25.0,
+      "ratio": 1.25,
+      "timestamp": "2025-12-19T13:45:43.147357Z"
+    }
+  ],
+  "updated_at": "2025-12-19T13:45:43.149373Z"
+}

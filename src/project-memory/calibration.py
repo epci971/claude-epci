@@ -546,14 +546,24 @@ class CalibrationManager:
 
     @staticmethod
     def _parse_time(time_str: Optional[str]) -> Optional[float]:
-        """Parse time string to minutes."""
+        """Parse time string to minutes.
+
+        Supported formats:
+        - "30min", "30m", "30" → 30 minutes
+        - "1h", "1h 30m", "1h30min" → 60, 90, 90 minutes
+        - "1.5h" → 90 minutes
+        """
         if not time_str:
             return None
 
-        # Handle "Xh Ym" format
         try:
+            # Normalize common formats
+            time_str = time_str.lower().strip()
+            time_str = time_str.replace('min', 'm').replace('hr', 'h').replace('hour', 'h')
+
+            # Handle "Xh Ym" format
             if 'h' in time_str:
-                parts = time_str.replace('h', '').replace('m', '').split()
+                parts = time_str.replace('h', ' ').replace('m', '').split()
                 hours = float(parts[0])
                 minutes = float(parts[1]) if len(parts) > 1 else 0
                 return hours * 60 + minutes
