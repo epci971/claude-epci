@@ -193,9 +193,73 @@ Phase 3:
 ---
 
 ## §3 — Implementation
-[To be completed by /epci Phase 2]
+
+### Progress
+
+- [x] Task 1 — Update runner.py hook types
+- [x] Task 2 — Modify epci.md Phase 3 structure
+- [x] Task 3 — Modify epci-quick.md
+- [x] Task 4 — Update hooks README.md
+- [x] Task 5 — Create pre-commit-memory.py
+- [x] Task 6 — Create post-commit-notify.py
+
+### Files Modified/Created
+
+| File | Action | LOC |
+|------|--------|-----|
+| `src/hooks/runner.py` | Modified | +4 |
+| `src/commands/epci.md` | Modified | +95 |
+| `src/commands/epci-quick.md` | Modified | +55 |
+| `src/hooks/README.md` | Modified | +45 |
+| `src/hooks/examples/pre-commit-memory.py` | Created | +195 |
+| `src/hooks/examples/post-commit-notify.py` | Created | +180 |
+
+**Total: ~575 LOC**
+
+### Reviews
+
+- **@code-reviewer**: APPROVED
+  - 0 Critical issues
+  - 2 Important (documentation completeness)
+  - 2 Minor (magic number, timeout doc)
+
+### Deviations
+
+| Task | Deviation | Justification |
+|------|-----------|---------------|
+| None | - | Implementation matched plan |
 
 ---
 
 ## §4 — Finalization
-[To be completed by /epci Phase 3]
+
+### Commit Message (Prepared)
+
+```
+feat(hooks): add pre-commit breakpoint and hooks reorganization
+
+- Add pre-commit and post-commit hook types to runner.py
+- Add BREAKPOINT PRE-COMMIT in epci.md Phase 3 with 4 options
+- Add pre-commit breakpoint in epci-quick.md
+- Document new hooks in README.md with context examples
+- Create pre-commit-memory.py for feature history before commit
+- Create post-commit-notify.py for notifications after commit
+
+Refs: docs/features/pre-commit-breakpoint.md
+```
+
+### Commit Status
+
+**PENDING** — Manual commit requested by user
+
+### Documentation
+
+- **README.md**: Updated with new hook types (pre-commit, post-commit)
+- **Context examples**: Added for pre-commit and post-commit hooks
+
+### PR Ready
+
+- Branch: `master`
+- Tests: N/A (documentation/commands)
+- Lint: N/A
+- Docs: ✅ Up to date
