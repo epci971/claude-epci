@@ -1,0 +1,188 @@
+# Specification — S05: Skills-Consolidate
+
+> **Parent project**: workflow-optimization-v32
+> **Spec ID**: S05
+> **Estimated effort**: 2 days
+> **Category**: STANDARD
+> **Priority**: LOW
+> **Dependencies**: S01
+> **Blocks**: —
+
+---
+
+## 1. Context
+
+This sub-spec is part of the **Workflow Optimization EPCI v3.2** project.
+
+**Problem**:
+- `project-memory` and `project-memory-loader` skills have overlapping functionality
+- Confusion about which skill to use
+- Two skills for same domain = maintenance burden
+
+**Solution**: Merge both skills into single `project-memory` skill.
+
+**Source**: `brief-workflow-optimization-2025-12-23.md` — Section 6
+
+---
+
+## 2. Scope
+
+### Included
+
+- Merge `project-memory-loader` into `project-memory`
+- Delete `project-memory-loader` skill directory
+- Update all command references
+- Update CLAUDE.md documentation
+
+### Excluded
+
+- Skill caching implementation (future optimization)
+- Lazy-load skills implementation (future optimization)
+- Changes to other skills
+
+---
+
+## 3. Tasks
+
+### 3.1 Analyze Current Skills
+
+**project-memory** (if exists):
+- [ ] Document current capabilities
+- [ ] List all sections and content
+
+**project-memory-loader**:
+- [ ] Document current capabilities
+- [ ] List all sections and content
+- [ ] Identify unique functionality
+
+### 3.2 Merge Skills
+
+- [ ] Create merged SKILL.md with combined content:
+  - Purpose/Overview section
+  - Capabilities section (load, save, query)
+  - Memory Structure section
+  - When to Use section
+  - Loading Process section
+  - Context Application Matrix
+  - Error Handling section
+  - Integration with Hooks section
+- [ ] Update frontmatter (name: `project-memory`)
+- [ ] Ensure allowed-tools includes Read, Glob, Write
+
+### 3.3 Delete project-memory-loader
+
+- [ ] Verify no direct references remain
+- [ ] Delete `src/skills/core/project-memory-loader/` directory
+
+### 3.4 Update Command References
+
+**epci-brief.md**:
+- [ ] Change `project-memory-loader` → `project-memory` in Skills list
+
+**epci.md**:
+- [ ] Change `project-memory-loader` → `project-memory` in Skills list
+
+**epci-quick.md**:
+- [ ] Change `project-memory-loader` → `project-memory` in Skills list
+
+**epci-spike.md**:
+- [ ] Add `project-memory` to Skills list if not present
+
+### 3.5 Update CLAUDE.md
+
+- [ ] Update section 3.5 "Système Skills"
+- [ ] Update Core Skills table (merge entries)
+- [ ] Update skill count: 14 → 13
+
+---
+
+## 4. Acceptance Criteria
+
+| ID | Criterion | Verification |
+|----|-----------|--------------|
+| S05-AC1 | Single project-memory skill exists | Check `src/skills/core/project-memory/SKILL.md` |
+| S05-AC2 | project-memory-loader deleted | Verify directory doesn't exist |
+| S05-AC3 | All commands reference project-memory | Grep for `project-memory-loader`, expect 0 results |
+| S05-AC4 | Merged skill has all capabilities | Review SKILL.md content |
+| S05-AC5 | Memory loading still works | Run `/epci-brief`, verify memory loads |
+
+---
+
+## 5. Impacted Files
+
+| File | Action | Risk |
+|------|--------|------|
+| `src/skills/core/project-memory/SKILL.md` | Modify (merge) | High |
+| `src/skills/core/project-memory-loader/` | Delete | Medium |
+| `src/commands/epci-brief.md` | Modify | Low |
+| `src/commands/epci.md` | Modify | Low |
+| `src/commands/epci-quick.md` | Modify | Low |
+| `src/commands/epci-spike.md` | Modify | Low |
+| `CLAUDE.md` | Modify | Low |
+
+---
+
+## 6. Source Reference
+
+> Extract from `brief-workflow-optimization-2025-12-23.md`
+
+### 6. Skills — Consolidation
+
+**Actions**:
+
+| Action | Détail |
+|--------|--------|
+| **Fusionner** | `project-memory` + `project-memory-loader` → `project-memory` |
+| **Implémenter** | Cache skills session |
+| **Implémenter** | Lazy-load skills |
+
+**Fichiers impactés**:
+- `src/skills/core/project-memory/SKILL.md` — Intégrer loader
+- `src/skills/core/project-memory-loader/` — Supprimer (fusionné)
+- Toutes les commandes — MAJ références skill
+
+**Résultat**: 20 skills (au lieu de 21)
+
+---
+
+## 7. Risks & Mitigations
+
+| Risk | Probability | Mitigation |
+|------|-------------|------------|
+| Lost functionality during merge | Medium | Careful content comparison before merge |
+| Broken references to old skill | Medium | Grep search before deletion |
+| Skill loading order issues | Low | Test full workflow after merge |
+
+---
+
+## 8. Merged Skill Structure (Preview)
+
+```yaml
+---
+name: project-memory
+description: >-
+  Comprehensive Project Memory management for EPCI workflows.
+  Loads context at workflow start, persists feature history,
+  and provides conventions/patterns for consistent code generation.
+  Auto-invoke at start of /epci-brief and /epci-spike.
+allowed-tools: [Read, Glob, Write]
+---
+```
+
+**Sections**:
+1. Overview
+2. Capabilities
+   - Context Loading
+   - Feature History
+   - Velocity Metrics
+   - Convention Application
+3. Memory Structure
+4. When to Use
+5. Loading Process
+6. Context Application Matrix
+7. Error Handling
+8. Integration with Hooks
+
+---
+
+*Generated by epci-decompose — Project: workflow-optimization-v32*

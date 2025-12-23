@@ -3,7 +3,7 @@
 ## Overview
 
 Score composite sur 100 mesurant la maturite de l'exploration.
-Calcule sur 5 axes ponderes.
+Calcule sur 5 axes ponderes. Version 2.0 avec ancres objectives.
 
 ## Les 5 Axes
 
@@ -23,6 +23,55 @@ EMS = (Clarte x 0.25) + (Profondeur x 0.20) + (Couverture x 0.20)
 ```
 
 Chaque axe est note de 0 a 100.
+
+## Ancres Objectives
+
+Criteres observables pour un scoring plus coherent.
+
+| Score | Clarte | Profondeur | Decisions |
+|-------|--------|------------|-----------|
+| **20** | Sujet enonce, non reformule | Questions surface uniquement | Tout reste ouvert |
+| **40** | Brief valide + scope defini | 1 chaine "pourquoi" (2+ niveaux) | 1-2 orientations prises |
+| **60** | + Contraintes (>=2) identifiees | Framework applique OU deep dive | Choix cles verrouilles |
+| **80** | + Criteres d'acceptation | Insights non-evidents | Priorisation etablie |
+| **100** | Zero ambiguite sur le "quoi" | Cause racine identifiee + validee | Tous threads fermes |
+
+**Couverture** :
+- 20: Une seule perspective
+- 40: 2-3 angles explores
+- 60: Risques adresses OU alternatives comparees
+- 80: Multi-stakeholders OU >=3 alternatives avec criteres
+- 100: Aucun angle mort identifiable
+
+**Actionnabilite** :
+- 20: Idees vagues, aucune action concrete
+- 40: "Il faudrait..." sans qui/quand
+- 60: Actions identifiees avec owner OU timeline
+- 80: Actions + owner + timeline + dependances
+- 100: Plan d'action complet, pret a executer
+
+## Recommandations Phase-Aware
+
+Les recommandations s'adaptent a la phase actuelle.
+
+| Phase | Focus Principal | Comportement |
+|-------|-----------------|--------------|
+| 🔀 Divergent | Couverture, Profondeur | Ne pas pousser les Decisions (normal qu'elles soient basses) |
+| 🎯 Convergent | Decisions, Actionnabilite | Pousser vers les decisions, suggerer frameworks de decision |
+
+**En phase Divergente** :
+```
+Recommandations :
+→ Couverture a 45% : Explorons d'autres angles (stakeholders ? risques ?)
+→ Profondeur a 38% : Un deep dive enrichirait l'exploration
+```
+
+**En phase Convergente** :
+```
+Recommandations :
+→ Decisions a 52% : 3 points restent ouverts, tranchons
+→ Actionnabilite a 40% : Definissons des actions concretes avec owners
+```
 
 ## Echelle de Maturite
 
