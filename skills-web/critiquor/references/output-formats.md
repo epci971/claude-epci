@@ -1,17 +1,19 @@
 # Output Formats
 
-> Complete reference for all CRITIQUOR output templates
+> Complete reference for all CRITIQUOR v2 output templates
 
 ---
 
-## Complete Mode Output Structure
+## Standard Mode Output Structure
 
 ### 1. Analysis Header
 
 ```markdown
 ## 📋 CRITIQUOR Analysis
 
-**Detected theme**: [Main theme] (+ secondary if applicable)
+[Persona icon] [Persona name] [Opening phrase]...
+
+**Detected theme**: [Main theme] (+ secondary if applicable) [Confidence icon]
 **Identified intention**: [Inform / Convince / Sell / Narrate / Structure / Reassure]
 **Target audience**: [Audience description]
 **Severity level**: [gentle / standard / strict]
@@ -36,24 +38,37 @@
 
 ---
 
-### 3. Global Score
+### 3. Visual Radar (NEW v2)
+
+```markdown
+## 📊 Radar des critères
+
+Clarté        ████████████████░░░░ 78/100
+Structure     ██████████████░░░░░░ 68/100
+Impact        ████████████░░░░░░░░ 58/100 ⚠️
+Pertinence    ██████████████████░░ 88/100 ✓
+Ton           ████████████████░░░░ 75/100
+Concision     ██████░░░░░░░░░░░░░░ 32/100 ❌
+```
+
+---
+
+### 4. Global Score
 
 ```markdown
 ## 🎯 Global Score
 
-**Score: XX/100** (level [standard]) — [Interpretation: Insufficient/Acceptable/Good/Excellent]
+**Score: XX/100** — [Level] [Confidence icon] (confiance [haute/moyenne/basse])
 
 **Expert adjustment**: ±X points — [Justification]
 ```
 
 ---
 
-### 4. Qualitative Analysis
+### 5. Qualitative Analysis
 
 ```markdown
 ## 📝 Qualitative Analysis
-
-[Structured paragraphs covering relevant aspects:]
 
 **Tone and Register**
 [Analysis of tone appropriateness...]
@@ -76,7 +91,7 @@
 
 ---
 
-### 5. Factual Errors Section (if applicable)
+### 6. Factual Errors Section (if applicable)
 
 ```markdown
 ## ⚠️ Factual Errors Detected
@@ -92,7 +107,7 @@ If no errors detected, this section is omitted entirely.
 
 ---
 
-### 6. Four-Block Table
+### 7. Four-Block Table
 
 ```markdown
 ## 📋 Strengths, Weaknesses, Advantages, Disadvantages
@@ -107,7 +122,7 @@ If no errors detected, this section is omitted entirely.
 
 ---
 
-### 7. Breakpoint 1
+### 8. Breakpoint 1
 
 ```markdown
 ---
@@ -118,7 +133,7 @@ Would you like me to generate a rewritten and re-evaluated version?
 
 ---
 
-### 8. Rewrite Preparation (Phase 1.5)
+### 9. Rewrite Preparation (Phase 1.5)
 
 ```markdown
 ## 💡 Improvement Suggestions
@@ -160,7 +175,7 @@ Answer these questions or indicate "proceed with your recommendations".
 
 ---
 
-### 9. Rewritten Version (Phase 2)
+### 10. Rewritten Version (Phase 2)
 
 ```markdown
 ## ✍️ Rewritten Version
@@ -170,7 +185,7 @@ Answer these questions or indicate "proceed with your recommendations".
 
 ---
 
-### 10. Modifications Table
+### 11. Modifications Table
 
 ```markdown
 ## 🔄 Key Modifications
@@ -185,28 +200,28 @@ Answer these questions or indicate "proceed with your recommendations".
 
 ---
 
-### 11. Comparative Re-evaluation
+### 12. Comparative Re-evaluation with Delta (NEW v2)
 
 ```markdown
 ## 📈 Comparative Re-evaluation
 
 | Criterion | Score Before | Score After | Δ |
 |-----------|--------------|-------------|---|
-| Clarity | 6/10 | 8/10 | +2 |
-| Structure | 5/10 | 8/10 | +3 |
-| Impact | 6/10 | 7/10 | +1 |
+| Clarity | 6/10 | 8/10 | +2 ↗ |
+| Structure | 5/10 | 8/10 | +3 ↗ |
+| Impact | 6/10 | 7/10 | +1 → |
 | ... | ... | ... | ... |
 
 ---
 
 **Score before**: XX/100 — [Interpretation]
 **Score after**: YY/100 — [Interpretation]
-**Improvement**: +ZZ points
+**Improvement**: +ZZ points [Trend icon]
 ```
 
 ---
 
-### 12. Breakpoint 2 (Satisfaction Check)
+### 13. Breakpoint 2 (Satisfaction Check)
 
 ```markdown
 ---
@@ -217,27 +232,167 @@ I can adjust specific elements if needed.
 
 ---
 
-## Summary Mode Output Structure
+## Express Mode Output (NEW v2)
 
 ```markdown
-## 📊 CRITIQUOR Summary
+## ⚡ CRITIQUOR Express
 
-**Score: XX/100** — [Interpretation: Insufficient/Acceptable/Good/Excellent]
+[Persona icon] [Persona] Analyse rapide...
 
-**Top 3 Strengths**:
-1. [Strength 1 - brief description]
-2. [Strength 2 - brief description]
-3. [Strength 3 - brief description]
+**Score: XX/100** — [Level] [Confidence icon]
 
-**Top 3 Weaknesses**:
-1. [Weakness 1 - brief description]
-2. [Weakness 2 - brief description]
-3. [Weakness 3 - brief description]
+📊 Radar
+Clarté      ████████████████░░░░ 78
+Structure   ██████████████░░░░░░ 65
+Impact      ██████████░░░░░░░░░░ 52 ⚠️
+Pertinence  ██████████████████░░ 85 ✓
+Ton         ████████████████░░░░ 72
 
-**Main Recommendation**: [Single most impactful improvement suggestion in 1-2 sentences]
+💪 **Forces** : [Point 1], [Point 2], [Point 3]
+⚠️ **Faiblesses** : [Point 1], [Point 2], [Point 3]
+🎯 **Priorité #1** : [Single most impactful improvement in 1-2 sentences]
 
 ---
-🛑 Want the complete analysis or a rewritten version?
+Critique complète ? → `approfondir`
+```
+
+---
+
+## Focus Mode Output (NEW v2)
+
+```markdown
+## 🔍 CRITIQUOR Focus — [Section Name]
+
+[Persona icon] [Persona] Concentrons-nous sur [section]...
+
+**Score section: XX/100** [Indicator]
+
+| Criterion | Score /10 | Analysis |
+|-----------|-----------|----------|
+| [Section-specific] | X | [Analysis] |
+| ... | ... | ... |
+
+📊 Radar section
+[Mini radar]
+
+### 💡 Recommendations
+
+1. [Specific recommendation]
+2. [Specific recommendation]
+
+### ✍️ Suggested rewrite (section only)
+
+[Rewritten section if applicable]
+
+---
+Critique du document entier ? → `critique complète`
+```
+
+---
+
+## Compare Mode Output (NEW v2)
+
+```markdown
+## ⚖️ CRITIQUOR Comparatif
+
+[Persona icon] [Persona] Analysons les deux versions...
+
+### 📊 Comparison Table
+
+| Criterion | Version A | Version B | Verdict |
+|-----------|-----------|-----------|---------|
+| Clarity | 65 | 78 | B +13 ✓ |
+| Structure | 72 | 68 | A +4 |
+| Impact | 58 | 71 | B +13 ✓ |
+| Tone | 75 | 74 | ≈ |
+| **Global** | **67** | **73** | **B +6** |
+
+### 🏆 Verdict
+
+**Version [X] recommended** (+Z points)
+
+**What A does better**:
+- [Point 1]
+- [Point 2]
+
+**What B does better**:
+- [Point 1]
+- [Point 2]
+
+### 💡 Optimal Version
+
+[Suggestion for combining best elements]
+
+---
+Generate this fused version? → `fusionner`
+```
+
+---
+
+## Iterate Mode Output (NEW v2)
+
+```markdown
+## 🔁 CRITIQUOR Itération #N
+
+[Persona icon] [Persona] Analyse des modifications...
+
+### Changements détectés
+
+- [Section] : [status: réécrite/modifiée/inchangée] [✓/⚠️]
+- ...
+
+### Impact sur le score
+
+| Criterion | Before | After | Δ |
+|-----------|--------|-------|---|
+| Clarity | 65 | 78 | +13 ↑ |
+| Impact | 58 | 72 | +14 ↑ |
+| Structure | 72 | 70 | -2 → |
+
+**Score: XX → YY (+/-Z)** [Trend icon]
+
+### ⚠️ Regression Detected (if any)
+
+**[Criterion]** (-X points [trend]): [Explanation]
+Suggestion: [How to fix]
+
+### ✅ Improvements Confirmed
+
+- [What improved and why]
+
+---
+Continue iterating? Provide next version.
+```
+
+---
+
+## Checklist Mode Output (NEW v2)
+
+```markdown
+## ✅ CRITIQUOR Checklist
+
+📋 Pre-send validation: [Document type]
+
+| Check | Status | Detail |
+|-------|--------|--------|
+| ✅ Spelling | OK | No errors detected |
+| ✅ Grammar | OK | Syntax correct |
+| ✅ Tone | OK | Professional, appropriate |
+| ⚠️ Length | ATTENTION | 450 words — may be too long |
+| ✅ CTA | OK | Clear meeting request |
+| ❌ Subject | MISSING | No subject line provided |
+| ✅ Personalization | OK | Client name used |
+| ⚠️ Urgency | LOW | No deadline mentioned |
+
+**Verdict: X/Y checks OK** — [Recommendation]
+
+🎯 **Actions before sending**:
+1. [Action 1]
+2. [Action 2]
+3. [Optional action]
+
+---
+Full critique? → `critique complète`
 ```
 
 ---
@@ -286,7 +441,7 @@ I can adjust specific elements if needed.
 **Final Score**: XX/100 — [Interpretation]
 
 ---
-🛑 **Analysis complete.** Would you like me to rewrite specific sections or the entire document?
+🛑 **Analysis complete.** Rewrite specific sections or entire document?
 ```
 
 ---
@@ -301,21 +456,36 @@ I can adjust specific elements if needed.
 ### Emphasis
 - **Bold** for labels and key terms
 - *Italic* for examples or quotes
-- `Code` for technical terms
+- `Code` for technical terms and commands
 
 ### Separators
 - Use `---` between major sections
 - Use blank lines for visual spacing
 
-### Emojis
-- 📋 Analysis / Overview
-- 📊 Scores / Data
-- 🎯 Results / Goals
-- 📝 Text / Writing
-- ⚠️ Warnings / Errors
-- 💡 Suggestions / Ideas
-- ❓ Questions
-- ✍️ Rewriting
-- 🔄 Changes / Comparison
-- 📈 Improvement
-- 🛑 Breakpoint / Stop
+### Emojis Reference
+
+| Emoji | Usage |
+|-------|-------|
+| 📋 | Analysis / Overview |
+| 📊 | Scores / Data / Radar |
+| 🎯 | Results / Goals |
+| 📝 | Text / Writing |
+| ⚠️ | Warnings / Errors / Attention needed |
+| 💡 | Suggestions / Ideas |
+| ❓ | Questions |
+| ✍️ | Rewriting |
+| 🔄 | Changes / Comparison |
+| 📈 | Improvement |
+| 🛑 | Breakpoint / Stop |
+| ⚡ | Express mode |
+| 🔍 | Focus mode |
+| ⚖️ | Compare mode |
+| 🔁 | Iterate mode |
+| ✅ | Checklist / Validation |
+| 🎓 | Mentor persona |
+| ✂️ | Editor persona |
+| 😈 | Devil's Advocate persona |
+| 👤 | Target Reader persona |
+| ✓ | Strong criterion (≥85) |
+| ❌ | Weak criterion (<50) |
+| ↑↗→↘↓ | Trend indicators |

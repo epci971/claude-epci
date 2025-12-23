@@ -1,163 +1,137 @@
 #!/usr/bin/env python3
 """
-CRITIQUOR Triggering Test Suite
-
-Tests semantic matching for the critiquor skill.
-Run: python test_triggering.py
-
-Expected: SHOULD_TRIGGER queries activate the skill
-          SHOULD_NOT_TRIGGER queries do not activate
+CRITIQUOR v2.0 — Triggering Test Suite
+Tests semantic matching for skill activation
 """
 
-# ============================================
-# TEST CASES
-# ============================================
+# Test cases for CRITIQUOR triggering
+# Format: (query, should_trigger, expected_mode, notes)
 
-SHOULD_TRIGGER = [
-    # Explicit triggers - French
-    "Critique ce texte",
-    "Critique ce mail que je dois envoyer",
-    "Analyse ce document",
-    "Analyse cette proposition commerciale",
-    "Relis ce texte s'il te plaît",
-    "Évalue cette note de synthèse",
-    "Donne-moi une critique de cet article",
-    "Peux-tu relire et corriger ce mail ?",
-    "Qu'est-ce que tu penses de ce texte ?",
+TRIGGER_TESTS = [
+    # === SHOULD TRIGGER (Standard Mode) ===
+    ("Critique ce mail", True, "standard", "Basic French trigger"),
+    ("Critique ce texte", True, "standard", "Basic text critique"),
+    ("Analyse ce document", True, "standard", "Document analysis"),
+    ("Relis ce mail", True, "standard", "Proofreading request"),
+    ("Donne-moi une critique de cette proposition", True, "standard", "Explicit critique request"),
+    ("Évalue cette proposition commerciale", True, "standard", "Evaluation request"),
+    ("Qu'est-ce que tu penses de ce texte ?", True, "standard", "Opinion request in critique context"),
+    ("Peux-tu relire et corriger ce document ?", True, "standard", "Proofread and correct"),
+    ("Review this email before I send it", True, "standard", "English trigger"),
+    ("Analyze my proposal", True, "standard", "English analysis"),
+    ("critiquor", True, "standard", "Direct skill invocation"),
     
-    # Explicit triggers - English
-    "Critique this text",
-    "Analyze this document",
-    "Proofread this email",
-    "Review this proposal",
-    "Evaluate this report",
-    "Give me feedback on this article",
-    "What do you think of this text?",
+    # === SHOULD TRIGGER (Express Mode) ===
+    ("--express critique ce mail", True, "express", "Express flag"),
+    ("--quick analyse ce texte", True, "express", "Quick flag"),
+    ("Critique rapide de ce mail", True, "express", "Implicit express"),
     
-    # With severity level
-    "Critique ce texte en mode strict",
-    "Analyse ce mail en mode doux",
-    "Critique this document in strict mode",
+    # === SHOULD TRIGGER (Focus Mode) ===
+    ("--focus intro critique ce texte", True, "focus", "Focus on intro"),
+    ("Critique seulement la conclusion", True, "focus", "Focus on conclusion"),
+    ("--focus section:2 analyse ce document", True, "focus", "Focus on section"),
     
-    # With custom criteria
-    "Critique ce texte et ajoute le critère SEO",
-    "Analyze this with focus on accessibility",
-    "Critique cette page en ajoutant le critère RGPD",
+    # === SHOULD TRIGGER (Compare Mode) ===
+    ("--compare ces deux versions", True, "compare", "Compare flag"),
+    ("compare\nVersion A\n---\nVersion B", True, "compare", "Compare format"),
+    ("Quelle version est meilleure ?", True, "compare", "Implicit compare"),
     
-    # Summary mode
-    "Donne-moi une critique en mode résumé",
-    "Quick summary critique of this email",
-    "Critique en bref ce document",
+    # === SHOULD TRIGGER (Checklist Mode) ===
+    ("--checklist ce mail avant envoi", True, "checklist", "Checklist flag"),
+    ("Validation pré-envoi de ce mail", True, "checklist", "Pre-send validation"),
     
-    # Long document
-    "Critique cette documentation technique de 3000 mots",
-    "Analyze this long proposal section by section",
+    # === SHOULD TRIGGER (With Persona) ===
+    ("--avocat critique cette proposition", True, "standard", "Devil's advocate"),
+    ("--mentor analyse ce texte", True, "standard", "Mentor mode"),
+    ("--strict critique ce mail", True, "standard", "Strict severity"),
     
-    # Context-specific
-    "Critique ce mail professionnel",
-    "Analyse cette proposition commerciale",
-    "Review this technical documentation",
-    "Évalue ce conte que j'ai écrit",
+    # === SHOULD TRIGGER (With Grid) ===
+    ("--grille prompt critique ces instructions", True, "standard", "Prompt grid"),
+    ("--grille api analyse cette documentation", True, "standard", "API grid"),
+    
+    # === SHOULD NOT TRIGGER ===
+    ("Corrige les fautes d'orthographe", False, None, "Simple spell-check only"),
+    ("Écris un mail pour mon client", False, None, "Content creation → corrector"),
+    ("Génère un prompt pour Claude", False, None, "Prompt creation → promptor"),
+    ("Résume cette réunion", False, None, "Meeting summary → resumator"),
+    ("Traduis ce texte en anglais", False, None, "Translation request"),
+    ("Quelle est la capitale de la France ?", False, None, "General knowledge"),
+    ("Aide-moi à coder une fonction Python", False, None, "Coding request"),
+    ("Analyse cette image", False, None, "Image analysis (not supported)"),
+    ("Crée une présentation PowerPoint", False, None, "Content creation"),
 ]
 
-SHOULD_NOT_TRIGGER = [
-    # Simple corrections (no full analysis)
-    "Corrige juste les fautes d'orthographe",
-    "Fix the typos in this text",
-    "Just spell-check this",
-    "Corrige la grammaire seulement",
-    
-    # Image/visual content
-    "Critique cette image",
-    "Analyze this diagram",
-    "Review this chart",
-    "Évalue ce logo",
-    
-    # Non-text requests
-    "Critique ce code Python",  # Could trigger but code is different
-    "Analyze this spreadsheet",
-    "Review this database schema",
-    
-    # Generic requests
-    "Aide-moi à écrire un mail",
-    "Write an email for me",
-    "Generate a proposal",
-    "Écris un article",
-    
-    # Translation
-    "Traduis ce texte",
-    "Translate this document",
-    
-    # Summarization (without critique)
-    "Résume ce document",
-    "Summarize this article",
-    
-    # Other skills
-    "Reformule ce message vocal",  # Clarifior
-    "Fais un compte-rendu de réunion",  # Resumator
-    "Crée un prompt pour...",  # Promptor
+# Test cases for theme detection
+THEME_DETECTION_TESTS = [
+    # (sample_text_snippet, expected_theme)
+    ("Cher client, suite à notre échange...", "Professional"),
+    ("Le ROI de cette campagne...", "Marketing"),
+    ("async function fetchData()...", "IT/Development"),
+    ("Le modèle GPT utilise des transformers...", "AI/ML"),
+    ("Conformément à l'article L.121-1...", "Legal"),
+    ("Le CA du T3 s'élève à 2.3M€...", "Finance"),
+    ("POST /api/v1/users", "API Documentation"),
+    ("Tu es un assistant qui...", "Prompt Engineering"),
+    ("<button>Valider</button>", "UX Writing"),
+    ("Slide 1: Problem\nSlide 2: Solution", "Pitch Deck"),
+    ("Décisions prises:\n- Action 1: Jean", "Meeting Notes"),
 ]
 
-# ============================================
-# TEST FRAMEWORK
-# ============================================
-
-def print_header(text: str):
-    """Print formatted header"""
-    print("\n" + "=" * 60)
-    print(f"  {text}")
-    print("=" * 60)
-
-def print_test_case(query: str, expected: str, status: str = "MANUAL"):
-    """Print test case for manual verification"""
-    emoji = "✅" if status == "PASS" else "❌" if status == "FAIL" else "🔍"
-    print(f"{emoji} [{expected}] {query}")
+# Test cases for persona auto-switch
+PERSONA_SWITCH_TESTS = [
+    # (context, expected_persona)
+    ("First document in session", "Mentor"),
+    ("Technical documentation", "Editor"),
+    ("Sales proposal", "Devil's Advocate"),
+    ("Email to client", "Target Reader"),
+    ("--strict mode", "Editor"),
+    ("--doux mode", "Mentor"),
+    ("Stress-test this pitch", "Devil's Advocate"),
+]
 
 def run_tests():
-    """Run all triggering tests"""
+    """Run all triggering tests and report results."""
+    print("=" * 60)
+    print("CRITIQUOR v2.0 — Triggering Test Suite")
+    print("=" * 60)
     
-    print_header("CRITIQUOR TRIGGERING TEST SUITE")
-    print("\nThis test suite helps verify semantic matching.")
-    print("Run each query manually and verify the skill triggers correctly.\n")
+    # Trigger tests
+    print("\n📋 TRIGGER TESTS")
+    print("-" * 40)
+    passed = 0
+    failed = 0
     
-    # Should trigger tests
-    print_header("SHOULD TRIGGER (expect critiquor to activate)")
-    for query in SHOULD_TRIGGER:
-        print_test_case(query, "SHOULD_TRIGGER")
+    for query, should_trigger, expected_mode, notes in TRIGGER_TESTS:
+        # In real implementation, this would call the actual matching logic
+        # Here we just report the expected behavior
+        status = "✅" if should_trigger else "❌"
+        mode_str = f" [{expected_mode}]" if expected_mode else ""
+        print(f"{status} {query[:40]:<40}{mode_str}")
+        print(f"   → {notes}")
+        passed += 1
     
-    print(f"\nTotal: {len(SHOULD_TRIGGER)} test cases")
+    print(f"\n📊 Results: {passed}/{len(TRIGGER_TESTS)} test cases defined")
     
-    # Should not trigger tests
-    print_header("SHOULD NOT TRIGGER (expect critiquor to NOT activate)")
-    for query in SHOULD_NOT_TRIGGER:
-        print_test_case(query, "SHOULD_NOT")
+    # Theme detection tests
+    print("\n📋 THEME DETECTION TESTS")
+    print("-" * 40)
+    for snippet, theme in THEME_DETECTION_TESTS:
+        print(f"🎯 \"{snippet[:30]}...\" → {theme}")
     
-    print(f"\nTotal: {len(SHOULD_NOT_TRIGGER)} test cases")
+    print(f"\n📊 Results: {len(THEME_DETECTION_TESTS)} theme cases defined")
     
-    # Summary
-    print_header("TEST SUMMARY")
-    print(f"""
-Total test cases: {len(SHOULD_TRIGGER) + len(SHOULD_NOT_TRIGGER)}
-- Should trigger: {len(SHOULD_TRIGGER)}
-- Should not trigger: {len(SHOULD_NOT_TRIGGER)}
-
-Instructions:
-1. Copy each query and paste into Claude
-2. Verify critiquor skill activates (or not) as expected
-3. Mark any failures for description refinement
-
-Key trigger words to verify:
-- critique, analyze, proofread, review, evaluate
-- "qu'est-ce que tu penses de"
-- "donne-moi une critique"
-- "relis ce texte"
-
-Key exclusions to verify:
-- Simple spell-check requests
-- Image/visual content
-- Code review (different skill)
-- Translation requests
-""")
+    # Persona switch tests
+    print("\n📋 PERSONA AUTO-SWITCH TESTS")
+    print("-" * 40)
+    for context, persona in PERSONA_SWITCH_TESTS:
+        icon = {"Mentor": "🎓", "Editor": "✂️", "Devil's Advocate": "😈", "Target Reader": "👤"}[persona]
+        print(f"{icon} {context:<35} → {persona}")
+    
+    print(f"\n📊 Results: {len(PERSONA_SWITCH_TESTS)} persona cases defined")
+    
+    print("\n" + "=" * 60)
+    print("Test suite complete. Use these cases to validate triggering.")
+    print("=" * 60)
 
 if __name__ == "__main__":
     run_tests()

@@ -1,477 +1,480 @@
 # Frameworks Catalog
 
-> Complete reference for thinking frameworks and idea scoring in Brainstormer
+> Outils de réflexion structurée pour enrichir le brainstorming
 
 ---
 
-## Framework Overview
+## Vue d'ensemble
 
-| Framework | Category | Best For | Complexity | Time |
-|-----------|----------|----------|------------|------|
-| SWOT | Analysis | Evaluating options, strategic planning | Low | 10-15 min |
-| 5 Whys | Clarification | Root cause analysis | Low | 5-10 min |
-| MoSCoW | Prioritization | Feature prioritization | Low | 10-15 min |
-| Six Thinking Hats | Perspective | Creative exploration, decision-making | Medium | 15-25 min |
-| Impact/Effort Matrix | Prioritization | Action planning | Low | 10 min |
-| Weighted Criteria Grid | Analysis | Multi-criteria comparison | Medium | 15-20 min |
-| Comparative Matrix | Research | Benchmarking, vendor selection | Medium | 15-20 min |
-| Business Model Canvas | Strategy | Business model design | High | 25-40 min |
+Les frameworks sont des méthodes de pensée structurée que Brainstormer peut appliquer pour approfondir l'exploration. Ils sont suggérés proactivement ou activés sur demande.
+
+**Nouveau v3.0** : Pre-mortem ajouté comme framework d'anticipation des risques.
 
 ---
 
-## Idea Scoring System
+## Catalogue des Frameworks
 
-### When to Use Scoring
+| Framework | Type | Quand l'utiliser | Commande |
+|-----------|------|------------------|----------|
+| **SWOT** | Analytique | Évaluer une option, un projet, une décision | `framework swot` |
+| **5 Whys** | Analytique | Trouver la cause racine d'un problème | `framework 5whys` |
+| **MoSCoW** | Décision | Prioriser des fonctionnalités ou tâches | `framework moscow` |
+| **Six Hats** | Exploration | Explorer un sujet sous tous les angles | `framework hats` |
+| **Pre-mortem** | Risques | Anticiper les causes d'échec (NOUVEAU v3.0) | `premortem` |
+| **Weighted Criteria** | Décision | Comparer des options avec critères pondérés | `framework weighted` |
+| **Scoring** | Décision | Évaluer et classer des idées | `scoring` |
+| **Starbursting** | Exploration | Générer des questions (Who/What/Where/When/Why/How) | `framework starbursting` |
+| **Reverse Brainstorming** | Créatif | Trouver des solutions en inversant le problème | `framework reverse` |
 
-Propose scoring when:
-- Multiple competing ideas have emerged
-- Prioritization is needed for action planning
-- User seems undecided between options
-- Before generating final report with action plan
+---
 
-### Scoring Formula
+## SWOT Analysis
 
-For each idea, score on 4 criteria:
+**Purpose** : Évaluer les Forces, Faiblesses, Opportunités et Menaces d'une option.
 
-| Criterion | Weight | Scale | Description |
-|-----------|--------|-------|-------------|
-| **Impact** | 40% | 1-5 | Business value, user benefit, strategic alignment |
-| **Effort** | 30% | 1-5 | Time, cost, complexity (inverted: 5 = low effort) |
-| **Risk** | 20% | 1-5 | Probability × severity of failure (inverted: 5 = low risk) |
-| **Alignment** | 10% | 1-5 | Fit with constraints, existing systems, team capabilities |
+**Quand l'utiliser** :
+- Évaluer un projet avant de s'engager
+- Comparer 2 options stratégiques
+- Faire un état des lieux d'une situation
 
-**Formula**:
-```
-Final Score = (Impact × 0.40) + (Effort × 0.30) + (Risk × 0.20) + (Alignment × 0.10)
-```
+**Process** :
+1. Identifier les **S**trengths (forces internes)
+2. Identifier les **W**eaknesses (faiblesses internes)
+3. Identifier les **O**pportunities (opportunités externes)
+4. Identifier les **T**hreats (menaces externes)
+5. Croiser les quadrants pour définir des stratégies
 
-**Score interpretation**:
-| Score | Level | Recommendation |
-|-------|-------|----------------|
-| 4.5 - 5.0 | Excellent | Prioritize immediately |
-| 3.5 - 4.4 | Good | Strong candidate |
-| 2.5 - 3.4 | Moderate | Consider with caveats |
-| 1.5 - 2.4 | Weak | Likely deprioritize |
-| 1.0 - 1.4 | Poor | Recommend against |
-
-### Scoring Output Format
+**Format de sortie** :
 
 ```markdown
-## 📊 Idea Scoring
+## SWOT : [Sujet]
 
-| Idea | Impact | Effort | Risk | Alignment | **Score** |
-|------|--------|--------|------|-----------|-----------|
-| [Idea A] | 4 | 5 | 4 | 4 | **4.3** |
-| [Idea B] | 5 | 2 | 3 | 5 | **3.8** |
-| [Idea C] | 3 | 4 | 5 | 3 | **3.8** |
+|  | Positif | Négatif |
+|--|---------|---------|
+| **Interne** | **Forces** | **Faiblesses** |
+|  | • Force 1 | • Faiblesse 1 |
+|  | • Force 2 | • Faiblesse 2 |
+| **Externe** | **Opportunités** | **Menaces** |
+|  | • Opportunité 1 | • Menace 1 |
+|  | • Opportunité 2 | • Menace 2 |
 
-**Ranking**:
-1. 🥇 Idea A (4.3) — Best balance of impact and feasibility
-2. 🥈 Idea B (3.8) — Highest impact but significant effort
-3. 🥉 Idea C (3.8) — Low risk but moderate impact
-
-**Recommendation**: [Synthesis based on scores and context]
+### Stratégies croisées
+- **S+O** : [Exploiter les forces pour saisir les opportunités]
+- **W+O** : [Améliorer les faiblesses via les opportunités]
+- **S+T** : [Utiliser les forces pour contrer les menaces]
+- **W+T** : [Plan défensif pour éviter le pire scénario]
 ```
 
-### Custom Scoring Criteria
-
-User can request custom criteria:
-- "Add 'time to market' as a criterion"
-- "Weight impact higher, I care less about risk"
-
-When customizing:
-1. Acknowledge the customization
-2. Redistribute weights to total 100%
-3. Apply new formula
-4. Note customization in report
+**Best for** : Templates `project`, `strategy`, `decision`
 
 ---
 
-## Framework Details
+## 5 Whys
 
-### SWOT Analysis
+**Purpose** : Remonter à la cause racine d'un problème en demandant "pourquoi" de manière itérative.
 
-**Purpose**: Evaluate internal and external factors affecting a decision or strategy.
+**Quand l'utiliser** :
+- Un problème récurrent qu'on n'arrive pas à résoudre
+- Symptômes visibles mais cause floue
+- Besoin de comprendre le "vrai" problème
 
-**Structure**:
-```
-┌─────────────────┬─────────────────┐
-│   STRENGTHS     │   WEAKNESSES    │
-│   (Internal +)  │   (Internal -)  │
-├─────────────────┼─────────────────┤
-│  OPPORTUNITIES  │     THREATS     │
-│   (External +)  │   (External -)  │
-└─────────────────┴─────────────────┘
-```
+**Process** :
+1. Énoncer le problème clairement
+2. Demander "Pourquoi ?" et noter la réponse
+3. Répéter 5 fois (ou jusqu'à la cause racine)
+4. Valider la cause racine trouvée
+5. Définir une action sur la cause racine
 
-**Guiding questions**:
-- Strengths: What advantages do we have? What do we do well?
-- Weaknesses: What could be improved? What are we lacking?
-- Opportunities: What trends can we leverage? What gaps exist?
-- Threats: What obstacles do we face? What is the competition doing?
+**Format de sortie** :
 
-**Output format**:
 ```markdown
-## SWOT Analysis: [Subject]
+## 5 Whys : [Problème initial]
 
-### Strengths
-- [Strength 1]
-- [Strength 2]
+**Problème** : [Énoncé du problème]
 
-### Weaknesses
-- [Weakness 1]
-- [Weakness 2]
+1. **Pourquoi ?** → [Réponse 1]
+2. **Pourquoi ?** → [Réponse 2]
+3. **Pourquoi ?** → [Réponse 3]
+4. **Pourquoi ?** → [Réponse 4]
+5. **Pourquoi ?** → [Réponse 5]
 
-### Opportunities
-- [Opportunity 1]
-- [Opportunity 2]
+🎯 **Cause racine identifiée** : [Cause racine]
 
-### Threats
-- [Threat 1]
-- [Threat 2]
-
-### Strategic Implications
-[Summary: leverage strengths + opportunities, mitigate weaknesses + threats]
+**Action corrective** : [Action sur la cause racine]
 ```
 
-**Best for**: Audit template, Business type, strategic decisions
+**Best for** : Templates `problem`, `audit`
 
 ---
 
-### 5 Whys
+## MoSCoW Prioritization
 
-**Purpose**: Dig to root cause by asking "why" iteratively.
+**Purpose** : Classer les éléments par priorité en 4 catégories.
 
-**Process**:
-1. State the problem clearly
-2. Ask "Why does this happen?"
-3. For each answer, ask "Why?" again
-4. Repeat until root cause is reached (typically 5 iterations)
-5. Verify: addressing root cause would prevent original problem
+**Quand l'utiliser** :
+- Liste de fonctionnalités à prioriser
+- Scope trop large à réduire
+- Besoin de distinguer l'essentiel du nice-to-have
 
-**Example**:
-```
-Problem: Users abandon the checkout process
+**Catégories** :
+- **M**ust have : Indispensable, bloquant si absent
+- **S**hould have : Important mais pas bloquant
+- **C**ould have : Nice-to-have, si temps/budget
+- **W**on't have : Hors scope pour cette itération
 
-Why 1: The page loads slowly
-Why 2: Too many external scripts
-Why 3: Marketing added tracking pixels without review
-Why 4: No approval process for third-party scripts
-Why 5: No performance budget policy
-→ Root cause: Missing governance for frontend performance
-```
+**Format de sortie** :
 
-**Output format**:
 ```markdown
-## 5 Whys Analysis: [Problem]
+## MoSCoW : [Sujet]
 
-**Problem Statement**: [Clear description]
+### 🔴 Must Have (Indispensable)
+- [ ] Élément 1
+- [ ] Élément 2
 
-| Level | Question | Answer |
-|-------|----------|--------|
-| 1 | Why? | [First answer] |
-| 2 | Why? | [Second answer] |
-| 3 | Why? | [Third answer] |
-| 4 | Why? | [Fourth answer] |
-| 5 | Why? | [Fifth answer] |
+### 🟠 Should Have (Important)
+- [ ] Élément 3
+- [ ] Élément 4
 
-**Root Cause**: [Identified root cause]
+### 🟡 Could Have (Nice-to-have)
+- [ ] Élément 5
+- [ ] Élément 6
 
-**Verification**: If we address [root cause], would [problem] be prevented? [Yes/No + explanation]
+### ⚪ Won't Have (Hors scope)
+- [ ] Élément 7
+- [ ] Élément 8
 
-**Recommended Action**: [Solution addressing root cause]
+**Rationale** : [Justification des choix de priorisation]
 ```
 
-**Best for**: Project template, debugging issues, process problems
+**Règle** : MoSCoW doit être appliqué avant `finish` si le template est `feature` et que des fonctionnalités ont été listées.
+
+**Best for** : Templates `feature`, `project`
 
 ---
 
-### MoSCoW Prioritization
+## Six Thinking Hats
 
-**Purpose**: Categorize requirements by priority.
+**Purpose** : Explorer un sujet sous 6 angles différents pour garantir une vision complète.
 
-**Categories**:
-| Category | Meaning | Guidance | Typical % |
-|----------|---------|----------|-----------|
-| **Must** | Critical, non-negotiable | Failure without these | 60% |
-| **Should** | Important but not vital | Workarounds possible | 20% |
-| **Could** | Desirable enhancements | Nice to have | 15% |
-| **Won't** | Out of scope (for now) | Explicitly excluded | 5% |
+**Quand l'utiliser** :
+- Sujet complexe avec multiples perspectives
+- Besoin de sortir d'un mode de pensée unique
+- Équilibrer émotion, faits, créativité, critique
 
-**Output format**:
+**Les 6 chapeaux** :
+- 🎩 **Blanc** : Faits, données, informations objectives
+- 🎩 **Rouge** : Émotions, intuitions, réactions viscérales
+- 🎩 **Noir** : Critique, risques, points négatifs
+- 🎩 **Jaune** : Optimisme, bénéfices, points positifs
+- 🎩 **Vert** : Créativité, alternatives, nouvelles idées
+- 🎩 **Bleu** : Méta, processus, synthèse
+
+**Format de sortie** :
+
 ```markdown
-## MoSCoW Prioritization: [Subject]
+## Six Hats : [Sujet]
 
-### Must Have (non-negotiable)
-- [ ] [Requirement 1] — [Justification]
-- [ ] [Requirement 2] — [Justification]
+### 🎩 Chapeau Blanc — Faits
+- [Données objectives]
+- [Informations vérifiables]
 
-### Should Have (important)
-- [ ] [Requirement 1] — [Justification]
+### 🎩 Chapeau Rouge — Émotions
+- [Réactions émotionnelles]
+- [Intuitions]
 
-### Could Have (nice to have)
-- [ ] [Requirement 1] — [Justification]
+### 🎩 Chapeau Noir — Critique
+- [Risques]
+- [Points négatifs]
+- [Obstacles]
 
-### Won't Have (this iteration)
-- [ ] [Requirement 1] — [Reason for exclusion]
+### 🎩 Chapeau Jaune — Optimisme
+- [Bénéfices]
+- [Opportunités]
+- [Points positifs]
 
-**Distribution check**: Must (~60%), Should (~20%), Could (~15%), Won't (~5%)
+### 🎩 Chapeau Vert — Créativité
+- [Alternatives]
+- [Idées nouvelles]
+- [Approches différentes]
+
+### 🎩 Chapeau Bleu — Synthèse
+- [Conclusions]
+- [Prochaines étapes]
+- [Décisions]
 ```
 
-**Best for**: Feature template, scope definition, release planning
+**Best for** : Templates `project`, `strategy`, `decision`
 
 ---
 
-### Six Thinking Hats
+## Pre-mortem (NOUVEAU v3.0)
 
-**Purpose**: Explore a topic from six distinct perspectives.
+**Purpose** : Anticiper les causes d'échec en imaginant que le projet a échoué, puis définir des mitigations préventives.
 
-**The Hats**:
-| Hat | Color | Focus | Key Question |
-|-----|-------|-------|--------------|
-| 🤍 White | Information | Facts and data | "What do we know? What do we need to know?" |
-| ❤️ Red | Emotion | Feelings and intuition | "What does my gut say? How do I feel?" |
-| 🖤 Black | Caution | Risks and problems | "What could go wrong? What are the dangers?" |
-| 💛 Yellow | Optimism | Benefits and value | "What are the advantages? Why will this work?" |
-| 💚 Green | Creativity | Alternatives and ideas | "What else is possible? What's a creative solution?" |
-| 💙 Blue | Process | Meta-thinking | "What's our next step? How should we think about this?" |
+**Quand l'utiliser** :
+- Avant de finaliser un plan d'action
+- Pour des projets à risque élevé (budget important, deadline serrée, nouveau domaine)
+- Quand le client demande des garanties
+- En complément de l'analyse de risques classique
 
-**Process**:
-1. 💙 Blue: Define the topic and goal
-2. 🤍 White: Gather facts and data
-3. 💚 Green: Generate ideas and alternatives
-4. 💛 Yellow: Explore benefits of each
-5. 🖤 Black: Identify risks and problems
-6. ❤️ Red: Check gut feelings
-7. 💙 Blue: Summarize and decide next steps
+**Différence avec l'analyse de risques classique** :
+- Analyse de risques : "Quels sont les risques possibles ?"
+- Pre-mortem : "Le projet a échoué. Qu'est-ce qui s'est passé ?"
 
-**Output format**:
+La projection dans l'échec libère la pensée et permet d'identifier des risques qu'on n'oserait pas mentionner autrement.
+
+**Process** :
+1. **Projection** : "Nous sommes dans [6 mois/1 an]. Le projet a complètement échoué."
+2. **Identification** : "Qu'est-ce qui s'est passé ? Listez toutes les causes possibles."
+3. **Priorisation** : Classer les causes par Probabilité × Impact
+4. **Mitigation** : Pour chaque cause majeure, définir une action préventive
+5. **Intégration** : Ajouter les mitigations au plan d'action
+
+**Format de sortie** :
+
 ```markdown
-## Six Hats Analysis: [Subject]
+## ⚰️ Pre-mortem : [Sujet]
 
-### 💙 Blue Hat — Process
-**Goal**: [What we're trying to decide/explore]
+**Projection** : Nous sommes le [date future]. Le projet [nom] a échoué.
 
-### 🤍 White Hat — Facts
-[Objective information and data only — no opinions]
+### Causes d'échec identifiées
 
-### 💚 Green Hat — Creativity
-[New ideas, alternatives, possibilities — no judgment]
+| # | Cause | Probabilité | Impact | Score |
+|---|-------|-------------|--------|-------|
+| 1 | [Cause 1] | 🔴 Haute | 🔴 Critique | 9 |
+| 2 | [Cause 2] | 🟡 Moyenne | 🔴 Critique | 6 |
+| 3 | [Cause 3] | 🟡 Moyenne | 🟡 Modéré | 4 |
+| 4 | [Cause 4] | 🟢 Faible | 🟡 Modéré | 2 |
 
-### 💛 Yellow Hat — Optimism
-[Benefits, advantages, opportunities — best case thinking]
+### Plan de mitigation
 
-### 🖤 Black Hat — Caution
-[Risks, dangers, problems — critical thinking]
+| Cause | Mitigation préventive | Owner | Deadline |
+|-------|----------------------|-------|----------|
+| [Cause 1] | [Action préventive] | [Qui] | [Quand] |
+| [Cause 2] | [Action préventive] | [Qui] | [Quand] |
 
-### ❤️ Red Hat — Emotions
-[Gut feelings — no justification needed]
+### Signaux d'alerte à surveiller
 
-### 💙 Blue Hat — Summary
-[Synthesis and recommended next steps]
+- 🚨 [Signal 1] → Déclenche [action corrective]
+- 🚨 [Signal 2] → Déclenche [action corrective]
 ```
 
-**Best for**: Creative type, complex decisions, team alignment
+**Scoring Probabilité × Impact** :
+- 🔴 Haute/Critique = 3
+- 🟡 Moyenne/Modéré = 2
+- 🟢 Faible/Mineur = 1
+- Score = Probabilité × Impact (max 9)
+
+**Lien avec autres skills** :
+- Les mitigations alimentent la section "Risques" de **Propositor**
+- Les actions préventives peuvent être chiffrées par **Estimator**
+
+**Best for** : Templates `project`, `feature`, `strategy`
+
+**Déclenchement** : Commande `premortem` — Active automatiquement le persona 🥊 Sparring
 
 ---
 
-### Impact/Effort Matrix
+## Weighted Criteria Grid
 
-**Purpose**: Prioritize actions based on value vs. cost.
+**Purpose** : Comparer des options avec des critères pondérés pour une décision objective.
 
-**Quadrants**:
-```
-High Impact │  BIG BETS      │  QUICK WINS
-            │  (Plan carefully) │  (Do first!)
-────────────┼──────────────────┼──────────────
-Low Impact  │  TIME SINKS    │  FILL-INS
-            │  (Avoid)       │  (Do if time)
-            └──────────────────┴──────────────
-              High Effort       Low Effort
-```
+**Quand l'utiliser** :
+- Choix entre plusieurs options équivalentes
+- Besoin de justifier une décision de manière rationnelle
+- Multiples critères à considérer
 
-**Scoring guidance**:
-- Impact (1-5): Business value, user benefit, strategic alignment
-- Effort (1-5): Time, cost, complexity, risk
+**Process** :
+1. Lister les options à comparer
+2. Définir les critères de comparaison
+3. Pondérer les critères (total = 100%)
+4. Noter chaque option sur chaque critère (1-5)
+5. Calculer le score pondéré
+6. Identifier le gagnant
 
-**Output format (Mermaid)**:
-```mermaid
-quadrantChart
-    title Impact/Effort Matrix
-    x-axis Low Effort --> High Effort
-    y-axis Low Impact --> High Impact
-    quadrant-1 Big Bets
-    quadrant-2 Quick Wins
-    quadrant-3 Time Sinks
-    quadrant-4 Fill-ins
-    Item A: [0.3, 0.8]
-    Item B: [0.7, 0.6]
-    Item C: [0.2, 0.3]
-```
+**Format de sortie** :
 
-**Best for**: Feature template, action planning, resource allocation
-
----
-
-### Weighted Criteria Grid
-
-**Purpose**: Objective multi-criteria comparison with weighted scoring.
-
-**Process**:
-1. Define options to compare (2-5 options ideal)
-2. Define criteria (5-8 criteria ideal)
-3. Assign weights to criteria (must total 100%)
-4. Score each option per criterion (0-10)
-5. Calculate weighted scores
-6. Rank options and recommend
-
-**Output format**:
 ```markdown
-## Weighted Evaluation: [Subject]
+## Weighted Criteria : [Décision]
 
-### Criteria Weights
-| Criterion | Weight | Justification |
-|-----------|--------|---------------|
-| [Criterion 1] | 30% | [Why this weight] |
-| [Criterion 2] | 25% | [Why this weight] |
-| ... | ... | ... |
-| **Total** | **100%** | |
+### Critères et pondération
 
-### Scoring Matrix
-| Criterion | Weight | Option A | Option B | Option C |
-|-----------|--------|----------|----------|----------|
-| [Criterion 1] | 30% | 8 (2.4) | 6 (1.8) | 7 (2.1) |
-| [Criterion 2] | 25% | 7 (1.75) | 8 (2.0) | 6 (1.5) |
-| ... | ... | ... | ... | ... |
-| **TOTAL** | 100% | **X.XX** | **X.XX** | **X.XX** |
+| Critère | Poids | Description |
+|---------|-------|-------------|
+| [Critère 1] | 30% | [Description] |
+| [Critère 2] | 25% | [Description] |
+| [Critère 3] | 25% | [Description] |
+| [Critère 4] | 20% | [Description] |
 
-**Ranking**: 1. [Winner], 2. [Second], 3. [Third]
+### Évaluation
 
-**Recommendation**: [Option X] based on [key differentiator]
+| Option | Critère 1 | Critère 2 | Critère 3 | Critère 4 | **Score** |
+|--------|-----------|-----------|-----------|-----------|-----------|
+| Option A | 4 (1.2) | 3 (0.75) | 5 (1.25) | 2 (0.4) | **3.60** |
+| Option B | 3 (0.9) | 5 (1.25) | 3 (0.75) | 4 (0.8) | **3.70** ✅ |
+| Option C | 5 (1.5) | 2 (0.5) | 4 (1.0) | 3 (0.6) | **3.60** |
+
+### Recommandation
+
+🎯 **Option B** avec un score de 3.70/5
+
+**Rationale** : [Justification qualitative au-delà du score]
 ```
 
-**Best for**: Audit template, vendor selection, technical decisions
+**Best for** : Templates `decision`, `feature`, `strategy`
 
 ---
 
-### Comparative Matrix
+## Scoring (Ideas Evaluation)
 
-**Purpose**: Side-by-side feature/capability comparison.
+**Purpose** : Évaluer et classer des idées sur des critères standards.
 
-**Output format**:
+**Critères par défaut** :
+- **Impact** : Effet potentiel si implémenté (1-5)
+- **Effort** : Ressources nécessaires (1-5, inversé)
+- **Risk** : Niveau de risque (1-5, inversé)
+- **Alignment** : Cohérence avec les objectifs (1-5)
+
+**Formule** :
+```
+Score = (Impact × 0.35) + ((6-Effort) × 0.25) + ((6-Risk) × 0.20) + (Alignment × 0.20)
+```
+
+**Format de sortie** :
+
 ```markdown
-## Comparative Matrix: [Subject]
+## Scoring : [Sujet]
 
-| Feature/Aspect | Option A | Option B | Option C | Winner |
-|----------------|----------|----------|----------|--------|
-| [Feature 1] | ✅ Full | ⚠️ Partial | ❌ No | A |
-| [Feature 2] | ⚠️ Limited | ✅ Full | ✅ Full | B/C |
-| [Feature 3] | ✅ Yes | ✅ Yes | ❌ No | A/B |
-| Price | $100/mo | $150/mo | $80/mo | C |
-| Support | 24/7 | Business hours | Community | A |
+| Idée | Impact | Effort | Risk | Align. | **Score** |
+|------|--------|--------|------|--------|-----------|
+| Idée 1 | 5 | 2 | 2 | 4 | **4.15** ✅ |
+| Idée 2 | 4 | 4 | 3 | 5 | **3.45** |
+| Idée 3 | 3 | 3 | 1 | 3 | **3.60** |
 
-**Legend**: ✅ Full support | ⚠️ Partial/Limited | ❌ Not available
+### Top 3
 
-**Summary**: [Key differentiators and recommendation]
+1. 🥇 **Idée 1** (4.15) — [Raison]
+2. 🥈 **Idée 3** (3.60) — [Raison]
+3. 🥉 **Idée 2** (3.45) — [Raison]
 ```
 
-**Best for**: Research template, tool selection, competitive analysis
+**Déclenchement** : Commande `scoring` — Proposé automatiquement si 3+ idées ont émergé
 
 ---
 
-### Business Model Canvas
+## Starbursting
 
-**Purpose**: Visualize complete business model on one page.
+**Purpose** : Générer des questions exhaustives autour d'un sujet avec les 6 interrogatifs.
 
-**9 Building Blocks**:
+**Quand l'utiliser** :
+- Début d'exploration pour couvrir tous les angles
+- Vérifier qu'on n'a rien oublié
+- Préparer un brief ou une spécification
+
+**Les 6 branches** :
+- **Who** : Qui est concerné ?
+- **What** : Qu'est-ce que c'est exactement ?
+- **Where** : Où ça se passe ?
+- **When** : Quand ça arrive ?
+- **Why** : Pourquoi c'est important ?
+- **How** : Comment ça fonctionne ?
+
+**Format de sortie** :
+
+```markdown
+## Starbursting : [Sujet]
+
+### 👤 Who (Qui)
+- Qui utilise ça ?
+- Qui décide ?
+- Qui est impacté ?
+
+### 📦 What (Quoi)
+- C'est quoi exactement ?
+- Ça inclut quoi ?
+- Ça exclut quoi ?
+
+### 📍 Where (Où)
+- Où ça se passe ?
+- Où c'est déployé ?
+- Où sont les utilisateurs ?
+
+### 📅 When (Quand)
+- Quand c'est utilisé ?
+- Quelle est la deadline ?
+- Quelle fréquence ?
+
+### ❓ Why (Pourquoi)
+- Pourquoi c'est nécessaire ?
+- Pourquoi maintenant ?
+- Pourquoi cette approche ?
+
+### ⚙️ How (Comment)
+- Comment ça fonctionne ?
+- Comment on mesure le succès ?
+- Comment on implémente ?
 ```
-┌────────────┬────────────┬────────────┬────────────┬────────────┐
-│    Key     │    Key     │   Value    │  Customer  │  Customer  │
-│  Partners  │ Activities │Propositions│Relationships│  Segments  │
-│            ├────────────┤            ├────────────┤            │
-│            │    Key     │            │  Channels  │            │
-│            │ Resources  │            │            │            │
-├────────────┴────────────┴────────────┴────────────┴────────────┤
-│        Cost Structure        │        Revenue Streams          │
-└──────────────────────────────┴─────────────────────────────────┘
-```
 
-**Guiding questions per block**:
-| Block | Key Question |
-|-------|--------------|
-| Customer Segments | Who are we creating value for? |
-| Value Propositions | What value do we deliver? What problem do we solve? |
-| Channels | How do we reach our customers? |
-| Customer Relationships | What type of relationship does each segment expect? |
-| Revenue Streams | What are customers willing to pay for? |
-| Key Resources | What assets are required? |
-| Key Activities | What must we do to deliver our value proposition? |
-| Key Partners | Who helps us? What do we outsource? |
-| Cost Structure | What are the major costs? |
-
-**Best for**: Business type, startup ideas, business model innovation
+**Best for** : Templates `audit`, `project`
 
 ---
 
-## Framework Selection Logic
+## Reverse Brainstorming
 
+**Purpose** : Trouver des solutions en inversant le problème ("Comment empirer ?").
+
+**Quand l'utiliser** :
+- Blocage créatif, pas d'idées
+- Besoin de voir le problème autrement
+- Identifier des risques cachés
+
+**Process** :
+1. Inverser le problème : "Comment faire pour que ça échoue ?"
+2. Lister toutes les façons de créer le problème
+3. Inverser chaque réponse pour trouver des solutions
+4. Évaluer et retenir les meilleures
+
+**Format de sortie** :
+
+```markdown
+## Reverse Brainstorming : [Problème]
+
+**Problème original** : [Énoncé]
+**Problème inversé** : "Comment s'assurer que [problème] arrive ?"
+
+### Façons de créer le problème
+
+| # | Comment empirer | Inversion → Solution |
+|---|-----------------|---------------------|
+| 1 | [Façon d'empirer 1] | [Solution 1] |
+| 2 | [Façon d'empirer 2] | [Solution 2] |
+| 3 | [Façon d'empirer 3] | [Solution 3] |
+
+### Solutions retenues
+
+1. **[Solution 1]** — [Justification]
+2. **[Solution 2]** — [Justification]
 ```
-AUTOMATIC SUGGESTION BASED ON TYPE + TEMPLATE:
 
-IF type == Technical:
-    Primary: Comparative Matrix, Weighted Criteria
-    Secondary: Impact/Effort
-
-IF type == Business:
-    Primary: SWOT, Business Model Canvas
-    Secondary: MoSCoW
-
-IF type == Creative:
-    Primary: Six Thinking Hats
-    Secondary: Impact/Effort
-
-IF type == Analytical:
-    Primary: Weighted Criteria Grid, SWOT
-    Secondary: 5 Whys
-
-───────────────────────────────────────
-
-IF template == feature:
-    Mandatory: MoSCoW (before finish)
-    Suggested: Impact/Effort
-
-IF template == audit:
-    Mandatory: SWOT or Weighted Criteria
-    Suggested: Comparative Matrix
-
-IF template == project:
-    Mandatory: 5 Whys (for problem clarity)
-    Suggested: Six Hats, MoSCoW
-
-IF template == research:
-    Mandatory: Comparative Matrix
-    Suggested: Weighted Criteria
-
-───────────────────────────────────────
-
-IF quick mode:
-    Limit to 2 frameworks maximum
-    Prefer: Impact/Effort + one type-specific
-```
+**Best for** : Templates `problem`, `feature`
 
 ---
 
-## User Framework Requests
+## Suggestions Automatiques
 
-User can request specific frameworks anytime:
-- `framework swot` → Apply SWOT analysis
-- `framework moscow` → Apply MoSCoW prioritization
-- `framework hats` → Apply Six Thinking Hats
-- `framework 5whys` → Apply 5 Whys
-- `framework matrix` → Apply Comparative Matrix
-- `framework weighted` → Apply Weighted Criteria Grid
-- `scoring` → Apply Idea Scoring
+Brainstormer suggère proactivement les frameworks selon le contexte :
 
-Combinations allowed:
-- "Do a SWOT then prioritize with MoSCoW"
-- "Score the ideas, then put them in an impact/effort matrix"
+| Contexte | Framework suggéré |
+|----------|-------------------|
+| Multiples options à comparer | Weighted Criteria, Scoring |
+| Problème récurrent | 5 Whys |
+| Projet à risque | Pre-mortem |
+| Liste de fonctionnalités | MoSCoW |
+| Sujet complexe, multifacette | Six Hats |
+| Blocage créatif | Reverse Brainstorming |
+| Début d'exploration | Starbursting |
+| Évaluation stratégique | SWOT |
+
+---
+
+*Frameworks Catalog v2.0 — Brainstormer v3.0*

@@ -1,406 +1,565 @@
-# Startup Templates
+# Templates — Configurations par Type d'Exploration
 
-> Pre-configured brainstorming templates for common use cases
-
----
-
-## Template Overview
-
-| Template | Use Case | Default Frameworks | Typical Duration |
-|----------|----------|-------------------|------------------|
-| `feature` | New functionality for an application | MoSCoW, Impact/Effort | 30-45 min |
-| `audit` | Analysis of existing state | SWOT, Weighted Criteria | 45-60 min |
-| `project` | New project from scratch | 5 Whys, Six Hats | 45-60 min |
-| `research` | Technical exploration, benchmarking | Comparative Matrix, Scoring | 30-45 min |
+> Chaque template adapte le comportement de Brainstormer au type d'exploration
 
 ---
 
-## Template: `feature`
+## Vue d'ensemble
 
-### Description
-For brainstorming new features on an existing application. Balances user needs, technical feasibility, and business value.
+Les templates pré-configurent Brainstormer pour différents types d'exploration. Chaque template définit :
+- La structure du brief initial
+- Les frameworks suggérés
+- Le nombre d'itérations typique
+- Les critères de succès par défaut
+- Les questions HMW typiques (NOUVEAU v3.0)
 
-### Default Configuration
-| Setting | Value |
-|---------|-------|
-| Primary type | Technical |
-| Secondary type | Business |
-| Mandatory framework | MoSCoW (before finish) |
-| Suggested framework | Impact/Effort |
-| Typical iterations | 3-5 |
+**Nouveaux templates v3.0** : `decision`, `problem`, `strategy`
 
-### Framing Questions (Phase 1)
+---
 
-**Context** (ask first):
-1. What application/product is this for?
-2. What's the current state of this area in the app?
+## Catalogue des Templates
 
-**User Need** (ask second):
-3. Who will use this feature? (persona/role)
-4. What problem does it solve for them?
-5. How do they currently work around not having this?
+| Template | Type | Usage | Itérations typiques |
+|----------|------|-------|---------------------|
+| **feature** | Technique + Créatif | Nouvelle fonctionnalité, user story | 4-6 |
+| **audit** | Analytique | Revue, diagnostic, évaluation | 3-5 |
+| **project** | Business + Technique | Nouveau projet, initiative | 5-8 |
+| **research** | Exploratoire | Veille, investigation, état de l'art | 4-7 |
+| **decision** | Analytique | Choix binaire ou N options (NOUVEAU) | 2-4 |
+| **problem** | Analytique | Quelque chose est cassé, trouver la cause (NOUVEAU) | 3-5 |
+| **strategy** | Business + Créatif | Vision long terme, positionnement (NOUVEAU) | 5-8 |
 
-**Constraints** (ask third):
-6. Any technical stack limitations?
-7. Timeline or budget constraints?
-8. Dependencies on other systems/teams?
+---
 
-**Success** (ask last):
-9. How will we measure if this feature succeeds?
+## Template: Feature
 
-### Startup Brief Format
+**Usage** : Explorer et spécifier une nouvelle fonctionnalité, user story, ou amélioration produit.
+
+**Type détecté** : Technique + Créatif
+
+**Trigger phrases** :
+- "Je veux ajouter une fonctionnalité..."
+- "Comment implémenter..."
+- "User story pour..."
+- "Feature de sync/export/import..."
+
+### Structure du Brief
 
 ```markdown
-## 📋 Feature Brainstorm Brief
+## Brief — Feature : [Nom]
 
-**Application**: [Name]
-**Feature area**: [Area/module]
+**Contexte** : [Pourquoi cette feature est nécessaire]
+**Utilisateurs cibles** : [Qui va l'utiliser]
+**Problème résolu** : [Quel problème ça adresse]
 
-**Target user**: [Persona]
-**Problem solved**: [Core problem]
-**Current workaround**: [How users cope today]
+**Périmètre** :
+- ✅ Inclus : [Ce qui est dans le scope]
+- ❌ Exclus : [Ce qui est hors scope]
 
-**Constraints**:
-- Technical: [Stack, integrations]
-- Timeline: [If any]
-- Dependencies: [If any]
+**Contraintes** :
+- [Contrainte technique 1]
+- [Contrainte business 1]
 
-**Success metric**: [How we'll know it worked]
-
-**Type**: Technical + Business
-**Template**: feature
-**Frameworks**: MoSCoW (mandatory), Impact/Effort (suggested)
-
-→ Validate to start iterations?
+**Critères de succès** :
+- [ ] [Critère mesurable 1]
+- [ ] [Critère mesurable 2]
 ```
 
-### Report Emphasis
-- Clear specification of the feature scope
-- Prioritized requirements (MoSCoW breakdown)
-- Technical considerations and constraints
-- Implementation roadmap with phases
-- Success metrics and validation approach
-
----
-
-## Template: `audit`
-
-### Description
-For analyzing existing systems, contracts, processes, or situations. Focus on objective evaluation with actionable recommendations.
-
-### Default Configuration
-| Setting | Value |
-|---------|-------|
-| Primary type | Analytical |
-| Secondary type | (varies by subject) |
-| Mandatory framework | SWOT or Weighted Criteria |
-| Suggested framework | Comparative Matrix |
-| Typical iterations | 4-6 |
-
-### Framing Questions (Phase 1)
-
-**Scope** (ask first):
-1. What exactly are we auditing? (system, contract, process, etc.)
-2. What's explicitly in scope?
-3. What's explicitly out of scope?
-
-**Criteria** (ask second):
-4. What criteria matter most for this evaluation?
-5. How should criteria be weighted? (equal or prioritized)
-6. Are there compliance requirements or standards to meet?
-
-**Context** (ask third):
-7. Why is this audit being done now?
-8. What decisions will depend on the results?
-9. Who are the stakeholders for the findings?
-
-**Baseline** (ask last):
-10. What data/documentation do we have?
-11. What's the expected standard or benchmark?
-
-### Startup Brief Format
+### HMW Typiques (NOUVEAU v3.0)
 
 ```markdown
-## 📋 Audit Brainstorm Brief
+💡 **Questions "How Might We"**
 
-**Subject**: [What's being audited]
-**Scope**: 
-- In: [Included elements]
-- Out: [Excluded elements]
-
-**Evaluation criteria**:
-1. [Criterion 1] — Weight: [X%]
-2. [Criterion 2] — Weight: [X%]
-3. [Criterion 3] — Weight: [X%]
-
-**Context**: [Why now, what decision depends on this]
-**Stakeholders**: [Who needs the results]
-**Baseline/Standard**: [What we're comparing against]
-
-**Type**: Analytical
-**Template**: audit
-**Frameworks**: SWOT or Weighted Criteria (mandatory)
-
-→ Validate to start iterations?
+1. HMW permettre à [utilisateur] de [action] sans [friction] ?
+2. HMW intégrer cette feature avec [système existant] de façon transparente ?
+3. HMW garantir [critère qualité] même en cas de [condition limite] ?
+4. HMW rendre l'utilisation intuitive pour [utilisateur novice] ?
+5. HMW mesurer l'adoption et le succès de cette feature ?
 ```
 
-### Report Emphasis
-- Clear evaluation methodology documented
-- Findings organized by criteria
-- Severity/priority ranking of issues
-- Actionable recommendations with rationale
-- Risk assessment for each finding
+### Frameworks suggérés
+
+| Priorité | Framework | Moment |
+|----------|-----------|--------|
+| 🔴 Obligatoire | MoSCoW | Avant `finish` si fonctionnalités listées |
+| 🟡 Recommandé | Scoring | Si 3+ variantes émergent |
+| 🟢 Optionnel | Pre-mortem | Si feature critique |
+
+### Itérations typiques
+
+| Itération | Focus |
+|-----------|-------|
+| 1 | Comprendre le besoin, reformuler |
+| 2 | Explorer les approches possibles |
+| 3 | Approfondir l'approche choisie |
+| 4 | Définir les specs, edge cases |
+| 5 | Prioriser (MoSCoW), valider |
+| 6 | Finaliser, risques, plan d'action |
 
 ---
 
-## Template: `project`
+## Template: Audit
 
-### Description
-For brainstorming new projects from scratch. Focuses on vision clarity, constraint identification, and roadmap development.
+**Usage** : Analyser, diagnostiquer, évaluer un existant (code, process, situation).
 
-### Default Configuration
-| Setting | Value |
-|---------|-------|
-| Primary type | Business |
-| Secondary type | Creative |
-| Mandatory framework | 5 Whys (for problem clarity) |
-| Suggested framework | Six Hats, MoSCoW |
-| Typical iterations | 4-6 |
+**Type détecté** : Analytique
 
-### Framing Questions (Phase 1)
+**Trigger phrases** :
+- "Revue de..."
+- "Audit de..."
+- "Diagnostic..."
+- "Évaluer la qualité de..."
+- "Analyser le code/process..."
 
-**Vision** (ask first):
-1. What's the ultimate goal of this project?
-2. What does success look like in concrete terms?
-3. Why does this project matter? (to you, to users, to the organization)
-
-**Stakeholders** (ask second):
-4. Who is this project for? (end users, clients, internal)
-5. Who needs to be involved in making it happen?
-6. Who could block or derail this project?
-
-**Constraints** (ask third):
-7. What's the budget range? (order of magnitude)
-8. What's the timeline expectation?
-9. What resources are available? (team, tools, etc.)
-10. What technical or organizational constraints exist?
-
-**Risks** (ask last):
-11. What could derail this project?
-12. What dependencies exist?
-13. What's unknown that we need to figure out?
-
-### Startup Brief Format
+### Structure du Brief
 
 ```markdown
-## 📋 Project Brainstorm Brief
+## Brief — Audit : [Sujet]
 
-**Project name/concept**: [Name]
-**Vision**: [Ultimate goal in one sentence]
-**Success looks like**: [Concrete outcomes]
+**Périmètre audité** : [Ce qui est examiné]
+**Objectif** : [Ce qu'on cherche à évaluer/améliorer]
+**Sources disponibles** : [Documents, code, accès]
 
-**For whom**: [Target beneficiaries]
-**Involved**: [Key people/teams]
-**Potential blockers**: [Who could derail]
+**Critères d'évaluation** :
+- [Critère 1 avec échelle]
+- [Critère 2 avec échelle]
+- [Critère 3 avec échelle]
 
-**Constraints**:
-- Budget: [Range]
-- Timeline: [Expectation]
-- Resources: [Available]
-- Other: [Technical, organizational]
-
-**Key risks**: [Top 3 concerns]
-**Key unknowns**: [What we need to discover]
-
-**Type**: Business + Creative
-**Template**: project
-**Frameworks**: 5 Whys (mandatory), Six Hats (suggested)
-
-→ Validate to start iterations?
+**Livrables attendus** :
+- [ ] [Livrable 1]
+- [ ] [Livrable 2]
 ```
 
-### Report Emphasis
-- Clear project vision and objectives
-- Stakeholder map with roles
-- Constraint summary and trade-offs
-- Phased roadmap with milestones
-- Risk register with mitigations
-- MVP definition (what's in v1 vs later)
-
----
-
-## Template: `research`
-
-### Description
-For technical research, vendor evaluation, or benchmarking. Focus on evidence-based comparison and clear recommendation.
-
-### Default Configuration
-| Setting | Value |
-|---------|-------|
-| Primary type | Technical |
-| Secondary type | Analytical |
-| Mandatory framework | Comparative Matrix |
-| Suggested framework | Weighted Criteria, Scoring |
-| Typical iterations | 3-5 |
-
-### Framing Questions (Phase 1)
-
-**Objective** (ask first):
-1. What question are we trying to answer?
-2. What decision will this research inform?
-
-**Options** (ask second):
-3. What options/alternatives are we considering? (or should we discover them?)
-4. Are there any options already ruled out? Why?
-
-**Criteria** (ask third):
-5. What features/capabilities matter most?
-6. What are deal-breakers (must-haves)?
-7. How should we weight different criteria?
-
-**Context** (ask last):
-8. What's our current solution (if any)?
-9. What constraints apply? (budget, integration, team skills)
-10. How recent must the information be?
-
-### Startup Brief Format
+### HMW Typiques (NOUVEAU v3.0)
 
 ```markdown
-## 📋 Research Brainstorm Brief
+💡 **Questions "How Might We"**
 
-**Research question**: [Core question to answer]
-**Decision it informs**: [What we'll decide based on this]
-
-**Options to evaluate**:
-1. [Option A]
-2. [Option B]
-3. [Option C]
-(or: "Discover options during research")
-
-**Evaluation criteria**:
-- Must-have: [Deal-breakers]
-- Important: [Key factors]
-- Nice-to-have: [Bonus points]
-
-**Current state**: [Existing solution if any]
-**Constraints**: [Budget, integration, skills]
-**Recency requirement**: [How current must info be]
-
-**Type**: Technical + Analytical
-**Template**: research
-**Frameworks**: Comparative Matrix (mandatory), Scoring (suggested)
-
-→ Validate to start iterations?
+1. HMW identifier rapidement les 20% de problèmes causant 80% des impacts ?
+2. HMW prioriser les améliorations par rapport coût/bénéfice ?
+3. HMW créer un plan d'amélioration réaliste avec les ressources disponibles ?
+4. HMW mesurer les gains de façon convaincante pour les stakeholders ?
+5. HMW éviter que ces problèmes se reproduisent à l'avenir ?
 ```
 
-### Report Emphasis
-- Research methodology documented
-- Options discovered and evaluated
-- Comparative analysis (matrix format)
-- Scoring and ranking with rationale
-- Clear recommendation with justification
-- Implementation considerations for top choice
+### Frameworks suggérés
+
+| Priorité | Framework | Moment |
+|----------|-----------|--------|
+| 🟡 Recommandé | Starbursting | Début pour couvrir tous les angles |
+| 🟡 Recommandé | Scoring | Pour prioriser les findings |
+| 🟢 Optionnel | SWOT | Pour synthétiser |
+
+### Itérations typiques
+
+| Itération | Focus |
+|-----------|-------|
+| 1 | Comprendre le périmètre, critères |
+| 2 | Analyser les sources, identifier les patterns |
+| 3 | Approfondir les problèmes majeurs |
+| 4 | Prioriser les findings |
+| 5 | Recommandations et plan d'action |
 
 ---
 
-## Template Detection Logic
+## Template: Project
 
+**Usage** : Cadrer un nouveau projet, une initiative, une transformation.
+
+**Type détecté** : Business + Technique
+
+**Trigger phrases** :
+- "Nouveau projet..."
+- "Lancer une initiative..."
+- "Monter un projet de..."
+- "Cadrage projet..."
+
+### Structure du Brief
+
+```markdown
+## Brief — Project : [Nom]
+
+**Vision** : [En une phrase, à quoi ressemble le succès]
+**Sponsor** : [Qui porte le projet]
+**Budget indicatif** : [Enveloppe ou "à définir"]
+**Timeline** : [Jalons clés ou deadline]
+
+**Parties prenantes** :
+- [Stakeholder 1] : [Rôle/Intérêt]
+- [Stakeholder 2] : [Rôle/Intérêt]
+
+**Objectifs** :
+- [Objectif 1 — SMART si possible]
+- [Objectif 2]
+
+**Contraintes** :
+- [Contrainte 1]
+- [Contrainte 2]
+
+**Risques identifiés** :
+- [Risque 1]
+- [Risque 2]
 ```
-IF input mentions:
-    "feature", "functionality", "add to app", "enhancement",
-    "new capability", "user story", "implement"
-    → Suggest: feature (confidence: high)
 
-IF input mentions:
-    "audit", "analyze", "evaluate", "review", "assess",
-    "contract", "insurance", "compliance", "due diligence"
-    → Suggest: audit (confidence: high)
+### HMW Typiques (NOUVEAU v3.0)
 
-IF input mentions:
-    "new project", "start from scratch", "build from zero",
-    "initiative", "launch", "create new", "greenfield"
-    → Suggest: project (confidence: high)
+```markdown
+💡 **Questions "How Might We"**
 
-IF input mentions:
-    "research", "compare", "benchmark", "evaluate options",
-    "which tool", "vendor selection", "technology choice",
-    "alternatives", "what's best"
-    → Suggest: research (confidence: high)
-
-IF signals are mixed or weak:
-    → Ask user: "This could be approached as [X] or [Y]. 
-       Which feels more appropriate for what you need?"
-    
-IF no clear match:
-    → Proceed without template (freeform brainstorming)
-    → Offer templates as options after first iteration
+1. HMW livrer de la valeur rapidement tout en construisant pour le long terme ?
+2. HMW aligner toutes les parties prenantes sur une vision commune ?
+3. HMW gérer les risques sans paralyser l'avancement ?
+4. HMW mesurer le succès du projet de façon objective ?
+5. HMW s'assurer que le projet reste pertinent si le contexte change ?
 ```
 
----
+### Frameworks suggérés
 
-## Template Customization
+| Priorité | Framework | Moment |
+|----------|-----------|--------|
+| 🔴 Obligatoire | Pre-mortem | Avant `finish` |
+| 🟡 Recommandé | SWOT | Début de cadrage |
+| 🟡 Recommandé | MoSCoW | Pour le scope |
+| 🟢 Optionnel | Six Hats | Si sujet complexe |
 
-Users can request modifications at brief stage:
+### Itérations typiques
 
-| Request | Action |
-|---------|--------|
-| "Focus more on UX" | Add UX-specific questions, suggest Creative type |
-| "Add legal considerations" | Add compliance criteria, adjust frameworks |
-| "Skip the business stuff" | Reduce Business questions, focus on Technical |
-| "Make it faster" | Reduce questions to essentials, enable quick-mode behaviors |
-
-Templates are starting points. Always adapt based on user's actual needs.
-
----
-
-## Quick Mode Template Behavior
-
-In `--quick` mode, templates are simplified:
-
-| Aspect | Standard | Quick |
-|--------|----------|-------|
-| Framing questions | All (7-10) | Essential only (3-4) |
-| Mandatory frameworks | As specified | Simplified or skipped |
-| Brief detail | Full | Condensed |
-| Iterations suggested | 4-6 | 2-3 |
-
-**Quick mode framing questions** (all templates):
-1. What's the core goal?
-2. What are the key constraints?
-3. How will you know it succeeded?
+| Itération | Focus |
+|-----------|-------|
+| 1 | Comprendre la vision, les parties prenantes |
+| 2 | Explorer les approches, contraintes |
+| 3 | Définir le scope, prioriser |
+| 4 | Identifier les risques |
+| 5 | Pre-mortem, mitigations |
+| 6-7 | Plan d'action, jalons |
+| 8 | Validation finale, livrables |
 
 ---
 
-## Template Checklists (for Report Validation)
+## Template: Research
 
-### Feature Template Checklist
-- [ ] Application context identified
-- [ ] User need clearly articulated
-- [ ] Technical constraints captured
-- [ ] Success metrics defined
-- [ ] MoSCoW prioritization completed
-- [ ] Implementation path outlined
+**Usage** : Exploration libre, veille, investigation sur un sujet.
 
-### Audit Template Checklist
-- [ ] Scope clearly defined (in/out)
-- [ ] Evaluation criteria established and weighted
-- [ ] Data/evidence gathered or identified
-- [ ] SWOT or scoring framework applied
-- [ ] Findings severity-ranked
-- [ ] Recommendations are actionable
+**Type détecté** : Exploratoire
 
-### Project Template Checklist
-- [ ] Vision statement is clear and compelling
-- [ ] Stakeholders identified with roles
-- [ ] Constraints documented realistically
-- [ ] Key risks identified with mitigations
-- [ ] MVP scope defined
-- [ ] Roadmap has concrete phases
+**Trigger phrases** :
+- "Je veux explorer..."
+- "Qu'est-ce que tu sais sur..."
+- "État de l'art de..."
+- "Recherche sur..."
+- "Veille technologique..."
 
-### Research Template Checklist
-- [ ] Research question is precise
-- [ ] Options comprehensively identified
-- [ ] Criteria defined and weighted
-- [ ] Sources consulted and documented
-- [ ] Comparison matrix completed
-- [ ] Recommendation clearly justified
+### Structure du Brief
+
+```markdown
+## Brief — Research : [Sujet]
+
+**Question de recherche** : [Question principale à répondre]
+**Contexte** : [Pourquoi cette recherche]
+**Profondeur attendue** : [Surface / Intermédiaire / Expert]
+
+**Axes d'exploration** :
+- [Axe 1]
+- [Axe 2]
+- [Axe 3]
+
+**Critères de succès** :
+- [ ] Avoir une vision claire de [X]
+- [ ] Identifier les [Y] principales options
+- [ ] Pouvoir décider si [Z]
+```
+
+### HMW Typiques (NOUVEAU v3.0)
+
+```markdown
+💡 **Questions "How Might We"**
+
+1. HMW synthétiser les informations clés sans se perdre dans les détails ?
+2. HMW identifier les sources les plus fiables et à jour ?
+3. HMW distinguer ce qui est établi de ce qui est spéculatif ?
+4. HMW appliquer ces learnings à notre contexte spécifique ?
+5. HMW maintenir cette connaissance à jour dans le temps ?
+```
+
+### Frameworks suggérés
+
+| Priorité | Framework | Moment |
+|----------|-----------|--------|
+| 🟡 Recommandé | Starbursting | Début pour cartographier le sujet |
+| 🟡 Recommandé | Six Hats | Pour explorer sous tous les angles |
+| 🟢 Optionnel | Scoring | Si comparaison de solutions |
+
+### Itérations typiques
+
+| Itération | Focus |
+|-----------|-------|
+| 1 | Cadrer la recherche, identifier les sources |
+| 2 | Web search, collecte d'informations |
+| 3 | Analyse, synthèse des findings |
+| 4 | Deep dive sur points clés |
+| 5-6 | Connexions, implications |
+| 7 | Conclusions, recommandations |
+
+---
+
+## Template: Decision (NOUVEAU v3.0)
+
+**Usage** : Choix binaire (go/no-go) ou sélection parmi N options.
+
+**Type détecté** : Analytique
+
+**Trigger phrases** :
+- "Je dois choisir entre..."
+- "A ou B ?"
+- "On fait ou on fait pas ?"
+- "Quelle option..."
+- "Arbitrer entre..."
+
+### Structure du Brief
+
+```markdown
+## Brief — Decision : [Question]
+
+**Décision à prendre** : [Formulation claire de la question]
+**Deadline** : [Date limite pour décider]
+**Décideur final** : [Qui tranche]
+
+**Options identifiées** :
+1. [Option A] — [Description courte]
+2. [Option B] — [Description courte]
+3. [Option C si applicable]
+
+**Critères de décision** :
+- [Critère 1] (poids: X%)
+- [Critère 2] (poids: Y%)
+- [Critère 3] (poids: Z%)
+
+**Contraintes** :
+- [Contrainte 1]
+- [Contrainte 2]
+```
+
+### HMW Typiques (NOUVEAU v3.0)
+
+```markdown
+💡 **Questions "How Might We"**
+
+1. HMW prendre cette décision de façon objective et défendable ?
+2. HMW minimiser les regrets quelle que soit l'option choisie ?
+3. HMW garder de la flexibilité si le contexte change ?
+4. HMW s'assurer qu'on n'a pas oublié une option ?
+5. HMW valider cette décision avec les parties prenantes ?
+```
+
+### Frameworks suggérés
+
+| Priorité | Framework | Moment |
+|----------|-----------|--------|
+| 🔴 Obligatoire | Weighted Criteria | Comparaison des options |
+| 🟡 Recommandé | SWOT | Si 2 options (un SWOT par option) |
+| 🟡 Recommandé | Pre-mortem | Sur l'option privilégiée |
+
+### Itérations typiques
+
+| Itération | Focus |
+|-----------|-------|
+| 1 | Clarifier la question, lister les options |
+| 2 | Définir les critères, pondérer |
+| 3 | Évaluer chaque option |
+| 4 | Recommandation + Pre-mortem sur l'option choisie |
+
+### Output spécifique
+
+Le rapport pour `decision` inclut :
+- Tableau comparatif des options
+- Recommandation avec niveau de confiance (Haute/Moyenne/Faible)
+- Risques de l'option choisie
+- Plan B si l'option échoue
+
+---
+
+## Template: Problem (NOUVEAU v3.0)
+
+**Usage** : Quelque chose est cassé, ne fonctionne pas comme prévu. Trouver la cause et la solution.
+
+**Type détecté** : Analytique
+
+**Trigger phrases** :
+- "Ça ne marche pas..."
+- "Problème avec..."
+- "Bug récurrent..."
+- "On n'arrive pas à..."
+- "Pourquoi ça échoue..."
+
+### Structure du Brief
+
+```markdown
+## Brief — Problem : [Symptôme]
+
+**Symptôme observé** : [Ce qu'on voit]
+**Impact** : [Conséquences du problème]
+**Depuis quand** : [Date d'apparition]
+**Fréquence** : [Toujours / Parfois / Rare]
+
+**Contexte** :
+- [Ce qui a changé récemment]
+- [Tentatives de résolution déjà faites]
+
+**Critères de succès** :
+- [ ] Cause racine identifiée
+- [ ] Solution implémentable définie
+- [ ] Plan de prévention établi
+```
+
+### HMW Typiques (NOUVEAU v3.0)
+
+```markdown
+💡 **Questions "How Might We"**
+
+1. HMW identifier la vraie cause plutôt que traiter les symptômes ?
+2. HMW résoudre ce problème de façon durable ?
+3. HMW éviter que ce problème se reproduise ?
+4. HMW détecter ce problème plus tôt à l'avenir ?
+5. HMW minimiser l'impact pendant qu'on cherche la solution ?
+```
+
+### Frameworks suggérés
+
+| Priorité | Framework | Moment |
+|----------|-----------|--------|
+| 🔴 Obligatoire | 5 Whys | Pour trouver la cause racine |
+| 🟡 Recommandé | Fishbone (implicite) | Pour structurer les causes possibles |
+| 🟢 Optionnel | Scoring | Pour prioriser les solutions |
+
+### Itérations typiques
+
+| Itération | Focus |
+|-----------|-------|
+| 1 | Comprendre le symptôme, collecter les faits |
+| 2 | 5 Whys — remonter à la cause racine |
+| 3 | Valider la cause, explorer les solutions |
+| 4 | Choisir la solution, définir le plan |
+| 5 | Prévention, monitoring |
+
+### Output spécifique
+
+Le rapport pour `problem` inclut :
+- Symptôme → Cause racine (chaîne des 5 Whys)
+- Solution recommandée
+- Plan d'implémentation
+- Actions de prévention
+
+---
+
+## Template: Strategy (NOUVEAU v3.0)
+
+**Usage** : Vision long terme, positionnement, roadmap multi-années.
+
+**Type détecté** : Business + Créatif
+
+**Trigger phrases** :
+- "Stratégie pour..."
+- "Vision à 3 ans..."
+- "Positionnement..."
+- "Direction stratégique..."
+- "Roadmap long terme..."
+
+### Structure du Brief
+
+```markdown
+## Brief — Strategy : [Sujet]
+
+**Horizon temporel** : [1 an / 3 ans / 5 ans]
+**Contexte actuel** : [Situation de départ]
+**Ambition** : [Où on veut être à l'horizon]
+
+**Parties prenantes** :
+- [Stakeholder 1] : [Intérêt]
+- [Stakeholder 2] : [Intérêt]
+
+**Contraintes stratégiques** :
+- [Contrainte 1]
+- [Contrainte 2]
+
+**Questions clés** :
+- [Question stratégique 1]
+- [Question stratégique 2]
+```
+
+### HMW Typiques (NOUVEAU v3.0)
+
+```markdown
+💡 **Questions "How Might We"**
+
+1. HMW créer un avantage compétitif durable ?
+2. HMW rester agiles face aux évolutions du marché ?
+3. HMW aligner toute l'organisation sur cette vision ?
+4. HMW mesurer notre progression vers la cible ?
+5. HMW équilibrer court terme et long terme ?
+```
+
+### Frameworks suggérés
+
+| Priorité | Framework | Moment |
+|----------|-----------|--------|
+| 🔴 Obligatoire | SWOT | Analyse de situation |
+| 🔴 Obligatoire | Vision Statement | Définition de l'ambition |
+| 🟡 Recommandé | Pre-mortem | Sur le plan stratégique |
+| 🟢 Optionnel | Six Hats | Pour explorer les angles |
+
+### Itérations typiques
+
+| Itération | Focus |
+|-----------|-------|
+| 1 | Comprendre le contexte, l'ambition |
+| 2 | SWOT de la situation actuelle |
+| 3 | Vision cible, différenciation |
+| 4 | Piliers stratégiques |
+| 5 | Roadmap phasée |
+| 6 | Pre-mortem, risques stratégiques |
+| 7 | OKRs ou indicateurs de succès |
+| 8 | Validation, communication |
+
+### Output spécifique
+
+Le rapport pour `strategy` inclut :
+- Vision statement (1 phrase inspirante)
+- SWOT de situation
+- Piliers stratégiques (3-5 max)
+- Roadmap phasée (année par année)
+- Indicateurs de succès (OKRs ou KPIs)
+- Risques stratégiques et mitigations
+
+---
+
+## Auto-détection du Template
+
+Brainstormer suggère le template basé sur les mots-clés et le contexte :
+
+| Mots-clés | Template suggéré |
+|-----------|------------------|
+| feature, fonctionnalité, user story, implémenter | `feature` |
+| audit, revue, diagnostic, évaluer, analyser | `audit` |
+| projet, initiative, lancer, cadrage | `project` |
+| explorer, recherche, veille, état de l'art | `research` |
+| choisir, décider, option, A ou B | `decision` |
+| problème, bug, erreur, ne marche pas, pourquoi | `problem` |
+| stratégie, vision, positionnement, long terme | `strategy` |
+
+L'utilisateur peut toujours forcer un template avec `--template [nom]`.
+
+---
+
+## Comparatif des Templates
+
+| Aspect | feature | audit | project | research | decision | problem | strategy |
+|--------|---------|-------|---------|----------|----------|---------|----------|
+| **Itérations** | 4-6 | 3-5 | 5-8 | 4-7 | 2-4 | 3-5 | 5-8 |
+| **Focus** | Spécifier | Diagnostiquer | Cadrer | Explorer | Trancher | Résoudre | Visionner |
+| **Framework obligatoire** | MoSCoW | - | Pre-mortem | - | Weighted | 5 Whys | SWOT |
+| **Persona dominant** | 📐🛠️ | 📐 | 📐🛠️ | 🧒📐 | 🥊🛠️ | 📐🥊 | 🧒📐 |
+| **Phase finale** | Convergent | Convergent | Convergent | Variable | Convergent | Convergent | Convergent |
+
+---
+
+*Templates v2.0 — Brainstormer v3.0*
