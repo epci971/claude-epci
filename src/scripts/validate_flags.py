@@ -67,7 +67,7 @@ KNOWN_FLAGS = {
     # Compression flags
     "--uc", "--verbose",
     # Workflow flags
-    "--safe", "--fast", "--dry-run",
+    "--safe", "--no-hooks",
     # Wave flags
     "--wave", "--wave-strategy",
     # Legacy
@@ -75,7 +75,7 @@ KNOWN_FLAGS = {
 }
 
 INCOMPATIBLE_PAIRS = [
-    ("--safe", "--fast"),
+    # No incompatible pairs after removing --fast
 ]
 
 

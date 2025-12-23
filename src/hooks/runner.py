@@ -452,6 +452,19 @@ def run_hooks(
     Returns:
         List of HookResult objects
     """
+    context_dict = context_dict or {}
+
+    # Check for --no-hooks flag (v3.2+)
+    active_flags = context_dict.get('active_flags', [])
+    if '--no-hooks' in active_flags:
+        print("⏭️  Hooks disabled by --no-hooks flag")
+        return [HookResult(
+            hook_name='runner',
+            hook_path='',
+            status='skipped',
+            message='Hooks disabled by --no-hooks flag'
+        )]
+
     # Check for deprecated hook types (v3.2)
     if hook_type in DEPRECATED_HOOK_TYPES:
         print(f"⚠️  WARNING: Hook type '{hook_type}' is deprecated in v3.2.")
@@ -483,7 +496,6 @@ def run_hooks(
         return []  # No hooks found is not an error
 
     # Build context
-    context_dict = context_dict or {}
     # Get project_root from context or detect from git/cwd
     project_root = context_dict.get('project_root', '')
     if not project_root:

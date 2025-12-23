@@ -37,13 +37,12 @@ Manage output verbosity.
 
 ### Workflow Flags
 
-Control execution safety.
+Control execution safety and hooks.
 
 | Flag | Effect | Trigger |
 |------|--------|---------|
 | `--safe` | All validations | Sensitive files |
-| `--fast` | Skip optional | Never auto |
-| `--dry-run` | Simulate only | Never auto |
+| `--no-hooks` | Disable hooks | Never auto |
 
 ### Wave Flags
 
@@ -116,12 +115,11 @@ Normalized to 0-1 scale:
 
 | A | B | Result |
 |---|---|--------|
-| `--safe` | `--fast` | ERROR |
 | `--uc` | `--verbose` | B wins if explicit |
 | `--think` | `--think-hard` | B wins |
 | `--think-hard` | `--ultrathink` | B wins |
 | `--wave` | `--safe` | Both (compatible) |
-| `--dry-run` | Any | Both (always compatible) |
+| `--no-hooks` | Any | Both (always compatible) |
 
 ### Conflict Error Format
 
@@ -172,7 +170,7 @@ When `--large` is detected:
 |---------|--------------|
 | `/epci-brief` | Evaluate and suggest flags |
 | `/epci` | Full flag support, display in breakpoints |
-| `/epci-quick` | Limited (--fast, --uc) |
+| `/epci-quick` | Limited (--uc, --no-hooks) |
 | `/epci-spike` | Thinking flags only |
 
 ### Hooks
