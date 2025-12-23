@@ -42,6 +42,10 @@ Load project context from `.project-memory/` directory. The skill handles:
 
 ---
 
+**🪝 Execute `pre-brief` hooks** (if configured in `hooks/active/`)
+
+---
+
 ### Step 1: Exploration (MANDATORY)
 
 **⚠️ DO NOT SKIP THIS STEP** — Use Task tool with @Explore subagent.
@@ -228,6 +232,12 @@ Generate a structured brief directly in your response (no file created):
 - [ ] Criterion 1 (measurable)
 - [ ] Criterion 2 (measurable)
 
+## Memory Summary
+[If .project-memory/ exists, include key context:]
+- **Project**: [project name from context.json]
+- **Conventions**: [key conventions from conventions.json]
+- **Patterns**: [relevant patterns if any]
+
 ## Category: [TINY|SMALL]
 
 ## Suggested Flags
@@ -261,12 +271,6 @@ Create the directory if needed, then write the Feature Document:
 - **Language**: [detected]
 - **Patterns**: [detected patterns]
 
-### Identified Files
-| File | Action | Risk |
-|------|--------|------|
-| path/to/file | Modify | Medium |
-| path/to/other | Create | Low |
-
 ### Acceptance Criteria
 - [ ] Criterion 1 (measurable)
 - [ ] Criterion 2 (measurable)
@@ -293,6 +297,13 @@ Create the directory if needed, then write the Feature Document:
 | `--safe` | auto | auth files detected |
 | `--wave` | auto | complexity > 0.7 |
 
+### Memory Summary
+[If .project-memory/ exists, include context loaded in Step 0:]
+- **Project**: [project name]
+- **Stack**: [detected stack from context.json]
+- **Conventions**: [key conventions]
+- **Velocity**: [features_completed count, if available]
+
 ---
 
 ## §2 — Implementation Plan
@@ -300,18 +311,17 @@ Create the directory if needed, then write the Feature Document:
 
 ---
 
-## §3 — Implementation
-[To be completed by /epci Phase 2]
-
----
-
-## §4 — Finalization
-[To be completed by /epci Phase 3]
+## §3 — Implementation & Finalization
+[To be completed by /epci Phases 2-3]
 ```
 
 #### If SPIKE → Inline Brief for Exploration
 
 Generate inline brief with exploration focus (no Feature Document).
+
+---
+
+**🪝 Execute `post-brief` hooks** (if configured in `hooks/active/`)
 
 ---
 

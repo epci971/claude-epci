@@ -174,10 +174,11 @@ Explore → Plan → Code → Inspect
                          ▼
         ┌────────────────────────────────┐
         │         /epci-brief            │
+        │  • Load Project Memory (1x)    │
         │  • @Explore (thorough)         │
         │  • Clarification               │
         │  • Évaluation complexité       │
-        │  • Génération output           │
+        │  • Génération output + Memory  │
         └────────────────┬───────────────┘
                          │
        ┌─────────────────┼─────────────────┐
@@ -193,6 +194,11 @@ Explore → Plan → Code → Inspect
 **Note :** `/epci-brief` effectue l'exploration complète et génère :
 - Brief inline pour TINY/SMALL (pas de fichier)
 - Feature Document avec §1 rempli pour STANDARD/LARGE
+
+**Memory Pattern (v3.2+):** Project Memory is loaded **once** in `/epci-brief` and passed downstream:
+- Via "Memory Summary" section in Feature Document §1 (STANDARD/LARGE)
+- Via "Memory Summary" section in inline brief (TINY/SMALL)
+- `/epci` and `/epci-quick` read memory from context, not from disk
 
 | Catégorie | Critères | Workflow | Durée |
 |-----------|----------|----------|-------|
@@ -210,14 +216,15 @@ Chaque feature STANDARD/LARGE génère un Feature Document unique :
 docs/features/<slug>.md
 ```
 
-**Cycle de vie :**
+**Cycle de vie (v3.2) :**
 
 | Section | Créé par | Contenu |
 |---------|----------|---------|
-| §1 | `/epci-brief` | Brief fonctionnel, stack, fichiers identifiés, critères |
-| §2 | `/epci` Phase 1 | Plan d'implémentation, tâches, risques |
-| §3 | `/epci` Phase 2 | Rapport d'implémentation, tests, reviews |
-| §4 | `/epci` Phase 3 | Commits, documentation, finalisation |
+| §1 | `/epci-brief` | Brief fonctionnel, stack, critères, Memory Summary |
+| §2 | `/epci` Phase 1 | Plan d'implémentation, fichiers impactés, tâches, risques |
+| §3 | `/epci` Phases 2-3 | Implémentation, tests, reviews, commits, documentation |
+
+> **Note (v3.2):** §3 et §4 fusionnés. Le tableau des fichiers est maintenant uniquement dans §2.
 
 **Structure :**
 
@@ -226,23 +233,19 @@ docs/features/<slug>.md
 
 ## §1 — Brief Fonctionnel
 [Créé par /epci-brief avec exploration complète]
-- Contexte, stack détecté, fichiers identifiés
+- Contexte, stack détecté
 - Critères d'acceptation, contraintes, hors scope
+- Memory Summary (chargé une fois)
 
 ## §2 — Plan d'Implémentation
-[Généré par /epci Phase 1 - planification directe]
-- Tâches atomiques basées sur §1
-- Validation @plan-validator
+[Généré par /epci Phase 1]
+- Fichiers impactés (tableau unique)
+- Tâches atomiques, validation @plan-validator
 
-## §3 — Rapport d'Implémentation
-[Mis à jour par /epci Phase 2]
-- Tâches complétées, tests, anomalies
-- Reviews @code-reviewer, @security-auditor, @qa-reviewer
-
-## §4 — Finalisation
-[Complété par /epci Phase 3]
-- Commits, documentation générée
-- Validation finale
+## §3 — Implementation & Finalization
+[Mis à jour par /epci Phases 2-3]
+- Progress, tests, reviews (Phase 2)
+- Commit message, documentation, PR ready (Phase 3)
 ```
 
 ### 3.4 Modèle Subagent
@@ -300,17 +303,20 @@ docs/features/<slug>.md
 
 Le système de hooks permet d'exécuter des scripts personnalisés à des points précis du workflow EPCI.
 
-#### Points de Hook
+#### Points de Hook (v3.2)
 
 | Hook Type | Déclencheur | Usage |
 |-----------|-------------|-------|
+| `pre-brief` | Avant exploration /epci-brief | Charger config externe, valider environnement |
+| `post-brief` | Après évaluation complexité | Notifier début feature, créer tickets |
 | `pre-phase-1` | Avant Phase 1 | Charger contexte, vérifier prérequis |
-| `post-phase-1` | Après validation plan | Notifier équipe, créer tickets |
+| `post-phase-1` | Après validation plan | Notifier équipe, mettre à jour tickets |
 | `pre-phase-2` | Avant Phase 2 | Exécuter linters, setup environnement |
 | `post-phase-2` | Après code review | Tests additionnels, coverage |
-| `pre-phase-3` | Avant Phase 3 | Vérifier tests passent |
 | `post-phase-3` | Après finalisation | Déployer, notifier, métriques |
 | `on-breakpoint` | À chaque breakpoint | Logging, collecte métriques |
+
+> **Note:** `pre-phase-3` supprimé en v3.2 (redondant avec `post-phase-2`).
 
 #### Structure des Fichiers
 
@@ -656,7 +662,7 @@ description: >-
 [Capacité] + [Auto-invoke WHEN...] + [Do NOT load for...]
 ```
 
-### 5.4 Cycle de vie Feature Document
+### 5.4 Cycle de vie Feature Document (v3.2)
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -665,19 +671,21 @@ description: >-
 ├─────────────────────────────────────────────────────────┤
 │                                                          │
 │  /epci-brief ──────► §1 Brief Fonctionnel               │
+│                      + Memory Summary (chargé 1x)        │
 │                                                          │
 │  /epci Phase 1 ────► §2 Plan d'Implémentation           │
+│       │              + Fichiers impactés (tableau)       │
 │       │              + Validation @plan-validator        │
 │       │                                                  │
 │       ▼ BREAKPOINT                                       │
 │                                                          │
-│  /epci Phase 2 ────► §3 Rapport d'Implémentation        │
-│       │              + Reviews subagents                 │
+│  /epci Phase 2 ────► §3 Implementation & Finalization   │
+│       │              + Progress, tests, reviews          │
 │       │                                                  │
 │       ▼ BREAKPOINT                                       │
 │                                                          │
-│  /epci Phase 3 ────► §4 Finalisation                    │
-│                      + Documentation @doc-generator      │
+│  /epci Phase 3 ────► §3 (append)                        │
+│                      + Commit, docs, PR ready            │
 │                                                          │
 └─────────────────────────────────────────────────────────┘
 ```

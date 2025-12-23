@@ -40,15 +40,18 @@ Hooks in `active/` are executed automatically at their respective trigger points
 
 | Hook Type | Trigger Point | Use Case |
 |-----------|--------------|----------|
+| `pre-brief` | Before /epci-brief exploration | Load external config, validate environment |
+| `post-brief` | After complexity evaluation | Notify feature start, create tickets |
 | `pre-phase-1` | Before Phase 1 starts | Load context, check prerequisites |
-| `post-phase-1` | After plan validation | Notify team, create tickets |
+| `post-phase-1` | After plan validation | Notify team, update tickets |
 | `pre-phase-2` | Before coding starts | Run linters, setup environment |
 | `post-phase-2` | After code review | Additional tests, coverage checks |
-| `pre-phase-3` | Before finalization | Verify all tests pass |
 | `pre-commit` | Before commit decision | Final checks, memory update, validation |
 | `post-commit` | After git commit | Notifications, CI trigger, webhooks |
 | `post-phase-3` | After Phase 3 complete | Cleanup, final metrics |
 | `on-breakpoint` | At each breakpoint | Logging, metrics collection |
+
+> **Note (v3.2):** `pre-phase-3` was removed as redundant with `post-phase-2`. Use `post-phase-2` for pre-finalization checks.
 
 ---
 

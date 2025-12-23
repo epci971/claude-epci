@@ -70,11 +70,8 @@ The Feature Document is created by `/epci-brief` at: `docs/features/<feature-slu
 ## §2 — Implementation Plan
 [Generated in Phase 1]
 
-## §3 — Implementation
-[Updated in Phase 2]
-
-## §4 — Finalization
-[Completed in Phase 3]
+## §3 — Implementation & Finalization
+[Updated in Phases 2-3]
 ```
 
 **Prerequisite:** Feature Document with §1 completed must exist before running `/epci`.
@@ -90,15 +87,18 @@ See `hooks/README.md` for configuration and examples.
 
 | Hook Type | Trigger Point | Use Case |
 |-----------|--------------|----------|
+| `pre-brief` | Before /epci-brief exploration | Load external config, validate environment |
+| `post-brief` | After complexity evaluation | Notify feature start, create tickets |
 | `pre-phase-1` | Before Phase 1 starts | Load context, check prerequisites |
-| `post-phase-1` | After plan validation | Notify team, create tickets |
+| `post-phase-1` | After plan validation | Notify team, update tickets |
 | `pre-phase-2` | Before coding starts | Run linters, setup environment |
 | `post-phase-2` | After code review | Additional tests, coverage checks |
-| `pre-phase-3` | Before finalization | Verify all tests pass |
 | `post-phase-3` | After completion | Deploy, notify, collect metrics |
 | `on-breakpoint` | At each breakpoint | Logging, metrics collection |
 | `pre-agent` | Before each agent runs | Custom agent setup, logging |
 | `post-agent` | After each agent completes | Process agent results, notifications |
+
+> **Note (v3.2):** `pre-phase-3` removed (redundant with `post-phase-2`).
 
 **Execution:** Hooks must be explicitly invoked using the hook runner.
 
@@ -152,16 +152,16 @@ overrides can be placed in `.project-memory/orchestration.yaml`.
 
 ---
 
-## Pre-Workflow: Load Project Memory
+## Pre-Workflow: Memory Context
 
-**Skill**: `project-memory-loader`
+**Memory is loaded once by `/epci-brief`** and passed via Feature Document §1 (Memory Summary section).
 
-Before starting any phase, load project context from `.project-memory/`. The skill handles:
-- Reading context, conventions, settings, patterns
-- Loading velocity metrics and feature history
-- Applying naming/structure/style conventions to all generated code
+**Reading memory context:**
+1. Check Feature Document §1 for "Memory Summary" section
+2. If present: Use conventions, patterns, and velocity from §1
+3. If absent (direct /epci call): Fall back to loading `.project-memory/` directly
 
-**If `.project-memory/` does not exist:** Continue with defaults. Suggest `/epci-memory init` after completion.
+**Fallback behavior:** If `/epci` is called without prior `/epci-brief`, the `project-memory-loader` skill will load context. This is not recommended — always start with `/epci-brief`.
 
 ---
 
@@ -368,12 +368,14 @@ After code review, the `proactive-suggestions` skill generates suggestions:
 
 User feedback is recorded for learning (F08) to improve future suggestions.
 
-### Output §3 (USE EDIT TOOL — MANDATORY)
+### Output §3 Part 1 (USE EDIT TOOL — MANDATORY)
 
-**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §3 content.
+**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §3 implementation content.
+
+> **Note (v3.2):** §3 now contains both Implementation and Finalization. Phase 2 writes the implementation part, Phase 3 appends the finalization part.
 
 ```markdown
-## §3 — Implementation
+## §3 — Implementation & Finalization
 
 ### Progress
 - [x] Task 1 — Create entity Y
@@ -473,8 +475,6 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 ### Process
 
-**🪝 Execute `pre-phase-3` hooks** (if configured)
-
 1. **Structured commit**
    ```
    feat(scope): short description
@@ -501,13 +501,13 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
    - Update velocity metrics
    - Record any corrections for pattern detection
 
-### Output §4 (USE EDIT TOOL — MANDATORY)
+### Output §3 Part 2 (USE EDIT TOOL — MANDATORY)
 
-**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §4 content.
+**⚠️ MANDATORY:** Use the **Edit tool** to **append** finalization content to §3.
+
+> **Note (v3.2):** Append this content after the Reviews/Deviations section in §3.
 
 ```markdown
-## §4 — Finalization
-
 ### Commit Message (Prepared)
 ```
 feat(user): add email validation

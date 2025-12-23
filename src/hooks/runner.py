@@ -140,15 +140,21 @@ class HookResult:
 # =============================================================================
 
 VALID_HOOK_TYPES = [
+    # Brief phase hooks (v3.2+)
+    'pre-brief', 'post-brief',
+    # Planning and implementation phase hooks
     'pre-phase-1', 'post-phase-1',
     'pre-phase-2', 'post-phase-2',
-    'pre-phase-3', 'post-phase-3',
+    'post-phase-3',  # pre-phase-3 removed in v3.2 (redundant with post-phase-2)
     # Commit validation hooks (pre-commit breakpoint feature)
     'pre-commit', 'post-commit',
     'on-breakpoint',
     # F07: Multi-Agent Orchestration hooks
     'pre-agent', 'post-agent',
 ]
+
+# Deprecated hook types (v3.2) - will show warning but still execute
+DEPRECATED_HOOK_TYPES = ['pre-phase-3']
 
 SUPPORTED_EXTENSIONS = ['.py', '.sh', '.js']
 
@@ -446,7 +452,13 @@ def run_hooks(
     Returns:
         List of HookResult objects
     """
-    if hook_type not in VALID_HOOK_TYPES:
+    # Check for deprecated hook types (v3.2)
+    if hook_type in DEPRECATED_HOOK_TYPES:
+        print(f"⚠️  WARNING: Hook type '{hook_type}' is deprecated in v3.2.")
+        print(f"   Use 'post-phase-2' instead of 'pre-phase-3'.")
+        print(f"   This hook will still execute but may be removed in future versions.")
+        # Allow deprecated hooks to run for backward compatibility
+    elif hook_type not in VALID_HOOK_TYPES:
         return [HookResult(
             hook_name='runner',
             hook_path='',

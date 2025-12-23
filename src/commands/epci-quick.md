@@ -53,15 +53,16 @@ No formal Feature Document, no breakpoints.
 | **Skills** | project-memory-loader, epci-core, code-conventions, flags-system, [stack] |
 | **Subagents** | @code-reviewer (light mode, SMALL only)
 
-## Pre-Workflow: Load Project Memory
+## Pre-Workflow: Memory Context
 
-**Skill**: `project-memory-loader`
+**Memory is loaded once by `/epci-brief`** and passed via the inline brief (Memory Summary section).
 
-Load project context from `.project-memory/` before implementation. The skill handles:
-- Reading context, conventions, settings, patterns
-- Applying naming/structure/style conventions to all generated code
+**Reading memory context:**
+1. Check inline brief for "Memory Summary" section
+2. If present: Use conventions and patterns from brief
+3. If absent: Continue with defaults (no separate load needed for TINY/SMALL)
 
-**If `.project-memory/` does not exist:** Continue with defaults.
+**Note:** For TINY/SMALL features, memory context is lightweight. Full memory loading is not required.
 
 ---
 

@@ -444,4 +444,38 @@ Score: XX/100 [emoji]
 
 ## §4 — Finalization
 
-[To be completed by /epci Phase 3]
+### Commit
+
+```
+feat(brainstormer): upgrade to v3 with personas, phases and pre-mortem
+
+- Add 3 personas (Architecte, Sparring, Pragmatique) with auto-switch
+- Add Divergent/Convergent phases with explicit indicators
+- Add pre-mortem framework for risk anticipation
+- Add EMS v2 with objective anchors (20/40/60/80/100)
+- Add HMW (How Might We) question generation
+- Add new commands: modes, premortem, diverge, converge, scoring
+- Add flags: --template, --no-hmw, --quick
+- Update biases to 4 dev-specific ones
+- Update breakpoint format with phase/persona header
+
+Refs: docs/features/brainstormer-v3.md
+```
+
+### Documentation
+
+- Feature Document: `docs/features/brainstormer-v3.md` (complet)
+- Cahier des charges: `docs/briefs/brainstormer-v3/brief-brainstormer-v3-claude-code-2025-12-23.md`
+
+### Validation Finale
+
+- [x] SKILL.md < 5000 tokens (~1,300 tokens)
+- [x] 3 personas avec bascule auto
+- [x] Phases Divergent/Convergent affichées
+- [x] Pre-mortem framework ajouté
+- [x] EMS v2 avec ancres objectives
+- [x] 5 frameworks documentés
+- [x] 4 biais dev-specific
+- [x] Nouvelles commandes ajoutées
+- [x] Flags documentés
+- [x] Rétrocompatibilité maintenue
