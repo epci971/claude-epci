@@ -58,7 +58,7 @@ un processus iteratif guide avec personas adaptatifs.
 **Objectif**: Etablir le contexte, definir la phase et le persona.
 
 **Actions:**
-1. Charger le contexte projet via `project-memory-loader`
+1. Charger le contexte projet via `project-memory`
 2. Invoquer `@Explore` pour analyser le codebase
 3. Reformuler le besoin utilisateur
 4. Detecter template (feature/problem/decision)

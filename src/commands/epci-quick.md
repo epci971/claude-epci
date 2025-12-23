@@ -3,7 +3,7 @@ description: >-
   Condensed EPCI workflow for TINY and SMALL features. Single-pass without
   formal Feature Document. TINY mode: <50 LOC, 1 file, no tests.
   SMALL mode: <200 LOC, 2-3 files, optional tests.
-argument-hint: "[--fast] [--uc]"
+argument-hint: "[--uc] [--no-hooks]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
@@ -40,8 +40,8 @@ No formal Feature Document, no breakpoints.
 
 | Flag | Effect | Auto-Trigger |
 |------|--------|--------------|
-| `--fast` | Skip optional checks | Never |
 | `--uc` | Compressed output | context > 75% |
+| `--no-hooks` | Disable all hook execution | Never |
 
 **Note:** Thinking flags (`--think-hard`, `--ultrathink`) trigger escalation to `/epci`.
 
@@ -50,7 +50,7 @@ No formal Feature Document, no breakpoints.
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think` (standard) |
-| **Skills** | project-memory-loader, epci-core, code-conventions, flags-system, [stack] |
+| **Skills** | project-memory, epci-core, code-conventions, flags-system, [stack] |
 | **Subagents** | @code-reviewer (light mode, SMALL only)
 
 ## Pre-Workflow: Memory Context

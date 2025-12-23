@@ -18,7 +18,7 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think hard` (default) / `ultrathink` (LARGE or high uncertainty) |
-| **Skills** | project-memory-loader, epci-core, architecture-patterns, flags-system, [stack-skill auto-detected] |
+| **Skills** | project-memory, epci-core, architecture-patterns, flags-system, [stack-skill auto-detected] |
 | **Subagents** | @Explore (thorough) |
 
 **Thinking mode selection:**
@@ -31,7 +31,7 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 
 ### Step 0: Load Project Memory
 
-**Skill**: `project-memory-loader`
+**Skill**: `project-memory`
 
 Load project context from `.project-memory/` directory. The skill handles:
 - Reading context, conventions, settings, patterns
@@ -333,7 +333,7 @@ Generate inline brief with exploration focus (no Feature Document).
 
 | Category | Command | Output | Typical Flags |
 |----------|---------|--------|---------------|
-| TINY | `/epci:epci-quick` | Inline brief | (none or `--fast`) |
+| TINY | `/epci:epci-quick` | Inline brief | (none) |
 | SMALL | `/epci:epci-quick` | Inline brief | `--think` if 3+ files |
 | STANDARD | `/epci:epci` | Feature Document | `--think` or `--think-hard` |
 | LARGE | `/epci:epci --large` | Feature Document | `--think-hard --wave` |

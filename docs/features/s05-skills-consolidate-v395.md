@@ -163,4 +163,74 @@ Currently:
 ---
 
 ## §3 — Implementation & Finalization
-[To be completed by /epci Phases 2-3]
+
+### Progress
+- [x] Task 1 — Merge project-memory-loader into project-memory
+- [x] Task 2 — Update epci-brief.md
+- [x] Task 3 — Update epci.md
+- [x] Task 4 — Update epci-quick.md
+- [x] Task 5 — Update epci-spike.md
+- [x] Task 6 — Update brainstorm.md
+- [x] Task 7 — Update epci-decompose.md
+- [x] Task 8 — Update plugin.json (version + remove skill)
+- [x] Task 9 — Update src/README.md version
+- [x] Task 10 — Update src/hooks/README.md version
+- [x] Task 11 — Update CLAUDE.md skill count
+- [x] Task 12 — Pre-deletion verification (found 3 extra references, fixed)
+- [x] Task 13 — Delete project-memory-loader directory
+- [x] Task 14 — Post-deletion verification
+
+### Verification Results
+```bash
+$ grep -r "project-memory-loader" src/
+✅ No references found
+
+$ plugin.json skills count
+Skills count: 19
+```
+
+### Files Modified
+| File | Changes |
+|------|---------|
+| `src/skills/core/project-memory/SKILL.md` | +170 LOC (merged loader content) |
+| `src/commands/epci-brief.md` | Replaced loader → memory |
+| `src/commands/epci.md` | Replaced loader → memory (3 occurrences) |
+| `src/commands/epci-quick.md` | Replaced loader → memory (2 occurrences) |
+| `src/commands/epci-spike.md` | Replaced loader → memory (2 occurrences) |
+| `src/commands/brainstorm.md` | Replaced loader → memory |
+| `src/commands/epci-decompose.md` | Replaced loader → memory |
+| `src/.claude-plugin/plugin.json` | Version 3.9.1→3.9.5, removed loader skill |
+| `src/README.md` | Version 3.8→3.9.5, removed loader references |
+| `src/hooks/README.md` | Version 1.1.0 (v3.7)→1.2.0 (v3.9.5) |
+| `CLAUDE.md` | Skills count 14→19 |
+| `src/skills/core/brainstormer/SKILL.md` | Fixed loader reference |
+
+### Reviews
+- **@code-reviewer**: APPROVED
+  - Merger complete and well-structured
+  - All 19 skills properly listed in plugin.json
+  - Version consistency verified (3.9.5)
+  - No references to project-memory-loader in src/
+  - Legacy references in docs/archive are acceptable (historical)
+
+### Commit
+```
+5a30630 feat(skills): consolidate project-memory skills + version 3.9.5
+
+S05 Skills Consolidation implementation:
+- Merge project-memory-loader skill into project-memory
+- Delete project-memory-loader directory (20 → 19 skills)
+- Update all commands to reference project-memory
+- Align versions to v3.9.5 across plugin.json, README.md, hooks/README.md
+- Update CLAUDE.md skill count (14 → 19)
+- Update brainstormer skill reference
+- Add Feature Document for S05
+
+Refs: docs/features/s05-skills-consolidate-v395.md
+```
+
+### PR Ready
+- Branch: `master`
+- Tests: ✅ Grep verification passed (0 references to project-memory-loader)
+- Skill count: ✅ 19 skills in plugin.json
+- Docs: ✅ Feature Document complete

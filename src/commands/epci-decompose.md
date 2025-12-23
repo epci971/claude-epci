@@ -30,7 +30,7 @@ executed sequentially or in parallel where dependencies allow.
 
 ## Pre-Workflow: Load Project Memory
 
-**Skill**: `project-memory-loader`
+**Skill**: `project-memory`
 
 Load project context from `.project-memory/` before analysis. The skill handles:
 - Reading context, conventions, settings, patterns
@@ -184,7 +184,7 @@ mkdir -p {output_dir}
 
 | Skill | Phase | Purpose |
 |-------|-------|---------|
-| `project-memory-loader` | Pre-Workflow | Load context and conventions |
+| `project-memory` | Pre-Workflow | Load context and conventions |
 | `architecture-patterns` | Phase 2 | Identify decomposition patterns |
 | `flags-system` | All | Handle --think levels |
 

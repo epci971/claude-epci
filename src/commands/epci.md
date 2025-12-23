@@ -3,7 +3,7 @@ description: >-
   Complete EPCI workflow in 3 phases for STANDARD and LARGE features.
   Phase 1: Analysis and planning. Phase 2: TDD implementation.
   Phase 3: Finalization and documentation. Includes breakpoints between phases.
-argument-hint: "[--large] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--sequential] [--parallel] [--uc] [--dry-run] [--continue]"
+argument-hint: "[--large] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--sequential] [--parallel] [--uc] [--no-hooks] [--continue]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
@@ -22,7 +22,7 @@ Generates a Feature Document as traceability thread.
 |----------|-------------|
 | `--large` | Alias for `--think-hard --wave` (backward compatible) |
 | `--continue` | Continue from last phase (resume after interruption) |
-| `--dry-run` | Simulate workflow without making changes |
+| `--no-hooks` | Disable all hook execution |
 
 ### Thinking Flags
 
@@ -37,7 +37,6 @@ Generates a Feature Document as traceability thread.
 | Flag | Effect | Auto-Trigger |
 |------|--------|--------------|
 | `--safe` | Maximum validations, extra confirmations | Sensitive files |
-| `--fast` | Skip optional validations | Never |
 
 ### Output Flags
 
@@ -161,7 +160,7 @@ overrides can be placed in `.project-memory/orchestration.yaml`.
 2. If present: Use conventions, patterns, and velocity from §1
 3. If absent (direct /epci call): Fall back to loading `.project-memory/` directly
 
-**Fallback behavior:** If `/epci` is called without prior `/epci-brief`, the `project-memory-loader` skill will load context. This is not recommended — always start with `/epci-brief`.
+**Fallback behavior:** If `/epci` is called without prior `/epci-brief`, the `project-memory` skill will load context. This is not recommended — always start with `/epci-brief`.
 
 ---
 
@@ -174,14 +173,14 @@ overrides can be placed in `.project-memory/orchestration.yaml`.
 | Element | Value |
 |---------|-------|
 | **Thinking** | Based on flags: `think` (default), `think hard` (--think-hard), `ultrathink` (--ultrathink) |
-| **Skills** | project-memory-loader, epci-core, architecture-patterns, flags-system, [stack] |
+| **Skills** | project-memory, epci-core, architecture-patterns, flags-system, [stack] |
 | **Subagents** | @plan-validator |
 
 **Flag effects on Phase 1:**
 - `--think-hard` or `--large`: Use `think hard` mode
 - `--ultrathink`: Use `ultrathink` mode (extended analysis)
 - `--safe`: Additional validation checks in plan
-- `--dry-run`: Show what would be planned without writing
+- `--no-hooks`: Skip pre-phase-1 and post-phase-1 hooks
 
 **Note**: @Plan is no longer invoked — exploration has been done by `/epci-brief`.
 
@@ -313,9 +312,8 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 **Flag effects on Phase 2:**
 - `--safe`: All conditional subagents become mandatory
-- `--fast`: Skip optional reviews (only @code-reviewer)
 - `--uc`: Compressed output in progress reports
-- `--dry-run`: Show what would be implemented without writing
+- `--no-hooks`: Skip pre-phase-2 and post-phase-2 hooks
 
 ### Conditional Subagents
 
@@ -680,9 +678,8 @@ This expands to `--think-hard --wave --safe`.
 
 | Combination | Result |
 |-------------|--------|
-| `--safe` + `--fast` | **Error** (incompatible) |
 | `--think` + `--think-hard` | `--think-hard` wins |
 | `--uc` + `--verbose` | Explicit wins |
 | `--large` + `--ultrathink` | `--ultrathink` wins |
 | `--wave` + `--safe` | Both active |
-| `--dry-run` + any | Both active |
+| `--no-hooks` + any | Both active |

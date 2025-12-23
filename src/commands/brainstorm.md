@@ -34,7 +34,7 @@ iteratives pour construire des specifications exhaustives.
 | Element | Valeur |
 |---------|--------|
 | **Thinking** | `think hard` (adaptatif selon complexite) |
-| **Skills** | `brainstormer`, `project-memory-loader`, `architecture-patterns` |
+| **Skills** | `brainstormer`, `project-memory`, `architecture-patterns` |
 | **Subagents** | `@Explore` (analyse codebase) |
 | **Personas** | 📐 Architecte (defaut), 🥊 Sparring, 🛠️ Pragmatique |
 | **Phases** | 🔀 Divergent → 🎯 Convergent |
@@ -44,7 +44,7 @@ iteratives pour construire des specifications exhaustives.
 ### Phase 1 — Initialisation
 
 1. **Charger le contexte projet**
-   - Skill: `project-memory-loader`
+   - Skill: `project-memory`
    - Si `.project-memory/` existe → charger
    - Sinon → continuer sans contexte
 
@@ -158,6 +158,6 @@ Le brief genere peut etre utilise :
 ## Skills Charges
 
 - `brainstormer` — Logique metier principale
-- `project-memory-loader` — Contexte projet
+- `project-memory` — Contexte projet
 - `architecture-patterns` — Suggestions architecture
 - `clarification-intelligente` — Systeme de questions

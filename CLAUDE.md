@@ -104,7 +104,7 @@ tools-claude-code-epci/
     ├── settings/                # Configuration (v3.1)
     │   └── flags.md            # Documentation flags universels
     │
-    └── skills/                  # 14 skills
+    └── skills/                  # 19 skills
         ├── core/               # Skills fondamentaux (6)
         │   ├── architecture-patterns/SKILL.md
         │   ├── code-conventions/SKILL.md
@@ -363,7 +363,7 @@ Le système de flags permet un contrôle fin du comportement des workflows EPCI.
 |-----------|-------|-------|
 | **Thinking** | `--think`, `--think-hard`, `--ultrathink` | Profondeur d'analyse |
 | **Compression** | `--uc`, `--verbose` | Gestion tokens |
-| **Workflow** | `--safe`, `--fast`, `--dry-run` | Contrôle exécution |
+| **Workflow** | `--safe`, `--no-hooks` | Contrôle exécution |
 | **Wave** | `--wave`, `--wave-strategy` | Orchestration multi-vagues |
 | **Legacy** | `--large`, `--continue` | Rétrocompatibilité |
 
@@ -382,9 +382,8 @@ Les flags peuvent être auto-activés selon le contexte:
 #### Règles de Précédence
 
 1. Flags explicites > Auto-activation
-2. `--safe` > `--fast` (safety first)
-3. `--ultrathink` > `--think-hard` > `--think`
-4. `--verbose` explicit > `--uc` auto
+2. `--ultrathink` > `--think-hard` > `--think`
+3. `--verbose` explicit > `--uc` auto
 
 #### Migration depuis v3.0
 
