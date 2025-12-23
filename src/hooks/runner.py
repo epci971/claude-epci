@@ -16,6 +16,7 @@ Hook Types:
     - pre-phase-1, post-phase-1
     - pre-phase-2, post-phase-2
     - pre-phase-3, post-phase-3
+    - pre-commit, post-commit (commit validation workflow)
     - on-breakpoint
     - pre-agent, post-agent (F07: Multi-Agent Orchestration)
 """
@@ -142,6 +143,8 @@ VALID_HOOK_TYPES = [
     'pre-phase-1', 'post-phase-1',
     'pre-phase-2', 'post-phase-2',
     'pre-phase-3', 'post-phase-3',
+    # Commit validation hooks (pre-commit breakpoint feature)
+    'pre-commit', 'post-commit',
     'on-breakpoint',
     # F07: Multi-Agent Orchestration hooks
     'pre-agent', 'post-agent',

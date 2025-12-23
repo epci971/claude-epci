@@ -116,9 +116,9 @@ For SMALL only, invoke @code-reviewer in light mode:
 
 **No architecture or optimization review.**
 
-### 4. Commit
+### 4. Commit Preparation
 
-Simplified Conventional Commits format:
+Prepare Conventional Commits message (do not execute yet):
 
 ```
 fix(scope): short description
@@ -129,6 +129,50 @@ or
 ```
 feat(scope): short description
 ```
+
+### ⏸️ BREAKPOINT PRE-COMMIT (MANDATORY — WAIT FOR USER)
+
+**⚠️ MANDATORY:** Display this breakpoint and WAIT for user choice before proceeding.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ⏸️  BREAKPOINT — Validation Commit                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ 📝 COMMIT SUGGÉRÉ                                                   │
+│    {TYPE}({SCOPE}): {DESCRIPTION}                                  │
+│                                                                     │
+│ 📋 RÉSUMÉ                                                           │
+│ ├── Mode: {TINY | SMALL}                                           │
+│ ├── Fichiers: {FILE_LIST}                                          │
+│ └── Tests: {TEST_STATUS}                                           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Options:                                                            │
+│   • Tapez "Commiter" → Exécuter le commit                          │
+│   • Tapez "Terminer" → Finaliser sans commit                       │
+│   • Tapez "Modifier" → Éditer le message                           │
+│   • Tapez "Annuler" → Abandonner                                   │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Awaiting user choice:**
+
+#### If user chose "Commiter"
+
+Execute git commit and continue to output.
+
+#### If user chose "Terminer"
+
+Skip commit, continue to output with "Commit: Pending".
+
+#### If user chose "Modifier"
+
+Ask for new message, return to breakpoint.
+
+#### If user chose "Annuler"
+
+Abort workflow.
 
 ## Output (MANDATORY)
 
@@ -144,7 +188,7 @@ Modification applied to `path/to/file.ext`
 - Change: [description]
 - Lines: +X / -Y
 
-Ready to commit.
+Commit: {COMMITTED | PENDING}
 ```
 
 ### SMALL Mode
@@ -160,7 +204,7 @@ Modified files:
 Tests: [X passing | Not required]
 Review: [@code-reviewer light | Not required]
 
-Ready to commit.
+Commit: {COMMITTED | PENDING}
 ```
 
 ## Examples
@@ -215,7 +259,7 @@ Recommendation: Switch to `/epci` for structured workflow.
 | Aspect | /epci-quick | /epci |
 |--------|-------------|-------|
 | Feature Document | No | Yes |
-| Breakpoints | No | Yes (2) |
+| Breakpoints | Yes (1: pre-commit) | Yes (3: P1, P2, pre-commit) |
 | @plan-validator | No | Yes |
 | @code-reviewer | Light (SMALL) | Full |
 | @security-auditor | No | Conditional |

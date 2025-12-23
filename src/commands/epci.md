@@ -508,7 +508,7 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 ```markdown
 ## §4 — Finalization
 
-### Commit
+### Commit Message (Prepared)
 ```
 feat(user): add email validation
 
@@ -531,7 +531,97 @@ Refs: docs/features/user-email-validation.md
 - Docs: ✅ Up to date
 ```
 
-**🪝 Execute `post-phase-3` hooks** (MANDATORY for Project Memory update)
+**🪝 Execute `pre-commit` hooks** (if configured)
+
+```bash
+python3 src/hooks/runner.py pre-commit --context '{
+  "phase": "phase-3",
+  "feature_slug": "<slug>",
+  "complexity": "<complexity>",
+  "files_modified": [...],
+  "commit_message": "<prepared message>",
+  "pending_commit": true
+}'
+```
+
+### ⏸️ BREAKPOINT PRE-COMMIT (MANDATORY — WAIT FOR USER)
+
+**⚠️ MANDATORY:** Display this breakpoint and WAIT for user choice before proceeding.
+
+**🪝 Execute `on-breakpoint` hooks** (if configured)
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ⏸️  BREAKPOINT PHASE 3 — Validation Commit                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ 📝 MESSAGE DE COMMIT PRÉPARÉ                                        │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ {COMMIT_TYPE}({SCOPE}): {DESCRIPTION}                           │ │
+│ │                                                                 │ │
+│ │ - {DETAIL_1}                                                    │ │
+│ │ - {DETAIL_2}                                                    │ │
+│ │                                                                 │ │
+│ │ Refs: docs/features/{SLUG}.md                                   │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ 📋 RÉSUMÉ                                                           │
+│ ├── Fichiers modifiés: {FILE_COUNT}                                │
+│ ├── Documentation: {DOC_STATUS}                                    │
+│ └── PR prête: {PR_STATUS}                                          │
+│                                                                     │
+│ 🔗 Feature Document: docs/features/{slug}.md                       │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Options:                                                            │
+│   • Tapez "Commiter" → Exécuter git commit + continuer             │
+│   • Tapez "Finaliser" → Terminer sans commit                       │
+│   • Tapez "Modifier" → Éditer le message de commit                 │
+│   • Tapez "Annuler" → Retourner au breakpoint Phase 2              │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Awaiting user choice:**
+
+#### If user chose "Commiter"
+
+1. Execute git commit:
+   ```bash
+   git add <files>
+   git commit -m "<prepared message>"
+   ```
+
+2. **🪝 Execute `post-commit` hooks** (if configured):
+   ```bash
+   python3 src/hooks/runner.py post-commit --context '{
+     "phase": "phase-3",
+     "feature_slug": "<slug>",
+     "commit_hash": "<hash>",
+     "branch": "<branch>",
+     "files_committed": [...]
+   }'
+   ```
+
+3. Update §4 with commit hash
+
+#### If user chose "Finaliser"
+
+1. Skip git commit
+2. Update §4 with: `Commit: Pending (manual commit requested)`
+3. Continue to completion
+
+#### If user chose "Modifier"
+
+1. Ask user for new commit message
+2. Update prepared message
+3. Return to breakpoint display
+
+#### If user chose "Annuler"
+
+1. Return to Phase 2 breakpoint
+2. Allow user to make corrections
+
+**🪝 Execute `post-phase-3` hooks** (always, for cleanup and metrics)
 
 ```bash
 python3 src/hooks/runner.py post-phase-3 --context '{
@@ -541,7 +631,8 @@ python3 src/hooks/runner.py post-phase-3 --context '{
   "files_modified": [...],
   "estimated_time": "<estimated>",
   "actual_time": "<actual>",
-  "commit_hash": "<hash>",
+  "commit_hash": "<hash or null>",
+  "commit_status": "<committed|pending|cancelled>",
   "test_results": {"status": "passed", "count": <n>}
 }'
 ```
@@ -557,9 +648,10 @@ python3 src/hooks/runner.py post-phase-3 --context '{
 Feature Document finalized: docs/features/<slug>.md
 - Phase 1: Plan validated
 - Phase 2: Code implemented and reviewed
-- Phase 3: Commit and documentation
+- Phase 3: Documentation and commit validation
 
-**Next step:** Create PR or merge
+Commit status: {COMMITTED | PENDING}
+**Next step:** {Create PR | Manual commit then PR}
 ---
 ```
 
