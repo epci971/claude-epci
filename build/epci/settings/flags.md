@@ -1,7 +1,7 @@
 # EPCI Flags Reference
 
-> **Version**: 3.1.0
-> **Date**: 2025-12-16
+> **Version**: 3.2.0
+> **Date**: 2025-12-29
 
 This document provides the complete reference for EPCI universal flags.
 
@@ -98,6 +98,60 @@ Control execution safety and hooks.
 # Disable hooks for testing or CI/CD
 /epci --no-hooks
 ```
+
+---
+
+## Persona Flags (F09)
+
+Control global thinking modes that influence the entire workflow.
+
+| Flag | Focus | Auto-Trigger |
+|------|-------|--------------|
+| `--persona-architect` | System thinking, patterns, scalability | architecture/design keywords |
+| `--persona-frontend` | UI/UX, accessibility, Core Web Vitals | component/UI keywords |
+| `--persona-backend` | APIs, data integrity, reliability | API/database keywords |
+| `--persona-security` | Threat modeling, OWASP, compliance | auth/security keywords |
+| `--persona-qa` | Tests, edge cases, coverage | test/quality keywords |
+| `--persona-doc` | Documentation, clarity, examples | document/README keywords |
+
+### Auto-Activation Scoring
+
+```
+Score = (keywords × 0.4) + (files × 0.4) + (stack × 0.2)
+
+Thresholds:
+- > 0.6  → Auto-activate
+- 0.4-0.6 → Suggest to user
+- < 0.4  → No activation
+```
+
+### Precedence
+
+1. **Explicit persona** always wins over auto-activation
+2. Only **one persona** can be active at a time
+3. If multiple personas score > 0.6, highest score wins
+
+### Examples
+
+```bash
+# Explicit persona for API development
+/epci --persona-backend
+
+# Combined with thinking flags
+/epci --persona-security --think-hard
+
+# Auto-activated based on brief content
+/epci-brief "Add user authentication endpoint"
+# → --persona-backend auto-activated (score: 0.68)
+```
+
+### Display
+
+```
+FLAGS: --think-hard (auto) | --persona-backend (auto: 0.72)
+```
+
+→ See `src/skills/personas/SKILL.md` for full documentation.
 
 ---
 
@@ -202,6 +256,61 @@ Legend:
 
 ---
 
+## MCP Flags (F12)
+
+Control Model Context Protocol server activation.
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--c7` | Enable Context7 (library docs) | persona architect/backend/doc, import keywords |
+| `--seq` | Enable Sequential (multi-step reasoning) | `--think-hard`, persona architect/security |
+| `--magic` | Enable Magic (UI generation) | persona frontend, *.jsx/*.tsx files |
+| `--play` | Enable Playwright (E2E tests) | persona frontend/qa, *.spec.ts files |
+| `--no-mcp` | Disable all MCP servers | Never |
+
+### MCP Auto-Activation
+
+MCPs are auto-activated based on:
+1. **Persona activation**: Each persona has preferred MCPs (see matrix below)
+2. **Keyword triggers**: Specific keywords in brief trigger MCPs
+3. **File triggers**: File patterns trigger MCPs
+4. **Flag triggers**: `--think-hard` triggers Sequential
+
+### Persona × MCP Matrix
+
+| Persona | Context7 | Sequential | Magic | Playwright |
+|---------|:--------:|:----------:|:-----:|:----------:|
+| architect | **auto** | **auto** | - | - |
+| frontend | **auto** | - | **auto** | **auto** |
+| backend | **auto** | **auto** | - | - |
+| security | - | **auto** | - | - |
+| qa | - | - | - | **auto** |
+| doc | **auto** | - | - | - |
+
+### MCP Precedence
+
+1. **Explicit flags** (`--c7`, `--no-mcp`) always override auto-activation
+2. **`--no-mcp`** disables all MCP servers
+3. **Multiple MCPs** can be active simultaneously
+
+### Examples
+
+```bash
+# Enable specific MCP
+/epci --c7                 # Context7 only
+/epci --seq --magic        # Sequential + Magic
+
+# Disable all MCP
+/epci --no-mcp
+
+# Combined with persona (auto-activates preferred MCPs)
+/epci --persona-frontend   # Auto: Magic + Playwright
+```
+
+→ See `src/skills/mcp/SKILL.md` for complete MCP documentation.
+
+---
+
 ## Quick Reference
 
 ### All Flags
@@ -211,6 +320,8 @@ Legend:
 | Thinking | `--think`, `--think-hard`, `--ultrathink` |
 | Compression | `--uc`, `--verbose` |
 | Workflow | `--safe`, `--no-hooks` |
+| Persona | `--persona-architect`, `--persona-frontend`, `--persona-backend`, `--persona-security`, `--persona-qa`, `--persona-doc` |
+| MCP | `--c7`, `--seq`, `--magic`, `--play`, `--no-mcp` |
 | Wave | `--wave`, `--wave-strategy` |
 | Legacy | `--large` (alias), `--continue` |
 
@@ -219,11 +330,12 @@ Legend:
 | Use Case | Flags |
 |----------|-------|
 | Large refactoring | `--think-hard --wave` or `--large` |
-| Security feature | `--think-hard --safe` |
-| Major architecture | `--ultrathink --wave --safe` |
+| Security feature | `--think-hard --safe --persona-security` |
+| Major architecture | `--ultrathink --wave --persona-architect` |
+| API development | `--think-hard --persona-backend` |
 | Testing without hooks | `--no-hooks` |
 | CI/CD pipeline | `--no-hooks --uc` |
 
 ---
 
-*Document generated for EPCI v3.1*
+*Document generated for EPCI v4.0.0*

@@ -1,7 +1,7 @@
 # EPCI Hooks System
 
-> **Version**: 1.2.0 (EPCI v3.9.5)
-> **Date**: 2025-12-18
+> **Version**: 1.3.0 (EPCI v4.0.0)
+> **Date**: 2025-12-29
 
 ## Overview
 

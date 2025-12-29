@@ -3,8 +3,8 @@ description: >-
   Decompose a complex PRD/CDC into actionable sub-specifications (1-5 days each).
   Generates dependency graph and Gantt planning with parallelization.
   Use for large projects (>5 days) before running /epci-brief on each sub-spec.
-argument-hint: "<file.md> [--output <dir>] [--think <level>] [--min-days <n>] [--max-days <n>]"
-allowed-tools: [Read, Write, Bash, Grep, Glob, Task]
+argument-hint: "<file.md> [--output <dir>] [--think <level>] [--min-days <n>] [--max-days <n>] [--c7]"
+allowed-tools: [Read, Write, Bash, Grep, Glob, Task, WebFetch]
 ---
 
 # EPCI Decompose
@@ -187,6 +187,7 @@ mkdir -p {output_dir}
 | `project-memory` | Pre-Workflow | Load context and conventions |
 | `architecture-patterns` | Phase 2 | Identify decomposition patterns |
 | `flags-system` | All | Handle --think levels |
+| `mcp` | Phase 2 | Context7 for architecture patterns |
 
 ## Invoked Subagents
 

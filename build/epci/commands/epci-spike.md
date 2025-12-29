@@ -3,8 +3,8 @@ description: >-
   Time-boxed exploration for technical uncertainties. Generates a Spike Report
   with GO/NO-GO/MORE_RESEARCH verdict. No production code, focus on
   learning and uncertainty reduction.
-argument-hint: "[duration] [question] [--think-hard]"
-allowed-tools: [Read, Glob, Grep, Bash, Task, WebFetch]
+argument-hint: "[duration] [question] [--think-hard] [--c7] [--seq]"
+allowed-tools: [Read, Glob, Grep, Bash, Task, WebFetch, WebSearch]
 ---
 
 # EPCI Spike — Time-boxed Exploration
@@ -27,6 +27,9 @@ A spike is a time-limited exploration to reduce technical uncertainty.
 |------|--------|--------------|
 | `--think-hard` | Deep analysis for complex spikes | Complex question detected |
 | `--uc` | Compressed Spike Report | context > 75% |
+| `--c7` | Enable Context7 for library docs | Auto with tech exploration |
+| `--seq` | Enable Sequential for complex reasoning | With `--think-hard` |
+| `--no-mcp` | Disable all MCP servers | Never |
 
 **Note:** `--safe`, `--wave` flags are not applicable to spikes (exploration only).
 
@@ -225,6 +228,7 @@ Verdict: NO-GO
 - `project-memory` (context and conventions)
 - `architecture-patterns` (approach evaluation)
 - `flags-system` (flag handling)
+- `mcp` (Context7 for docs, Sequential for reasoning)
 - `[stack-skill]` (auto-detected)
 
 ## Differences with Other Workflows

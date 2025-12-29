@@ -3,8 +3,8 @@ description: >-
   Brainstorming guide v3 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
   Use when: idee vague a transformer en specs, besoin de clarifier une feature.
-argument-hint: [description] [--template feature|problem|decision] [--quick] [--no-hmw]
-allowed-tools: [Read, Write, Bash, Glob, Grep, Task]
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--no-hmw] [--c7] [--seq]"
+allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
 # /brainstorm — Feature Discovery v3.0
@@ -34,10 +34,11 @@ iteratives pour construire des specifications exhaustives.
 | Element | Valeur |
 |---------|--------|
 | **Thinking** | `think hard` (adaptatif selon complexite) |
-| **Skills** | `brainstormer`, `project-memory`, `architecture-patterns` |
+| **Skills** | `brainstormer`, `project-memory`, `architecture-patterns`, `mcp` |
 | **Subagents** | `@Explore` (analyse codebase) |
 | **Personas** | 📐 Architecte (defaut), 🥊 Sparring, 🛠️ Pragmatique |
 | **Phases** | 🔀 Divergent → 🎯 Convergent |
+| **MCP** | Context7 (patterns architecture), Sequential (raisonnement complexe) |
 
 ## Process
 

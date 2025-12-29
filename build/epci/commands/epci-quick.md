@@ -45,12 +45,23 @@ No formal Feature Document, no breakpoints.
 
 **Note:** Thinking flags (`--think-hard`, `--ultrathink`) trigger escalation to `/epci`.
 
+### MCP Flags (F12 — Lightweight)
+
+For SMALL features only, MCP servers can be used in lightweight mode:
+
+| Flag | Effect | Note |
+|------|--------|------|
+| `--c7` | Context7 for quick doc lookup | Recommended for SMALL |
+| `--no-mcp` | Disable all MCP servers | Default for TINY |
+
+**Note:** Sequential, Magic, and Playwright are not recommended for TINY/SMALL. Use `/epci` for complex MCP needs.
+
 ## Configuration
 
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think` (standard) |
-| **Skills** | project-memory, epci-core, code-conventions, flags-system, [stack] |
+| **Skills** | project-memory, epci-core, code-conventions, flags-system, mcp, [stack] |
 | **Subagents** | @code-reviewer (light mode, SMALL only)
 
 ## Pre-Workflow: Memory Context

@@ -3,6 +3,8 @@ Orchestration Configuration Module
 
 Handles loading and merging of orchestration configurations from YAML files.
 Supports per-agent timeouts, conditions, and orchestration modes.
+
+Extended in F11 to support Wave Orchestration with WaveConfig.
 """
 
 from dataclasses import dataclass, field
@@ -17,6 +19,12 @@ class OrchestrationMode(Enum):
     SEQUENTIAL = "sequential"  # One agent after another
     PARALLEL = "parallel"      # All agents simultaneously (ignore DAG)
     DAG = "dag"               # Respect dependency graph
+
+
+class WaveStrategyType(Enum):
+    """Wave execution strategy types (F11)."""
+    PROGRESSIVE = "progressive"  # Wave by wave with validation
+    SYSTEMATIC = "systematic"    # Analyze all first, then execute
 
 
 @dataclass
@@ -206,3 +214,231 @@ def merge_with_defaults(
 def get_default_config() -> OrchestrationConfig:
     """Get the built-in default configuration."""
     return _parse_config(DEFAULT_CONFIG)
+
+
+# ============================================================================
+# Wave Configuration (F11)
+# ============================================================================
+
+@dataclass
+class WaveDefinition:
+    """Definition of a single wave in the orchestration."""
+    name: str
+    order: int
+    description: str = ""
+    task_patterns: List[str] = field(default_factory=list)
+    timeout: int = 300  # seconds
+
+    def matches_task(self, task_name: str) -> bool:
+        """Check if a task name matches this wave's patterns."""
+        task_lower = task_name.lower()
+        return any(pattern in task_lower for pattern in self.task_patterns)
+
+
+@dataclass
+class WaveConfig:
+    """Configuration for wave-based orchestration (F11)."""
+    strategy: WaveStrategyType = WaveStrategyType.PROGRESSIVE
+    timeout_global: int = 1200  # 20 minutes
+    timeout_per_wave: int = 300  # 5 minutes
+    breakpoints_enabled: bool = True
+    waves: Dict[str, WaveDefinition] = field(default_factory=dict)
+
+    # Context limits
+    max_files_created: int = 50
+    max_files_modified: int = 50
+    max_patterns_used: int = 20
+    max_issues_tracked: int = 30
+
+    def get_wave(self, wave_id: str) -> Optional[WaveDefinition]:
+        """Get wave definition by ID."""
+        return self.waves.get(wave_id)
+
+    def get_ordered_waves(self) -> List[WaveDefinition]:
+        """Get waves sorted by execution order."""
+        return sorted(self.waves.values(), key=lambda w: w.order)
+
+    def find_wave_for_task(self, task_name: str) -> Optional[WaveDefinition]:
+        """Find which wave a task belongs to based on patterns."""
+        for wave in self.get_ordered_waves():
+            if wave.matches_task(task_name):
+                return wave
+        # Default to last wave (finalization) if no match
+        ordered = self.get_ordered_waves()
+        return ordered[-1] if ordered else None
+
+
+# Default wave configuration
+DEFAULT_WAVE_CONFIG = {
+    "wave_orchestration": {
+        "default_strategy": "progressive",
+        "timeout_global": 1200,
+        "timeout_per_wave": 300,
+        "breakpoints_enabled": True,
+        "waves": {
+            "foundations": {
+                "name": "Foundations",
+                "order": 1,
+                "description": "Data structures, entities, base classes",
+                "task_patterns": ["entity", "repository", "base", "config", "model", "schema"],
+                "timeout": 300,
+            },
+            "core": {
+                "name": "Core Logic",
+                "order": 2,
+                "description": "Main implementation, services, business logic",
+                "task_patterns": ["service", "handler", "logic", "processor", "manager"],
+                "timeout": 300,
+            },
+            "integration": {
+                "name": "Integration",
+                "order": 3,
+                "description": "Controllers, APIs, external integration",
+                "task_patterns": ["controller", "api", "integration", "adapter", "client"],
+                "timeout": 300,
+            },
+            "finalization": {
+                "name": "Finalization",
+                "order": 4,
+                "description": "Tests, documentation, cleanup",
+                "task_patterns": ["test", "doc", "migration", "cleanup"],
+                "timeout": 300,
+            },
+        },
+    },
+    "context": {
+        "max_files_created": 50,
+        "max_files_modified": 50,
+        "max_patterns_used": 20,
+        "max_issues_tracked": 30,
+    },
+}
+
+
+def load_wave_config(path: str) -> WaveConfig:
+    """
+    Load wave configuration from a YAML file.
+
+    Args:
+        path: Path to the YAML configuration file
+
+    Returns:
+        WaveConfig instance
+
+    Raises:
+        FileNotFoundError: If config file doesn't exist
+        ValueError: If config is invalid
+    """
+    config_path = Path(path)
+
+    if not config_path.exists():
+        raise FileNotFoundError(f"Wave configuration file not found: {path}")
+
+    with open(config_path, "r", encoding="utf-8") as f:
+        raw_config = yaml.safe_load(f)
+
+    return _parse_wave_config(raw_config)
+
+
+def _parse_wave_config(raw_config: Dict[str, Any]) -> WaveConfig:
+    """Parse raw wave configuration dictionary into WaveConfig."""
+    if not raw_config or "wave_orchestration" not in raw_config:
+        raise ValueError("Invalid wave config: missing 'wave_orchestration' key")
+
+    wave_orch = raw_config["wave_orchestration"]
+    context_cfg = raw_config.get("context", {})
+
+    # Parse strategy
+    strategy_str = wave_orch.get("default_strategy", "progressive")
+    try:
+        strategy = WaveStrategyType(strategy_str)
+    except ValueError:
+        raise ValueError(f"Invalid wave strategy: {strategy_str}")
+
+    # Parse waves
+    waves = {}
+    raw_waves = wave_orch.get("waves", {})
+    for wave_id, wave_data in raw_waves.items():
+        waves[wave_id] = WaveDefinition(
+            name=wave_data.get("name", wave_id),
+            order=wave_data.get("order", 0),
+            description=wave_data.get("description", ""),
+            task_patterns=wave_data.get("task_patterns", []),
+            timeout=wave_data.get("timeout", 300),
+        )
+
+    return WaveConfig(
+        strategy=strategy,
+        timeout_global=wave_orch.get("timeout_global", 1200),
+        timeout_per_wave=wave_orch.get("timeout_per_wave", 300),
+        breakpoints_enabled=wave_orch.get("breakpoints_enabled", True),
+        waves=waves,
+        max_files_created=context_cfg.get("max_files_created", 50),
+        max_files_modified=context_cfg.get("max_files_modified", 50),
+        max_patterns_used=context_cfg.get("max_patterns_used", 20),
+        max_issues_tracked=context_cfg.get("max_issues_tracked", 30),
+    )
+
+
+def get_default_wave_config() -> WaveConfig:
+    """Get the built-in default wave configuration."""
+    return _parse_wave_config(DEFAULT_WAVE_CONFIG)
+
+
+# ============================================================================
+# MCP Configuration (F12)
+# ============================================================================
+
+@dataclass
+class MCPConfig:
+    """
+    Configuration for MCP integration in orchestration (F12).
+
+    Integrates with WaveConfig to provide MCP context to agents.
+    """
+    enabled: bool = True
+    default_timeout_seconds: int = 15
+    retry_count: int = 2
+    servers: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+
+    def __post_init__(self):
+        """Initialize with defaults if servers empty."""
+        if not self.servers:
+            self.servers = {
+                "context7": {"enabled": True, "auto_activate": True, "timeout_seconds": 15},
+                "sequential": {"enabled": True, "auto_activate": True, "timeout_seconds": 30},
+                "magic": {"enabled": True, "auto_activate": True, "timeout_seconds": 20},
+                "playwright": {"enabled": True, "auto_activate": True, "timeout_seconds": 20},
+            }
+
+    def is_enabled(self, server_name: str) -> bool:
+        """Check if a specific server is enabled."""
+        if not self.enabled:
+            return False
+        server = self.servers.get(server_name, {})
+        return server.get("enabled", True)
+
+    def get_timeout(self, server_name: str) -> int:
+        """Get timeout for a specific server."""
+        server = self.servers.get(server_name, {})
+        return server.get("timeout_seconds", self.default_timeout_seconds)
+
+
+def load_mcp_config_from_settings(settings: Dict[str, Any]) -> MCPConfig:
+    """
+    Load MCP configuration from settings dictionary.
+
+    Args:
+        settings: Settings dictionary (from .project-memory/settings.json)
+
+    Returns:
+        MCPConfig instance
+    """
+    mcp_settings = settings.get("mcp", {})
+
+    return MCPConfig(
+        enabled=mcp_settings.get("enabled", True),
+        default_timeout_seconds=mcp_settings.get("default_timeout_seconds", 15),
+        retry_count=mcp_settings.get("retry_count", 2),
+        servers=mcp_settings.get("servers", {}),
+    )

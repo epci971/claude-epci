@@ -54,6 +54,18 @@ Generates a Feature Document as traceability thread.
 | `--sequential` | Force sequential agent execution | Never |
 | `--parallel` | Force all agents in parallel (ignores DAG) | Never |
 
+### MCP Flags (F12)
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--c7` | Enable Context7 (library docs) | persona architect/backend/doc |
+| `--seq` | Enable Sequential (multi-step reasoning) | `--think-hard`, persona architect/security |
+| `--magic` | Enable Magic (UI generation) | persona frontend |
+| `--play` | Enable Playwright (E2E tests) | persona frontend/qa |
+| `--no-mcp` | Disable all MCP servers | Never |
+
+**MCP Reference:** See `src/skills/mcp/SKILL.md` for complete documentation.
+
 **Flag Reference:** See `src/settings/flags.md` for complete documentation.
 
 ## Feature Document
