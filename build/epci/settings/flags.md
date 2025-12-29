@@ -72,13 +72,12 @@ When `--uc` is active:
 
 ## Workflow Flags
 
-Control execution safety and speed.
+Control execution safety and hooks.
 
 | Flag | Effect | Auto-Trigger |
 |------|--------|--------------|
 | `--safe` | Maximum validations, extra confirmations | Sensitive files detected |
-| `--fast` | Skip optional validations | Never |
-| `--dry-run` | Simulation only, no modifications | Never |
+| `--no-hooks` | Disable all hook execution | Never |
 
 ### Sensitive File Patterns (trigger `--safe`)
 
@@ -96,11 +95,8 @@ Control execution safety and speed.
 # Safe mode for security-sensitive changes
 /epci --safe
 
-# Fast iteration in development
-/epci-quick --fast
-
-# Preview what would happen
-/epci --dry-run
+# Disable hooks for testing or CI/CD
+/epci --no-hooks
 ```
 
 ---
@@ -156,31 +152,19 @@ Control multi-wave orchestration for large features.
 ### Priority Order
 
 1. **Explicit flags** always override auto-activation
-2. **Safety over speed**: `--safe` > `--fast`
-3. **Higher thinking wins**: `--ultrathink` > `--think-hard` > `--think`
-4. **Explicit verbosity wins**: `--verbose` overrides auto `--uc`
-5. **Implicit wave**: `--think-hard` + LARGE implies `--wave`
+2. **Higher thinking wins**: `--ultrathink` > `--think-hard` > `--think`
+3. **Explicit verbosity wins**: `--verbose` overrides auto `--uc`
+4. **Implicit wave**: `--think-hard` + LARGE implies `--wave`
 
 ### Conflict Resolution
 
 | Flag A | Flag B | Result |
 |--------|--------|--------|
-| `--safe` | `--fast` | **Error** (incompatible) |
 | `--uc` | `--verbose` | `--verbose` wins (if explicit) |
 | `--think` | `--think-hard` | `--think-hard` wins |
 | `--think-hard` | `--ultrathink` | `--ultrathink` wins |
 | `--wave` | `--safe` | Both active (compatible) |
-| `--dry-run` | Any | Both active (always compatible) |
-
-### Error Messages
-
-```
-ERROR: Flags --safe and --fast are incompatible.
-       --safe enforces all validations
-       --fast skips optional validations
-
-       Choose one or omit both for default behavior.
-```
+| `--no-hooks` | Any | Both active (always compatible) |
 
 ---
 
@@ -226,7 +210,7 @@ Legend:
 |----------|-------|
 | Thinking | `--think`, `--think-hard`, `--ultrathink` |
 | Compression | `--uc`, `--verbose` |
-| Workflow | `--safe`, `--fast`, `--dry-run` |
+| Workflow | `--safe`, `--no-hooks` |
 | Wave | `--wave`, `--wave-strategy` |
 | Legacy | `--large` (alias), `--continue` |
 
@@ -236,9 +220,9 @@ Legend:
 |----------|-------|
 | Large refactoring | `--think-hard --wave` or `--large` |
 | Security feature | `--think-hard --safe` |
-| Quick fix in dev | `--fast` |
 | Major architecture | `--ultrathink --wave --safe` |
-| Preview changes | `--dry-run` |
+| Testing without hooks | `--no-hooks` |
+| CI/CD pipeline | `--no-hooks --uc` |
 
 ---
 

@@ -28,7 +28,7 @@ A spike is a time-limited exploration to reduce technical uncertainty.
 | `--think-hard` | Deep analysis for complex spikes | Complex question detected |
 | `--uc` | Compressed Spike Report | context > 75% |
 
-**Note:** `--safe`, `--fast`, `--wave` flags are not applicable to spikes (exploration only).
+**Note:** `--safe`, `--wave` flags are not applicable to spikes (exploration only).
 
 ## When to Use a Spike
 
@@ -40,7 +40,7 @@ A spike is a time-limited exploration to reduce technical uncertainty.
 
 ## Pre-Workflow: Load Project Memory
 
-**Skill**: `project-memory-loader`
+**Skill**: `project-memory`
 
 Load project context from `.project-memory/` before exploration. The skill handles:
 - Reading context, conventions, settings, patterns
@@ -222,7 +222,7 @@ Verdict: NO-GO
 
 ## Skills Loaded
 
-- `project-memory-loader` (context and conventions)
+- `project-memory` (context and conventions)
 - `architecture-patterns` (approach evaluation)
 - `flags-system` (flag handling)
 - `[stack-skill]` (auto-detected)

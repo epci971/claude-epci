@@ -3,7 +3,7 @@ description: >-
   Condensed EPCI workflow for TINY and SMALL features. Single-pass without
   formal Feature Document. TINY mode: <50 LOC, 1 file, no tests.
   SMALL mode: <200 LOC, 2-3 files, optional tests.
-argument-hint: "[--fast] [--uc]"
+argument-hint: "[--uc] [--no-hooks]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
@@ -40,8 +40,8 @@ No formal Feature Document, no breakpoints.
 
 | Flag | Effect | Auto-Trigger |
 |------|--------|--------------|
-| `--fast` | Skip optional checks | Never |
 | `--uc` | Compressed output | context > 75% |
+| `--no-hooks` | Disable all hook execution | Never |
 
 **Note:** Thinking flags (`--think-hard`, `--ultrathink`) trigger escalation to `/epci`.
 
@@ -50,18 +50,19 @@ No formal Feature Document, no breakpoints.
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think` (standard) |
-| **Skills** | project-memory-loader, epci-core, code-conventions, flags-system, [stack] |
+| **Skills** | project-memory, epci-core, code-conventions, flags-system, [stack] |
 | **Subagents** | @code-reviewer (light mode, SMALL only)
 
-## Pre-Workflow: Load Project Memory
+## Pre-Workflow: Memory Context
 
-**Skill**: `project-memory-loader`
+**Memory is loaded once by `/epci-brief`** and passed via the inline brief (Memory Summary section).
 
-Load project context from `.project-memory/` before implementation. The skill handles:
-- Reading context, conventions, settings, patterns
-- Applying naming/structure/style conventions to all generated code
+**Reading memory context:**
+1. Check inline brief for "Memory Summary" section
+2. If present: Use conventions and patterns from brief
+3. If absent: Continue with defaults (no separate load needed for TINY/SMALL)
 
-**If `.project-memory/` does not exist:** Continue with defaults.
+**Note:** For TINY/SMALL features, memory context is lightweight. Full memory loading is not required.
 
 ---
 
@@ -116,9 +117,9 @@ For SMALL only, invoke @code-reviewer in light mode:
 
 **No architecture or optimization review.**
 
-### 4. Commit
+### 4. Commit Preparation
 
-Simplified Conventional Commits format:
+Prepare Conventional Commits message (do not execute yet):
 
 ```
 fix(scope): short description
@@ -129,6 +130,50 @@ or
 ```
 feat(scope): short description
 ```
+
+### ⏸️ BREAKPOINT PRE-COMMIT (MANDATORY — WAIT FOR USER)
+
+**⚠️ MANDATORY:** Display this breakpoint and WAIT for user choice before proceeding.
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ⏸️  BREAKPOINT — Validation Commit                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ 📝 COMMIT SUGGÉRÉ                                                   │
+│    {TYPE}({SCOPE}): {DESCRIPTION}                                  │
+│                                                                     │
+│ 📋 RÉSUMÉ                                                           │
+│ ├── Mode: {TINY | SMALL}                                           │
+│ ├── Fichiers: {FILE_LIST}                                          │
+│ └── Tests: {TEST_STATUS}                                           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Options:                                                            │
+│   • Tapez "Commiter" → Exécuter le commit                          │
+│   • Tapez "Terminer" → Finaliser sans commit                       │
+│   • Tapez "Modifier" → Éditer le message                           │
+│   • Tapez "Annuler" → Abandonner                                   │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Awaiting user choice:**
+
+#### If user chose "Commiter"
+
+Execute git commit and continue to output.
+
+#### If user chose "Terminer"
+
+Skip commit, continue to output with "Commit: Pending".
+
+#### If user chose "Modifier"
+
+Ask for new message, return to breakpoint.
+
+#### If user chose "Annuler"
+
+Abort workflow.
 
 ## Output (MANDATORY)
 
@@ -144,7 +189,7 @@ Modification applied to `path/to/file.ext`
 - Change: [description]
 - Lines: +X / -Y
 
-Ready to commit.
+Commit: {COMMITTED | PENDING}
 ```
 
 ### SMALL Mode
@@ -160,7 +205,7 @@ Modified files:
 Tests: [X passing | Not required]
 Review: [@code-reviewer light | Not required]
 
-Ready to commit.
+Commit: {COMMITTED | PENDING}
 ```
 
 ## Examples
@@ -215,7 +260,7 @@ Recommendation: Switch to `/epci` for structured workflow.
 | Aspect | /epci-quick | /epci |
 |--------|-------------|-------|
 | Feature Document | No | Yes |
-| Breakpoints | No | Yes (2) |
+| Breakpoints | Yes (1: pre-commit) | Yes (3: P1, P2, pre-commit) |
 | @plan-validator | No | Yes |
 | @code-reviewer | Light (SMALL) | Full |
 | @security-auditor | No | Conditional |

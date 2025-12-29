@@ -10,7 +10,8 @@ Compatible avec le workflow EPCI.
 ```markdown
 # Brief Fonctionnel — [Titre de la Feature]
 
-> **Genere par**: Brainstormer
+> **Genere par**: Brainstormer v3.0
+> **Template**: [feature/problem/decision]
 > **EMS Final**: XX/100
 > **Date**: YYYY-MM-DD
 > **Slug**: [feature-slug]
@@ -114,13 +115,39 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 
 ---
 
+## Risques (Pre-mortem)
+
+[Section optionnelle — si pre-mortem effectue]
+
+| Risque | Score | Mitigation |
+|--------|-------|------------|
+| [Risque 1] | 9 | [Action preventive] |
+| [Risque 2] | 6 | [Action preventive] |
+
+---
+
+## EMS Final
+
+Score: XX/100 [emoji]
+
+| Axe | Score |
+|-----|-------|
+| Clarte | XX/100 |
+| Profondeur | XX/100 |
+| Couverture | XX/100 |
+| Decisions | XX/100 |
+| Actionnabilite | XX/100 |
+
+---
+
 ## Metadonnees Brainstormer
 
 | Metrique | Valeur |
 |----------|--------|
 | Iterations | X |
 | EMS Final | XX/100 |
-| Frameworks utilises | [MoSCoW, ...] |
+| Template | [feature/problem/decision] |
+| Frameworks utilises | [MoSCoW, Pre-mortem, ...] |
 | Duree exploration | ~Xmin |
 
 ---

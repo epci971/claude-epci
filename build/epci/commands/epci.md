@@ -3,7 +3,7 @@ description: >-
   Complete EPCI workflow in 3 phases for STANDARD and LARGE features.
   Phase 1: Analysis and planning. Phase 2: TDD implementation.
   Phase 3: Finalization and documentation. Includes breakpoints between phases.
-argument-hint: "[--large] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--uc] [--dry-run] [--continue]"
+argument-hint: "[--large] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--sequential] [--parallel] [--uc] [--no-hooks] [--continue]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
@@ -22,7 +22,7 @@ Generates a Feature Document as traceability thread.
 |----------|-------------|
 | `--large` | Alias for `--think-hard --wave` (backward compatible) |
 | `--continue` | Continue from last phase (resume after interruption) |
-| `--dry-run` | Simulate workflow without making changes |
+| `--no-hooks` | Disable all hook execution |
 
 ### Thinking Flags
 
@@ -37,7 +37,6 @@ Generates a Feature Document as traceability thread.
 | Flag | Effect | Auto-Trigger |
 |------|--------|--------------|
 | `--safe` | Maximum validations, extra confirmations | Sensitive files |
-| `--fast` | Skip optional validations | Never |
 
 ### Output Flags
 
@@ -50,8 +49,10 @@ Generates a Feature Document as traceability thread.
 
 | Flag | Effect | Auto-Trigger |
 |------|--------|--------------|
-| `--wave` | Enable multi-wave execution | complexity > 0.7 |
+| `--wave` | Enable multi-wave DAG orchestration | complexity > 0.7 |
 | `--wave-strategy` | `progressive` (default) or `systematic` | With --wave |
+| `--sequential` | Force sequential agent execution | Never |
+| `--parallel` | Force all agents in parallel (ignores DAG) | Never |
 
 **Flag Reference:** See `src/settings/flags.md` for complete documentation.
 
@@ -68,11 +69,8 @@ The Feature Document is created by `/epci-brief` at: `docs/features/<feature-slu
 ## §2 — Implementation Plan
 [Generated in Phase 1]
 
-## §3 — Implementation
-[Updated in Phase 2]
-
-## §4 — Finalization
-[Completed in Phase 3]
+## §3 — Implementation & Finalization
+[Updated in Phases 2-3]
 ```
 
 **Prerequisite:** Feature Document with §1 completed must exist before running `/epci`.
@@ -88,29 +86,81 @@ See `hooks/README.md` for configuration and examples.
 
 | Hook Type | Trigger Point | Use Case |
 |-----------|--------------|----------|
+| `pre-brief` | Before /epci-brief exploration | Load external config, validate environment |
+| `post-brief` | After complexity evaluation | Notify feature start, create tickets |
 | `pre-phase-1` | Before Phase 1 starts | Load context, check prerequisites |
-| `post-phase-1` | After plan validation | Notify team, create tickets |
+| `post-phase-1` | After plan validation | Notify team, update tickets |
 | `pre-phase-2` | Before coding starts | Run linters, setup environment |
 | `post-phase-2` | After code review | Additional tests, coverage checks |
-| `pre-phase-3` | Before finalization | Verify all tests pass |
 | `post-phase-3` | After completion | Deploy, notify, collect metrics |
 | `on-breakpoint` | At each breakpoint | Logging, metrics collection |
+| `pre-agent` | Before each agent runs | Custom agent setup, logging |
+| `post-agent` | After each agent completes | Process agent results, notifications |
 
-**Execution:** If hooks are configured in `hooks/active/`, they run automatically.
+> **Note (v3.2):** `pre-phase-3` removed (redundant with `post-phase-2`).
+
+**Execution:** Hooks must be explicitly invoked using the hook runner.
+
+**⚠️ MANDATORY: Always invoke hooks at the designated points using:**
+
+```bash
+python3 src/hooks/runner.py <hook-type> --context '{
+  "phase": "<phase>",
+  "feature_slug": "<slug>",
+  "complexity": "<TINY|SMALL|STANDARD|LARGE>",
+  "files_modified": ["file1.py", "file2.py"],
+  ...
+}'
+```
+
 On error with `fail_on_error: false` (default), workflow continues with warning.
 
 ---
 
-## Pre-Workflow: Load Project Memory
+## Multi-Agent Orchestration (F07)
 
-**Skill**: `project-memory-loader`
+When `--wave` flag is enabled, agents are executed using the DAG-based orchestrator
+for parallel execution of independent agents.
 
-Before starting any phase, load project context from `.project-memory/`. The skill handles:
-- Reading context, conventions, settings, patterns
-- Loading velocity metrics and feature history
-- Applying naming/structure/style conventions to all generated code
+**Orchestration Modes:**
 
-**If `.project-memory/` does not exist:** Continue with defaults. Suggest `/epci-memory init` after completion.
+| Mode | Description | Flag |
+|------|-------------|------|
+| Sequential | One agent at a time | `--sequential` |
+| DAG | Respect dependencies, parallelize when possible | default with `--wave` |
+| Parallel | All agents simultaneously (use with caution) | `--parallel` |
+
+**DAG Structure:**
+```
+@plan-validator
+       │
+       ├──────────────┬──────────────┐
+       ▼              ▼              ▼
+@code-reviewer  @security-auditor  @qa-reviewer
+       │              │              │
+       └──────────────┼──────────────┘
+                      ▼
+               @doc-generator
+```
+
+**Performance:** Parallel execution of independent agents (code-reviewer, security-auditor,
+qa-reviewer) reduces validation time by 30-50% for LARGE features.
+
+**Configuration:** Default DAG is defined in `config/dag-default.yaml`. Project-specific
+overrides can be placed in `.project-memory/orchestration.yaml`.
+
+---
+
+## Pre-Workflow: Memory Context
+
+**Memory is loaded once by `/epci-brief`** and passed via Feature Document §1 (Memory Summary section).
+
+**Reading memory context:**
+1. Check Feature Document §1 for "Memory Summary" section
+2. If present: Use conventions, patterns, and velocity from §1
+3. If absent (direct /epci call): Fall back to loading `.project-memory/` directly
+
+**Fallback behavior:** If `/epci` is called without prior `/epci-brief`, the `project-memory` skill will load context. This is not recommended — always start with `/epci-brief`.
 
 ---
 
@@ -123,14 +173,14 @@ Before starting any phase, load project context from `.project-memory/`. The ski
 | Element | Value |
 |---------|-------|
 | **Thinking** | Based on flags: `think` (default), `think hard` (--think-hard), `ultrathink` (--ultrathink) |
-| **Skills** | project-memory-loader, epci-core, architecture-patterns, flags-system, [stack] |
+| **Skills** | project-memory, epci-core, architecture-patterns, flags-system, [stack] |
 | **Subagents** | @plan-validator |
 
 **Flag effects on Phase 1:**
 - `--think-hard` or `--large`: Use `think hard` mode
 - `--ultrathink`: Use `ultrathink` mode (extended analysis)
 - `--safe`: Additional validation checks in plan
-- `--dry-run`: Show what would be planned without writing
+- `--no-hooks`: Skip pre-phase-1 and post-phase-1 hooks
 
 **Note**: @Plan is no longer invoked — exploration has been done by `/epci-brief`.
 
@@ -186,7 +236,10 @@ Before starting any phase, load project context from `.project-memory/`. The ski
 - **@plan-validator**: APPROVED
 ```
 
-**🪝 Execute `post-phase-1` hooks** (if configured)
+**🪝 Execute `post-phase-1` hooks:**
+```bash
+python3 src/hooks/runner.py post-phase-1 --context '{"phase": "phase-1", "feature_slug": "<slug>", "complexity": "<complexity>"}'
+```
 
 ### ⏸️ BREAKPOINT (MANDATORY — WAIT FOR USER)
 
@@ -259,9 +312,8 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 **Flag effects on Phase 2:**
 - `--safe`: All conditional subagents become mandatory
-- `--fast`: Skip optional reviews (only @code-reviewer)
 - `--uc`: Compressed output in progress reports
-- `--dry-run`: Show what would be implemented without writing
+- `--no-hooks`: Skip pre-phase-2 and post-phase-2 hooks
 
 ### Conditional Subagents
 
@@ -314,12 +366,14 @@ After code review, the `proactive-suggestions` skill generates suggestions:
 
 User feedback is recorded for learning (F08) to improve future suggestions.
 
-### Output §3 (USE EDIT TOOL — MANDATORY)
+### Output §3 Part 1 (USE EDIT TOOL — MANDATORY)
 
-**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §3 content.
+**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §3 implementation content.
+
+> **Note (v3.2):** §3 now contains both Implementation and Finalization. Phase 2 writes the implementation part, Phase 3 appends the finalization part.
 
 ```markdown
-## §3 — Implementation
+## §3 — Implementation & Finalization
 
 ### Progress
 - [x] Task 1 — Create entity Y
@@ -343,7 +397,10 @@ OK (47 tests, 156 assertions)
 | #3 | +1 file | Helper extraction |
 ```
 
-**🪝 Execute `post-phase-2` hooks** (if configured)
+**🪝 Execute `post-phase-2` hooks:**
+```bash
+python3 src/hooks/runner.py post-phase-2 --context '{"phase": "phase-2", "feature_slug": "<slug>", "files_modified": [...], "test_results": {...}}'
+```
 
 ### ⏸️ BREAKPOINT (MANDATORY — WAIT FOR USER)
 
@@ -416,8 +473,6 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 
 ### Process
 
-**🪝 Execute `pre-phase-3` hooks** (if configured)
-
 1. **Structured commit**
    ```
    feat(scope): short description
@@ -444,14 +499,14 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
    - Update velocity metrics
    - Record any corrections for pattern detection
 
-### Output §4 (USE EDIT TOOL — MANDATORY)
+### Output §3 Part 2 (USE EDIT TOOL — MANDATORY)
 
-**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §4 content.
+**⚠️ MANDATORY:** Use the **Edit tool** to **append** finalization content to §3.
+
+> **Note (v3.2):** Append this content after the Reviews/Deviations section in §3.
 
 ```markdown
-## §4 — Finalization
-
-### Commit
+### Commit Message (Prepared)
 ```
 feat(user): add email validation
 
@@ -474,7 +529,113 @@ Refs: docs/features/user-email-validation.md
 - Docs: ✅ Up to date
 ```
 
-**🪝 Execute `post-phase-3` hooks** (if configured)
+**🪝 Execute `pre-commit` hooks** (if configured)
+
+```bash
+python3 src/hooks/runner.py pre-commit --context '{
+  "phase": "phase-3",
+  "feature_slug": "<slug>",
+  "complexity": "<complexity>",
+  "files_modified": [...],
+  "commit_message": "<prepared message>",
+  "pending_commit": true
+}'
+```
+
+### ⏸️ BREAKPOINT PRE-COMMIT (MANDATORY — WAIT FOR USER)
+
+**⚠️ MANDATORY:** Display this breakpoint and WAIT for user choice before proceeding.
+
+**🪝 Execute `on-breakpoint` hooks** (if configured)
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ⏸️  BREAKPOINT PHASE 3 — Validation Commit                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ 📝 MESSAGE DE COMMIT PRÉPARÉ                                        │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ {COMMIT_TYPE}({SCOPE}): {DESCRIPTION}                           │ │
+│ │                                                                 │ │
+│ │ - {DETAIL_1}                                                    │ │
+│ │ - {DETAIL_2}                                                    │ │
+│ │                                                                 │ │
+│ │ Refs: docs/features/{SLUG}.md                                   │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ 📋 RÉSUMÉ                                                           │
+│ ├── Fichiers modifiés: {FILE_COUNT}                                │
+│ ├── Documentation: {DOC_STATUS}                                    │
+│ └── PR prête: {PR_STATUS}                                          │
+│                                                                     │
+│ 🔗 Feature Document: docs/features/{slug}.md                       │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Options:                                                            │
+│   • Tapez "Commiter" → Exécuter git commit + continuer             │
+│   • Tapez "Finaliser" → Terminer sans commit                       │
+│   • Tapez "Modifier" → Éditer le message de commit                 │
+│   • Tapez "Annuler" → Retourner au breakpoint Phase 2              │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Awaiting user choice:**
+
+#### If user chose "Commiter"
+
+1. Execute git commit:
+   ```bash
+   git add <files>
+   git commit -m "<prepared message>"
+   ```
+
+2. **🪝 Execute `post-commit` hooks** (if configured):
+   ```bash
+   python3 src/hooks/runner.py post-commit --context '{
+     "phase": "phase-3",
+     "feature_slug": "<slug>",
+     "commit_hash": "<hash>",
+     "branch": "<branch>",
+     "files_committed": [...]
+   }'
+   ```
+
+3. Update §4 with commit hash
+
+#### If user chose "Finaliser"
+
+1. Skip git commit
+2. Update §4 with: `Commit: Pending (manual commit requested)`
+3. Continue to completion
+
+#### If user chose "Modifier"
+
+1. Ask user for new commit message
+2. Update prepared message
+3. Return to breakpoint display
+
+#### If user chose "Annuler"
+
+1. Return to Phase 2 breakpoint
+2. Allow user to make corrections
+
+**🪝 Execute `post-phase-3` hooks** (always, for cleanup and metrics)
+
+```bash
+python3 src/hooks/runner.py post-phase-3 --context '{
+  "phase": "phase-3",
+  "feature_slug": "<slug>",
+  "complexity": "<complexity>",
+  "files_modified": [...],
+  "estimated_time": "<estimated>",
+  "actual_time": "<actual>",
+  "commit_hash": "<hash or null>",
+  "commit_status": "<committed|pending|cancelled>",
+  "test_results": {"status": "passed", "count": <n>}
+}'
+```
+
+**Important:** This hook updates `.project-memory/` with feature history and velocity metrics.
 
 ### ✅ COMPLETION
 
@@ -485,9 +646,10 @@ Refs: docs/features/user-email-validation.md
 Feature Document finalized: docs/features/<slug>.md
 - Phase 1: Plan validated
 - Phase 2: Code implemented and reviewed
-- Phase 3: Commit and documentation
+- Phase 3: Documentation and commit validation
 
-**Next step:** Create PR or merge
+Commit status: {COMMITTED | PENDING}
+**Next step:** {Create PR | Manual commit then PR}
 ---
 ```
 
@@ -516,9 +678,8 @@ This expands to `--think-hard --wave --safe`.
 
 | Combination | Result |
 |-------------|--------|
-| `--safe` + `--fast` | **Error** (incompatible) |
 | `--think` + `--think-hard` | `--think-hard` wins |
 | `--uc` + `--verbose` | Explicit wins |
 | `--large` + `--ultrathink` | `--ultrathink` wins |
 | `--wave` + `--safe` | Both active |
-| `--dry-run` + any | Both active |
+| `--no-hooks` + any | Both active |

@@ -1,4 +1,4 @@
-# EPCI Plugin v3.8
+# EPCI Plugin v3.9.5
 
 > **E**xplore → **P**lan → **C**ode → **I**nspect
 
@@ -389,8 +389,7 @@ Skills fondamentaux chargés selon le contexte du workflow.
 | `git-workflow` | Conventional Commits, branching | Phase 3 |
 | `breakpoint-metrics` | Scoring complexité, estimation temps | Breakpoints enrichis |
 | `flags-system` | Flags universels, auto-activation | Toutes commandes |
-| `project-memory` | Contexte mémoire projet | `/epci-memory`, workflows |
-| `project-memory-loader` | Chargement et initialisation mémoire | Démarrage workflows |
+| `project-memory` | Contexte et chargement mémoire projet | `/epci-memory`, workflows |
 | `learning-optimizer` | Optimisation apprentissage | `/epci-learn` |
 | `proactive-suggestions` | Suggestions proactives IA | Phase 2, breakpoints |
 | `clarification-intelligente` | Clarification intelligente | `/epci-brief` |
@@ -568,7 +567,7 @@ Les flags universels contrôlent le comportement des workflows EPCI.
 |-----------|-------|-------------|
 | **Thinking** | `--think`, `--think-hard`, `--ultrathink` | Profondeur d'analyse |
 | **Compression** | `--uc`, `--verbose` | Gestion des tokens |
-| **Workflow** | `--safe`, `--fast`, `--dry-run` | Contrôle exécution |
+| **Workflow** | `--safe`, `--no-hooks` | Contrôle exécution |
 | **Wave** | `--wave`, `--wave-strategy` | Orchestration multi-vagues |
 | **Legacy** | `--large`, `--continue` | Rétrocompatibilité |
 
@@ -587,8 +586,7 @@ Les flags peuvent être activés automatiquement selon le contexte :
 ### Précédence
 
 1. Flags explicites > Auto-activation
-2. `--safe` > `--fast` (safety first)
-3. `--ultrathink` > `--think-hard` > `--think`
+2. `--ultrathink` > `--think-hard` > `--think`
 
 ---
 
@@ -629,7 +627,6 @@ src/
 │   │   ├── breakpoint-metrics/
 │   │   ├── flags-system/
 │   │   ├── project-memory/
-│   │   ├── project-memory-loader/
 │   │   ├── learning-optimizer/
 │   │   ├── proactive-suggestions/
 │   │   └── clarification-intelligente/
@@ -766,7 +763,6 @@ Le skill `skills-creator` guide la création en 6 phases :
 - `@decompose-validator` — Validation des décompositions
 
 **Nouveaux skills core :**
-- `project-memory-loader` — Chargement mémoire au démarrage
 - `learning-optimizer` — Optimisation apprentissage
 - `proactive-suggestions` — Suggestions proactives IA
 - `clarification-intelligente` — Clarification intelligente

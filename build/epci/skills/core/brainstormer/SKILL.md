@@ -1,45 +1,85 @@
 ---
 name: brainstormer
 description: >-
-  Feature discovery et brainstorming guide pour EPCI. Workflow 3 phases
-  (Init, Iterate, Finish) avec scoring EMS et frameworks d'analyse.
+  Feature discovery et brainstorming guide pour EPCI v3.0. Workflow avec
+  personas adaptatifs (Architecte, Sparring, Pragmatique), phases Divergent/
+  Convergent, scoring EMS v2 et frameworks d'analyse incluant pre-mortem.
   Use when: /brainstorm invoked, feature discovery needed.
   Not for: implementation tasks, code generation, simple questions.
 allowed-tools: [Read, Write, Glob, Grep]
 ---
 
-# Brainstormer
+# Brainstormer v3.0
 
 ## Overview
 
 Skill de brainstorming specialise pour la decouverte de features.
 Transforme des idees vagues en briefs fonctionnels complets via
-un processus iteratif guide.
+un processus iteratif guide avec personas adaptatifs.
 
 **Reference Documents:**
-- [EMS System](references/ems-system.md) — Scoring et progression
-- [Frameworks](references/frameworks.md) — Outils d'analyse
+- [Personas](references/personas.md) — 3 modes de facilitation
+- [EMS System](references/ems-system.md) — Scoring v2 avec ancres objectives
+- [Frameworks](references/frameworks.md) — Outils d'analyse (+ pre-mortem)
 - [Brief Format](references/brief-format.md) — Template de sortie
+
+## Personas
+
+3 modes de facilitation avec bascule automatique.
+
+| Persona | Icone | Role |
+|---------|-------|------|
+| **Architecte** | 📐 | Structure, frameworks, synthese (DEFAUT) |
+| **Sparring** | 🥊 | Challenge, stress-test |
+| **Pragmatique** | 🛠️ | Action, deblocage |
+
+**Signalement** : En debut de message quand le mode change.
+```
+📐 [Structure] Organisons ce qu'on a explore...
+🥊 [Challenge] Attends — qu'est-ce qui te fait dire ca ?
+🛠️ [Action] Assez analyse. Quelle est la decision ?
+```
+
+→ Voir [personas.md](references/personas.md) pour les regles de bascule
+
+## Phases
+
+| Phase | Icone | Focus |
+|-------|-------|-------|
+| **Divergent** | 🔀 | Generer, explorer, quantite |
+| **Convergent** | 🎯 | Evaluer, decider, qualite |
+
+**Transition auto** : Couverture >= 60% ET iter >= 3 → suggerer Convergent
 
 ## Workflow 3 Phases
 
 ### Phase 1 — Initialisation
 
-**Objectif**: Etablir le contexte et commencer l'exploration.
+**Objectif**: Etablir le contexte, definir la phase et le persona.
 
 **Actions:**
-1. Charger le contexte projet via `project-memory-loader`
-2. Invoquer `@Explore` pour analyser le codebase :
-   - Structure du projet
-   - Stack technique (detection automatique)
-   - Patterns architecturaux
-   - Fichiers potentiellement impactes
+1. Charger le contexte projet via `project-memory`
+2. Invoquer `@Explore` pour analyser le codebase
 3. Reformuler le besoin utilisateur
-4. Identifier les premieres ambiguites
+4. Detecter template (feature/problem/decision)
 5. Generer 3-5 questions de cadrage
 6. Initialiser EMS a ~20-25/100
+7. Definir phase → 🔀 Divergent
+8. Definir persona → 📐 Architecte
+9. Generer HMW (si pas --no-hmw)
 
-**Output**: Premier breakpoint avec questions de cadrage.
+**HMW (How Might We)** — Apres validation brief :
+```
+💡 Questions "How Might We"
+
+1. HMW [simplifier] [processus] sans [compromis] ?
+2. HMW garantir [qualite] meme si [contrainte] ?
+3. HMW permettre [fonctionnalite] dans [contexte difficile] ?
+
+→ Laquelle on explore en premier ?
+```
+
+**Output**: Premier breakpoint avec phase, persona et questions.
 
 ### Phase 2 — Iterations
 
@@ -57,9 +97,16 @@ un processus iteratif guide.
 | Commande | Comportement |
 |----------|--------------|
 | `continue` | Integrer reponses, nouvelles questions |
-| `dive [topic]` | Focus profond sur un aspect, questions ciblees |
-| `pivot` | Reorienter l'exploration, reset partiel EMS |
-| `status` | Afficher EMS detaille (5 axes avec radar) |
+| `dive [topic]` | Focus profond sur un aspect |
+| `pivot` | Reorienter l'exploration |
+| `status` | Afficher EMS detaille (5 axes) |
+| `modes` | Afficher/changer persona |
+| `mode [nom]` | Forcer un persona |
+| `premortem` | Lancer exercice pre-mortem |
+| `diverge` | Forcer phase Divergent |
+| `converge` | Forcer phase Convergent |
+| `scoring` | Evaluer les idees |
+| `framework [x]` | Appliquer un framework |
 | `finish` | Passer en Phase 3 |
 
 **Criteres de suggestion `finish`:**
@@ -84,17 +131,17 @@ Optimise pour CLI (evite le scroll) :
 
 ```
 -------------------------------------------------------
-Iteration X | EMS: XX/100 (+Y) [progress] [emoji]
+🔀 DIVERGENT | 📐 Architecte | Iter X | EMS: XX/100 (+Y) [emoji]
 -------------------------------------------------------
-Done: [liste courte des elements valides]
-Open: [liste courte des points a clarifier]
+Done: [elements valides]
+Open: [points a clarifier]
 
 Questions:
-1. [Question concise]
-2. [Question concise]
-3. [Question concise]
+1. [Question] → Suggestion: [si applicable]
+2. [Question]
+3. [Question]
 
--> continue | dive [topic] | pivot | status | finish
+-> continue | dive [topic] | premortem | modes | finish
 -------------------------------------------------------
 ```
 
@@ -118,6 +165,7 @@ Appliquer automatiquement selon le contexte :
 | "Pourquoi" repete | 5 Whys | Creuser la cause racine |
 | Plusieurs options | SWOT | Analyser forces/faiblesses |
 | Criteres multiples | Scoring | Matrice de decision |
+| Risques, projet important | Pre-mortem | Anticiper les echecs |
 
 ## Gestion du Contexte Codebase
 
@@ -134,14 +182,14 @@ L'analyse `@Explore` initiale fournit :
 
 ## Detection de Biais
 
-Surveiller et alerter si detecte :
+Surveiller et alerter si detecte (max 1 alerte par type par session) :
 
 | Biais | Signal | Action |
 |-------|--------|--------|
-| Confirmation | Ignore les alternatives | Proposer des contre-exemples |
-| Ancrage | Fixe sur premiere idee | Suggerer un pivot |
-| Scope Creep | Expansion continue | Rappeler le focus initial |
-| Complexite | Sur-ingenierie | Suggerer MVP |
+| Over-engineering | "Ajoutons X au cas ou" | Suggerer MVP |
+| Scope creep | Expansion continue | Rappeler le focus initial |
+| Sunk cost | "On a deja fait X" | Challenger l'attachment |
+| Bikeshedding | Focus sur details triviaux | Recentrer sur le critique |
 
 ## Reponses Utilisateur
 

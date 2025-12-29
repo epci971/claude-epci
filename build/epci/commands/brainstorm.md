@@ -1,19 +1,19 @@
 ---
 description: >-
-  Brainstorming guide pour decouvrir et specifier une feature.
-  Explore le codebase, pose des questions iteratives, genere un brief EPCI-ready.
+  Brainstorming guide v3 pour decouvrir et specifier une feature.
+  Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
   Use when: idee vague a transformer en specs, besoin de clarifier une feature.
-argument-hint: [description de la feature souhaitee]
+argument-hint: [description] [--template feature|problem|decision] [--quick] [--no-hmw]
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task]
 ---
 
-# /brainstorm — Feature Discovery
+# /brainstorm — Feature Discovery v3.0
 
 ## Overview
 
 Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
-Utilise l'analyse du codebase et des questions iteratives pour construire
-des specifications exhaustives.
+Utilise l'analyse du codebase, des personas adaptatifs et des questions
+iteratives pour construire des specifications exhaustives.
 
 ## Usage
 
@@ -34,32 +34,42 @@ des specifications exhaustives.
 | Element | Valeur |
 |---------|--------|
 | **Thinking** | `think hard` (adaptatif selon complexite) |
-| **Skills** | `brainstormer`, `project-memory-loader`, `architecture-patterns` |
+| **Skills** | `brainstormer`, `project-memory`, `architecture-patterns` |
 | **Subagents** | `@Explore` (analyse codebase) |
+| **Personas** | 📐 Architecte (defaut), 🥊 Sparring, 🛠️ Pragmatique |
+| **Phases** | 🔀 Divergent → 🎯 Convergent |
 
 ## Process
 
 ### Phase 1 — Initialisation
 
 1. **Charger le contexte projet**
-   - Skill: `project-memory-loader`
+   - Skill: `project-memory`
    - Si `.project-memory/` existe → charger
    - Sinon → continuer sans contexte
 
 2. **Analyser le codebase**
    - Invoquer `@Explore` avec Task tool
    - Scan complet : structure, stack, patterns, fichiers pertinents
-   - Stocker les resultats pour le questionnement
 
 3. **Reformuler le besoin**
    - Paraphraser la demande utilisateur
-   - Identifier les ambiguites initiales
+   - Detecter template (feature/problem/decision)
 
-4. **Questions de cadrage** (3-5 max)
+4. **Initialiser session**
+   - Phase → 🔀 Divergent
+   - Persona → 📐 Architecte
+   - EMS → ~25/100
+
+5. **Generer HMW** (si pas `--no-hmw`)
+   - 3 questions "How Might We" orientees dev
+   - Permettent de cadrer l'exploration
+
+6. **Questions de cadrage** (3-5 max)
    - Basees sur l'analyse codebase
    - Suggestions incluses quand pertinent
 
-5. **Afficher breakpoint compact**
+7. **Afficher breakpoint compact**
 
 ### Phase 2 — Iterations
 
@@ -79,6 +89,13 @@ Boucle jusqu'a `finish` :
 | `dive [topic]` | Approfondir un aspect specifique |
 | `pivot` | Reorienter si le vrai besoin emerge |
 | `status` | Afficher EMS detaille (5 axes) |
+| `modes` | Afficher/changer persona |
+| `mode [nom]` | Forcer un persona (architecte/sparring/pragmatique) |
+| `premortem` | Lancer exercice d'anticipation des risques |
+| `diverge` | Forcer phase Divergent |
+| `converge` | Forcer phase Convergent |
+| `scoring` | Evaluer et prioriser les idees |
+| `framework [x]` | Appliquer un framework (moscow/5whys/swot) |
 | `finish` | Generer brief + journal |
 
 ### Phase 3 — Generation
@@ -102,19 +119,27 @@ Boucle jusqu'a `finish` :
 
 ```
 -------------------------------------------------------
-Iteration X | EMS: XX/100 (+Y) [progress bar] [emoji]
+🔀 DIVERGENT | 📐 Architecte | Iter X | EMS: XX/100 (+Y) [emoji]
 -------------------------------------------------------
 Done: [elements valides]
 Open: [elements a clarifier]
 
 Questions:
-1. [Question 1] -> Suggestion: [si applicable]
-2. [Question 2]
-3. [Question 3]
+1. [Question] → Suggestion: [si applicable]
+2. [Question]
+3. [Question]
 
--> continue | dive [topic] | pivot | status | finish
+-> continue | dive [topic] | premortem | modes | finish
 -------------------------------------------------------
 ```
+
+## Flags
+
+| Flag | Effet |
+|------|-------|
+| `--template [name]` | Forcer template (feature/problem/decision) |
+| `--no-hmw` | Desactiver generation des questions HMW |
+| `--quick` | Mode rapide (3 iter max, EMS simplifie) |
 
 ## Output
 
@@ -133,6 +158,6 @@ Le brief genere peut etre utilise :
 ## Skills Charges
 
 - `brainstormer` — Logique metier principale
-- `project-memory-loader` — Contexte projet
+- `project-memory` — Contexte projet
 - `architecture-patterns` — Suggestions architecture
 - `clarification-intelligente` — Systeme de questions

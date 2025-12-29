@@ -16,7 +16,9 @@ Hook Types:
     - pre-phase-1, post-phase-1
     - pre-phase-2, post-phase-2
     - pre-phase-3, post-phase-3
+    - pre-commit, post-commit (commit validation workflow)
     - on-breakpoint
+    - pre-agent, post-agent (F07: Multi-Agent Orchestration)
 """
 
 import sys
@@ -73,6 +75,11 @@ class HookContext:
     project_memory: Dict[str, Any] = field(default_factory=dict)  # context, conventions
     detected_stack: str = ""  # php-symfony, javascript-react, etc.
     detected_conventions: Dict[str, Any] = field(default_factory=dict)  # naming, structure
+    # F07: Multi-Agent Orchestration support
+    agent_name: str = ""  # Name of agent being executed (for pre-agent/post-agent)
+    agent_config: Dict[str, Any] = field(default_factory=dict)  # Agent configuration
+    agent_status: str = ""  # Agent execution status (for post-agent)
+    agent_result: Dict[str, Any] = field(default_factory=dict)  # Agent result (for post-agent)
     extra: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict:
@@ -91,6 +98,11 @@ class HookContext:
             'project_memory': self.project_memory,
             'detected_stack': self.detected_stack,
             'detected_conventions': self.detected_conventions,
+            # F07: Agent orchestration fields
+            'agent_name': self.agent_name,
+            'agent_config': self.agent_config,
+            'agent_status': self.agent_status,
+            'agent_result': self.agent_result,
             **self.extra
         }
 
@@ -128,11 +140,21 @@ class HookResult:
 # =============================================================================
 
 VALID_HOOK_TYPES = [
+    # Brief phase hooks (v3.2+)
+    'pre-brief', 'post-brief',
+    # Planning and implementation phase hooks
     'pre-phase-1', 'post-phase-1',
     'pre-phase-2', 'post-phase-2',
-    'pre-phase-3', 'post-phase-3',
-    'on-breakpoint'
+    'post-phase-3',  # pre-phase-3 removed in v3.2 (redundant with post-phase-2)
+    # Commit validation hooks (pre-commit breakpoint feature)
+    'pre-commit', 'post-commit',
+    'on-breakpoint',
+    # F07: Multi-Agent Orchestration hooks
+    'pre-agent', 'post-agent',
 ]
+
+# Deprecated hook types (v3.2) - will show warning but still execute
+DEPRECATED_HOOK_TYPES = ['pre-phase-3']
 
 SUPPORTED_EXTENSIONS = ['.py', '.sh', '.js']
 
@@ -430,7 +452,26 @@ def run_hooks(
     Returns:
         List of HookResult objects
     """
-    if hook_type not in VALID_HOOK_TYPES:
+    context_dict = context_dict or {}
+
+    # Check for --no-hooks flag (v3.2+)
+    active_flags = context_dict.get('active_flags', [])
+    if '--no-hooks' in active_flags:
+        print("⏭️  Hooks disabled by --no-hooks flag")
+        return [HookResult(
+            hook_name='runner',
+            hook_path='',
+            status='skipped',
+            message='Hooks disabled by --no-hooks flag'
+        )]
+
+    # Check for deprecated hook types (v3.2)
+    if hook_type in DEPRECATED_HOOK_TYPES:
+        print(f"⚠️  WARNING: Hook type '{hook_type}' is deprecated in v3.2.")
+        print(f"   Use 'post-phase-2' instead of 'pre-phase-3'.")
+        print(f"   This hook will still execute but may be removed in future versions.")
+        # Allow deprecated hooks to run for backward compatibility
+    elif hook_type not in VALID_HOOK_TYPES:
         return [HookResult(
             hook_name='runner',
             hook_path='',
@@ -455,7 +496,6 @@ def run_hooks(
         return []  # No hooks found is not an error
 
     # Build context
-    context_dict = context_dict or {}
     # Get project_root from context or detect from git/cwd
     project_root = context_dict.get('project_root', '')
     if not project_root:

@@ -1,6 +1,6 @@
 # EPCI Hooks System
 
-> **Version**: 1.1.0 (EPCI v3.7)
+> **Version**: 1.2.0 (EPCI v3.9.5)
 > **Date**: 2025-12-18
 
 ## Overview
@@ -40,13 +40,18 @@ Hooks in `active/` are executed automatically at their respective trigger points
 
 | Hook Type | Trigger Point | Use Case |
 |-----------|--------------|----------|
+| `pre-brief` | Before /epci-brief exploration | Load external config, validate environment |
+| `post-brief` | After complexity evaluation | Notify feature start, create tickets |
 | `pre-phase-1` | Before Phase 1 starts | Load context, check prerequisites |
-| `post-phase-1` | After plan validation | Notify team, create tickets |
+| `post-phase-1` | After plan validation | Notify team, update tickets |
 | `pre-phase-2` | Before coding starts | Run linters, setup environment |
 | `post-phase-2` | After code review | Additional tests, coverage checks |
-| `pre-phase-3` | Before finalization | Verify all tests pass |
-| `post-phase-3` | After completion | Deploy, notify, collect metrics |
+| `pre-commit` | Before commit decision | Final checks, memory update, validation |
+| `post-commit` | After git commit | Notifications, CI trigger, webhooks |
+| `post-phase-3` | After Phase 3 complete | Cleanup, final metrics |
 | `on-breakpoint` | At each breakpoint | Logging, metrics collection |
+
+> **Note (v3.2):** `pre-phase-3` was removed as redundant with `post-phase-2`. Use `post-phase-2` for pre-finalization checks.
 
 ---
 
@@ -197,6 +202,37 @@ process.stdin.on('end', () => {
 }
 ```
 
+### Pre-Commit Context Example
+
+```json
+{
+  "phase": "phase-3",
+  "hook_type": "pre-commit",
+  "feature_slug": "user-authentication",
+  "files_modified": ["src/auth.py", "tests/test_auth.py"],
+  "commit_message": "feat(auth): add user authentication\n\n- Add login endpoint\n- Add JWT validation",
+  "pending_commit": true,
+  "complexity": "STANDARD",
+  "project_root": "/path/to/project",
+  "timestamp": "2025-12-18T10:30:00Z"
+}
+```
+
+### Post-Commit Context Example
+
+```json
+{
+  "phase": "phase-3",
+  "hook_type": "post-commit",
+  "feature_slug": "user-authentication",
+  "commit_hash": "a1b2c3d",
+  "branch": "feature/user-authentication",
+  "files_committed": ["src/auth.py", "tests/test_auth.py"],
+  "project_root": "/path/to/project",
+  "timestamp": "2025-12-18T10:35:00Z"
+}
+```
+
 ### Post-Phase-3 Context Example
 
 ```json
@@ -212,6 +248,8 @@ process.stdin.on('end', () => {
   "complexity_score": 0.6,
   "estimated_time": "2h",
   "actual_time": "2h 30m",
+  "commit_hash": "a1b2c3d",
+  "commit_status": "committed",
   "agents_used": ["code-reviewer", "security-auditor"],
   "feature_document": "docs/features/user-authentication.md",
   "project_root": "/path/to/project",
@@ -359,7 +397,9 @@ cat epci-breakpoints.log  # If using on-breakpoint-log example
 |---------|------|---------|-------------|
 | `pre-phase-2-lint.sh` | pre-phase-2 | Run linters (npm/composer/flake8) | Yes |
 | `post-phase-2-suggestions.py` | post-phase-2 | Generate proactive suggestions | Yes |
-| `post-phase-3-memory-update.py` | post-phase-3 | Save feature to Project Memory | Yes |
+| `pre-commit-memory.py` | pre-commit | Save feature to Project Memory (before commit) | Yes |
+| `post-commit-notify.py` | post-commit | Send notifications after commit | No* |
+| `post-phase-3-memory-update.py` | post-phase-3 | Legacy: Save feature to Project Memory | No |
 | `post-phase-3-notify.py` | post-phase-3 | Send Slack/Discord notifications | No* |
 | `on-breakpoint-memory-context.py` | on-breakpoint | Load memory context for breakpoint | Yes |
 | `on-breakpoint-log.sh` | on-breakpoint | Log breakpoint events to file | No |
