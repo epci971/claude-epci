@@ -1,0 +1,110 @@
+# EPCI Wave Orchestration Default Configuration
+#
+# Defines the default wave structure for LARGE feature execution.
+# Waves are executed sequentially, with optional breakpoints between them.
+#
+# Wave Structure:
+#   Wave 1: Foundations  - Data structures, base classes, config
+#   Wave 2: Core Logic   - Main implementation, services, handlers
+#   Wave 3: Integration  - Controllers, APIs, external integrations
+#   Wave 4: Finalization - Tests, documentation, cleanup
+#
+# Version: 1.0.0 (EPCI v4.0 - F11)
+
+wave_orchestration:
+  # Default strategy: progressive | systematic
+  default_strategy: "progressive"
+
+  # Global wave timeout in seconds (max 1800 = 30 min)
+  timeout_global: 1200
+
+  # Per-wave timeout in seconds
+  timeout_per_wave: 300
+
+  # Enable breakpoints between waves (requires --safe flag)
+  breakpoints_enabled: true
+
+  # Wave definitions
+  waves:
+    foundations:
+      name: "Foundations"
+      order: 1
+      description: "Data structures, entities, base classes, configuration"
+      task_patterns:
+        - "entity"
+        - "repository"
+        - "base"
+        - "config"
+        - "model"
+        - "schema"
+        - "interface"
+        - "type"
+        - "enum"
+      timeout: 300
+
+    core:
+      name: "Core Logic"
+      order: 2
+      description: "Main implementation, services, business logic"
+      task_patterns:
+        - "service"
+        - "handler"
+        - "logic"
+        - "processor"
+        - "manager"
+        - "validator"
+        - "factory"
+      timeout: 300
+
+    integration:
+      name: "Integration"
+      order: 3
+      description: "Controllers, APIs, external system integration"
+      task_patterns:
+        - "controller"
+        - "api"
+        - "integration"
+        - "adapter"
+        - "client"
+        - "gateway"
+        - "endpoint"
+      timeout: 300
+
+    finalization:
+      name: "Finalization"
+      order: 4
+      description: "Tests, documentation, migrations, cleanup"
+      task_patterns:
+        - "test"
+        - "doc"
+        - "migration"
+        - "cleanup"
+        - "readme"
+        - "changelog"
+      timeout: 300
+
+  # Strategy-specific settings
+  strategies:
+    progressive:
+      description: "Execute wave by wave with validation between each"
+      validate_between_waves: true
+      allow_early_exit: true
+      context_accumulation: true
+
+    systematic:
+      description: "Analyze all waves first, then execute in batches"
+      analysis_first: true
+      batch_execution: true
+      context_accumulation: true
+
+# Context accumulation settings
+context:
+  # Maximum items to keep in context per category
+  max_files_created: 50
+  max_files_modified: 50
+  max_patterns_used: 20
+  max_issues_tracked: 30
+  max_decisions_recorded: 20
+
+  # Prune strategy when limits exceeded
+  prune_strategy: "oldest_first"
