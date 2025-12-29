@@ -133,9 +133,9 @@ Score = (0.67 × 0.4) + (0.6 × 0.4) + (0.5 × 0.2) = 0.61 → AUTO-ACTIVATE
 
 **Result**: Both backend and security score > 0.6. Display both as suggestions, recommend highest.
 
-## MCP Preferences (F12 Preparation)
+## MCP Integration (F12 Active)
 
-Each persona has preferred MCP servers for enhanced context:
+Each persona automatically activates preferred MCP servers for enhanced context:
 
 | Persona | Primary MCP | Secondary MCP | Auto-Trigger |
 |---------|-------------|---------------|--------------|
@@ -146,7 +146,7 @@ Each persona has preferred MCP servers for enhanced context:
 | qa | Playwright | - | E2E tests |
 | doc | Context7 | - | Doc standards |
 
-**Note**: MCP activation deferred to F12. Structure prepared here.
+**Status**: MCP integration active (F12 implemented). See `src/skills/mcp/SKILL.md` for details.
 
 ### Fallback Behavior
 

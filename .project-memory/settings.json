@@ -30,5 +30,32 @@
     "notion": {
       "sync_features": false
     }
+  },
+  "mcp": {
+    "enabled": true,
+    "default_timeout_seconds": 15,
+    "retry_count": 2,
+    "servers": {
+      "context7": {
+        "enabled": true,
+        "auto_activate": true,
+        "timeout_seconds": 15
+      },
+      "sequential": {
+        "enabled": true,
+        "auto_activate": true,
+        "timeout_seconds": 30
+      },
+      "magic": {
+        "enabled": true,
+        "auto_activate": true,
+        "timeout_seconds": 20
+      },
+      "playwright": {
+        "enabled": true,
+        "auto_activate": true,
+        "timeout_seconds": 20
+      }
+    }
   }
 }

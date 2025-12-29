@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 3.2.0
+> **Version** : 4.0.0
 > **Date** : Décembre 2024
 > **Audience** : Développeurs du plugin EPCI
 
@@ -23,15 +23,16 @@ EPCI (Explore → Plan → Code → Inspect) est un plugin Claude Code qui struc
 
 ### 1.3 Évolution depuis v2.7
 
-| Aspect | v2.7 | v3.0 | v3.2 |
-|--------|------|------|------|
-| Commandes | 12 fichiers | 5 fichiers | 5 fichiers |
-| Point d'entrée | Multiple (micro, soft, 0-briefing...) | Unique (`epci-brief`) | Unique (`epci-brief`) |
-| Subagents custom | 0 | 5 | 5 |
-| Skills | 0 | 19 | 20+ |
-| Personas | Custom | Déprécié | **F09 Auto-activation** |
-| Routing | 5 niveaux (TINY→LARGE + pré-stages) | 3 workflows (quick, full, spike) | 3 workflows + personas |
-| Auto-extension | Non | Component Factory | Component Factory |
+| Aspect | v2.7 | v3.0 | v3.2 | v4.0 |
+|--------|------|------|------|------|
+| Commandes | 12 fichiers | 5 fichiers | 5 fichiers | 5 fichiers |
+| Point d'entrée | Multiple (micro, soft, 0-briefing...) | Unique (`epci-brief`) | Unique (`epci-brief`) | Unique (`epci-brief`) |
+| Subagents custom | 0 | 5 | 5 | 5 |
+| Skills | 0 | 19 | 20+ | 21+ |
+| Personas | Custom | Déprécié | **F09 Auto-activation** | F09 + **F12 MCP** |
+| Routing | 5 niveaux (TINY→LARGE + pré-stages) | 3 workflows (quick, full, spike) | 3 workflows + personas | 3 workflows + MCP |
+| Auto-extension | Non | Component Factory | Component Factory | Component Factory |
+| MCP Integration | Non | Non | Non | **4 serveurs** |
 
 ### 1.4 Nouveautés v3.2 (F09)
 
@@ -41,6 +42,16 @@ EPCI (Explore → Plan → Code → Inspect) est un plugin Claude Code qui struc
 - **6 Personas** : Architect, Frontend, Backend, Security, QA, Doc
 - **Flags `--persona-X`** : Activation manuelle possible
 - **Breakpoint display** : Personas actifs/suggérés dans FLAGS line
+
+### 1.5 Nouveautés v4.0 (F12)
+
+- **MCP Integration** : 4 serveurs Model Context Protocol intégrés
+- **Auto-activation MCP** : Basée sur personas F09 et contexte
+- **4 Serveurs** : Context7 (docs), Sequential (reasoning), Magic (UI), Playwright (E2E)
+- **Matrice Persona × MCP** : Chaque persona active ses MCPs préférés
+- **Flags MCP** : `--c7`, `--seq`, `--magic`, `--play`, `--no-mcp`
+- **Fallbacks gracieux** : Dégradation élégante si MCP indisponible
+- **Configuration projet** : `.project-memory/settings.json` pour paramétrage
 
 ---
 
@@ -79,7 +90,7 @@ tools-claude-code-epci/
 │       ├── breaking-changes.md
 │       └── upgrade-guide.md
 │
-└── src/                         # Implémentation v3.0
+└── src/                         # Implémentation v4.0
     ├── .claude-plugin/
     │   └── plugin.json          # Manifeste plugin
     │
@@ -103,6 +114,22 @@ tools-claude-code-epci/
     │   ├── examples/           # Exemples de hooks
     │   └── active/             # Hooks actifs (symlinks)
     │
+    ├── mcp/                     # MCP Integration (v4.0 - F12)
+    │   ├── __init__.py         # Module exports
+    │   ├── config.py           # MCPServerConfig, MCPContext, MCPStatus
+    │   ├── activation_matrix.py # Persona × MCP mapping
+    │   ├── auto_activation.py  # Auto-activation logic
+    │   ├── registry.py         # MCPRegistry singleton
+    │   ├── fallbacks.py        # Fallback strategies
+    │   └── tests/              # Test suite
+    │       ├── test_auto_activation.py
+    │       └── test_fallbacks.py
+    │
+    ├── orchestration/           # Wave orchestration (v3.2 - F11)
+    │   ├── config.py           # OrchestrationConfig, WaveConfig, MCPConfig
+    │   ├── wave_context.py     # WaveContext with MCP support
+    │   └── ...
+    │
     ├── scripts/                 # Validation
     │   ├── validate_all.py     # Orchestrateur
     │   ├── validate_command.py
@@ -114,7 +141,7 @@ tools-claude-code-epci/
     ├── settings/                # Configuration (v3.1)
     │   └── flags.md            # Documentation flags universels
     │
-    └── skills/                  # 20+ skills
+    └── skills/                  # 21+ skills
         ├── core/               # Skills fondamentaux (6)
         │   ├── architecture-patterns/SKILL.md
         │   ├── code-conventions/SKILL.md
@@ -138,6 +165,14 @@ tools-claude-code-epci/
         │       ├── security.md
         │       ├── qa.md
         │       └── doc.md
+        │
+        ├── mcp/                # MCP Integration (1) — v4.0
+        │   ├── SKILL.md
+        │   └── references/
+        │       ├── context7.md
+        │       ├── sequential.md
+        │       ├── magic.md
+        │       └── playwright.md
         │
         └── factory/            # Component Factory (4)
             ├── commands-creator/
@@ -472,6 +507,67 @@ Step 5: Persona Detection (nouveau en v3.2)
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+### 3.9 MCP Integration (v4.0 — F12)
+
+Le système MCP (Model Context Protocol) enrichit EPCI avec 4 serveurs externes.
+
+#### 4 MCP Servers
+
+| Server | Icon | Function | Auto-Trigger |
+|--------|------|----------|--------------|
+| **Context7** |  | Documentation librairies | imports, persona architect/backend |
+| **Sequential** |  | Raisonnement multi-étapes | `--think-hard`, debugging |
+| **Magic** |  | Génération UI (21st.dev) | persona frontend, fichiers .tsx |
+| **Playwright** |  | Tests E2E, browser | persona qa, fichiers .spec.ts |
+
+#### Matrice Persona × MCP
+
+| Persona | Context7 | Sequential | Magic | Playwright |
+|---------|:--------:|:----------:|:-----:|:----------:|
+| architect | **auto** | **auto** | - | - |
+| frontend | **auto** | - | **auto** | **auto** |
+| backend | **auto** | **auto** | - | - |
+| security | - | **auto** | - | - |
+| qa | - | - | - | **auto** |
+| doc | **auto** | - | - | - |
+
+#### Flags MCP
+
+| Flag | Effet |
+|------|-------|
+| `--c7` | Active Context7 |
+| `--seq` | Active Sequential |
+| `--magic` | Active Magic |
+| `--play` | Active Playwright |
+| `--no-mcp` | Désactive tous les MCPs |
+
+#### Mode Dégradé
+
+Si un MCP est indisponible:
+- **Context7** → Web search fallback
+- **Sequential** → Raisonnement natif Claude
+- **Magic** → Génération basique
+- **Playwright** → Suggestions tests manuels
+
+#### Configuration
+
+```json
+// .project-memory/settings.json
+{
+  "mcp": {
+    "enabled": true,
+    "servers": {
+      "context7": { "enabled": true, "auto_activate": true },
+      "sequential": { "enabled": true, "auto_activate": true },
+      "magic": { "enabled": true, "auto_activate": true },
+      "playwright": { "enabled": true, "auto_activate": true }
+    }
+  }
+}
+```
+
+Voir `src/skills/mcp/SKILL.md` pour la documentation complète.
+
 ---
 
 ## 4. Component Reference
@@ -671,6 +767,18 @@ allowed-tools: [Read, Write, Glob]
 | Skill | Fichier | Description |
 |-------|---------|-------------|
 | personas | `skills/personas/SKILL.md` | 6 workflow personas with auto-activation (v3.2) |
+
+#### MCP Skills (1) — v4.0
+
+| Skill | Fichier | Description |
+|-------|---------|-------------|
+| mcp | `skills/mcp/SKILL.md` | MCP server integration with auto-activation (F12) |
+
+**References:**
+- `references/context7.md` — Library documentation lookup
+- `references/sequential.md` — Multi-step structured reasoning
+- `references/magic.md` — UI component generation
+- `references/playwright.md` — E2E testing automation
 
 #### Stack Skills
 

@@ -383,3 +383,62 @@ def _parse_wave_config(raw_config: Dict[str, Any]) -> WaveConfig:
 def get_default_wave_config() -> WaveConfig:
     """Get the built-in default wave configuration."""
     return _parse_wave_config(DEFAULT_WAVE_CONFIG)
+
+
+# ============================================================================
+# MCP Configuration (F12)
+# ============================================================================
+
+@dataclass
+class MCPConfig:
+    """
+    Configuration for MCP integration in orchestration (F12).
+
+    Integrates with WaveConfig to provide MCP context to agents.
+    """
+    enabled: bool = True
+    default_timeout_seconds: int = 15
+    retry_count: int = 2
+    servers: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+
+    def __post_init__(self):
+        """Initialize with defaults if servers empty."""
+        if not self.servers:
+            self.servers = {
+                "context7": {"enabled": True, "auto_activate": True, "timeout_seconds": 15},
+                "sequential": {"enabled": True, "auto_activate": True, "timeout_seconds": 30},
+                "magic": {"enabled": True, "auto_activate": True, "timeout_seconds": 20},
+                "playwright": {"enabled": True, "auto_activate": True, "timeout_seconds": 20},
+            }
+
+    def is_enabled(self, server_name: str) -> bool:
+        """Check if a specific server is enabled."""
+        if not self.enabled:
+            return False
+        server = self.servers.get(server_name, {})
+        return server.get("enabled", True)
+
+    def get_timeout(self, server_name: str) -> int:
+        """Get timeout for a specific server."""
+        server = self.servers.get(server_name, {})
+        return server.get("timeout_seconds", self.default_timeout_seconds)
+
+
+def load_mcp_config_from_settings(settings: Dict[str, Any]) -> MCPConfig:
+    """
+    Load MCP configuration from settings dictionary.
+
+    Args:
+        settings: Settings dictionary (from .project-memory/settings.json)
+
+    Returns:
+        MCPConfig instance
+    """
+    mcp_settings = settings.get("mcp", {})
+
+    return MCPConfig(
+        enabled=mcp_settings.get("enabled", True),
+        default_timeout_seconds=mcp_settings.get("default_timeout_seconds", 15),
+        retry_count=mcp_settings.get("retry_count", 2),
+        servers=mcp_settings.get("servers", {}),
+    )

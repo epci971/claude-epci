@@ -8,7 +8,10 @@ Each wave inherits and enriches the context from previous waves.
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..mcp.config import MCPContext as MCPContextType
 
 
 class WaveStatus(Enum):
@@ -140,6 +143,10 @@ class WaveContext:
     complexity: str = ""
     started_at: Optional[datetime] = None
 
+    # MCP Context (F12)
+    mcp_context: Optional[Any] = None  # MCPContext from src/mcp/config.py
+    mcp_servers_used: List[str] = field(default_factory=list)
+
     def add_file_created(self, file_path: str) -> None:
         """Add a created file to the context."""
         if file_path not in self.files_created:
@@ -175,6 +182,15 @@ class WaveContext:
         """Store the result from an agent execution."""
         self.agent_results[agent_name] = result
 
+    def set_mcp_context(self, mcp_context: Any) -> None:
+        """Set the MCP context for this wave (F12)."""
+        self.mcp_context = mcp_context
+
+    def record_mcp_usage(self, server_name: str) -> None:
+        """Record that an MCP server was used (F12)."""
+        if server_name not in self.mcp_servers_used:
+            self.mcp_servers_used.append(server_name)
+
     def get_critical_issues(self) -> List[Issue]:
         """Get all critical issues."""
         return [i for i in self.issues_found if i.severity == "critical"]
@@ -202,6 +218,8 @@ class WaveContext:
             feature_slug=self.feature_slug,
             complexity=self.complexity,
             started_at=self.started_at,
+            mcp_context=self.mcp_context,
+            mcp_servers_used=self.mcp_servers_used.copy(),
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -218,6 +236,8 @@ class WaveContext:
             "feature_slug": self.feature_slug,
             "complexity": self.complexity,
             "started_at": self.started_at.isoformat() if self.started_at else None,
+            "mcp_context": self.mcp_context.to_dict() if self.mcp_context and hasattr(self.mcp_context, 'to_dict') else None,
+            "mcp_servers_used": self.mcp_servers_used,
         }
 
     @classmethod
@@ -252,6 +272,7 @@ class WaveContext:
 
     def summary(self) -> str:
         """Generate a human-readable summary of the context."""
+        mcp_info = f"  MCP servers used: {', '.join(self.mcp_servers_used) if self.mcp_servers_used else 'none'}\n" if self.mcp_servers_used else ""
         return (
             f"Wave {self.wave_number} Context:\n"
             f"  Files created: {len(self.files_created)}\n"
@@ -259,5 +280,6 @@ class WaveContext:
             f"  Patterns used: {len(self.patterns_used)}\n"
             f"  Tests: {len(self.tests_status)} ({sum(1 for s in self.tests_status.values() if s == 'passed')} passed)\n"
             f"  Issues: {len(self.issues_found)} ({len(self.get_critical_issues())} critical)\n"
-            f"  Decisions: {len(self.decisions_made)}"
-        )
+            f"  Decisions: {len(self.decisions_made)}\n"
+            f"{mcp_info}"
+        ).rstrip()

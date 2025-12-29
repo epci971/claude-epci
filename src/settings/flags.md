@@ -256,6 +256,61 @@ Legend:
 
 ---
 
+## MCP Flags (F12)
+
+Control Model Context Protocol server activation.
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--c7` | Enable Context7 (library docs) | persona architect/backend/doc, import keywords |
+| `--seq` | Enable Sequential (multi-step reasoning) | `--think-hard`, persona architect/security |
+| `--magic` | Enable Magic (UI generation) | persona frontend, *.jsx/*.tsx files |
+| `--play` | Enable Playwright (E2E tests) | persona frontend/qa, *.spec.ts files |
+| `--no-mcp` | Disable all MCP servers | Never |
+
+### MCP Auto-Activation
+
+MCPs are auto-activated based on:
+1. **Persona activation**: Each persona has preferred MCPs (see matrix below)
+2. **Keyword triggers**: Specific keywords in brief trigger MCPs
+3. **File triggers**: File patterns trigger MCPs
+4. **Flag triggers**: `--think-hard` triggers Sequential
+
+### Persona × MCP Matrix
+
+| Persona | Context7 | Sequential | Magic | Playwright |
+|---------|:--------:|:----------:|:-----:|:----------:|
+| architect | **auto** | **auto** | - | - |
+| frontend | **auto** | - | **auto** | **auto** |
+| backend | **auto** | **auto** | - | - |
+| security | - | **auto** | - | - |
+| qa | - | - | - | **auto** |
+| doc | **auto** | - | - | - |
+
+### MCP Precedence
+
+1. **Explicit flags** (`--c7`, `--no-mcp`) always override auto-activation
+2. **`--no-mcp`** disables all MCP servers
+3. **Multiple MCPs** can be active simultaneously
+
+### Examples
+
+```bash
+# Enable specific MCP
+/epci --c7                 # Context7 only
+/epci --seq --magic        # Sequential + Magic
+
+# Disable all MCP
+/epci --no-mcp
+
+# Combined with persona (auto-activates preferred MCPs)
+/epci --persona-frontend   # Auto: Magic + Playwright
+```
+
+→ See `src/skills/mcp/SKILL.md` for complete MCP documentation.
+
+---
+
 ## Quick Reference
 
 ### All Flags
@@ -266,6 +321,7 @@ Legend:
 | Compression | `--uc`, `--verbose` |
 | Workflow | `--safe`, `--no-hooks` |
 | Persona | `--persona-architect`, `--persona-frontend`, `--persona-backend`, `--persona-security`, `--persona-qa`, `--persona-doc` |
+| MCP | `--c7`, `--seq`, `--magic`, `--play`, `--no-mcp` |
 | Wave | `--wave`, `--wave-strategy` |
 | Legacy | `--large` (alias), `--continue` |
 

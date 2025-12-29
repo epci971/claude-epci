@@ -18,7 +18,7 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think hard` (default) / `ultrathink` (LARGE or high uncertainty) |
-| **Skills** | project-memory, epci-core, architecture-patterns, flags-system, [stack-skill auto-detected] |
+| **Skills** | project-memory, epci-core, architecture-patterns, flags-system, mcp, personas, [stack-skill auto-detected] |
 | **Subagents** | @Explore (thorough) |
 
 **Thinking mode selection:**
@@ -97,6 +97,14 @@ Analyze the brief and exploration results to prepare:
    - If score > 0.6: Auto-activate persona
    - If score 0.4-0.6: Suggest persona in breakpoint
    - Include active/suggested persona in FLAGS line
+
+6. **MCP Activation (F12)**:
+   - Based on activated personas, determine MCP servers to activate
+   - Check keyword triggers in brief text
+   - Check file pattern triggers in impacted files
+   - Check flag triggers (`--c7`, `--seq`, `--magic`, `--play`, `--think-hard`)
+   - Auto-activate MCPs based on `src/skills/mcp/SKILL.md` matrix
+   - Include active MCP flags in FLAGS line: `--c7 (auto: architect)`
 
 ---
 
