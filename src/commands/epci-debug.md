@@ -3,7 +3,7 @@ description: >-
   Structured debugging workflow with adaptive routing. Diagnoses bugs using
   thought tree analysis, solution scoring, and automatic research (web + MCP).
   Routes to Trivial/Quick/Complet mode based on complexity.
-argument-hint: "[error message | stack trace] [--full] [--no-report]"
+argument-hint: "[error message | stack trace] [--full] [--no-report] [--c7] [--seq]"
 allowed-tools: [Read, Glob, Grep, Bash, Task, WebFetch, WebSearch, Write, Edit]
 ---
 
@@ -36,8 +36,9 @@ Diagnose and fix bugs systematically with:
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think` (Quick), `think hard` (Complet) |
-| **Skills** | project-memory, debugging-strategy, [stack-skill] |
+| **Skills** | project-memory, debugging-strategy, mcp, [stack-skill] |
 | **Subagents** | @code-reviewer (Complet mode), @security-auditor (if security bug) |
+| **MCP** | Context7 (error docs), Sequential (multi-step reasoning) |
 
 ## Pre-Workflow: Load Context
 
@@ -383,6 +384,7 @@ Input: "Intermittent authentication failures in production"
 
 - `project-memory` (context)
 - `debugging-strategy` (methodology)
+- `mcp` (Context7 for error docs, Sequential for reasoning)
 - `[stack-skill]` (auto-detected: php-symfony, javascript-react, python-django, java-springboot)
 
 ## Differences with Other Workflows
