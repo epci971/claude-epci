@@ -3,7 +3,7 @@ description: >-
   Brainstorming guide v3 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
   Use when: idee vague a transformer en specs, besoin de clarifier une feature.
-argument-hint: [description] [--template feature|problem|decision] [--quick] [--no-hmw] [--c7] [--seq]
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--no-hmw] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 

@@ -1,6 +1,6 @@
 {
   "name": "epci",
-  "version": "3.9.5",
+  "version": "4.0.0",
   "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability and project memory",
   "author": {
     "name": "EPCI Team"
@@ -14,7 +14,9 @@
     "./commands/epci-decompose.md",
     "./commands/epci-memory.md",
     "./commands/epci-learn.md",
-    "./commands/create.md"
+    "./commands/create.md",
+    "./commands/brainstorm.md",
+    "./commands/epci-debug.md"
   ],
   "agents": [
     "./agents/plan-validator.md",
@@ -36,6 +38,8 @@
     "./skills/core/breakpoint-metrics/SKILL.md",
     "./skills/core/clarification-intelligente/SKILL.md",
     "./skills/core/proactive-suggestions/SKILL.md",
+    "./skills/core/brainstormer/SKILL.md",
+    "./skills/core/debugging-strategy/SKILL.md",
     "./skills/stack/php-symfony/SKILL.md",
     "./skills/stack/javascript-react/SKILL.md",
     "./skills/stack/python-django/SKILL.md",
@@ -43,6 +47,8 @@
     "./skills/factory/skills-creator/SKILL.md",
     "./skills/factory/commands-creator/SKILL.md",
     "./skills/factory/subagents-creator/SKILL.md",
-    "./skills/factory/component-advisor/SKILL.md"
+    "./skills/factory/component-advisor/SKILL.md",
+    "./skills/mcp/SKILL.md",
+    "./skills/personas/SKILL.md"
   ]
 }

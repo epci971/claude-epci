@@ -1,0 +1,186 @@
+# EPCI Plugin — Claude Code
+
+> **Version** : 4.0.0
+> **License** : MIT
+
+EPCI (Explore → Plan → Code → Inspect) est un plugin Claude Code qui structure le développement logiciel en phases distinctes avec validation à chaque étape.
+
+## Installation
+
+1. Cloner le repository dans votre répertoire de plugins Claude Code :
+   ```bash
+   git clone https://github.com/epci/claude-epci.git ~/.claude/plugins/epci
+   ```
+
+2. Le plugin est automatiquement chargé au démarrage de Claude Code.
+
+## Commandes Principales
+
+| Commande | Description |
+|----------|-------------|
+| `/epci-brief` | Point d'entrée — Exploration, clarification, évaluation complexité |
+| `/epci` | Workflow complet 3 phases pour features STANDARD/LARGE |
+| `/epci-quick` | Workflow condensé pour features TINY/SMALL |
+| `/epci-spike` | Exploration time-boxée pour incertitudes techniques |
+| `/epci:create` | Component Factory — Créer skills, commands, subagents |
+
+### Commandes Additionnelles
+
+| Commande | Description |
+|----------|-------------|
+| `/brainstorm` | Découverte de feature avec personas adaptatifs |
+| `/epci-debug` | Diagnostic structuré de bugs avec thought tree |
+| `/epci-decompose` | Décomposition de PRD/CDC en sous-specs |
+| `/epci-memory` | Gestion de la mémoire projet |
+| `/epci-learn` | Gestion du système d'apprentissage continu |
+
+## Workflow
+
+```
+Brief utilisateur
+       │
+       ▼
+┌──────────────┐
+│ /epci-brief  │  ← Point d'entrée unique
+└──────┬───────┘
+       │
+       ├─► TINY/SMALL ──► /epci-quick
+       │
+       ├─► STANDARD ────► /epci (3 phases)
+       │
+       ├─► LARGE ───────► /epci --large
+       │
+       └─► SPIKE ───────► /epci-spike
+```
+
+## Features v4.0
+
+### Personas (F09)
+6 modes de pensée globaux avec auto-activation basée sur scoring :
+- 🏗️ Architect — System thinking, patterns
+- 🎨 Frontend — UI/UX, accessibility
+- ⚙️ Backend — APIs, data integrity
+- 🔒 Security — Threat modeling, OWASP
+- 🧪 QA — Tests, edge cases
+- 📝 Doc — Documentation, clarity
+
+### MCP Integration (F12)
+4 serveurs Model Context Protocol :
+- **Context7** — Documentation librairies
+- **Sequential** — Raisonnement multi-étapes
+- **Magic** — Génération UI (21st.dev)
+- **Playwright** — Tests E2E, browser automation
+
+### Wave Orchestration (F11)
+Exécution parallèle des agents via DAG pour features LARGE.
+
+### Project Memory
+Mémoire persistante par projet :
+- Conventions et patterns détectés
+- Historique des features
+- Métriques de vélocité
+- Apprentissage continu
+
+## Flags
+
+### Thinking
+| Flag | Effet |
+|------|-------|
+| `--think` | Analyse standard |
+| `--think-hard` | Analyse approfondie |
+| `--ultrathink` | Analyse critique |
+
+### MCP
+| Flag | Effet |
+|------|-------|
+| `--c7` | Active Context7 |
+| `--seq` | Active Sequential |
+| `--magic` | Active Magic |
+| `--play` | Active Playwright |
+| `--no-mcp` | Désactive tous les MCPs |
+
+### Personas
+| Flag | Effet |
+|------|-------|
+| `--persona-architect` | Mode architecte |
+| `--persona-frontend` | Mode frontend |
+| `--persona-backend` | Mode backend |
+| `--persona-security` | Mode sécurité |
+| `--persona-qa` | Mode QA |
+| `--persona-doc` | Mode documentation |
+
+## Structure du Plugin
+
+```
+src/
+├── commands/          # 10 commandes
+├── agents/            # 6 subagents custom
+├── skills/            # 23 skills
+│   ├── core/         # Skills fondamentaux
+│   ├── stack/        # Skills par technologie
+│   ├── factory/      # Component Factory
+│   ├── mcp/          # MCP Integration
+│   └── personas/     # Système de personas
+├── hooks/            # Système de hooks
+├── mcp/              # Module MCP Python
+├── orchestration/    # Wave orchestration
+└── project-memory/   # Gestion mémoire projet
+```
+
+## Configuration
+
+### Project Memory
+Initialiser la mémoire projet :
+```bash
+/epci-memory init
+```
+
+### MCP (optionnel)
+Configuration dans `.project-memory/settings.json` :
+```json
+{
+  "mcp": {
+    "enabled": true,
+    "servers": {
+      "context7": { "enabled": true },
+      "sequential": { "enabled": true },
+      "magic": { "enabled": true },
+      "playwright": { "enabled": true }
+    }
+  }
+}
+```
+
+## Documentation
+
+- [CLAUDE.md](CLAUDE.md) — Documentation développeur complète
+- [docs/](docs/) — Spécifications et guides
+
+## Validation
+
+Exécuter la suite de validation :
+```bash
+python3 src/scripts/validate_all.py
+```
+
+## Changelog
+
+### v4.0.0 (2024-12)
+- F12: MCP Integration (Context7, Sequential, Magic, Playwright)
+- F11: Wave Orchestration pour features LARGE
+- F09: Système de Personas avec auto-activation
+- Nouvelles commandes: `/brainstorm`, `/epci-debug`, `/epci-decompose`
+
+### v3.2.0
+- F09: Personas système initial
+- F08: Apprentissage continu
+- F07: Orchestration multi-agents
+
+### v3.0.0
+- Refonte complète avec 5 commandes principales
+- Component Factory
+- Project Memory
+
+## License
+
+MIT License - voir [LICENSE](LICENSE) pour plus de détails.
