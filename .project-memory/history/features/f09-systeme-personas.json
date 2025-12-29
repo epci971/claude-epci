@@ -1,0 +1,50 @@
+{
+  "slug": "f09-systeme-personas",
+  "title": "F09: Système de Personas",
+  "created_at": "2025-12-29T16:23:42.507414Z",
+  "complexity": "LARGE",
+  "completed_at": "2025-12-29T16:23:42.507414Z",
+  "complexity_score": 0.5,
+  "files_modified": [
+    "src/skills/personas/SKILL.md",
+    "src/skills/personas/references/architect.md",
+    "src/skills/personas/references/frontend.md",
+    "src/skills/personas/references/backend.md",
+    "src/skills/personas/references/security.md",
+    "src/skills/personas/references/qa.md",
+    "src/skills/personas/references/doc.md",
+    "src/settings/flags.md",
+    "src/commands/epci-brief.md",
+    "CLAUDE.md"
+  ],
+  "files_created": 7,
+  "files_updated": 1,
+  "loc_added": 1487,
+  "loc_removed": 0,
+  "tests_created": 16,
+  "test_coverage": null,
+  "estimated_time": "17min",
+  "actual_time": null,
+  "phases": {
+    "phase_1": "2025-12-29T16:23:42.507414Z",
+    "phase_2": "2025-12-29T16:23:42.507414Z",
+    "phase_3": "2025-12-29T16:23:42.507414Z"
+  },
+  "agents_used": [
+    "plan-validator",
+    "code-reviewer",
+    "security-auditor",
+    "qa-reviewer",
+    "doc-generator"
+  ],
+  "issues_found": {
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "details": []
+  },
+  "related_features": [],
+  "feature_document": "/home/epci/apps/claude-epci/docs/features/f09-systeme-personas.md",
+  "commit_hash": "a93ec44",
+  "branch": "master"
+}

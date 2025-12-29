@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 3.0.0
+> **Version** : 3.2.0
 > **Date** : Décembre 2024
 > **Audience** : Développeurs du plugin EPCI
 
@@ -23,14 +23,24 @@ EPCI (Explore → Plan → Code → Inspect) est un plugin Claude Code qui struc
 
 ### 1.3 Évolution depuis v2.7
 
-| Aspect | v2.7 | v3.0 |
-|--------|------|------|
-| Commandes | 12 fichiers | 5 fichiers |
-| Point d'entrée | Multiple (micro, soft, 0-briefing...) | Unique (`epci-brief`) |
-| Subagents custom | 0 | 5 |
-| Skills | 0 | 13 |
-| Routing | 5 niveaux (TINY→LARGE + pré-stages) | 3 workflows (quick, full, spike) |
-| Auto-extension | Non | Component Factory |
+| Aspect | v2.7 | v3.0 | v3.2 |
+|--------|------|------|------|
+| Commandes | 12 fichiers | 5 fichiers | 5 fichiers |
+| Point d'entrée | Multiple (micro, soft, 0-briefing...) | Unique (`epci-brief`) | Unique (`epci-brief`) |
+| Subagents custom | 0 | 5 | 5 |
+| Skills | 0 | 19 | 20+ |
+| Personas | Custom | Déprécié | **F09 Auto-activation** |
+| Routing | 5 niveaux (TINY→LARGE + pré-stages) | 3 workflows (quick, full, spike) | 3 workflows + personas |
+| Auto-extension | Non | Component Factory | Component Factory |
+
+### 1.4 Nouveautés v3.2 (F09)
+
+- **Système de Personas** : 6 modes de pensée globaux avec auto-activation
+- **Scoring algorithmique** : Détection automatique based on keywords + files + stack
+- **Integration `/epci-brief`** : Step 5 - Persona Detection dans le workflow
+- **6 Personas** : Architect, Frontend, Backend, Security, QA, Doc
+- **Flags `--persona-X`** : Activation manuelle possible
+- **Breakpoint display** : Personas actifs/suggérés dans FLAGS line
 
 ---
 
@@ -104,7 +114,7 @@ tools-claude-code-epci/
     ├── settings/                # Configuration (v3.1)
     │   └── flags.md            # Documentation flags universels
     │
-    └── skills/                  # 19 skills
+    └── skills/                  # 20+ skills
         ├── core/               # Skills fondamentaux (6)
         │   ├── architecture-patterns/SKILL.md
         │   ├── code-conventions/SKILL.md
@@ -118,6 +128,16 @@ tools-claude-code-epci/
         │   ├── javascript-react/SKILL.md
         │   ├── php-symfony/SKILL.md
         │   └── python-django/SKILL.md
+        │
+        ├── personas/           # Personas système (1)
+        │   ├── SKILL.md
+        │   └── references/
+        │       ├── architect.md
+        │       ├── frontend.md
+        │       ├── backend.md
+        │       ├── security.md
+        │       ├── qa.md
+        │       └── doc.md
         │
         └── factory/            # Component Factory (4)
             ├── commands-creator/
@@ -364,6 +384,7 @@ Le système de flags permet un contrôle fin du comportement des workflows EPCI.
 | **Thinking** | `--think`, `--think-hard`, `--ultrathink` | Profondeur d'analyse |
 | **Compression** | `--uc`, `--verbose` | Gestion tokens |
 | **Workflow** | `--safe`, `--no-hooks` | Contrôle exécution |
+| **Persona** | `--persona-architect`, `--persona-frontend`, etc. | Modes de pensée globaux (v3.2) |
 | **Wave** | `--wave`, `--wave-strategy` | Orchestration multi-vagues |
 | **Legacy** | `--large`, `--continue` | Rétrocompatibilité |
 
@@ -393,6 +414,64 @@ Les flags peuvent être auto-activés selon le contexte:
 
 Voir `src/settings/flags.md` pour la documentation complète.
 
+### 3.8 Système de Personas (v3.2+)
+
+Le système de personas définit des **modes de pensée globaux** qui influencent l'ensemble du workflow EPCI.
+
+#### 6 Personas Workflow
+
+| Persona | Icon | Focus | Flag |
+|---------|------|-------|------|
+| **Architect** | 🏗️ | System thinking, patterns, scalability | `--persona-architect` |
+| **Frontend** | 🎨 | UI/UX, accessibility, Core Web Vitals | `--persona-frontend` |
+| **Backend** | ⚙️ | APIs, data integrity, reliability | `--persona-backend` |
+| **Security** | 🔒 | Threat modeling, OWASP, compliance | `--persona-security` |
+| **QA** | 🧪 | Tests, edge cases, coverage | `--persona-qa` |
+| **Doc** | 📝 | Documentation, clarity, examples | `--persona-doc` |
+
+#### Auto-Activation
+
+```
+Score = (keywords × 0.4) + (files × 0.4) + (stack × 0.2)
+```
+
+| Score | Action |
+|-------|--------|
+| > 0.6 | Auto-activate persona |
+| 0.4-0.6 | Suggest to user at breakpoint |
+| < 0.4 | No activation |
+
+#### Personas vs Subagents vs Brainstormer
+
+| Aspect | Persona (F09) | Subagent | Brainstormer |
+|--------|---------------|----------|--------------|
+| **Scope** | Entire workflow | Validation point | `/brainstorm` only |
+| **Timing** | During generation | After generation | Facilitation sessions |
+| **Role** | Thinking mode | Verification | Facilitation style |
+| **Count** | 6 workflow personas | 5 custom | 3 facilitation personas |
+
+**No Conflict**: They operate at different levels without interference.
+
+#### Integration dans `/epci-brief`
+
+Step 5: Persona Detection (nouveau en v3.2)
+1. Calcul du score pour les 6 personas via algorithme
+2. Auto-activation si score > 0.6
+3. Suggestion si score 0.4-0.6
+4. Affichage dans la ligne FLAGS du breakpoint
+
+#### Exemple
+
+```bash
+# Brief: "Add user authentication endpoint with JWT"
+# → --persona-backend (auto: 0.65) + --persona-security (auto: 0.61)
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ FLAGS: --think-hard (auto) | --persona-backend (auto: 0.65)        │
+│        --persona-security (suggested: 0.61)                        │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
 ---
 
 ## 4. Component Reference
@@ -415,8 +494,9 @@ allowed-tools: [Read, Glob, Grep, Bash, Task, Write]
 2. Invocation `@Explore` (thorough) — exploration complète
 3. Boucle clarification (max 3 itérations)
 4. Évaluation complexité
-5. Génération output selon catégorie
-6. Routage vers `/epci-quick`, `/epci`, ou `/epci-spike`
+5. **Détection personas** (v3.2) — scoring et auto-activation
+6. Génération output selon catégorie
+7. Routage vers `/epci-quick`, `/epci`, ou `/epci-spike`
 
 **Output :**
 - TINY/SMALL → Brief inline structuré
@@ -585,6 +665,12 @@ allowed-tools: [Read, Write, Glob]
 | flags-system | `skills/core/flags-system/SKILL.md` | Flags universels, auto-activation, précédence (v3.1) |
 | testing-strategy | `skills/core/testing-strategy/SKILL.md` | TDD, BDD, coverage, mocking |
 | git-workflow | `skills/core/git-workflow/SKILL.md` | Conventional Commits, branching |
+
+#### Personas Skills (1)
+
+| Skill | Fichier | Description |
+|-------|---------|-------------|
+| personas | `skills/personas/SKILL.md` | 6 workflow personas with auto-activation (v3.2) |
 
 #### Stack Skills
 
@@ -792,14 +878,14 @@ python src/scripts/validate_all.py
 | `epci-spike` | `epci-spike` | Simplifié |
 | `epci-hotfix` | `epci-quick` urgent | Déprécié |
 | `epci-flags` | Flags natifs Claude | Déprécié |
-| `epci-personas` | Personas natifs Claude | Déprécié |
+| `epci-personas` | `/epci --persona-X` (v3.2) | Réimplémenté avec auto-activation |
 
 ### 7.2 Fonctionnalités dépréciées
 
 | Feature v2.7 | Alternative v3.0 |
 |--------------|------------------|
 | Système de flags custom | Utiliser flags natifs Claude Code |
-| Système de personas custom | Utiliser personas natifs Claude Code |
+| Système de personas custom | Système personas EPCI v3.2 avec auto-activation |
 | Routing 5 niveaux | Routing simplifié 3 workflows |
 | epci-hotfix | `/epci-quick` avec mention urgence |
 | Pre-stages (discover) | Intégré dans `/epci-brief` |

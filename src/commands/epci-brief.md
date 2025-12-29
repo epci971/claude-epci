@@ -91,6 +91,13 @@ Analyze the brief and exploration results to prepare:
 4. **Flag Detection**:
    - Auto-detect flags based on thresholds
 
+5. **Persona Detection (F09)**:
+   - Score all 6 personas using algorithm from `src/skills/personas/SKILL.md`
+   - `Score = (keywords × 0.4) + (files × 0.4) + (stack × 0.2)`
+   - If score > 0.6: Auto-activate persona
+   - If score 0.4-0.6: Suggest persona in breakpoint
+   - Include active/suggested persona in FLAGS line
+
 ---
 
 ### Step 3: BREAKPOINT — Analysis Review (MANDATORY)
