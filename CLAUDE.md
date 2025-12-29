@@ -12,11 +12,11 @@
 
 EPCI (Explore → Plan → Code → Inspect) est un plugin Claude Code qui structure le développement logiciel en phases distinctes avec validation à chaque étape.
 
-### 1.2 Philosophie v3
+### 1.2 Philosophie v4
 
 | Principe | Description |
 |----------|-------------|
-| **Simplicité** | 5 commandes principales (vs 12 en v2.7) |
+| **Simplicité** | 10 commandes spécialisées (vs 12 en v2.7) |
 | **Modularité** | Exploitation des primitives natives Claude Code (Skills, Subagents) |
 | **Traçabilité** | Feature Document comme fil rouge de chaque développement |
 | **Extensibilité** | Component Factory pour créer de nouveaux composants |
@@ -25,10 +25,10 @@ EPCI (Explore → Plan → Code → Inspect) est un plugin Claude Code qui struc
 
 | Aspect | v2.7 | v3.0 | v3.2 | v4.0 |
 |--------|------|------|------|------|
-| Commandes | 12 fichiers | 5 fichiers | 5 fichiers | 5 fichiers |
+| Commandes | 12 fichiers | 5 fichiers | 5 fichiers | **10 fichiers** |
 | Point d'entrée | Multiple (micro, soft, 0-briefing...) | Unique (`epci-brief`) | Unique (`epci-brief`) | Unique (`epci-brief`) |
-| Subagents custom | 0 | 5 | 5 | 5 |
-| Skills | 0 | 19 | 20+ | 21+ |
+| Subagents custom | 0 | 5 | 5 | **6** |
+| Skills | 0 | 19 | 20+ | **23** |
 | Personas | Custom | Déprécié | **F09 Auto-activation** | F09 + **F12 MCP** |
 | Routing | 5 niveaux (TINY→LARGE + pré-stages) | 3 workflows (quick, full, spike) | 3 workflows + personas | 3 workflows + MCP |
 | Auto-extension | Non | Component Factory | Component Factory | Component Factory |
@@ -94,16 +94,22 @@ tools-claude-code-epci/
     ├── .claude-plugin/
     │   └── plugin.json          # Manifeste plugin
     │
-    ├── agents/                  # 5 subagents custom
+    ├── agents/                  # 6 subagents custom
     │   ├── code-reviewer.md
+    │   ├── decompose-validator.md  # Validation décomposition PRD
     │   ├── doc-generator.md
     │   ├── plan-validator.md
     │   ├── qa-reviewer.md
     │   └── security-auditor.md
     │
-    ├── commands/                # 5 commandes
+    ├── commands/                # 10 commandes
+    │   ├── brainstorm.md       # /brainstorm - Feature discovery
     │   ├── create.md           # /epci:create - Component Factory
     │   ├── epci-brief.md       # Point d'entrée + routing
+    │   ├── epci-debug.md       # /epci-debug - Diagnostic bugs
+    │   ├── epci-decompose.md   # /epci-decompose - Décomposition PRD
+    │   ├── epci-learn.md       # /epci-learn - Gestion apprentissage
+    │   ├── epci-memory.md      # /epci-memory - Gestion mémoire projet
     │   ├── epci-quick.md       # Workflow TINY/SMALL
     │   ├── epci-spike.md       # Exploration time-boxed
     │   └── epci.md             # Workflow complet 3 phases
@@ -141,13 +147,20 @@ tools-claude-code-epci/
     ├── settings/                # Configuration (v3.1)
     │   └── flags.md            # Documentation flags universels
     │
-    └── skills/                  # 21+ skills
-        ├── core/               # Skills fondamentaux (6)
+    └── skills/                  # 23 skills
+        ├── core/               # Skills fondamentaux (13)
         │   ├── architecture-patterns/SKILL.md
+        │   ├── brainstormer/SKILL.md        # Logique /brainstorm
+        │   ├── breakpoint-metrics/SKILL.md
+        │   ├── clarification-intelligente/SKILL.md
         │   ├── code-conventions/SKILL.md
+        │   ├── debugging-strategy/SKILL.md  # Logique /epci-debug
         │   ├── epci-core/SKILL.md
-        │   ├── flags-system/SKILL.md  # Système flags universels (v3.1)
+        │   ├── flags-system/SKILL.md
         │   ├── git-workflow/SKILL.md
+        │   ├── learning-optimizer/SKILL.md
+        │   ├── proactive-suggestions/SKILL.md
+        │   ├── project-memory/SKILL.md
         │   └── testing-strategy/SKILL.md
         │
         ├── stack/              # Skills par technologie (4)
@@ -314,7 +327,7 @@ docs/features/<slug>.md
 
 **Note :** `@Plan` n'est plus utilisé — l'exploration est centralisée dans `/epci-brief`.
 
-#### Subagents Custom EPCI
+#### Subagents Custom EPCI (6)
 
 | Subagent | Rôle | Invoqué par |
 |----------|------|-------------|
@@ -323,10 +336,11 @@ docs/features/<slug>.md
 | **@security-auditor** | Audit sécurité OWASP | `/epci` Phase 2 (conditionnel) |
 | **@qa-reviewer** | Revue tests et couverture | `/epci` Phase 2 (conditionnel) |
 | **@doc-generator** | Génération documentation | `/epci` Phase 3 |
+| **@decompose-validator** | Valide décomposition PRD | `/epci-decompose` |
 
 ### 3.5 Système Skills
 
-#### Skills Core (5)
+#### Skills Core (13)
 
 | Skill | Rôle | Chargé par |
 |-------|------|------------|
@@ -335,6 +349,14 @@ docs/features/<slug>.md
 | `code-conventions` | Naming, formatting, structure | `/epci-quick`, `/epci` Phase 2 |
 | `testing-strategy` | TDD, coverage, mocking | `/epci` Phase 2 |
 | `git-workflow` | Conventional Commits, branching | `/epci` Phase 3 |
+| `flags-system` | Système flags universels | Toutes commandes |
+| `project-memory` | Gestion mémoire projet | `/epci-brief`, `/epci-memory` |
+| `brainstormer` | Logique brainstorming | `/brainstorm` |
+| `debugging-strategy` | Méthodologie debugging | `/epci-debug` |
+| `learning-optimizer` | Optimisation apprentissage | `/epci-learn` |
+| `breakpoint-metrics` | Métriques breakpoints | Breakpoints |
+| `clarification-intelligente` | Questions intelligentes | `/epci-brief`, `/brainstorm` |
+| `proactive-suggestions` | Suggestions proactives | Post-reviews |
 
 #### Skills Stack (4) — Auto-détectés
 
@@ -572,7 +594,7 @@ Voir `src/skills/mcp/SKILL.md` pour la documentation complète.
 
 ## 4. Component Reference
 
-### 4.1 Commands (5)
+### 4.1 Commands (10)
 
 #### `/epci-brief` — Point d'entrée
 
@@ -668,7 +690,102 @@ allowed-tools: [Read, Write, Glob, Bash]
 - `command` → Invoque `commands-creator`
 - `agent` → Invoque `subagents-creator`
 
-### 4.2 Custom Subagents (5)
+#### `/brainstorm` — Feature Discovery
+
+```yaml
+---
+description: >-
+  Brainstorming guide v3 pour découvrir et spécifier une feature.
+  Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
+argument-hint: "[description] [--template feature|problem|decision] [--quick]"
+allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
+---
+```
+
+**Différence avec `/epci-brief`** :
+- `/brainstorm` : Exploration libre, itérative, génère un brief externe
+- `/epci-brief` : Point d'entrée EPCI, évalue complexité, route vers workflow
+
+**Personas brainstorming** (3) : Architecte 📐, Sparring 🥊, Pragmatique 🛠️
+
+**Output :** `docs/briefs/brief-<slug>-<date>.md` + journal d'exploration
+
+#### `/epci-debug` — Diagnostic Bugs
+
+```yaml
+---
+description: >-
+  Structured debugging workflow with adaptive routing.
+  Diagnoses bugs using thought tree analysis and solution scoring.
+argument-hint: "[error message] [--full] [--no-report]"
+allowed-tools: [Read, Glob, Grep, Bash, Task, WebFetch, WebSearch, Write, Edit]
+---
+```
+
+**Routing adaptatif :**
+- **Trivial** : Fix direct, inline summary
+- **Quick** : Thought tree simplifié, fix + vérification
+- **Complet** : Thought tree complet, scoring solutions, Debug Report
+
+**Output (Complet) :** `docs/debug/<slug>-<date>.md`
+
+#### `/epci-decompose` — Décomposition PRD
+
+```yaml
+---
+description: >-
+  Decompose a complex PRD/CDC into actionable sub-specifications (1-5 days each).
+  Generates dependency graph and Gantt planning.
+argument-hint: "<file.md> [--output <dir>] [--min-days <n>] [--max-days <n>]"
+allowed-tools: [Read, Write, Bash, Grep, Glob, Task, WebFetch]
+---
+```
+
+**Process :**
+1. Validation document source
+2. Analyse structurelle + détection dépendances
+3. Proposition découpage (breakpoint validation)
+4. Génération fichiers
+
+**Output :** `docs/specs/<slug>/INDEX.md` + `S01-*.md` ... `SNN-*.md`
+
+#### `/epci-memory` — Gestion Mémoire Projet
+
+```yaml
+---
+description: >-
+  Manage project memory for EPCI. Initializes, displays status,
+  resets, or exports the .project-memory/ directory.
+argument-hint: "status|init|reset|export"
+allowed-tools: [Read, Write, Glob, Bash]
+---
+```
+
+**Subcommands :**
+- `status` : Affiche état mémoire et métriques
+- `init` : Initialise avec auto-détection stack/conventions
+- `reset` : Réinitialise (avec backup)
+- `export` : Exporte en JSON
+
+#### `/epci-learn` — Gestion Apprentissage
+
+```yaml
+---
+description: >-
+  Manage EPCI continuous learning system. Displays calibration status,
+  resets learning data, exports for analysis, or forces recalibration.
+argument-hint: "status|reset|export|calibrate"
+allowed-tools: [Read, Write, Glob, Bash]
+---
+```
+
+**Subcommands :**
+- `status` : Affiche calibration et patterns appris
+- `reset` : Réinitialise données apprentissage
+- `export` : Exporte en JSON
+- `calibrate` : Force recalibration depuis historique
+
+### 4.2 Custom Subagents (6)
 
 #### @plan-validator
 
@@ -749,18 +866,43 @@ allowed-tools: [Read, Write, Glob]
 - CHANGELOG entries
 - Inline documentation
 
+#### @decompose-validator
+
+```yaml
+---
+name: decompose-validator
+description: Valide décomposition PRD avant génération fichiers
+allowed-tools: [Read, Grep]
+---
+```
+
+**Critères validation :**
+- Cohérence des dépendances (pas de cycles)
+- Granularité respectée (min-days/max-days)
+- Couverture complète du document source
+- Parallélisation correcte
+
+**Verdict :** `APPROVED` | `NEEDS_REVISION`
+
 ### 4.3 Skills Catalog
 
-#### Core Skills (6)
+#### Core Skills (13)
 
 | Skill | Fichier | Description |
 |-------|---------|-------------|
 | epci-core | `skills/core/epci-core/SKILL.md` | Workflow EPCI, Feature Document, phases |
 | architecture-patterns | `skills/core/architecture-patterns/SKILL.md` | SOLID, DDD, Clean Architecture |
 | code-conventions | `skills/core/code-conventions/SKILL.md` | Naming, formatting, structure |
-| flags-system | `skills/core/flags-system/SKILL.md` | Flags universels, auto-activation, précédence (v3.1) |
+| flags-system | `skills/core/flags-system/SKILL.md` | Flags universels, auto-activation, précédence |
 | testing-strategy | `skills/core/testing-strategy/SKILL.md` | TDD, BDD, coverage, mocking |
 | git-workflow | `skills/core/git-workflow/SKILL.md` | Conventional Commits, branching |
+| project-memory | `skills/core/project-memory/SKILL.md` | Gestion mémoire projet persistante |
+| brainstormer | `skills/core/brainstormer/SKILL.md` | Logique brainstorming, personas, EMS |
+| debugging-strategy | `skills/core/debugging-strategy/SKILL.md` | Thought tree, solution scoring |
+| learning-optimizer | `skills/core/learning-optimizer/SKILL.md` | Calibration, apprentissage continu |
+| breakpoint-metrics | `skills/core/breakpoint-metrics/SKILL.md` | Métriques et scoring breakpoints |
+| clarification-intelligente | `skills/core/clarification-intelligente/SKILL.md` | Questions adaptatives |
+| proactive-suggestions | `skills/core/proactive-suggestions/SKILL.md` | Suggestions post-review |
 
 #### Personas Skills (1)
 

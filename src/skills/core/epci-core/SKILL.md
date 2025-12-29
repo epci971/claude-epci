@@ -37,23 +37,22 @@ with validation at each phase.
 
 Central traceability document for each STANDARD/LARGE feature.
 
-### Structure
+### Structure (v4.0)
 
 ```markdown
 # Feature Document — [ID]
 
 ## §1 — Functional Brief
-[Context, acceptance criteria, constraints]
+[Context, acceptance criteria, constraints, Memory Summary]
 
 ## §2 — Implementation Plan
-[Tasks, files, risks]
+[Tasks, files, risks, @plan-validator verdict]
 
-## §3 — Implementation
-[Progress, tests, reviews]
-
-## §4 — Finalization
-[Commit, documentation, PR]
+## §3 — Implementation & Finalization
+[Progress, tests, reviews, commit, documentation, PR]
 ```
+
+> **Note (v4.0):** §3 et §4 fusionnés en une seule section pour simplifier le suivi.
 
 ### Location
 

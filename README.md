@@ -14,6 +14,51 @@ EPCI (Explore → Plan → Code → Inspect) est un plugin Claude Code qui struc
 
 2. Le plugin est automatiquement chargé au démarrage de Claude Code.
 
+## Quick Start
+
+### Premier Feature en 3 étapes
+
+**Étape 1** — Démarrer avec `/epci-brief`
+```
+/epci-brief Ajouter une fonctionnalité de recherche utilisateurs
+```
+EPCI analyse votre codebase, pose des questions de clarification, évalue la complexité et vous route vers le workflow approprié.
+
+**Étape 2** — Suivre le workflow recommandé
+- **TINY/SMALL** → `/epci-quick` : Implémentation directe
+- **STANDARD** → `/epci` : 3 phases avec Feature Document
+- **Incertain** → `/epci-spike` : Exploration time-boxée
+
+**Étape 3** — Valider aux breakpoints
+Chaque phase se termine par un breakpoint. Tapez `Continuer` pour avancer ou demandez des ajustements.
+
+### Exemple complet (Feature STANDARD)
+
+```bash
+# 1. Brief
+/epci-brief Ajouter un endpoint REST pour la recherche utilisateurs
+
+# 2. EPCI évalue → STANDARD → crée Feature Document
+#    Vous êtes routé vers /epci
+
+# 3. Phase 1: Planification
+#    → Breakpoint: Valider le plan
+
+# 4. Phase 2: Code
+#    → Breakpoint: Review code
+
+# 5. Phase 3: Finalisation
+#    → Commit + PR ready
+```
+
+### Initialiser Project Memory (recommandé)
+
+```bash
+/epci-memory init
+```
+
+Cela active l'apprentissage continu, détecte votre stack et vos conventions.
+
 ## Commandes Principales
 
 | Commande | Description |
