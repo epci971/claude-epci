@@ -76,11 +76,18 @@ iteratives pour construire des specifications exhaustives.
 
 Boucle jusqu'a `finish` :
 
+**⚠️ MANDATORY at EACH iteration:**
+
 1. **Integrer les reponses** utilisateur
-2. **Mettre a jour EMS** (score sur 100)
+2. **Recalculer EMS** en utilisant la formule 5 axes de `references/ems-system.md`
+   - Evaluer chaque axe (Clarte, Profondeur, Couverture, Decisions, Actionnabilite)
+   - Calculer le score composite
+   - Determiner le delta depuis la derniere iteration
 3. **Appliquer frameworks** si pertinent (MoSCoW, 5 Whys, etc.)
-4. **Generer questions/suggestions** suivantes
-5. **Afficher breakpoint compact**
+4. **Generer questions/suggestions** suivantes (basees sur les axes faibles)
+5. **Afficher breakpoint compact avec EMS visible**
+
+**⚠️ NEVER skip EMS calculation or display — it's the core metric of brainstorming progress.**
 
 **Commandes disponibles :**
 
@@ -104,6 +111,7 @@ Boucle jusqu'a `finish` :
 1. **Generer le brief fonctionnel**
    - Format: voir `references/brief-format.md`
    - Fichier: `./docs/briefs/brief-[slug]-[date].md`
+   - **Inclure la section "Exploration Summary"** avec stack, patterns, fichiers candidats
 
 2. **Generer le journal d'exploration**
    - Historique des iterations
@@ -111,10 +119,23 @@ Boucle jusqu'a `finish` :
    - Questions resolues
    - Fichier: `./docs/briefs/journal-[slug]-[date].md`
 
-3. **Afficher resume**
-   - EMS final
-   - Liens vers les fichiers
-   - Suggestion de commande EPCI suivante
+3. **Afficher resume final** (MANDATORY format):
+
+```
+-------------------------------------------------------
+✅ BRAINSTORM COMPLETE
+-------------------------------------------------------
+EMS Final: XX/100 [emoji]
+
+📄 Fichiers generes:
+   • Brief: ./docs/briefs/brief-[slug]-[date].md
+   • Journal: ./docs/briefs/journal-[slug]-[date].md
+
+🚀 Prochaine etape:
+   Lancer /epci-brief avec le contenu du brief ci-dessus.
+   L'exploration ciblee affinera les fichiers impactes.
+-------------------------------------------------------
+```
 
 ## Format Breakpoint (compact pour CLI)
 
@@ -151,10 +172,11 @@ Questions:
 
 ## Integration EPCI
 
-Le brief genere peut etre utilise :
-- Directement avec `/epci-brief` (copier le contenu)
-- Comme reference pour `/epci` ou `/epci-quick`
-- Comme documentation de la phase de decouverte
+Le brief genere s'integre dans le workflow EPCI:
+
+1. **Lancer `/epci-brief`** avec le contenu du brief comme description
+2. L'exploration ciblee (avec un brief precis) identifie les fichiers exacts
+3. Le brief et le journal servent de **documentation** de la phase de decouverte
 
 ## Skills Charges
 

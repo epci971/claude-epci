@@ -35,6 +35,28 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 - **Patterns**: [Repository, Service, Controller, ...]
 - **Outils**: [Doctrine, API Platform, Mercure, ...]
 
+## Exploration Summary
+
+> Cette section documente l'analyse initiale du codebase effectuee pendant le brainstorm.
+> Elle sert de reference pour `/epci-brief` qui effectuera une exploration ciblee.
+
+### Codebase Analysis
+- **Structure**: [monorepo / multi-module / single-app]
+- **Architecture**: [MVC / Hexagonal / Clean / etc.]
+- **Test patterns**: [PHPUnit / Jest / Pytest / etc.]
+
+### Fichiers Potentiels
+| Fichier | Action probable | Notes |
+|---------|-----------------|-------|
+| `path/to/file1.ext` | Create | [Description] |
+| `path/to/file2.ext` | Modify | [Description] |
+
+> Note: Liste indicative. L'exploration de `/epci-brief` affinera ces fichiers.
+
+### Risques Identifies
+- [Risque 1 avec niveau: Low/Medium/High]
+- [Risque 2 avec niveau]
+
 ## Specifications Fonctionnelles
 
 ### SF1 — [Nom du bloc fonctionnel]
@@ -152,7 +174,7 @@ Score: XX/100 [emoji]
 
 ---
 
-*Brief pret pour EPCI — Commande suggeree: `/epci-brief` ou `/epci`*
+*Brief pret pour EPCI — Lancer `/epci-brief` avec ce contenu.*
 ```
 
 ## Template Journal d'Exploration

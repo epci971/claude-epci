@@ -85,12 +85,28 @@ un processus iteratif guide avec personas adaptatifs.
 
 **Objectif**: Approfondir et affiner jusqu'a maturite.
 
+**⚠️ MANDATORY — EMS CALCULATION AT EACH ITERATION:**
+
+The EMS (Exploration Maturity Score) is the core metric of brainstorming progress.
+It MUST be calculated and displayed at every iteration.
+
 **Boucle:**
 1. Integrer les reponses utilisateur
-2. Mettre a jour les 5 axes EMS
-3. Detecter si un framework est applicable
-4. Generer questions suivantes (3-5 max)
-5. Afficher breakpoint compact
+2. **Recalculer les 5 axes EMS** (voir `references/ems-system.md`):
+   - Clarte (25%) — Precision du besoin
+   - Profondeur (20%) — Niveau de detail
+   - Couverture (20%) — Exhaustivite
+   - Decisions (20%) — Choix actes
+   - Actionnabilite (15%) — Pret pour action
+3. **Calculer le delta** depuis la derniere iteration
+4. Detecter si un framework est applicable (basé sur les axes faibles)
+5. Generer questions suivantes (3-5 max) — cibler les axes les plus faibles
+6. **Afficher breakpoint compact AVEC EMS visible**
+
+**⚠️ NEVER skip EMS display in breakpoint header:**
+```
+🔀 DIVERGENT | 📐 Architecte | Iter X | EMS: XX/100 (+Y) [emoji]
+```
 
 **Commandes:**
 
@@ -120,10 +136,26 @@ un processus iteratif guide avec personas adaptatifs.
 
 **Actions:**
 1. Compiler toutes les decisions en brief structure
-2. Generer le journal d'exploration
-3. Creer le dossier `./docs/briefs/` si inexistant
-4. Ecrire les fichiers
-5. Afficher resume avec liens
+2. **Inclure la section "Exploration Summary"** dans le brief (stack, patterns, fichiers)
+3. Generer le journal d'exploration
+4. Creer le dossier `./docs/briefs/` si inexistant
+5. Ecrire les fichiers
+6. **Afficher resume final** (MANDATORY):
+
+```
+-------------------------------------------------------
+✅ BRAINSTORM COMPLETE
+-------------------------------------------------------
+EMS Final: XX/100 [emoji]
+
+📄 Fichiers generes:
+   • Brief: ./docs/briefs/brief-[slug]-[date].md
+   • Journal: ./docs/briefs/journal-[slug]-[date].md
+
+🚀 Prochaine etape:
+   Lancer /epci-brief avec le contenu du brief.
+-------------------------------------------------------
+```
 
 ## Format Breakpoint Compact
 
