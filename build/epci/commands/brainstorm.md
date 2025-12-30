@@ -106,20 +106,27 @@ Boucle jusqu'a `finish` :
 | `framework [x]` | Appliquer un framework (moscow/5whys/swot) |
 | `finish` | Generer brief + journal |
 
-### Phase 3 — Generation
+### Phase 3 — Generation (USE WRITE TOOL)
 
-1. **Generer le brief fonctionnel**
-   - Format: voir `references/brief-format.md`
-   - Fichier: `./docs/briefs/brief-[slug]-[date].md`
-   - **Inclure la section "Exploration Summary"** avec stack, patterns, fichiers candidats
+**⚠️ MANDATORY: You MUST use the Write tool to create BOTH files. Do NOT just display the content.**
 
-2. **Generer le journal d'exploration**
-   - Historique des iterations
-   - Decisions prises
-   - Questions resolues
-   - Fichier: `./docs/briefs/journal-[slug]-[date].md`
+#### Step 3.1: Create Brief File
 
-3. **Afficher resume final** (MANDATORY format):
+**⚠️ USE WRITE TOOL** to create `./docs/briefs/brief-[slug]-[date].md`:
+- Format: voir `references/brief-format.md`
+- **Inclure la section "Exploration Summary"** avec stack, patterns, fichiers candidats
+- Create `./docs/briefs/` directory first if it doesn't exist (use Bash: `mkdir -p ./docs/briefs`)
+
+#### Step 3.2: Create Journal File
+
+**⚠️ USE WRITE TOOL** to create `./docs/briefs/journal-[slug]-[date].md`:
+- Historique des iterations
+- Decisions prises
+- Questions resolues
+
+#### Step 3.3: Display Confirmation
+
+**After BOTH files are written**, display resume final (MANDATORY format):
 
 ```
 -------------------------------------------------------

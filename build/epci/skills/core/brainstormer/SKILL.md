@@ -130,17 +130,20 @@ It MUST be calculated and displayed at every iteration.
 - Axe Clarte >= 80/100
 - Axe Actionnabilite >= 60/100
 
-### Phase 3 — Generation
+### Phase 3 — Generation (USE WRITE TOOL)
 
 **Objectif**: Produire les livrables finaux.
 
+**⚠️ MANDATORY: You MUST use the Write tool to create BOTH files. Do NOT just display content.**
+
 **Actions:**
-1. Compiler toutes les decisions en brief structure
-2. **Inclure la section "Exploration Summary"** dans le brief (stack, patterns, fichiers)
-3. Generer le journal d'exploration
-4. Creer le dossier `./docs/briefs/` si inexistant
-5. Ecrire les fichiers
-6. **Afficher resume final** (MANDATORY):
+1. Create directory: `mkdir -p ./docs/briefs` (use Bash tool)
+2. **USE WRITE TOOL** to create `./docs/briefs/brief-[slug]-[date].md`:
+   - Compiler toutes les decisions en brief structure
+   - **Inclure la section "Exploration Summary"** (stack, patterns, fichiers)
+3. **USE WRITE TOOL** to create `./docs/briefs/journal-[slug]-[date].md`:
+   - Historique des iterations, decisions prises, questions resolues
+4. **After BOTH files written**, afficher resume final (MANDATORY):
 
 ```
 -------------------------------------------------------
