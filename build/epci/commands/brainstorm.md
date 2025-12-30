@@ -3,7 +3,7 @@ description: >-
   Brainstorming guide v3 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
   Use when: idee vague a transformer en specs, besoin de clarifier une feature.
-argument-hint: "[description] [--template feature|problem|decision] [--quick] [--no-hmw] [--c7] [--seq]"
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--no-hmw] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
@@ -169,6 +169,35 @@ Questions:
 | `--template [name]` | Forcer template (feature/problem/decision) |
 | `--no-hmw` | Desactiver generation des questions HMW |
 | `--quick` | Mode rapide (3 iter max, EMS simplifie) |
+| `--turbo` | Mode turbo: @clarifier (Haiku), max 3 iter, auto-accept si EMS > 60 |
+
+### --turbo Mode (MANDATORY Instructions)
+
+**⚠️ MANDATORY: When `--turbo` flag is active, you MUST follow these rules:**
+
+1. **Use @clarifier agent** (Haiku model) for generating clarification questions:
+   ```
+   Invoke @clarifier via Task tool with model: haiku
+   Input: Current brief + codebase context
+   Output: 2-3 targeted questions with suggestions
+   ```
+
+2. **Maximum 3 iterations** — Auto-finish after iteration 3
+
+3. **Auto-accept suggestions** if EMS > 60:
+   - If EMS reaches 60+, suggest `finish` proactively
+   - If user provides quick confirmation ("ok", "oui", "c"), auto-accept all suggestions
+
+4. **Reduced breakpoint** — Compact format only, skip detailed explanations
+
+5. **Skip HMW questions** — Equivalent to `--no-hmw`
+
+**Turbo Process:**
+```
+Init → @clarifier (Haiku) → Iter 1 → Iter 2 → Iter 3 (max) → finish
+                              ↓
+                        EMS > 60? → Auto-suggest finish
+```
 
 ## Output
 

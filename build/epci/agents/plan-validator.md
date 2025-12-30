@@ -3,7 +3,7 @@ name: plan-validator
 description: >-
   Validates EPCI Phase 1 implementation plan. Checks completeness, consistency,
   feasibility and task quality. Returns APPROVED or NEEDS_REVISION.
-model: claude-sonnet-4-20250514
+model: opus
 allowed-tools: [Read, Grep]
 ---
 

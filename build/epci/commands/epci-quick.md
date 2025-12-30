@@ -3,7 +3,7 @@ description: >-
   Condensed EPCI workflow for TINY and SMALL features. Single-pass without
   formal Feature Document. TINY mode: <50 LOC, 1 file, no tests.
   SMALL mode: <200 LOC, 2-3 files, optional tests.
-argument-hint: "[--uc] [--no-hooks]"
+argument-hint: "[--uc] [--turbo] [--no-hooks]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
@@ -41,9 +41,42 @@ No formal Feature Document, no breakpoints.
 | Flag | Effect | Auto-Trigger |
 |------|--------|--------------|
 | `--uc` | Compressed output | context > 75% |
+| `--turbo` | Speed mode: @implementer (Sonnet), skip optional review, auto-commit |
 | `--no-hooks` | Disable all hook execution | Never |
 
 **Note:** Thinking flags (`--think-hard`, `--ultrathink`) trigger escalation to `/epci`.
+
+### --turbo Mode (MANDATORY Instructions)
+
+**⚠️ MANDATORY: When `--turbo` flag is active, you MUST follow these rules:**
+
+1. **Use @implementer agent** (Sonnet model) for SMALL features:
+   ```
+   Invoke @implementer via Task tool with model: sonnet
+   Input: Brief + target files
+   Output: Implementation with minimal tests
+   ```
+
+2. **Skip optional review** — No @code-reviewer for SMALL (keep for TINY if needed)
+
+3. **Auto-commit** — Skip pre-commit breakpoint, commit directly with prepared message
+
+4. **Compact output** — Summary only, no detailed change descriptions
+
+**Turbo Process:**
+```
+TINY:  Read → Fix → Auto-commit → Done
+SMALL: Read → @implementer (Sonnet) → Auto-commit → Done
+```
+
+**Turbo vs Standard Comparison:**
+
+| Aspect | Standard | Turbo |
+|--------|----------|-------|
+| Breakpoints | 1 (pre-commit) | 0 (auto-commit) |
+| Implementation | Manual | @implementer (Sonnet) for SMALL |
+| Review | @code-reviewer light | Skipped |
+| Commit | User approval | Auto-commit |
 
 ### MCP Flags (F12 — Lightweight)
 

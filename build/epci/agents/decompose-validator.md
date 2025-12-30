@@ -3,7 +3,7 @@ name: decompose-validator
 description: >-
   Validates PRD/CDC decomposition proposals. Checks dependency consistency,
   circular references, and granularity compliance. Returns APPROVED or NEEDS_REVISION.
-model: claude-sonnet-4-20250514
+model: opus
 allowed-tools: [Read, Grep]
 ---
 

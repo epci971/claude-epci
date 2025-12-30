@@ -3,7 +3,7 @@ name: qa-reviewer
 description: >-
   EPCI Phase 2 QA review. Checks test strategy, coverage,
   and anti-patterns. Invoked if complex tests detected.
-model: claude-sonnet-4-20250514
+model: sonnet
 allowed-tools: [Read, Grep, Glob, Bash]
 ---
 
