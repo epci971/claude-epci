@@ -3,7 +3,7 @@ name: doc-generator
 description: >-
   EPCI Phase 3 documentation generation. Creates or updates
   README, API docs, changelog based on changes made.
-model: claude-sonnet-4-20250514
+model: sonnet
 allowed-tools: [Read, Write, Glob]
 ---
 

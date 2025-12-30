@@ -3,7 +3,7 @@ description: >-
   Complete EPCI workflow in 3 phases for STANDARD and LARGE features.
   Phase 1: Analysis and planning. Phase 2: TDD implementation.
   Phase 3: Finalization and documentation. Includes breakpoints between phases.
-argument-hint: "[--large] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--sequential] [--parallel] [--uc] [--no-hooks] [--continue]"
+argument-hint: "[--large] [--turbo] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--sequential] [--parallel] [--uc] [--no-hooks] [--continue]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
@@ -21,8 +21,81 @@ Generates a Feature Document as traceability thread.
 | Argument | Description |
 |----------|-------------|
 | `--large` | Alias for `--think-hard --wave` (backward compatible) |
+| `--turbo` | Speed-optimized mode: @planner/@implementer (Sonnet), parallel reviews, 1 breakpoint |
 | `--continue` | Continue from last phase (resume after interruption) |
 | `--no-hooks` | Disable all hook execution |
+
+### --turbo Mode (MANDATORY Instructions)
+
+**⚠️ MANDATORY: When `--turbo` flag is active, you MUST follow these rules:**
+
+#### Phase 1 — Turbo Planning
+
+1. **Use @planner agent** (Sonnet model) for rapid task breakdown:
+   ```
+   Invoke @planner via Task tool with model: sonnet
+   Input: Feature Document §1 + identified files
+   Output: Atomic tasks (2-15 min each) with dependencies
+   ```
+
+2. **Skip detailed risk analysis** — Focus on execution, not documentation
+
+3. **Single breakpoint only** — Combine BP1 approval with implementation start
+
+#### Phase 2 — Turbo Implementation
+
+1. **Use @implementer agent** (Sonnet model) for code execution:
+   ```
+   Invoke @implementer via Task tool with model: sonnet
+   Input: Single task from plan
+   Output: Implemented code with tests
+   ```
+
+2. **Parallel reviews** — Run all review agents simultaneously:
+   ```
+   ⚠️ MANDATORY: Launch ALL applicable reviews in a SINGLE message with multiple Task calls:
+
+   Task 1: @code-reviewer (opus) — Review code quality
+   Task 2: @security-auditor (opus) — If security files detected
+   Task 3: @qa-reviewer (sonnet) — If complex tests
+
+   DO NOT run these sequentially. Use parallel Task tool calls.
+   ```
+
+3. **Single breakpoint** — Skip BP2, proceed directly to Phase 3 after reviews pass
+
+4. **Auto-fix minor issues** — Apply Minor/Style fixes automatically, report in summary
+
+#### Turbo DAG Structure
+
+```
+@planner (sonnet)
+      │
+      ▼
+@implementer (sonnet) ──────────────────────────┐
+      │                                          │
+      ▼                                          ▼
+┌─────────────────────────────────────────────────────┐
+│ PARALLEL REVIEWS (single Task message)              │
+│ @code-reviewer (opus)                               │
+│ @security-auditor (opus) — if applicable            │
+│ @qa-reviewer (sonnet) — if applicable               │
+└─────────────────────────────────────────────────────┘
+      │
+      ▼
+@doc-generator (sonnet)
+```
+
+**Turbo vs Standard Comparison:**
+
+| Aspect | Standard | Turbo |
+|--------|----------|-------|
+| Breakpoints | 3 (BP1, BP2, pre-commit) | 1 (pre-commit only) |
+| Planning | Manual | @planner (Sonnet) |
+| Implementation | Manual | @implementer (Sonnet) |
+| Reviews | Sequential | Parallel (single message) |
+| Minor fixes | User approval | Auto-applied |
+| Est. time savings | - | 30-50% |
 
 ### Thinking Flags
 

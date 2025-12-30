@@ -3,7 +3,7 @@ name: security-auditor
 description: >-
   EPCI Phase 2 security audit. Checks OWASP Top 10, defense-in-depth,
   and sensitive configurations. Invoked if auth/security files detected.
-model: claude-sonnet-4-20250514
+model: opus
 allowed-tools: [Read, Grep]
 ---
 

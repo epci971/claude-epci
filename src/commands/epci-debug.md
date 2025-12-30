@@ -3,7 +3,7 @@ description: >-
   Structured debugging workflow with adaptive routing. Diagnoses bugs using
   thought tree analysis, solution scoring, and automatic research (web + MCP).
   Routes to Trivial/Quick/Complet mode based on complexity.
-argument-hint: "[error message | stack trace] [--full] [--no-report] [--c7] [--seq]"
+argument-hint: "[error message | stack trace] [--full] [--turbo] [--no-report] [--c7] [--seq]"
 allowed-tools: [Read, Glob, Grep, Bash, Task, WebFetch, WebSearch, Write, Edit]
 ---
 
@@ -28,8 +28,43 @@ Diagnose and fix bugs systematically with:
 | Flag | Effect |
 |------|--------|
 | `--full` | Force Complet mode (skip routing) |
+| `--turbo` | Speed mode: Haiku diagnostic, auto-apply best solution, skip breakpoint |
 | `--no-report` | Complet mode without Debug Report file |
 | `--context <path>` | Link to existing Feature Document |
+
+### --turbo Mode (MANDATORY Instructions)
+
+**⚠️ MANDATORY: When `--turbo` flag is active, you MUST follow these rules:**
+
+1. **Use Haiku model for initial diagnostic**:
+   ```
+   Use model: haiku for Phase 1 diagnostic
+   Focus: Fast root cause identification
+   Skip: Detailed thought tree elaboration
+   ```
+
+2. **Single solution only** — No solution scoring, apply best solution immediately
+
+3. **Skip breakpoint** — No confirmation needed, auto-proceed with highest confidence solution
+
+4. **Minimal report** — If Complet mode, generate compact Debug Report (summary only)
+
+5. **Auto-verify** — Run tests immediately after fix, report result
+
+**Turbo Process:**
+```
+Error → Haiku Diagnostic → Best Solution → Auto-Apply → Verify → Done
+                              ↓
+                      Confidence < 70%? → Fallback to standard mode
+```
+
+**Turbo Routing Override:**
+
+| Standard Mode | Turbo Mode |
+|---------------|------------|
+| Trivial | Same (direct fix) |
+| Quick | Turbo (auto-apply, no tree) |
+| Complet | Turbo Complet (single solution, no BP) |
 
 ## Configuration
 

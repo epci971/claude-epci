@@ -4,7 +4,7 @@ description: >-
   EPCI Phase 2 code review. Checks quality, architecture,
   tests and plan alignment. Returns a report with
   Critical/Important/Minor severity.
-model: claude-sonnet-4-20250514
+model: opus
 allowed-tools: [Read, Grep, Glob, Bash]
 ---
 

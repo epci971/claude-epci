@@ -3,6 +3,7 @@ description: >-
   EPCI entry point. Performs thorough exploration, clarifies ambiguities,
   evaluates complexity, generates output (inline brief or Feature Document),
   and routes to appropriate workflow (/epci-quick, /epci, /epci-spike).
+argument-hint: "[brief] [--turbo] [--c7] [--seq]"
 allowed-tools: [Read, Write, Glob, Grep, Bash, Task]
 ---
 
@@ -24,6 +25,37 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 **Thinking mode selection:**
 - `think hard`: Default for most briefs
 - `ultrathink`: When complexity appears LARGE or technical uncertainty is high
+
+### --turbo Mode (MANDATORY Instructions)
+
+**⚠️ MANDATORY: When `--turbo` flag is active, you MUST follow these rules:**
+
+1. **Use @Explore with Haiku model** for faster codebase analysis:
+   ```
+   Invoke @Explore via Task tool with model: haiku
+   Focus: Quick scan, file identification only
+   Skip: Deep pattern analysis (defer to implementation)
+   ```
+
+2. **Maximum 2 clarification questions** — Focus on blocking ambiguities only
+
+3. **Auto-accept suggestions** if confidence > 0.7:
+   - If AI suggestions have high confidence, skip question [1] option
+   - Present only [2] Validate, [3] Modify, [4] Launch
+
+4. **Suggest --turbo automatically** if:
+   - `.project-memory/` exists (experienced project)
+   - Coming from `/brainstorm` with EMS > 60
+   - Category is STANDARD (not LARGE)
+
+5. **Reduced breakpoint** — Compact format, single confirmation step
+
+**Turbo Suggestion Logic:**
+```
+IF .project-memory/ exists AND category != LARGE:
+   Display: "💡 --turbo recommandé (projet connu)"
+   Auto-add --turbo to recommended command
+```
 
 ## Process
 

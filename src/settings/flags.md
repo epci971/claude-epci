@@ -101,6 +101,85 @@ Control execution safety and hooks.
 
 ---
 
+## Turbo Flag
+
+**Speed-optimized mode** that reduces workflow time by 30-50% for experienced projects.
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--turbo` | Speed mode: adaptive models, parallel reviews, reduced breakpoints | `.project-memory/` exists AND category != LARGE |
+
+### What `--turbo` Changes
+
+| Aspect | Standard | Turbo |
+|--------|----------|-------|
+| **Clarification** | Full questions | @clarifier (Haiku) — 2-3 targeted questions |
+| **Exploration** | Thorough @Explore | @Explore (Haiku) — Quick scan |
+| **Planning** | Manual breakdown | @planner (Sonnet) — Rapid task generation |
+| **Implementation** | Manual coding | @implementer (Sonnet) — Task-by-task execution |
+| **Reviews** | Sequential | Parallel (all agents in single Task call) |
+| **Breakpoints** | 3 (BP1, BP2, pre-commit) | 1 (pre-commit only) |
+| **Suggestions** | Manual approval | Auto-accept if confidence > 0.7 |
+
+### Turbo Agent Model Distribution
+
+| Agent | Model | Role |
+|-------|-------|------|
+| @clarifier | **haiku** | Fast clarification questions |
+| @planner | **sonnet** | Rapid task breakdown |
+| @implementer | **sonnet** | Code implementation |
+| @plan-validator | **opus** | Critical validation (unchanged) |
+| @code-reviewer | **opus** | Quality validation (unchanged) |
+| @security-auditor | **opus** | Security validation (unchanged) |
+| @qa-reviewer | **sonnet** | Test review |
+| @doc-generator | **sonnet** | Documentation |
+
+### Auto-Activation
+
+`--turbo` is **auto-suggested** (not auto-activated) when:
+
+```
+IF .project-memory/ exists AND category != LARGE:
+   Display: "💡 --turbo recommandé (projet connu)"
+   Include --turbo in FLAGS suggestion
+```
+
+**Why not auto-activated?** Turbo mode trades some depth for speed. User should opt-in.
+
+### Command Compatibility
+
+| Command | Turbo Effect |
+|---------|--------------|
+| `/brainstorm` | @clarifier (Haiku), max 3 iter, auto-accept EMS > 60 |
+| `/epci-brief` | @Explore (Haiku), 2 questions max, auto-suggest --turbo |
+| `/epci` | @planner + @implementer, parallel reviews, 1 breakpoint |
+| `/epci-quick` | @implementer for SMALL, auto-commit, skip review |
+| `/epci-debug` | Haiku diagnostic, auto-apply best solution |
+
+### Examples
+
+```bash
+# Explicit turbo mode
+/epci --turbo
+
+# Combined with other flags
+/epci --turbo --safe           # Turbo with extra safety
+/epci --turbo --persona-backend # Turbo with backend focus
+
+# Not recommended
+/epci --turbo --large          # Conflicting: large needs depth, turbo speeds
+```
+
+### Precedence
+
+| Flag Combination | Result |
+|------------------|--------|
+| `--turbo` + `--large` | Warning: conflicting flags, `--large` takes precedence |
+| `--turbo` + `--ultrathink` | `--ultrathink` overrides turbo thinking reduction |
+| `--turbo` + `--safe` | Both active (safe + speed = quality-gated speed) |
+
+---
+
 ## Persona Flags (F09)
 
 Control global thinking modes that influence the entire workflow.
@@ -320,6 +399,7 @@ MCPs are auto-activated based on:
 | Thinking | `--think`, `--think-hard`, `--ultrathink` |
 | Compression | `--uc`, `--verbose` |
 | Workflow | `--safe`, `--no-hooks` |
+| **Speed** | **`--turbo`** |
 | Persona | `--persona-architect`, `--persona-frontend`, `--persona-backend`, `--persona-security`, `--persona-qa`, `--persona-doc` |
 | MCP | `--c7`, `--seq`, `--magic`, `--play`, `--no-mcp` |
 | Wave | `--wave`, `--wave-strategy` |
@@ -329,6 +409,8 @@ MCPs are auto-activated based on:
 
 | Use Case | Flags |
 |----------|-------|
+| **Fast standard feature** | **`--turbo`** |
+| **Fast with quality gate** | **`--turbo --safe`** |
 | Large refactoring | `--think-hard --wave` or `--large` |
 | Security feature | `--think-hard --safe --persona-security` |
 | Major architecture | `--ultrathink --wave --persona-architect` |
