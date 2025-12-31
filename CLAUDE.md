@@ -12,15 +12,17 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
-| **Simplicité**      | 8 commandes spécialisées                                      |
-| **Modularité**      | Skills, Subagents, Hooks natifs                               |
+| **Simplicité**      | 9 commandes spécialisées                                      |
+| **Modularité**      | 23 Skills, 9 Subagents, Hooks natifs                          |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 4 serveurs externes (Context7, Sequential, Magic, Playwright) |
 
 ### Nouveautés v4.4
 
 - **Fusion learn → memory** : `/learn` supprimé, learning intégré dans `/memory` via subcommands `learn status|reset|calibrate`
-- 8 commandes au lieu de 9
+- **Ajout `/commit`** : Commande dédiée pour finalisation git avec contexte EPCI
+- **3 nouveaux agents turbo** : `@clarifier`, `@planner`, `@implementer` pour modes rapides
+- **Hooks obligatoires documentés** : Section 11 ajoutée pour garantir la mise à jour mémoire
 
 ### Nouveautés v4.3
 
@@ -40,8 +42,8 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 ```
 src/
-├── agents/           # 6 subagents (code-reviewer, plan-validator, etc.)
-├── commands/         # 8 commandes (brief, epci, quick, brainstorm, etc.)
+├── agents/           # 9 subagents (6 core + 3 turbo/quick)
+├── commands/         # 9 commandes (brief, epci, quick, commit, etc.)
 ├── hooks/            # Système hooks (runner.py, examples/, active/)
 ├── mcp/              # MCP Integration (config, activation, registry)
 ├── orchestration/    # Wave orchestration
@@ -97,13 +99,14 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 4. Commands (8)
+## 4. Commands (9)
 
 | Commande      | Rôle                                                        |
 | ------------- | ----------------------------------------------------------- |
 | `/brief`      | Point d'entrée unique — exploration, clarification, routing |
 | `/epci`       | Workflow complet 3 phases (STD/LARGE)                       |
-| `/quick`      | Workflow condensé (TINY/SMALL)                              |
+| `/quick`      | Workflow condensé EPCT (TINY/SMALL)                         |
+| `/commit`     | Finalisation git avec contexte EPCI                         |
 | `/brainstorm` | Feature discovery + exploration technique (spike intégré)   |
 | `/debug`      | Diagnostic bugs structuré                                   |
 | `/decompose`  | Décomposition PRD en sous-specs                             |
@@ -112,16 +115,26 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 5. Subagents (6)
+## 5. Subagents (9)
 
-| Subagent               | Rôle                       | Invoqué par     |
-| ---------------------- | -------------------------- | --------------- |
-| `@plan-validator`      | Valide plan avant Phase 2  | `/epci` Phase 1 |
-| `@code-reviewer`       | Revue qualité code         | `/epci` Phase 2 |
-| `@security-auditor`    | Audit OWASP (conditionnel) | `/epci` Phase 2 |
-| `@qa-reviewer`         | Revue tests (conditionnel) | `/epci` Phase 2 |
-| `@doc-generator`       | Génération documentation   | `/epci` Phase 3 |
-| `@decompose-validator` | Valide décomposition PRD   | `/decompose`    |
+### Core Subagents (6)
+
+| Subagent               | Model | Rôle                       | Invoqué par     |
+| ---------------------- | ----- | -------------------------- | --------------- |
+| `@plan-validator`      | opus  | Valide plan avant Phase 2  | `/epci` Phase 1 |
+| `@code-reviewer`       | opus  | Revue qualité code         | `/epci` Phase 2, `/debug` |
+| `@security-auditor`    | opus  | Audit OWASP (conditionnel) | `/epci` Phase 2 |
+| `@qa-reviewer`         | sonnet | Revue tests (conditionnel) | `/epci` Phase 2 |
+| `@doc-generator`       | sonnet | Génération documentation   | `/epci` Phase 3 |
+| `@decompose-validator` | opus  | Valide décomposition PRD   | `/decompose`    |
+
+### Turbo/Quick Subagents (3) — v4.4+
+
+| Subagent        | Model  | Rôle                        | Invoqué par     |
+| --------------- | ------ | --------------------------- | --------------- |
+| `@clarifier`    | haiku  | Questions clarification rapides | `/brief --turbo`, `/brainstorm --turbo` |
+| `@planner`      | sonnet | Planification rapide        | `/epci --turbo` P1, `/quick` [P] |
+| `@implementer`  | sonnet | Implémentation TDD rapide   | `/epci --turbo` P2, `/quick` [C] |
 
 ---
 
@@ -254,3 +267,60 @@ python src/scripts/validate_subagent.py src/agents/code-reviewer.md
 | Flags             | `src/settings/flags.md`                                  |
 | MCP               | `src/skills/mcp/SKILL.md`                                |
 | Personas          | `src/skills/personas/SKILL.md`                           |
+| Audit Workflow    | `docs/audits/AUDIT_PROMPT.md`                            |
+
+---
+
+## 11. Hooks Obligatoires
+
+### Post-Phase-3 Memory Update
+
+**CRITIQUE** : Ce hook DOIT être exécuté à la fin de `/epci` et `/quick` pour sauvegarder l'historique des features.
+
+```bash
+python3 src/hooks/runner.py post-phase-3 --context '{
+  "phase": "phase-3",
+  "feature_slug": "<slug>",
+  "complexity": "<TINY|SMALL|STANDARD|LARGE>",
+  "files_modified": ["<files>"],
+  "actual_time": "<duration>",
+  "commit_status": "<committed|pending>"
+}'
+```
+
+**Effets** :
+- Sauvegarde dans `.project-memory/history/features/`
+- Met à jour les métriques de vélocité
+- Incrémente le compteur `features_completed`
+- Permet la calibration des estimations
+
+### Hooks Actifs par Défaut
+
+| Hook | Type | Fichier |
+|------|------|---------|
+| Memory context at breakpoints | on-breakpoint | `on-breakpoint-memory-context.py` |
+| Suggestions post-P2 | post-phase-2 | `post-phase-2-suggestions.py` |
+| Memory update post-P3 | post-phase-3 | `post-phase-3-memory-update.py` |
+
+**Désactiver** : `--no-hooks`
+
+---
+
+## 12. Audit et Qualité
+
+### Audit Régulier
+
+Exécuter l'audit de cohérence régulièrement :
+
+```bash
+# Voir docs/audits/AUDIT_PROMPT.md pour le prompt complet
+```
+
+### Score Qualité Cible
+
+| Critère | Objectif |
+|---------|----------|
+| Cohérence globale | >= 85/100 |
+| Documentation sync | >= 95/100 |
+| Hooks fonctionnels | 100% |
+| Tests passants | 100% |

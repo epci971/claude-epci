@@ -1,7 +1,8 @@
 # EPCI Plugin — Claude Code
 
-> **Version** : 4.2.0
+> **Version** : 4.4.0
 > **License** : MIT
+> **Last Audit** : 2024-12-31 (Score: 70/100)
 
 EPCI (Explore → Plan → Code → Inspect) est un plugin Claude Code qui structure le développement logiciel en phases distinctes avec validation à chaque étape.
 
@@ -69,19 +70,18 @@ Cela active l'apprentissage continu, détecte votre stack et vos conventions.
 | -------------- | ------------------------------------------------------------------ |
 | `/epci:brief`  | Point d'entrée — Exploration, clarification, évaluation complexité |
 | `/epci:epci`   | Workflow complet 3 phases pour features STANDARD/LARGE             |
-| `/epci:quick`  | Workflow condensé pour features TINY/SMALL                         |
-| `/epci:spike`  | Exploration time-boxée pour incertitudes techniques                |
+| `/epci:quick`  | Workflow EPCT condensé pour features TINY/SMALL                    |
+| `/epci:commit` | Finalisation git avec contexte EPCI                                |
 | `/epci:create` | Component Factory — Créer skills, commands, subagents              |
 
 ### Commandes Additionnelles
 
 | Commande           | Description                                    |
 | ------------------ | ---------------------------------------------- |
-| `/epci:brainstorm` | Découverte de feature avec personas adaptatifs |
+| `/epci:brainstorm` | Découverte de feature avec personas adaptatifs + spike intégré |
 | `/epci:debug`      | Diagnostic structuré de bugs avec thought tree |
 | `/epci:decompose`  | Décomposition de PRD/CDC en sous-specs         |
-| `/epci:memory`     | Gestion de la mémoire projet                   |
-| `/epci:learn`      | Gestion du système d'apprentissage continu     |
+| `/epci:memory`     | Gestion de la mémoire projet + learning        |
 
 ## Workflow
 
@@ -93,25 +93,47 @@ Brief utilisateur
 │ /epci:brief  │  ← Point d'entrée unique
 └──────┬───────┘
        │
-       ├─► TINY/SMALL ──► /epci:quick
-       │
-       ├─► STANDARD ────► /epci:epci (3 phases)
-       │
-       ├─► LARGE ───────► /epci:epci --large
-       │
-       └─► SPIKE ───────► /epci:spike
+       ├─► TINY/SMALL ──► /epci:quick ──┐
+       │                                 │
+       ├─► STANDARD ────► /epci:epci ───┼──► /epci:commit
+       │                                 │
+       └─► LARGE ───────► /epci:epci ───┘
+                          --large
 ```
 
-## Features v4.2
+### Workflow Complet (STANDARD/LARGE)
 
-### Renommage commandes (v4.2)
+```
+/brainstorm (optionnel)
+       │
+       ▼
+/brief → Feature Document §1
+       │
+       ▼
+/epci Phase 1 → §2 (Plan validé par @plan-validator)
+       │
+       ▼
+/epci Phase 2 → §3 (Code reviewé par @code-reviewer)
+       │
+       ▼
+/epci Phase 3 → Documentation + contexte commit
+       │
+       ▼
+/commit → Git commit + PR ready
+```
 
-Les commandes ont été simplifiées : le préfixe `epci-` a été supprimé.
+## Features v4.4
 
-- `/epci:epci-brief` → `/epci:brief`
-- `/epci:epci-quick` → `/epci:quick`
-- `/epci:epci-spike` → `/epci:spike`
-- etc.
+### Nouveautés v4.4
+
+- **9 subagents** : 6 core + 3 turbo (`@clarifier`, `@planner`, `@implementer`)
+- **9 commandes** : Ajout de `/commit` pour finalisation git
+- **Hooks obligatoires** : Garantie de mise à jour mémoire projet
+- **Audit de cohérence** : Prompt réutilisable dans `docs/audits/`
+
+### Commandes simplifiées (v4.2+)
+
+Les commandes utilisent le format simplifié : `/epci:brief`, `/epci:quick`, etc.
 
 ### Personas (F09)
 
@@ -181,18 +203,23 @@ Mémoire persistante par projet :
 
 ```
 src/
-├── commands/          # 10 commandes
-├── agents/            # 6 subagents custom
+├── commands/          # 9 commandes
+├── agents/            # 9 subagents (6 core + 3 turbo)
 ├── skills/            # 23 skills
-│   ├── core/         # Skills fondamentaux
-│   ├── stack/        # Skills par technologie
-│   ├── factory/      # Component Factory
-│   ├── mcp/          # MCP Integration
-│   └── personas/     # Système de personas
+│   ├── core/         # 13 skills fondamentaux
+│   ├── stack/        # 4 skills par technologie
+│   ├── factory/      # 4 skills Component Factory
+│   ├── mcp/          # 1 skill MCP Integration
+│   └── personas/     # 1 skill Système de personas
 ├── hooks/            # Système de hooks
 ├── mcp/              # Module MCP Python
 ├── orchestration/    # Wave orchestration
 └── project-memory/   # Gestion mémoire projet
+
+docs/
+├── audits/           # Audits de cohérence
+├── briefs/           # Briefs features
+└── features/         # Feature Documents
 ```
 
 ## Configuration
@@ -238,16 +265,21 @@ python3 src/scripts/validate_all.py
 
 ## Changelog
 
+### v4.4.0 (2024-12)
+
+- **Fusion learn → memory** : `/learn` supprimé, learning intégré dans `/memory`
+- **Ajout `/commit`** : Commande dédiée pour finalisation git
+- **3 nouveaux agents turbo** : `@clarifier`, `@planner`, `@implementer`
+- **Hooks obligatoires documentés** : Section 11 dans CLAUDE.md
+- **Fusion spike → brainstorm** : Exploration technique intégrée
+- **Audit de cohérence** : Prompt d'audit dans `docs/audits/AUDIT_PROMPT.md`
+
 ### v4.2.0 (2024-12)
 
 - Renommage des commandes : suppression du préfixe `epci-`
     - `/epci:epci-brief` → `/epci:brief`
     - `/epci:epci-quick` → `/epci:quick`
-    - `/epci:epci-spike` → `/epci:spike`
-    - `/epci:epci-debug` → `/epci:debug`
-    - `/epci:epci-decompose` → `/epci:decompose`
-    - `/epci:epci-memory` → `/epci:memory`
-    - `/epci:epci-learn` → `/epci:learn`
+    - etc.
 
 ### v4.1.0 (2024-12)
 
@@ -260,17 +292,12 @@ python3 src/scripts/validate_all.py
 - F09: Système de Personas avec auto-activation
 - Nouvelles commandes: `/brainstorm`, `/debug`, `/decompose`
 
-### v3.2.0
+### v3.x
 
 - F09: Personas système initial
 - F08: Apprentissage continu
 - F07: Orchestration multi-agents
-
-### v3.0.0
-
-- Refonte complète avec 5 commandes principales
-- Component Factory
-- Project Memory
+- Refonte complète avec Component Factory et Project Memory
 
 ## License
 
