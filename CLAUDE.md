@@ -12,10 +12,10 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
-| **Simplicité**      | 9 commandes spécialisées                                      |
-| **Modularité**      | 23 Skills, 9 Subagents, Hooks natifs                          |
+| **Simplicité**      | 10 commandes spécialisées                                     |
+| **Modularité**      | 24 Skills, 9 Subagents, Hooks natifs                          |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
-| **MCP Integration** | 4 serveurs externes (Context7, Sequential, Magic, Playwright) |
+| **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
 
 ### Nouveautés v4.4
 
@@ -43,17 +43,18 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 ```
 src/
 ├── agents/           # 9 subagents (6 core + 3 turbo/quick)
-├── commands/         # 9 commandes (brief, epci, quick, commit, etc.)
+├── commands/         # 10 commandes (brief, epci, quick, commit, promptor, etc.)
 ├── hooks/            # Système hooks (runner.py, examples/, active/)
 ├── mcp/              # MCP Integration (config, activation, registry)
 ├── orchestration/    # Wave orchestration
 ├── scripts/          # Validation (validate_all.py, etc.)
 ├── settings/         # Configuration (flags.md)
-└── skills/           # 23 skills
+└── skills/           # 24 skills
     ├── core/         # 13 skills fondamentaux
     ├── stack/        # 4 skills technologie (react, django, symfony, spring)
     ├── personas/     # Système personas
     ├── mcp/          # MCP skill
+    ├── promptor/     # Voice-to-brief + Notion export
     └── factory/      # Component Factory (4 skills)
 
 docs/                 # Documentation détaillée
@@ -99,7 +100,7 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 4. Commands (9)
+## 4. Commands (10)
 
 | Commande      | Rôle                                                        |
 | ------------- | ----------------------------------------------------------- |
@@ -111,6 +112,7 @@ Brief brut → /brief → Évaluation
 | `/debug`      | Diagnostic bugs structuré                                   |
 | `/decompose`  | Décomposition PRD en sous-specs                             |
 | `/memory`     | Gestion mémoire projet + learning (calibration, préférences)|
+| `/promptor`   | Voice-to-brief — dictée vocale → brief structuré + Notion   |
 | `/create`     | Component Factory (skill\|command\|agent)                   |
 
 ---
@@ -138,7 +140,7 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 6. Skills (23)
+## 6. Skills (24)
 
 ### Core (13)
 
@@ -155,6 +157,12 @@ Brief brut → /brief → Évaluation
 | `javascript-react` | `package.json` + react                |
 | `python-django`    | `requirements.txt` / `pyproject.toml` |
 | `java-springboot`  | `pom.xml` / `build.gradle`            |
+
+### Promptor (1) — Voice-to-Brief
+
+| Skill     | Description                                        |
+| --------- | -------------------------------------------------- |
+| `promptor`| Transformation dictée vocale → brief + export Notion |
 
 ### Personas (1) + MCP (1) + Factory (4)
 
@@ -173,7 +181,7 @@ Brief brut → /brief → Évaluation
 | 🧪 QA        | Tests, coverage           | `--persona-qa`        |
 | 📝 Doc       | Documentation             | `--persona-doc`       |
 
-### 4 MCP Servers
+### 5 MCP Servers
 
 | Server     | Function                  | Flags     |
 | ---------- | ------------------------- | --------- |
@@ -181,6 +189,7 @@ Brief brut → /brief → Évaluation
 | Sequential | Raisonnement multi-étapes | `--seq`   |
 | Magic      | Génération UI (21st.dev)  | `--magic` |
 | Playwright | Tests E2E                 | `--play`  |
+| Notion     | Export tâches vers Notion | `/promptor` |
 
 **Désactiver tous** : `--no-mcp`
 

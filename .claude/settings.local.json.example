@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": []
+  },
+  "notion": {
+    "token": "ntn_YOUR_NOTION_INTEGRATION_TOKEN",
+    "tasks_database_id": "YOUR_TASKS_DATABASE_ID",
+    "default_project_id": "YOUR_DEFAULT_PROJECT_PAGE_ID"
+  }
+}
