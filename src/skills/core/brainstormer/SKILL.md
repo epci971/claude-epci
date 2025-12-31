@@ -156,7 +156,7 @@ EMS Final: XX/100 [emoji]
    • Journal: ./docs/briefs/journal-[slug]-[date].md
 
 🚀 Prochaine etape:
-   Lancer /epci-brief avec le contenu du brief.
+   Lancer /brief avec le contenu du brief.
 -------------------------------------------------------
 ```
 

@@ -279,18 +279,18 @@ def validate_init_module(module_path: Path, report: ValidationReport) -> bool:
 
 
 def validate_command(commands_path: Path, report: ValidationReport) -> bool:
-    """Validate epci-memory.md command."""
-    command_path = commands_path / 'epci-memory.md'
+    """Validate memory.md command."""
+    command_path = commands_path / 'memory.md'
 
     if not command_path.exists():
-        report.add_error("epci-memory.md command not found")
+        report.add_error("memory.md command not found")
         return False
 
     content = command_path.read_text(encoding='utf-8')
 
     # Check YAML frontmatter
     if not content.startswith('---'):
-        report.add_error("epci-memory.md: Missing YAML frontmatter")
+        report.add_error("memory.md: Missing YAML frontmatter")
         return False
 
     required_subcommands = ['status', 'init', 'reset', 'export']
@@ -298,10 +298,10 @@ def validate_command(commands_path: Path, report: ValidationReport) -> bool:
     all_found = True
     for subcmd in required_subcommands:
         if f'`{subcmd}`' not in content and f'/{subcmd}' not in content.lower():
-            report.add_warning(f"epci-memory.md: Subcommand '{subcmd}' not documented")
+            report.add_warning(f"memory.md: Subcommand '{subcmd}' not documented")
 
     if all_found:
-        print("[OK] epci-memory.md: Command structure valid")
+        print("[OK] memory.md: Command structure valid")
         report.pass_check()
 
     return True
@@ -351,8 +351,8 @@ def validate_plugin_json(plugin_path: Path, report: ValidationReport) -> bool:
 
     # Check for command
     commands = plugin.get('commands', [])
-    if not any('epci-memory' in cmd for cmd in commands):
-        report.add_error("plugin.json: Missing epci-memory.md in commands")
+    if not any('memory' in cmd for cmd in commands):
+        report.add_error("plugin.json: Missing memory.md in commands")
         return False
 
     # Check for skill

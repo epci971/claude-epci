@@ -1,8 +1,8 @@
 ---
 description: >-
-  EPCI entry point. Performs thorough exploration, clarifies ambiguities,
-  evaluates complexity, generates output (inline brief or Feature Document),
-  and routes to appropriate workflow (/epci-quick, /epci, /epci-spike).
+    EPCI entry point. Performs thorough exploration, clarifies ambiguities,
+    evaluates complexity, generates output (inline brief or Feature Document),
+    and routes to appropriate workflow (/quick, /epci, /spike).
 argument-hint: "[brief] [--turbo] [--c7] [--seq]"
 allowed-tools: [Read, Write, Glob, Grep, Bash, Task]
 ---
@@ -16,13 +16,14 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 
 ## Configuration
 
-| Element | Value |
-|---------|-------|
-| **Thinking** | `think hard` (default) / `ultrathink` (LARGE or high uncertainty) |
-| **Skills** | project-memory, epci-core, architecture-patterns, flags-system, mcp, personas, [stack-skill auto-detected] |
-| **Subagents** | @Explore (thorough) |
+| Element       | Value                                                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Thinking**  | `think hard` (default) / `ultrathink` (LARGE or high uncertainty)                                          |
+| **Skills**    | project-memory, epci-core, architecture-patterns, flags-system, mcp, personas, [stack-skill auto-detected] |
+| **Subagents** | @Explore (thorough)                                                                                        |
 
 **Thinking mode selection:**
+
 - `think hard`: Default for most briefs
 - `ultrathink`: When complexity appears LARGE or technical uncertainty is high
 
@@ -31,26 +32,28 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 **⚠️ MANDATORY: When `--turbo` flag is active, you MUST follow these rules:**
 
 1. **Use @Explore with Haiku model** for faster codebase analysis:
-   ```
-   Invoke @Explore via Task tool with model: haiku
-   Focus: Quick scan, file identification only
-   Skip: Deep pattern analysis (defer to implementation)
-   ```
+
+    ```
+    Invoke @Explore via Task tool with model: haiku
+    Focus: Quick scan, file identification only
+    Skip: Deep pattern analysis (defer to implementation)
+    ```
 
 2. **Maximum 2 clarification questions** — Focus on blocking ambiguities only
 
 3. **Auto-accept suggestions** if confidence > 0.7:
-   - If AI suggestions have high confidence, skip question [1] option
-   - Present only [2] Validate, [3] Modify, [4] Launch
+    - If AI suggestions have high confidence, skip question [1] option
+    - Present only [2] Validate, [3] Modify, [4] Launch
 
 4. **Suggest --turbo automatically** if:
-   - `.project-memory/` exists (experienced project)
-   - Coming from `/brainstorm` with EMS > 60
-   - Category is STANDARD (not LARGE)
+    - `.project-memory/` exists (experienced project)
+    - Coming from `/brainstorm` with EMS > 60
+    - Category is STANDARD (not LARGE)
 
 5. **Reduced breakpoint** — Compact format, single confirmation step
 
 **Turbo Suggestion Logic:**
+
 ```
 IF .project-memory/ exists AND category != LARGE:
    Display: "💡 --turbo recommandé (projet connu)"
@@ -66,11 +69,12 @@ IF .project-memory/ exists AND category != LARGE:
 **Skill**: `project-memory`
 
 Load project context from `.project-memory/` directory. The skill handles:
+
 - Reading context, conventions, settings, patterns
 - Loading velocity metrics and feature history
 - Applying defaults and displaying memory status
 
-**If `.project-memory/` does not exist:** Continue without context. Suggest `/epci-memory init` at workflow end.
+**If `.project-memory/` does not exist:** Continue without context. Suggest `/memory init` at workflow end.
 
 ---
 
@@ -83,6 +87,7 @@ Load project context from `.project-memory/` directory. The skill handles:
 **⚠️ DO NOT SKIP THIS STEP** — Use Task tool with @Explore subagent.
 
 **Action:** Invoke @Explore (thorough level) using the Task tool to:
+
 - Scan complete project structure
 - Identify all technologies, frameworks, versions
 - Map architectural patterns (Repository, Service, Controller, etc.)
@@ -91,6 +96,7 @@ Load project context from `.project-memory/` directory. The skill handles:
 - Detect existing test patterns
 
 **Internal outputs** (store for Step 2):
+
 - List of candidate files with probable action (Create/Modify/Delete)
 - Detailed technical stack
 - Detected architectural patterns
@@ -105,38 +111,38 @@ Load project context from `.project-memory/` directory. The skill handles:
 Analyze the brief and exploration results to prepare:
 
 1. **Clarification Questions** (2-3 max):
-   - Identify gaps, ambiguities, missing information
-   - Prepare suggestions for each question
+    - Identify gaps, ambiguities, missing information
+    - Prepare suggestions for each question
 
 2. **AI Suggestions** (3-5 max):
-   - Architecture recommendations
-   - Implementation approach
-   - Risks and mitigations
-   - Stack-specific best practices
+    - Architecture recommendations
+    - Implementation approach
+    - Risks and mitigations
+    - Stack-specific best practices
 
 3. **Complexity Evaluation**:
-   - Count impacted files
-   - Estimate LOC
-   - Assess risk level
-   - Determine category (TINY/SMALL/STANDARD/LARGE/SPIKE)
+    - Count impacted files
+    - Estimate LOC
+    - Assess risk level
+    - Determine category (TINY/SMALL/STANDARD/LARGE/SPIKE)
 
 4. **Flag Detection**:
-   - Auto-detect flags based on thresholds
+    - Auto-detect flags based on thresholds
 
 5. **Persona Detection (F09)**:
-   - Score all 6 personas using algorithm from `src/skills/personas/SKILL.md`
-   - `Score = (keywords × 0.4) + (files × 0.4) + (stack × 0.2)`
-   - If score > 0.6: Auto-activate persona
-   - If score 0.4-0.6: Suggest persona in breakpoint
-   - Include active/suggested persona in FLAGS line
+    - Score all 6 personas using algorithm from `src/skills/personas/SKILL.md`
+    - `Score = (keywords × 0.4) + (files × 0.4) + (stack × 0.2)`
+    - If score > 0.6: Auto-activate persona
+    - If score 0.4-0.6: Suggest persona in breakpoint
+    - Include active/suggested persona in FLAGS line
 
 6. **MCP Activation (F12)**:
-   - Based on activated personas, determine MCP servers to activate
-   - Check keyword triggers in brief text
-   - Check file pattern triggers in impacted files
-   - Check flag triggers (`--c7`, `--seq`, `--magic`, `--play`, `--think-hard`)
-   - Auto-activate MCPs based on `src/skills/mcp/SKILL.md` matrix
-   - Include active MCP flags in FLAGS line: `--c7 (auto: architect)`
+    - Based on activated personas, determine MCP servers to activate
+    - Check keyword triggers in brief text
+    - Check file pattern triggers in impacted files
+    - Check flag triggers (`--c7`, `--seq`, `--magic`, `--play`, `--think-hard`)
+    - Auto-activate MCPs based on `src/skills/mcp/SKILL.md` matrix
+    - Include active MCP flags in FLAGS line: `--c7 (auto: architect)`
 
 ---
 
@@ -211,12 +217,12 @@ Present ALL analysis results in a consolidated breakpoint:
 
 **Wait for user response.** Process based on choice:
 
-| Choice | Action |
-|--------|--------|
-| **[1] Répondre** | Wait for user answers, incorporate into brief, show breakpoint again |
-| **[2] Valider** | Use suggestions as-is, generate output (Step 5), show breakpoint again with updated eval |
-| **[3] Modifier** | Wait for modifications, update suggestions, show breakpoint again |
-| **[4] Lancer** | Generate output (Step 5) then execute the recommended command |
+| Choice           | Action                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------- |
+| **[1] Répondre** | Wait for user answers, incorporate into brief, show breakpoint again                     |
+| **[2] Valider**  | Use suggestions as-is, generate output (Step 5), show breakpoint again with updated eval |
+| **[3] Modifier** | Wait for modifications, update suggestions, show breakpoint again                        |
+| **[4] Lancer**   | Generate output (Step 5) then execute the recommended command                            |
 
 **After [1], [2], or [3]:** Update analysis and show breakpoint again until user chooses [4].
 **After [4]:** Proceed to Step 5 (generate output) then Step 6 (execute command).
@@ -227,25 +233,26 @@ Present ALL analysis results in a consolidated breakpoint:
 
 Finalize complexity evaluation based on user answers:
 
-| Criteria | TINY | SMALL | STANDARD | LARGE | SPIKE |
-|----------|------|-------|----------|-------|-------|
-| Files | 1 | 2-3 | 4-10 | 10+ | ? |
-| Estimated LOC | <50 | <200 | <1000 | 1000+ | ? |
-| Risk | None | Low | Medium | High | Unknown |
-| Tests required | No | Optional | Yes | Yes+ | N/A |
-| Arch impacted | No | No | Possible | Yes | ? |
+| Criteria       | TINY | SMALL    | STANDARD | LARGE | SPIKE   |
+| -------------- | ---- | -------- | -------- | ----- | ------- |
+| Files          | 1    | 2-3      | 4-10     | 10+   | ?       |
+| Estimated LOC  | <50  | <200     | <1000    | 1000+ | ?       |
+| Risk           | None | Low      | Medium   | High  | Unknown |
+| Tests required | No   | Optional | Yes      | Yes+  | N/A     |
+| Arch impacted  | No   | No       | Possible | Yes   | ?       |
 
 **Flag Auto-Activation:**
 
-| Condition | Threshold | Flag |
-|-----------|-----------|------|
-| Files impacted | 3-10 | `--think` |
-| Files impacted | >10 | `--think-hard` |
-| Refactoring/migration detected | true | `--think-hard` |
-| Sensitive file patterns | any match | `--safe` |
-| Complexity score | >0.7 | `--wave` |
+| Condition                      | Threshold | Flag           |
+| ------------------------------ | --------- | -------------- |
+| Files impacted                 | 3-10      | `--think`      |
+| Files impacted                 | >10       | `--think-hard` |
+| Refactoring/migration detected | true      | `--think-hard` |
+| Sensitive file patterns        | any match | `--safe`       |
+| Complexity score               | >0.7      | `--wave`       |
 
 **Sensitive file patterns:**
+
 ```
 **/auth/**  **/security/**  **/payment/**
 **/password/**  **/api/v*/admin/**
@@ -267,20 +274,26 @@ Generate a structured brief directly in your response (no file created):
 # Functional Brief — [Title]
 
 ## Context
+
 [Summary of the need in 2-3 sentences]
 
 ## Detected Stack
+
 [Stack identified by @Explore]
 
 ## Target Files
+
 - `path/to/file.ext` (action: Create/Modify)
 
 ## Acceptance Criteria
+
 - [ ] Criterion 1 (measurable)
 - [ ] Criterion 2 (measurable)
 
 ## Memory Summary
+
 [If .project-memory/ exists, include key context:]
+
 - **Project**: [project name from context.json]
 - **Conventions**: [key conventions from conventions.json]
 - **Patterns**: [relevant patterns if any]
@@ -288,9 +301,10 @@ Generate a structured brief directly in your response (no file created):
 ## Category: [TINY|SMALL]
 
 ## Suggested Flags
+
 - [flag] (auto/recommended) — if any detected
 
-→ Launch `/epci-quick`
+→ Launch `/quick`
 ```
 
 #### If STANDARD or LARGE → Feature Document (USE WRITE TOOL)
@@ -311,26 +325,32 @@ Create the directory if needed, then write the Feature Document:
 ## §1 — Functional Brief
 
 ### Context
+
 [Summary of the need]
 
 ### Detected Stack
+
 - **Framework**: [detected]
 - **Language**: [detected]
 - **Patterns**: [detected patterns]
 
 ### Acceptance Criteria
+
 - [ ] Criterion 1 (measurable)
 - [ ] Criterion 2 (measurable)
 
 ### Constraints
+
 - [Technical constraint]
 - [Other constraint if applicable]
 
 ### Out of Scope
+
 - [Explicit exclusion 1]
 - [Explicit exclusion 2]
 
 ### Evaluation
+
 - **Category**: [STANDARD|LARGE]
 - **Estimated files**: X
 - **Estimated LOC**: ~Y
@@ -338,14 +358,17 @@ Create the directory if needed, then write the Feature Document:
 - **Justification**: [Reason for categorization]
 
 ### Suggested Flags
-| Flag | Source | Reason |
-|------|--------|--------|
-| `--think-hard` | auto | >10 files impacted |
-| `--safe` | auto | auth files detected |
-| `--wave` | auto | complexity > 0.7 |
+
+| Flag           | Source | Reason              |
+| -------------- | ------ | ------------------- |
+| `--think-hard` | auto   | >10 files impacted  |
+| `--safe`       | auto   | auth files detected |
+| `--wave`       | auto   | complexity > 0.7    |
 
 ### Memory Summary
+
 [If .project-memory/ exists, include context loaded in Step 0:]
+
 - **Project**: [project name]
 - **Stack**: [detected stack from context.json]
 - **Conventions**: [key conventions]
@@ -354,11 +377,13 @@ Create the directory if needed, then write the Feature Document:
 ---
 
 ## §2 — Implementation Plan
+
 [To be completed by /epci Phase 1]
 
 ---
 
 ## §3 — Implementation & Finalization
+
 [To be completed by /epci Phases 2-3]
 ```
 
@@ -378,13 +403,13 @@ Generate inline brief with exploration focus (no Feature Document).
 
 **Routing table:**
 
-| Category | Command | Output | Typical Flags |
-|----------|---------|--------|---------------|
-| TINY | `/epci:epci-quick` | Inline brief | (none) |
-| SMALL | `/epci:epci-quick` | Inline brief | `--think` if 3+ files |
-| STANDARD | `/epci:epci` | Feature Document | `--think` or `--think-hard` |
-| LARGE | `/epci:epci --large` | Feature Document | `--think-hard --wave` |
-| SPIKE | `/epci:epci-spike` | Inline brief | `--think-hard` if complex |
+| Category | Command              | Output           | Typical Flags               |
+| -------- | -------------------- | ---------------- | --------------------------- |
+| TINY     | `/epci:quick`        | Inline brief     | (none)                      |
+| SMALL    | `/epci:quick`        | Inline brief     | `--think` if 3+ files       |
+| STANDARD | `/epci:epci`         | Feature Document | `--think` or `--think-hard` |
+| LARGE    | `/epci:epci --large` | Feature Document | `--think-hard --wave`       |
+| SPIKE    | `/epci:spike`        | Inline brief     | `--think-hard` if complex   |
 
 **Note:** `--large` is an alias for `--think-hard --wave`. Both forms are accepted.
 

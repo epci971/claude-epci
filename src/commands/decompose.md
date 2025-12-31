@@ -1,8 +1,8 @@
 ---
 description: >-
-  Decompose a complex PRD/CDC into actionable sub-specifications (1-5 days each).
-  Generates dependency graph and Gantt planning with parallelization.
-  Use for large projects (>5 days) before running /epci-brief on each sub-spec.
+    Decompose a complex PRD/CDC into actionable sub-specifications (1-5 days each).
+    Generates dependency graph and Gantt planning with parallelization.
+    Use for large projects (>5 days) before running /brief on each sub-spec.
 argument-hint: "<file.md> [--output <dir>] [--think <level>] [--min-days <n>] [--max-days <n>] [--c7]"
 allowed-tools: [Read, Write, Bash, Grep, Glob, Task, WebFetch]
 ---
@@ -20,19 +20,20 @@ executed sequentially or in parallel where dependencies allow.
 
 ## Arguments
 
-| Argument | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `<file.md>` | Source PRD/CDC file to decompose | Yes | — |
-| `--output <dir>` | Output directory for generated specs | No | `docs/specs/{slug}/` |
-| `--think <level>` | Thinking level: `quick`, `think`, `think-hard`, `ultrathink` | No | `think` |
-| `--min-days <n>` | Minimum effort per sub-spec | No | `1` |
-| `--max-days <n>` | Maximum effort per sub-spec | No | `5` |
+| Argument          | Description                                                  | Required | Default              |
+| ----------------- | ------------------------------------------------------------ | -------- | -------------------- |
+| `<file.md>`       | Source PRD/CDC file to decompose                             | Yes      | —                    |
+| `--output <dir>`  | Output directory for generated specs                         | No       | `docs/specs/{slug}/` |
+| `--think <level>` | Thinking level: `quick`, `think`, `think-hard`, `ultrathink` | No       | `think`              |
+| `--min-days <n>`  | Minimum effort per sub-spec                                  | No       | `1`                  |
+| `--max-days <n>`  | Maximum effort per sub-spec                                  | No       | `5`                  |
 
 ## Pre-Workflow: Load Project Memory
 
 **Skill**: `project-memory`
 
 Load project context from `.project-memory/` before analysis. The skill handles:
+
 - Reading context, conventions, settings, patterns
 - Finding similar past decompositions for reference
 - Applying project-specific naming conventions to generated specs
@@ -48,16 +49,19 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 ### Phase 1: Validation (MANDATORY)
 
 **Checks:**
+
 1. File exists and is readable
 2. File extension is `.md`
 3. Extract title/slug from document
 4. Count lines (complexity indicator)
 
 **Exit conditions:**
+
 - File not found → Error with suggestion
 - Not a `.md` file → Error with suggestion
 
 **Output:**
+
 ```
 📄 Document: {filename}
 ├── Lines: {count}
@@ -73,32 +77,33 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 
 **Structure detection:**
 
-| Signal | Usage |
-|--------|-------|
-| Headers `## Phase X` | Level 1 decomposition candidates |
-| Headers `### Step X.Y` | Sub-decomposition candidates |
-| Tables with "Effort" | Reuse existing estimates |
-| "Checklist" sections | Validation boundaries |
-| "Gate", "Prerequisite" mentions | Explicit dependencies |
+| Signal                          | Usage                            |
+| ------------------------------- | -------------------------------- |
+| Headers `## Phase X`            | Level 1 decomposition candidates |
+| Headers `### Step X.Y`          | Sub-decomposition candidates     |
+| Tables with "Effort"            | Reuse existing estimates         |
+| "Checklist" sections            | Validation boundaries            |
+| "Gate", "Prerequisite" mentions | Explicit dependencies            |
 
 **Dependency extraction:**
 
-| Pattern | Detection |
-|---------|-----------|
-| Explicit | "depends on", "requires", "after", "before" |
-| Django FK | `ForeignKey('app.Model')` → model must exist |
-| Imports | `from X import Y` → Y must exist |
-| References | `see S01`, `cf. Phase 1` |
+| Pattern    | Detection                                    |
+| ---------- | -------------------------------------------- |
+| Explicit   | "depends on", "requires", "after", "before"  |
+| Django FK  | `ForeignKey('app.Model')` → model must exist |
+| Imports    | `from X import Y` → Y must exist             |
+| References | `see S01`, `cf. Phase 1`                     |
 
 **Granularity rules:**
 
-| Block effort | Action |
-|--------------|--------|
-| < min-days | Merge with adjacent block |
-| min-days to max-days | Target granularity |
-| > max-days | Seek sub-decomposition |
+| Block effort         | Action                    |
+| -------------------- | ------------------------- |
+| < min-days           | Merge with adjacent block |
+| min-days to max-days | Target granularity        |
+| > max-days           | Seek sub-decomposition    |
 
 **Invoke @decompose-validator:**
+
 - Check dependency consistency
 - Detect circular dependencies
 - Validate granularity compliance
@@ -161,6 +166,7 @@ Votre choix (ou texte libre):
 **⚠️ MANDATORY:** Use the **Write tool** to create all output files.
 
 **Create output directory:**
+
 ```bash
 mkdir -p {output_dir}
 ```
@@ -171,6 +177,7 @@ mkdir -p {output_dir}
 2. **S01-{slug}.md** through **SNN-{slug}.md** — Individual sub-specs
 
 **Output structure:**
+
 ```
 {output_dir}/
 ├── INDEX.md
@@ -182,24 +189,24 @@ mkdir -p {output_dir}
 
 ## Loaded Skills
 
-| Skill | Phase | Purpose |
-|-------|-------|---------|
-| `project-memory` | Pre-Workflow | Load context and conventions |
-| `architecture-patterns` | Phase 2 | Identify decomposition patterns |
-| `flags-system` | All | Handle --think levels |
-| `mcp` | Phase 2 | Context7 for architecture patterns |
+| Skill                   | Phase        | Purpose                            |
+| ----------------------- | ------------ | ---------------------------------- |
+| `project-memory`        | Pre-Workflow | Load context and conventions       |
+| `architecture-patterns` | Phase 2      | Identify decomposition patterns    |
+| `flags-system`          | All          | Handle --think levels              |
+| `mcp`                   | Phase 2      | Context7 for architecture patterns |
 
 ## Invoked Subagents
 
-| Subagent | Condition | Role |
-|----------|-----------|------|
-| `@decompose-validator` | Always | Validate decomposition consistency |
+| Subagent               | Condition | Role                               |
+| ---------------------- | --------- | ---------------------------------- |
+| `@decompose-validator` | Always    | Validate decomposition consistency |
 
 ## Output Formats
 
 ### INDEX.md
 
-```markdown
+````markdown
 # {Project Title} — Index
 
 > **Generated**: {date}
@@ -211,11 +218,11 @@ mkdir -p {output_dir}
 
 ## Overview
 
-| ID | Sub-Spec | Effort | Dependencies | Parallelizable |
-|----|----------|--------|--------------|----------------|
-| S01 | {name} | {d}j | — | No |
-| S02 | {name} | {d}j | S01 | No |
-| ... | ... | ... | ... | ... |
+| ID  | Sub-Spec | Effort | Dependencies | Parallelizable |
+| --- | -------- | ------ | ------------ | -------------- |
+| S01 | {name}   | {d}j   | —            | No             |
+| S02 | {name}   | {d}j   | S01          | No             |
+| ... | ...      | ...    | ...          | ...            |
 
 ---
 
@@ -229,6 +236,7 @@ flowchart TD
     S03 --> S05[S05: {name}]
     ...
 ```
+````
 
 ---
 
@@ -253,24 +261,26 @@ gantt
 ## Progress
 
 | Spec | Status | Comment |
-|------|--------|---------|
-| S01 | To do | |
-| S02 | To do | |
-| ... | ... | |
+| ---- | ------ | ------- |
+| S01  | To do  |         |
+| S02  | To do  |         |
+| ...  | ...    |         |
 
 ---
 
 ## Usage
 
 Launch a sub-spec:
+
 ```bash
-/epci-brief @{output_dir}/S01-{name}.md
+/brief @{output_dir}/S01-{name}.md
 ```
 
 ---
 
-*Generated by epci-decompose*
-```
+_Generated by decompose_
+
+````
 
 ### SXX-{name}.md (Sub-Spec Template)
 
@@ -329,8 +339,8 @@ This sub-spec is part of the **{project_title}** project.
 
 ---
 
-*Generated by epci-decompose — Project: {slug}*
-```
+*Generated by decompose — Project: {slug}*
+````
 
 ## Edge Cases
 
@@ -339,6 +349,7 @@ This sub-spec is part of the **{project_title}** project.
 **Detection:** Less than 3 `##` headers or no "Phase/Step" patterns.
 
 **Behavior:**
+
 ```
 Document structure insufficient.
 
@@ -363,13 +374,14 @@ Options: [Validate structure] [Modify] [Cancel]
 **Detection:** Total estimated effort < 3 days.
 
 **Behavior:**
+
 ```
 This document seems simple enough for a single EPCI session.
 
 Estimated effort: {X} days
-Recommendation: Use /epci-brief directly
+Recommendation: Use /brief directly
 
-/epci-brief @{file}
+/brief @{file}
 ```
 
 **No decomposition** — command ends.
@@ -379,6 +391,7 @@ Recommendation: Use /epci-brief directly
 **Detection:** A sub-spec exceeds `--max-days`.
 
 **Behavior:**
+
 ```
 ALERT: Sub-spec {ID} too large ({X} days estimated)
 
@@ -397,6 +410,7 @@ Options:
 **Detection:** Cycle in dependency graph.
 
 **Behavior:**
+
 ```
 ERROR: Circular dependency detected
 
@@ -419,6 +433,7 @@ Options:
 **Detection:** No estimation patterns found.
 
 **Behavior:**
+
 ```
 No estimates found in document
 
@@ -434,7 +449,7 @@ Estimates are indicative. Adjust if needed.
 ### Example 1: Standard Usage
 
 ```
-> /epci-decompose migration_architecture_gardel.md
+> /decompose migration_architecture_gardel.md
 
 📄 Document: migration_architecture_gardel.md
 ├── Lines: 1738
@@ -479,7 +494,7 @@ docs/specs/migration-gardel/
 ### Example 2: With Custom Options
 
 ```
-> /epci-decompose mon-prd.md --output specs/alpha/ --min-days 2 --max-days 4 --think think-hard
+> /decompose mon-prd.md --output specs/alpha/ --min-days 2 --max-days 4 --think think-hard
 
 [Deep analysis with think-hard...]
 [Granularity adjusted to 2-4 days per spec...]
@@ -488,27 +503,27 @@ docs/specs/migration-gardel/
 ### Example 3: Small Document (Auto-Redirect)
 
 ```
-> /epci-decompose simple-feature.md
+> /decompose simple-feature.md
 
 This document seems simple enough for a single EPCI session.
 
 Estimated effort: 2 days
-Recommendation: Use /epci-brief directly
+Recommendation: Use /brief directly
 
-/epci-brief @simple-feature.md
+/brief @simple-feature.md
 ```
 
 ## Error Handling
 
-| Error | Cause | Solution |
-|-------|-------|----------|
-| File not found | Path incorrect or file missing | Check path, use absolute path |
-| Not a .md file | Wrong file type | Provide a Markdown file |
-| Circular dependency | Document has conflicting prerequisites | Fix source document or ignore one direction |
-| No structure detected | Document lacks headers/organization | Accept proposed structure or restructure manually |
+| Error                 | Cause                                  | Solution                                          |
+| --------------------- | -------------------------------------- | ------------------------------------------------- |
+| File not found        | Path incorrect or file missing         | Check path, use absolute path                     |
+| Not a .md file        | Wrong file type                        | Provide a Markdown file                           |
+| Circular dependency   | Document has conflicting prerequisites | Fix source document or ignore one direction       |
+| No structure detected | Document lacks headers/organization    | Accept proposed structure or restructure manually |
 
 ## See Also
 
-- `/epci-brief` — Entry point for individual sub-specs after decomposition
+- `/brief` — Entry point for individual sub-specs after decomposition
 - `/epci` — Complete workflow for STANDARD/LARGE features
-- `/epci-quick` — Fast workflow for TINY/SMALL sub-specs
+- `/quick` — Fast workflow for TINY/SMALL sub-specs

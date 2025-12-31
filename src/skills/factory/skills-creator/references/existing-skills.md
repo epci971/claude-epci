@@ -13,13 +13,13 @@ Reference catalog of all existing EPCI skills for consistency and inspiration.
 ### architecture-patterns
 - **Category**: core
 - **Purpose**: SOLID, DDD, Clean Architecture patterns
-- **Loaded by**: `/epci-brief`, `/epci` Phase 1
+- **Loaded by**: `/brief`, `/epci` Phase 1
 - **Key sections**: Design patterns, layer separation, dependency rules
 
 ### code-conventions
 - **Category**: core
 - **Purpose**: Naming, formatting, code structure standards
-- **Loaded by**: `/epci-quick`, `/epci` Phase 2
+- **Loaded by**: `/quick`, `/epci` Phase 2
 - **Key sections**: Naming conventions, file organization, style guides
 
 ### testing-strategy

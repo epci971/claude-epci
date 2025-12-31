@@ -38,7 +38,7 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 ## Exploration Summary
 
 > Cette section documente l'analyse initiale du codebase effectuee pendant le brainstorm.
-> Elle sert de reference pour `/epci-brief` qui effectuera une exploration ciblee.
+> Elle sert de reference pour `/brief` qui effectuera une exploration ciblee.
 
 ### Codebase Analysis
 - **Structure**: [monorepo / multi-module / single-app]
@@ -51,7 +51,7 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 | `path/to/file1.ext` | Create | [Description] |
 | `path/to/file2.ext` | Modify | [Description] |
 
-> Note: Liste indicative. L'exploration de `/epci-brief` affinera ces fichiers.
+> Note: Liste indicative. L'exploration de `/brief` affinera ces fichiers.
 
 ### Risques Identifies
 - [Risque 1 avec niveau: Low/Medium/High]
@@ -174,7 +174,7 @@ Score: XX/100 [emoji]
 
 ---
 
-*Brief pret pour EPCI — Lancer `/epci-brief` avec ce contenu.*
+*Brief pret pour EPCI — Lancer `/brief` avec ce contenu.*
 ```
 
 ## Template Journal d'Exploration

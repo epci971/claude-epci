@@ -115,7 +115,7 @@ Identify issues before finalization.
 **Reasoning:** [Technical justification]
 ```
 
-## Light Mode (for /epci-quick)
+## Light Mode (for /quick)
 
 In light mode, focus only on:
 - Obvious bugs

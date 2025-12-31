@@ -99,10 +99,10 @@ All learning data is stored in `.project-memory/learning/`:
 
 | Command | Purpose |
 |---------|---------|
-| `/epci-learn status` | View learning state |
-| `/epci-learn reset` | Clear learning data |
-| `/epci-learn export` | Export for analysis |
-| `/epci-learn calibrate` | Force recalibration |
+| `/learn status` | View learning state |
+| `/learn reset` | Clear learning data |
+| `/learn export` | Export for analysis |
+| `/learn calibrate` | Force recalibration |
 
 ## Integration Points
 
@@ -134,7 +134,7 @@ Suggestion scores affect display order and filtering:
 1. **Record times consistently** — Always set estimated/actual times
 2. **Use appropriate complexity** — TINY/SMALL/STANDARD/LARGE
 3. **Collect enough samples** — 5+ per complexity for confidence
-4. **Review periodically** — Check `/epci-learn status`
+4. **Review periodically** — Check `/learn status`
 
 ### For Better Suggestions
 
@@ -150,7 +150,7 @@ Suggestion scores affect display order and filtering:
 | Inaccurate estimates | Collect more samples, check time format |
 | Irrelevant suggestions | Disable pattern, adjust threshold |
 | Missing suggestions | Check if disabled, lower threshold |
-| Corrupted data | Use `/epci-learn reset` |
+| Corrupted data | Use `/learn reset` |
 
 ## Privacy
 

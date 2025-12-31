@@ -151,10 +151,10 @@ IF .project-memory/ exists AND category != LARGE:
 | Command | Turbo Effect |
 |---------|--------------|
 | `/brainstorm` | @clarifier (Haiku), max 3 iter, auto-accept EMS > 60 |
-| `/epci-brief` | @Explore (Haiku), 2 questions max, auto-suggest --turbo |
+| `/brief` | @Explore (Haiku), 2 questions max, auto-suggest --turbo |
 | `/epci` | @planner + @implementer, parallel reviews, 1 breakpoint |
-| `/epci-quick` | @implementer for SMALL, auto-commit, skip review |
-| `/epci-debug` | Haiku diagnostic, auto-apply best solution |
+| `/quick` | @implementer for SMALL, auto-commit, skip review |
+| `/debug` | Haiku diagnostic, auto-apply best solution |
 
 ### Examples
 
@@ -220,7 +220,7 @@ Thresholds:
 /epci --persona-security --think-hard
 
 # Auto-activated based on brief content
-/epci-brief "Add user authentication endpoint"
+/brief "Add user authentication endpoint"
 # → --persona-backend auto-activated (score: 0.68)
 ```
 

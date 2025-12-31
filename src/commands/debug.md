@@ -424,7 +424,7 @@ Input: "Intermittent authentication failures in production"
 
 ## Differences with Other Workflows
 
-| Aspect | /epci-debug | /epci | /epci-spike |
+| Aspect | /debug | /epci | /spike |
 |--------|-------------|-------|-------------|
 | Trigger | Bug/error | Feature | Uncertainty |
 | Output | Fix + Report | Feature Doc | Spike Report |

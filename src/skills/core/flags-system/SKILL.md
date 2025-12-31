@@ -168,10 +168,10 @@ When `--large` is detected:
 
 | Command | Flag Support |
 |---------|--------------|
-| `/epci-brief` | Evaluate and suggest flags |
+| `/brief` | Evaluate and suggest flags |
 | `/epci` | Full flag support, display in breakpoints |
-| `/epci-quick` | Limited (--uc, --no-hooks) |
-| `/epci-spike` | Thinking flags only |
+| `/quick` | Limited (--uc, --no-hooks) |
+| `/spike` | Thinking flags only |
 
 ### Hooks
 

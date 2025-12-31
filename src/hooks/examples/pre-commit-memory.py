@@ -199,7 +199,7 @@ def main():
 
         if not manager.is_initialized():
             result["status"] = "warning"
-            result["message"] = "Project Memory not initialized. Run /epci-memory init first."
+            result["message"] = "Project Memory not initialized. Run /memory init first."
             print(json.dumps(result))
             return
 

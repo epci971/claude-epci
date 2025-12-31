@@ -19,7 +19,7 @@ Optimized for speed in --turbo mode workflows.
 ## When to Use
 
 - `/brainstorm --turbo` : Replace iterative questioning with fast clarification
-- `/epci-brief --turbo` : Quick requirement gathering
+- `/brief --turbo` : Quick requirement gathering
 - Any workflow where speed > depth for clarification
 
 ## Process

@@ -170,7 +170,7 @@ Create the directory if needed, then write the Spike Report:
 ### If GO
 - **Recommended approach:** [Approach to follow]
 - **Estimated effort:** [SMALL | STANDARD | LARGE]
-- **Next step:** Launch `/epci-brief` with this information
+- **Next step:** Launch `/brief` with this information
 
 ### If NO-GO
 - **Reason:** [Why it's not feasible]
@@ -233,7 +233,7 @@ Verdict: NO-GO
 
 ## Differences with Other Workflows
 
-| Aspect | /epci-spike | /epci | /epci-quick |
+| Aspect | /spike | /epci | /quick |
 |--------|-------------|-------|-------------|
 | Objective | Learn | Produce | Produce |
 | Code | Throwaway | Production | Production |
@@ -245,7 +245,7 @@ Verdict: NO-GO
 
 After a GO spike:
 1. Create a brief with spike information
-2. Launch `/epci-brief` for normal workflow
+2. Launch `/brief` for normal workflow
 3. Reference Spike Report in Feature Document
 
 ```

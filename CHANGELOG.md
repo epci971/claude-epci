@@ -5,27 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.0] - 2024-12-31
+
+### Changed
+
+- **Command Renaming**: Removed redundant `epci-` prefix from all commands
+    - `/epci:epci-brief` → `/epci:brief`
+    - `/epci:epci-quick` → `/epci:quick`
+    - `/epci:epci-spike` → `/epci:spike`
+    - `/epci:epci-debug` → `/epci:debug`
+    - `/epci:epci-decompose` → `/epci:decompose`
+    - `/epci:epci-memory` → `/epci:memory`
+    - `/epci:epci-learn` → `/epci:learn`
+- Updated all internal references in commands, agents, skills, hooks, and documentation
+- Maintained `/epci:epci` as the main workflow command (unchanged)
+- Maintained `/epci:brainstorm` and `/epci:create` (already without prefix)
+
+### Technical Details
+
+- Renamed 7 command files in `src/commands/`
+- Updated `plugin.json` with new command paths
+- Updated all cross-references in 9 agent files, 15+ skill files, 4 hook files
+- Updated `CLAUDE.md`, `README.md`, and `src/settings/flags.md`
+- Version bumped to 4.2.0
+
 ## [Unreleased]
 
 ### Added
 
 - **F02: Système de Hooks** - Extensibility system for EPCI workflow with:
-  - 7 hook points: pre/post-phase-1/2/3, on-breakpoint
-  - Python runner (`hooks/runner.py`) with subprocess execution, timeout, JSON I/O
-  - Safe interpreter whitelist for shebang security
-  - 3 example hooks: linter, notification, logging
-  - Full documentation in `hooks/README.md`
-  - Integration with `/epci` command at all phase transitions
+    - 7 hook points: pre/post-phase-1/2/3, on-breakpoint
+    - Python runner (`hooks/runner.py`) with subprocess execution, timeout, JSON I/O
+    - Safe interpreter whitelist for shebang security
+    - 3 example hooks: linter, notification, logging
+    - Full documentation in `hooks/README.md`
+    - Integration with `/epci` command at all phase transitions
 
 - **F03: Enriched Breakpoints** - Enhanced `/epci` workflow breakpoints with:
-  - Complexity scoring algorithm (files×0.3 + LOC×0.3 + deps×0.2 + risk×0.2)
-  - Time estimation heuristics (TINY=15min, SMALL=1h, STANDARD=3h, LARGE=8h+)
-  - Agent verdict summaries with clear status indicators
-  - Preview of next phase tasks (3-5 upcoming tasks displayed)
-  - Interactive options with guided text instructions
-  - ASCII-art formatted breakpoint displays for terminal readability
-  - New `breakpoint-metrics` skill with BP1/BP2 templates
-  - Integration with both Phase 1→2 and Phase 2→3 breakpoints
+    - Complexity scoring algorithm (files×0.3 + LOC×0.3 + deps×0.2 + risk×0.2)
+    - Time estimation heuristics (TINY=15min, SMALL=1h, STANDARD=3h, LARGE=8h+)
+    - Agent verdict summaries with clear status indicators
+    - Preview of next phase tasks (3-5 upcoming tasks displayed)
+    - Interactive options with guided text instructions
+    - ASCII-art formatted breakpoint displays for terminal readability
+    - New `breakpoint-metrics` skill with BP1/BP2 templates
+    - Integration with both Phase 1→2 and Phase 2→3 breakpoints
 
 ### Changed
 

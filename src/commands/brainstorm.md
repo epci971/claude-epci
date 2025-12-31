@@ -139,7 +139,7 @@ EMS Final: XX/100 [emoji]
    • Journal: ./docs/briefs/journal-[slug]-[date].md
 
 🚀 Prochaine etape:
-   Lancer /epci-brief avec le contenu du brief ci-dessus.
+   Lancer /brief avec le contenu du brief ci-dessus.
    L'exploration ciblee affinera les fichiers impactes.
 -------------------------------------------------------
 ```
@@ -210,7 +210,7 @@ Init → @clarifier (Haiku) → Iter 1 → Iter 2 → Iter 3 (max) → finish
 
 Le brief genere s'integre dans le workflow EPCI:
 
-1. **Lancer `/epci-brief`** avec le contenu du brief comme description
+1. **Lancer `/brief`** avec le contenu du brief comme description
 2. L'exploration ciblee (avec un brief precis) identifie les fichiers exacts
 3. Le brief et le journal servent de **documentation** de la phase de decouverte
 

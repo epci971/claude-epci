@@ -11,7 +11,7 @@ allowed-tools: [Read, Grep]
 
 ## Mission
 
-Validate decomposition proposals from `/epci-decompose` before file generation.
+Validate decomposition proposals from `/decompose` before file generation.
 Acts as gate-keeper to ensure coherent, executable sub-specifications.
 
 ## Validation Criteria
@@ -183,5 +183,5 @@ function detectCycle(node, visited, recursionStack):
 
 ## Integration
 
-Called by `/epci-decompose` during Phase 2 (Structural Analysis) to validate
+Called by `/decompose` during Phase 2 (Structural Analysis) to validate
 the proposed decomposition before presenting to user at the breakpoint.

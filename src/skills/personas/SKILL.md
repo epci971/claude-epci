@@ -188,7 +188,7 @@ Each persona applies a specific priority order when making decisions:
 
 ## Integration Points
 
-### In /epci-brief (Step 4.5)
+### In /brief (Step 4.5)
 
 After complexity evaluation, before output generation:
 1. Run scoring algorithm for all 6 personas
@@ -218,7 +218,7 @@ After complexity evaluation, before output generation:
 /epci --persona-backend
 
 # Auto-activation (based on brief content)
-/epci-brief "Add REST API for user management"
+/brief "Add REST API for user management"
 # → --persona-backend auto-activated (score: 0.68)
 
 # Override auto-activation

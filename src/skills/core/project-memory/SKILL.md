@@ -3,8 +3,8 @@ name: project-memory
 description: >-
   Comprehensive Project Memory management for EPCI workflows. Loads context
   at workflow start, persists feature history, and provides conventions/patterns
-  for consistent code generation. Auto-invoke at start of /epci-brief, /epci,
-  /epci-quick, /epci-spike, /epci-decompose.
+  for consistent code generation. Auto-invoke at start of /brief, /epci,
+  /quick, /spike, /decompose.
 allowed-tools: [Read, Glob, Write]
 ---
 
@@ -82,11 +82,11 @@ Access development velocity:
 ## When to Load
 
 **Always load at the start of:**
-- `/epci-brief` — Before exploration
+- `/brief` — Before exploration
 - `/epci` — Before each phase
-- `/epci-quick` — Before implementation
-- `/epci-spike` — Before exploration
-- `/epci-decompose` — Before analysis
+- `/quick` — Before implementation
+- `/spike` — Before exploration
+- `/decompose` — Before analysis
 
 ## Loading Process
 
@@ -98,7 +98,7 @@ Check if `.project-memory/` directory exists in project root.
 
 **If not found:** Continue without context. At workflow end, suggest:
 ```
-💡 No Project Memory detected. Run `/epci-memory init` to enable
+💡 No Project Memory detected. Run `/memory init` to enable
    learning, conventions, and velocity tracking.
 ```
 
@@ -292,10 +292,10 @@ At workflow start, display loaded context summary:
 
 | Command | Description |
 |---------|-------------|
-| `/epci-memory init` | Initialize memory with auto-detection |
-| `/epci-memory status` | Display current state |
-| `/epci-memory reset` | Clear memory (with backup) |
-| `/epci-memory export` | Export as JSON |
+| `/memory init` | Initialize memory with auto-detection |
+| `/memory status` | Display current state |
+| `/memory reset` | Clear memory (with backup) |
+| `/memory export` | Export as JSON |
 
 ## Auto-Detection
 
@@ -316,7 +316,7 @@ On initialization, the system detects:
 |-----------|--------|
 | File missing | Skip with debug log, continue |
 | Invalid JSON | Warn user, skip file, continue |
-| Empty directory | Suggest `/epci-memory init` |
+| Empty directory | Suggest `/memory init` |
 | Partial data | Use available data, log gaps |
 
 ## Integration Points
@@ -330,10 +330,10 @@ On initialization, the system detects:
 
 ## Best Practices
 
-1. **Initialize early** — Run `/epci-memory init` at project start
+1. **Initialize early** — Run `/memory init` at project start
 2. **Let it learn** — Complete features to build velocity history
 3. **Review conventions** — Check detected conventions match your intent
-4. **Export before major changes** — Backup with `/epci-memory export`
+4. **Export before major changes** — Backup with `/memory export`
 
 ## Performance Notes
 

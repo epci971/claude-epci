@@ -143,13 +143,13 @@ Generates a Feature Document as traceability thread.
 
 ## Feature Document
 
-The Feature Document is created by `/epci-brief` at: `docs/features/<feature-slug>.md`
+The Feature Document is created by `/brief` at: `docs/features/<feature-slug>.md`
 
 ```markdown
 # Feature Document — [Title]
 
 ## §1 — Functional Brief
-[Created by /epci-brief with thorough exploration]
+[Created by /brief with thorough exploration]
 
 ## §2 — Implementation Plan
 [Generated in Phase 1]
@@ -171,7 +171,7 @@ See `hooks/README.md` for configuration and examples.
 
 | Hook Type | Trigger Point | Use Case |
 |-----------|--------------|----------|
-| `pre-brief` | Before /epci-brief exploration | Load external config, validate environment |
+| `pre-brief` | Before /brief exploration | Load external config, validate environment |
 | `post-brief` | After complexity evaluation | Notify feature start, create tickets |
 | `pre-phase-1` | Before Phase 1 starts | Load context, check prerequisites |
 | `post-phase-1` | After plan validation | Notify team, update tickets |
@@ -238,14 +238,14 @@ overrides can be placed in `.project-memory/orchestration.yaml`.
 
 ## Pre-Workflow: Memory Context
 
-**Memory is loaded once by `/epci-brief`** and passed via Feature Document §1 (Memory Summary section).
+**Memory is loaded once by `/brief`** and passed via Feature Document §1 (Memory Summary section).
 
 **Reading memory context:**
 1. Check Feature Document §1 for "Memory Summary" section
 2. If present: Use conventions, patterns, and velocity from §1
 3. If absent (direct /epci call): Fall back to loading `.project-memory/` directly
 
-**Fallback behavior:** If `/epci` is called without prior `/epci-brief`, the `project-memory` skill will load context. This is not recommended — always start with `/epci-brief`.
+**Fallback behavior:** If `/epci` is called without prior `/brief`, the `project-memory` skill will load context. This is not recommended — always start with `/brief`.
 
 ---
 
@@ -267,15 +267,15 @@ overrides can be placed in `.project-memory/orchestration.yaml`.
 - `--safe`: Additional validation checks in plan
 - `--no-hooks`: Skip pre-phase-1 and post-phase-1 hooks
 
-**Note**: @Plan is no longer invoked — exploration has been done by `/epci-brief`.
+**Note**: @Plan is no longer invoked — exploration has been done by `/brief`.
 
 ### Process
 
 **🪝 Execute `pre-phase-1` hooks** (if configured)
 
 1. **Read Feature Document**
-   - Read `docs/features/<slug>.md` (created by `/epci-brief`)
-   - Verify §1 is complete (if incomplete → error, suggest `/epci-brief` first)
+   - Read `docs/features/<slug>.md` (created by `/brief`)
+   - Verify §1 is complete (if incomplete → error, suggest `/brief` first)
    - Extract from §1: identified files, stack, constraints, acceptance criteria
 
 2. **Direct planning**
