@@ -1,67 +1,78 @@
 ---
 description: >-
-  Manage project memory for EPCI. Initializes, displays status, resets, or
-  exports the .project-memory/ directory in the current project.
-  Use 'init' to set up memory, 'status' for current state, 'export' for backup.
-argument-hint: "status|init|reset|export"
+  Manage project memory and learning for EPCI. Initializes, displays status,
+  resets, or exports the .project-memory/ directory. Includes learning subsystem
+  for calibration, preferences, and pattern detection.
+argument-hint: "status|init|reset|export|learn [status|reset|calibrate]"
 allowed-tools: [Read, Write, Glob, Bash]
 ---
 
-# EPCI Memory — Project Memory Management
+# EPCI Memory — Project Memory & Learning Management v2.0
 
 ## Overview
 
-Manages the `.project-memory/` directory in the current project.
-This directory stores project context, conventions, feature history, and metrics.
+Manages the `.project-memory/` directory which stores:
+- **Project context**: stack, conventions, patterns, feature history
+- **Learning data**: calibration, preferences, recurring patterns
 
 ## Subcommands
 
 | Command | Description |
 |---------|-------------|
-| `status` | Display current memory state and statistics |
+| `status` | Display project memory + learning summary |
 | `init` | Initialize project memory with auto-detection |
-| `reset` | Clear project memory (with confirmation) |
-| `export` | Export all memory data as JSON |
+| `reset` | Reset all memory (with confirmation) |
+| `export` | Export all data as JSON |
+| `learn status` | Display detailed learning statistics |
+| `learn reset` | Reset learning data only (keep project context) |
+| `learn calibrate` | Force recalibration from feature history |
 
 ---
 
 ## /memory status
 
-Display the current state of project memory.
+Display combined project memory and learning state.
 
 ### Process
 
 1. Check if `.project-memory/` exists
-2. Load context, conventions, and velocity
-3. Display summary
+2. Load context, conventions, velocity, and learning data
+3. Display unified summary
 
 ### Output
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│ 📦 PROJECT MEMORY STATUS                                            │
+│ PROJECT MEMORY STATUS                                               │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│ 📂 Location: .project-memory/                                       │
+│ Location: .project-memory/                                          │
 │                                                                     │
-│ 🔧 PROJECT                                                          │
+│ PROJECT                                                             │
 │ ├── Name: {project_name}                                           │
 │ ├── Stack: {stack}                                                 │
 │ ├── Framework: {framework_version}                                 │
 │ └── Initialized: {initialized_at}                                  │
 │                                                                     │
-│ 📊 METRICS                                                          │
+│ METRICS                                                             │
 │ ├── Features completed: {features_completed}                       │
 │ ├── Last session: {last_session}                                   │
 │ └── Velocity trend: {velocity_trend}                               │
 │                                                                     │
-│ 📋 CONVENTIONS                                                      │
+│ CONVENTIONS                                                         │
 │ ├── Entities: {naming.entities}                                    │
 │ ├── Services: {naming.services}                                    │
 │ └── Code style: {code_style}                                       │
 │                                                                     │
-│ 🏗️  PATTERNS DETECTED                                               │
+│ PATTERNS DETECTED                                                   │
 │ └── {patterns or "None detected"}                                  │
+│                                                                     │
+│ LEARNING (summary)                                                  │
+│ ├── Calibration samples: {total_samples}                           │
+│ ├── Overall accuracy: {overall_accuracy}                           │
+│ └── Patterns tracked: {patterns_tracked}                           │
+│                                                                     │
+│ -> /memory learn status for detailed learning info                 │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -96,37 +107,45 @@ Initialize project memory with auto-detection.
    │   ├── velocity.json
    │   └── quality.json
    └── learning/
-       ├── corrections.json
-       └── preferences.json
+       ├── calibration.json
+       ├── preferences.json
+       └── corrections.json
    ```
-4. Display detected values
+4. Initialize learning with defaults
+5. Display detected values
 
 ### Output
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│ ✅ PROJECT MEMORY INITIALIZED                                        │
+│ PROJECT MEMORY INITIALIZED                                          │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│ 📂 Created: .project-memory/                                        │
+│ Created: .project-memory/                                           │
 │                                                                     │
-│ 🔍 DETECTION RESULTS                                                │
+│ DETECTION RESULTS                                                   │
 │ ├── Stack: {detected_stack} (confidence: {confidence}%)            │
 │ ├── Framework: {framework} {version}                               │
 │ ├── Language: {language} {version}                                 │
 │ └── Code style: {code_style}                                       │
 │                                                                     │
-│ 📋 CONVENTIONS DETECTED                                             │
+│ CONVENTIONS DETECTED                                                │
 │ ├── Entities: {naming.entities}                                    │
 │ ├── Services: {naming.services}                                    │
 │ ├── Tests location: {structure.tests_location}                     │
 │ └── Test suffix: {structure.test_suffix}                           │
 │                                                                     │
-│ 🏗️  PATTERNS DETECTED                                               │
+│ PATTERNS DETECTED                                                   │
 │ └── {patterns_list or "None detected"}                             │
 │                                                                     │
-│ 💡 You can manually adjust conventions in:                          │
+│ LEARNING INITIALIZED                                                │
+│ ├── Calibration: Ready (0 samples)                                 │
+│ ├── Preferences: Empty                                             │
+│ └── Patterns: Tracking enabled                                     │
+│                                                                     │
+│ You can manually adjust in:                                         │
 │    .project-memory/conventions.json                                │
+│    .project-memory/settings.json                                   │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -135,7 +154,7 @@ Initialize project memory with auto-detection.
 
 ## /memory reset
 
-Reset project memory with confirmation.
+Reset all project memory with confirmation.
 
 ### Process
 
@@ -148,10 +167,11 @@ Reset project memory with confirmation.
 ### Confirmation Dialog
 
 ```
-⚠️  WARNING: This will delete all project memory data.
+WARNING: This will delete ALL project memory data.
 
 Current state:
 - Features recorded: {count}
+- Learning samples: {count}
 - Initialized: {date}
 - Last session: {date}
 
@@ -163,8 +183,8 @@ Type "RESET" to confirm, or anything else to cancel:
 ### Output (after confirmation)
 
 ```
-✅ Project memory has been reset.
-📦 Backup created: .project-memory-backup-20251216-143022/
+Project memory has been reset.
+Backup created: .project-memory-backup-20251216-143022/
 
 To reinitialize: /memory init
 ```
@@ -173,7 +193,7 @@ To reinitialize: /memory init
 
 ## /memory export
 
-Export all memory data as JSON.
+Export all memory and learning data as JSON.
 
 ### Process
 
@@ -197,18 +217,154 @@ Export all memory data as JSON.
     "detected": [ ... ],
     "custom": [ ... ]
   },
+  "learning": {
+    "calibration": { ... },
+    "preferences": { ... },
+    "corrections": { ... }
+  },
   "exported_at": "2025-12-16T14:30:00Z"
 }
 ```
 
-### Usage
+---
 
-```bash
-# Display in terminal
-/memory export
+## /memory learn status
 
-# Save to file (user copies output)
-/memory export > memory-backup.json
+Display detailed learning statistics.
+
+### Output
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ EPCI LEARNING STATUS                                                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ CALIBRATION                                                         │
+│ ├── Total samples: {total_samples}                                 │
+│ ├── Overall accuracy: {overall_accuracy}                           │
+│ ├── Trend: {trend}                                                 │
+│ └── Last updated: {last_updated}                                   │
+│                                                                     │
+│ FACTORS BY COMPLEXITY                                               │
+│ ├── TINY:     {factor}x ({samples} samples, {confidence} conf)    │
+│ ├── SMALL:    {factor}x ({samples} samples, {confidence} conf)    │
+│ ├── STANDARD: {factor}x ({samples} samples, {confidence} conf)    │
+│ └── LARGE:    {factor}x ({samples} samples, {confidence} conf)    │
+│                                                                     │
+│ SUGGESTION LEARNING                                                 │
+│ ├── Patterns tracked: {patterns_tracked}                          │
+│ ├── Disabled patterns: {disabled_count}                            │
+│ ├── Preferred patterns: {preferred_count}                          │
+│ └── Learning enabled: {enabled}                                    │
+│                                                                     │
+│ RECURRING PATTERNS                                                  │
+│ ├── Total corrections: {corrections_count}                         │
+│ ├── Recurring (auto-suggest): {recurring_count}                    │
+│ └── Top patterns:                                                  │
+│     1. {pattern_1} ({acceptance_rate_1})                           │
+│     2. {pattern_2} ({acceptance_rate_2})                           │
+│     3. {pattern_3} ({acceptance_rate_3})                           │
+│                                                                     │
+│ INTERPRETATION                                                      │
+│ • Factor > 1.0: Actual time exceeds estimates                       │
+│ • Factor < 1.0: Estimates exceed actual time                        │
+│ • High confidence: More reliable calibration                        │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Interpretation Guide
+
+| Factor | Meaning | Action |
+|--------|---------|--------|
+| 1.0 | Estimates are accurate | No adjustment needed |
+| > 1.0 | Under-estimating | Multiply base estimate by factor |
+| < 1.0 | Over-estimating | Multiply base estimate by factor |
+| Low confidence | Few samples | Collect more data |
+
+---
+
+## /memory learn reset
+
+Reset learning data only, keeping project context intact.
+
+### Process
+
+1. Check if learning data exists
+2. Display current statistics
+3. Ask for explicit confirmation
+4. Create backup files
+5. Reset calibration and preferences only
+
+### Confirmation Dialog
+
+```
+WARNING: This will reset learning data only.
+Project context, conventions, and history will be preserved.
+
+Current learning state:
+- Calibration samples: {count}
+- Patterns tracked: {count}
+- Corrections recorded: {count}
+- Learning since: {date}
+
+Backups will be created:
+- learning/calibration.backup-{timestamp}.json
+- learning/preferences.backup-{timestamp}.json
+- learning/corrections.backup-{timestamp}.json
+
+Type "RESET" to confirm, or anything else to cancel:
+```
+
+### Output (after confirmation)
+
+```
+Learning data has been reset.
+Backups created in .project-memory/learning/
+
+Project context preserved.
+Run features with /epci to collect new calibration data.
+```
+
+---
+
+## /memory learn calibrate
+
+Force recalibration from feature history.
+
+### Process
+
+1. Load all completed feature history
+2. Filter features with valid estimated/actual times
+3. Reset calibration data
+4. Replay all features through calibration algorithm
+5. Display new calibration status
+
+### Use Cases
+
+- After importing feature history from another project
+- After suspected calibration data corruption
+- To recalculate with different alpha (weight) value
+
+### Output
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ RECALIBRATION COMPLETE                                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Features processed: {count}                                        │
+│ Features with valid times: {valid_count}                           │
+│                                                                     │
+│ NEW CALIBRATION FACTORS                                             │
+│ ├── TINY:     {factor}x ({samples} samples)                       │
+│ ├── SMALL:    {factor}x ({samples} samples)                       │
+│ ├── STANDARD: {factor}x ({samples} samples)                       │
+│ └── LARGE:    {factor}x ({samples} samples)                       │
+│                                                                     │
+│ Overall accuracy: {accuracy}                                       │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -221,6 +377,8 @@ Export all memory data as JSON.
 | Corrupted files | Warn and use defaults |
 | Permission denied | Display error with path |
 | Already initialized (init) | Ask for confirmation |
+| No learning data | Show empty status, suggest running features |
+| No feature history (calibrate) | Cannot recalibrate, show message |
 
 ---
 
@@ -232,8 +390,37 @@ Project memory is automatically used by:
 |---------|-------|
 | `/brief` | Loads context for stack detection |
 | `/epci` | Saves feature history after Phase 3 |
+| `/epci` Phase 3 | Triggers calibration with feature times |
 | Breakpoints | Displays velocity metrics |
+| Suggestions | Records accept/reject feedback |
+| Code review | Records corrections for pattern detection |
 | Hooks | Receives memory context |
+
+---
+
+## Settings
+
+Learning behavior can be configured in `.project-memory/settings.json`:
+
+```json
+{
+  "learning": {
+    "enabled": true,
+    "calibration_alpha": 0.3,
+    "suggestion_threshold": 0.3,
+    "max_suggestions_per_breakpoint": 5,
+    "recurrence_threshold": 3
+  }
+}
+```
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `enabled` | `true` | Enable/disable learning |
+| `calibration_alpha` | `0.3` | EMA smoothing factor (0-1) |
+| `suggestion_threshold` | `0.3` | Min score to show suggestion |
+| `max_suggestions_per_breakpoint` | `5` | Max suggestions at breakpoints |
+| `recurrence_threshold` | `3` | Occurrences for auto-suggest |
 
 ---
 
@@ -250,5 +437,22 @@ Project memory is automatically used by:
 | `patterns/custom.json` | User-defined patterns |
 | `metrics/velocity.json` | Development velocity metrics |
 | `metrics/quality.json` | Code quality metrics |
-| `learning/corrections.json` | Applied corrections history |
-| `learning/preferences.json` | User preferences |
+| `learning/calibration.json` | Time estimation calibration |
+| `learning/preferences.json` | Suggestion preferences |
+| `learning/corrections.json` | Correction patterns |
+
+---
+
+## Privacy
+
+EPCI Learning collects only:
+- Time metrics (estimated vs actual)
+- Pattern identifiers (not code content)
+- User actions (accept/reject/ignore)
+
+**Never stored:**
+- Source code content
+- File contents
+- Personal information
+
+All data is local to `.project-memory/` and can be exported/deleted at any time.

@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 4.2.0 | **Date** : Décembre 2024
+> **Version** : 4.4.0 | **Date** : Décembre 2024
 
 ---
 
@@ -12,10 +12,19 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
-| **Simplicité**      | 10 commandes spécialisées                                     |
+| **Simplicité**      | 8 commandes spécialisées                                      |
 | **Modularité**      | Skills, Subagents, Hooks natifs                               |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 4 serveurs externes (Context7, Sequential, Magic, Playwright) |
+
+### Nouveautés v4.4
+
+- **Fusion learn → memory** : `/learn` supprimé, learning intégré dans `/memory` via subcommands `learn status|reset|calibrate`
+- 8 commandes au lieu de 9
+
+### Nouveautés v4.3
+
+- **Fusion spike → brainstorm** : `/spike` supprimé, exploration technique intégrée dans `/brainstorm` via commande `spike [duration] [question]`
 
 ### Nouveautés v4.2
 
@@ -32,7 +41,7 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 ```
 src/
 ├── agents/           # 6 subagents (code-reviewer, plan-validator, etc.)
-├── commands/         # 10 commandes (brief, epci, quick, etc.)
+├── commands/         # 8 commandes (brief, epci, quick, brainstorm, etc.)
 ├── hooks/            # Système hooks (runner.py, examples/, active/)
 ├── mcp/              # MCP Integration (config, activation, registry)
 ├── orchestration/    # Wave orchestration
@@ -59,10 +68,10 @@ archive/              # Versions dépréciées
 ```
 Brief brut → /brief → Évaluation
                         │
-       ┌────────────────┼────────────────┐
-       ▼                ▼                ▼
-  TINY/SMALL        STD/LARGE         SPIKE
-    /quick            /epci           /spike
+       ┌────────────────┴────────────────┐
+       ▼                                 ▼
+  TINY/SMALL                         STD/LARGE
+    /quick                             /epci
 ```
 
 | Catégorie    | Critères                            | Workflow           |
@@ -71,7 +80,8 @@ Brief brut → /brief → Évaluation
 | **SMALL**    | 2-3 fichiers, < 200 LOC             | `/quick`           |
 | **STANDARD** | 4-10 fichiers, tests requis         | `/epci` (3 phases) |
 | **LARGE**    | 10+ fichiers, architecture complexe | `/epci --large`    |
-| **SPIKE**    | Incertitude technique               | `/spike`           |
+
+> **Note** : Pour les incertitudes techniques, utiliser `/brainstorm` avec la commande `spike [duration] [question]` intégrée.
 
 ### Feature Document (STD/LARGE)
 
@@ -87,19 +97,17 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 4. Commands (10)
+## 4. Commands (8)
 
 | Commande      | Rôle                                                        |
 | ------------- | ----------------------------------------------------------- |
 | `/brief`      | Point d'entrée unique — exploration, clarification, routing |
 | `/epci`       | Workflow complet 3 phases (STD/LARGE)                       |
 | `/quick`      | Workflow condensé (TINY/SMALL)                              |
-| `/spike`      | Exploration time-boxée                                      |
-| `/brainstorm` | Feature discovery avec personas                             |
+| `/brainstorm` | Feature discovery + exploration technique (spike intégré)   |
 | `/debug`      | Diagnostic bugs structuré                                   |
 | `/decompose`  | Décomposition PRD en sous-specs                             |
-| `/memory`     | Gestion mémoire projet                                      |
-| `/learn`      | Gestion apprentissage                                       |
+| `/memory`     | Gestion mémoire projet + learning (calibration, préférences)|
 | `/create`     | Component Factory (skill\|command\|agent)                   |
 
 ---
