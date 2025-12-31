@@ -1,0 +1,16 @@
+{
+  "source": "epci",
+  "type": "feat",
+  "scope": "commit",
+  "description": "add unified /commit command for EPCI workflows",
+  "files": [
+    "src/commands/commit.md",
+    "src/commands/epci.md",
+    "src/commands/quick.md",
+    "src/commands/debug.md",
+    "docs/features/commit-command.md"
+  ],
+  "featureDoc": "docs/features/commit-command.md",
+  "breaking": false,
+  "ticket": null
+}

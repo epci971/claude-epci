@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "summary": {
-    "total_features": 9,
+    "total_features": 10,
     "avg_time_tiny": null,
     "avg_time_small": null,
     "avg_time_standard": null,
@@ -10,7 +10,7 @@
   },
   "by_complexity": {
     "TINY": {
-      "count": 0,
+      "count": 1,
       "avg_time": null,
       "avg_files": null,
       "avg_loc": null
@@ -39,12 +39,6 @@
       {
         "slug": "f07-orchestration-multi-agents",
         "complexity": "LARGE",
-        "estimated": "4h20min",
-        "actual": "3h"
-      },
-      {
-        "slug": "f07-orchestration-multi-agents",
-        "complexity": "LARGE",
         "estimated": "10",
         "actual": null
       },
@@ -65,9 +59,15 @@
         "complexity": "LARGE",
         "estimated": "17min",
         "actual": null
+      },
+      {
+        "slug": "test-memory-fix",
+        "complexity": "TINY",
+        "estimated": null,
+        "actual": "30s"
       }
     ],
     "velocity_trend": "stable"
   },
-  "updated_at": "2025-12-29T16:23:42.595519Z"
+  "updated_at": "2025-12-31T15:35:40.863458Z"
 }

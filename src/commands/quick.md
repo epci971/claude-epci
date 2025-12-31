@@ -375,6 +375,23 @@ Examples:
 
 **⚠️ MANDATORY:** Always display the completion message.
 
+### Generate Commit Context
+
+**Before displaying completion, generate `.epci-commit-context.json`:**
+
+```json
+{
+  "source": "quick",
+  "type": "feat|fix",
+  "scope": "<detected module>",
+  "description": "<from brief description>",
+  "files": ["<list of modified files>"],
+  "featureDoc": null,
+  "breaking": false,
+  "ticket": null
+}
+```
+
 ### TINY Mode Output
 
 ```markdown
@@ -389,7 +406,8 @@ Examples:
 │ Temps total: {N}s                                                  │
 │ Session: .project-memory/sessions/quick-{timestamp}.json           │
 │                                                                     │
-│ Pour commiter: /commit                                             │
+│ 📝 Contexte commit préparé → /commit                               │
+│    (ou /commit --auto-commit pour commit direct)                   │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -409,7 +427,8 @@ Examples:
 │ Temps total: {N}s                                                  │
 │ Session: .project-memory/sessions/quick-{timestamp}.json           │
 │                                                                     │
-│ Pour commiter: /commit                                             │
+│ 📝 Contexte commit préparé → /commit                               │
+│    (ou /commit --auto-commit pour commit direct)                   │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
