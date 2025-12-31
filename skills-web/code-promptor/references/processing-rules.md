@@ -1,19 +1,30 @@
-# Processing Rules — Detailed Extraction Methodology
+# Processing Rules — Extraction Methodology
 
-> Complete reference for transcript analysis and information extraction
+> Detailed rules for extracting structured information from transcripts
 
 ---
 
-## 1. Pre-Analysis Phase
+## Core Principles
 
-### 1.1 Full Read-Through
-**Always** read the entire transcript before any processing. This prevents:
-- Missing later corrections/reversals
-- Misidentifying primary intent
-- Overlooking constraints mentioned at the end
+1. **Read entire transcript before processing** — Prevents missing corrections
+2. **Later statements override earlier** — Contradictions resolved by recency
+3. **Never invent** — If not stated, mark as absent
+4. **Preserve technical terms** — Don't translate or "improve" jargon
 
-### 1.2 Segmentation
-Mentally divide the transcript into logical segments:
+---
+
+## Pre-Analysis Phase
+
+### 1. Full Read-Through
+
+**Always** read the complete transcript before any extraction:
+- Catch later corrections ("actually", "no wait", "rather")
+- Identify the primary vs secondary intents
+- Note constraints mentioned at the end
+
+### 2. Segmentation
+
+Identify logical segments:
 
 | Segment Type | Markers |
 |--------------|---------|
@@ -23,107 +34,110 @@ Mentally divide the transcript into logical segments:
 | Emphasis | "The important thing is...", "Must have...", "Priority..." |
 | Uncertainty | "Maybe...", "Not sure if...", "We'll see..." |
 
-### 1.3 Complexity Assessment
+### 3. Complexity Assessment
 
 | Word Count | Classification | Mode |
 |------------|----------------|------|
-| < 100 words | Short | Compact (if single intent) |
-| 100-500 words | Medium | Standard |
-| > 500 words | Long | Standard with synthesis |
+| < 50 words | Short | Quick fix (if corrective) |
+| 50-200 words | Medium | Standard |
+| > 200 words | Long | Major (with synthesis) |
 
 ---
 
-## 2. Linguistic Normalization
+## Linguistic Normalization
 
-### 2.1 Remove Speech Artifacts
+### Speech Artifacts to Remove
 
-| Artifact Type | Examples | Action |
-|---------------|----------|--------|
-| Hesitations | "euh", "um", "uh" | Delete |
-| Filler words | "tu vois", "genre", "quoi", "voilà" | Delete |
+| Type | Examples | Action |
+|------|----------|--------|
+| Hesitations | "euh", "um", "uh", "hum" | Delete |
+| Fillers | "tu vois", "genre", "quoi", "voilà" | Delete |
 | Self-corrections | "non en fait", "je veux dire" | Keep corrected version only |
 | Repetitions | "il faut, il faut que..." | Keep once |
-| Tangents | Unrelated personal anecdotes | Delete |
+| Tangents | Unrelated anecdotes | Delete |
 
-### 2.2 Sentence Reconstruction
+### Sentence Reconstruction
 
-**Before**: "Donc euh on voudrait genre un truc qui fait les factures tu vois et euh qui les envoie quoi"
+**Before**:
+> "Donc euh on voudrait genre un truc qui fait les factures tu vois et euh qui les envoie quoi"
 
-**After**: "Le système doit générer et envoyer automatiquement les factures."
+**After**:
+> "Le système doit générer et envoyer automatiquement les factures."
 
 **Rules**:
-- Explicit subject
+- Explicit subject (not "on" → "le système")
 - Clear verb
 - Intelligible complement
 - Present tense preferred
-- Neutral voice (avoid "je/tu/nous")
+- Neutral voice (avoid je/tu/nous in brief)
 
-### 2.3 Terminology Preservation
+### Term Preservation
+
 Keep technical terms exactly as stated:
 - API names, product names
-- Technical acronyms (REST, CRUD, SSO)
-- Domain-specific vocabulary
-- Do NOT translate or "improve" technical terms
+- Acronyms (REST, CRUD, SSO, JWT)
+- Domain vocabulary (TCB, Brix, etc.)
+- Stack names (Symfony, React, Django)
+
+**Never** translate or "correct" technical jargon.
 
 ---
 
-## 3. Intent Prioritization Algorithm
+## Intent Prioritization
 
-### 3.1 Weighted Scoring System
+### Weighted Scoring
 
-For each distinct intent identified, calculate:
+For each distinct intent in transcript:
 
 ```
 SCORE = (Development × 0.4) + (Recurrence × 0.3) + (Position × 0.2) + (Emphasis × 0.1)
 ```
 
-### 3.2 Scoring Criteria
+### Scoring Criteria
 
 **Development (40%)**
-| Metric | Score |
-|--------|-------|
-| < 20 words dedicated | 1 |
+| Words dedicated | Score |
+|-----------------|-------|
+| < 20 words | 1 |
 | 20-50 words | 2 |
 | 50-100 words | 3 |
 | > 100 words | 4 |
 
 **Recurrence (30%)**
-| Metric | Score |
-|--------|-------|
-| Mentioned once | 1 |
-| Mentioned 2-3 times | 2 |
-| Mentioned 4+ times | 3 |
-| Running theme throughout | 4 |
+| Mentions | Score |
+|----------|-------|
+| Once | 1 |
+| 2-3 times | 2 |
+| 4+ times | 3 |
+| Running theme | 4 |
 
 **Position (20%)**
-| Metric | Score |
-|--------|-------|
+| Location | Score |
+|----------|-------|
 | Early only (first quarter) | 1 |
 | Middle | 2 |
 | Late (final quarter) | 3 |
-| Mentioned at end as conclusion | 4 |
+| Conclusion position | 4 |
 
 **Emphasis (10%)**
-| Metric | Score |
-|--------|-------|
-| No emphasis markers | 1 |
-| Some emphasis ("important") | 2 |
-| Strong emphasis ("must have", "priority") | 3 |
-| Explicit primary ("the main thing is...") | 4 |
+| Markers | Score |
+|---------|-------|
+| None | 1 |
+| "important" | 2 |
+| "must have", "priority" | 3 |
+| "the main thing is..." | 4 |
 
-### 3.3 Intent Classification
+### Classification
 
-| Result | Classification |
-|--------|----------------|
-| Highest score | **Primary Intent** → Objective |
-| Second highest | **Secondary** → Important Notes |
-| Others | **Tertiary** → Important Notes (if relevant) |
+- **Highest score** → Primary Intent → Objective
+- **Second highest** → Secondary → Important Notes
+- **Others** → Tertiary → Important Notes (if relevant)
 
 ---
 
-## 4. Contradiction Resolution
+## Contradiction Resolution
 
-### 4.1 Detection Markers
+### Detection Markers
 
 | French | English | Meaning |
 |--------|---------|---------|
@@ -133,33 +147,72 @@ SCORE = (Development × 0.4) + (Recurrence × 0.3) + (Position × 0.2) + (Emphas
 | "oublie ce que j'ai dit" | "forget what I said" | Explicit retraction |
 | "on va faire comme ça" | "let's do it this way" | Final decision |
 
-### 4.2 Resolution Rules
+### Resolution Rules
 
-1. **Later overrides earlier**: The last stated position is the valid one
-2. **Explicit beats implicit**: "Let's do X" beats implied preference for Y
-3. **Specific beats general**: "Use PostgreSQL" beats "some database"
+1. **Later overrides earlier**: Last stated position wins
+2. **Explicit beats implicit**: "Let's do X" > implied Y
+3. **Specific beats general**: "Use PostgreSQL" > "some database"
 
-### 4.3 Documentation
+### Documentation
 
-When resolving contradictions:
-- Keep **only** the final version in Objective/FR
-- **Optionally** note the change in Important Notes (only if context-useful)
-
-**Example**:
+In brief's Notes section (only if context-useful):
 ```markdown
-## Important Notes
+## Notes
 
-- Une approche basée sur des fichiers CSV a été initialement envisagée puis 
-  abandonnée au profit d'une intégration API directe.
+- Une approche fichiers CSV initialement envisagée puis abandonnée 
+  au profit d'une intégration API directe.
 ```
 
 ---
 
-## 5. Long Transcript Handling
+## Information Classification
 
-### 5.1 Synthesis Strategy
+### Decision Tree
 
-For transcripts > 500 words:
+For each piece of information:
+
+```
+Is it about PURPOSE/WHY?
+    YES → Objective
+    NO ↓
+
+Is it about CONTEXT/HOW IT WORKS generally?
+    YES → Description
+    NO ↓
+
+Is it an OBSERVABLE BEHAVIOR the system must perform?
+    YES → FR (Functional Requirement)
+    NO ↓
+
+Is it a QUALITY ATTRIBUTE (performance, security, UX)?
+    YES → NFR (Non-Functional Requirement)
+    NO ↓
+
+Is it a TECHNICAL/BUSINESS LIMIT?
+    YES → Constraints
+    NO ↓
+
+Is it SECONDARY, OPTIONAL, or FOR LATER?
+    YES → Important Notes
+    NO → Probably noise, discard
+```
+
+### Classification Examples
+
+| Statement | Classification |
+|-----------|---------------|
+| "Enable automated invoice generation" | Objective |
+| "Integrates with existing ERP via REST API" | Description |
+| "Users can export reports to PDF" | FR |
+| "Response time < 2 seconds" | NFR |
+| "Must use PostgreSQL" | Constraint |
+| "Maybe add batch export later" | Notes |
+
+---
+
+## Long Transcript Handling
+
+### Synthesis Strategy (> 500 words)
 
 1. **Extract skeleton first**:
    - Main objective
@@ -177,7 +230,7 @@ For transcripts > 500 words:
    - Technical specifications
    - Explicit requirements
 
-### 5.2 What to Keep vs Discard
+### Keep vs Discard
 
 | KEEP | DISCARD |
 |------|---------|
@@ -190,77 +243,37 @@ For transcripts > 500 words:
 
 ---
 
-## 6. Poor/Vague Transcript Handling
+## Poor/Vague Transcript Handling
 
-### 6.1 Minimum Viable Brief
+### Minimum Viable Brief
 
 Even from minimal input, produce:
-- Title (even generic like "Fonctionnalité à définir")
+- Title (even generic: "Fonctionnalité à définir")
 - Objective (even partial)
 - Explicit absence markers for missing sections
 
-### 6.2 Confidence Indicators
+### Never Invent
 
-| Scenario | Confidence | Gaps to Flag |
-|----------|------------|--------------|
-| Clear intent, all sections populated | HIGH | 0 |
-| Clear intent, missing FR/NFR | MEDIUM | 1-2 |
-| Vague intent, multiple gaps | LOW | 3+ |
-
-### 6.3 Never Invent
-
-**Wrong approach**:
+**Wrong**:
 > "Le système devra probablement aussi gérer les utilisateurs."
 
-**Correct approach**:
+**Correct**:
 > "Aucun FR explicitement mentionné dans la source."
 
 ---
 
-## 7. Classification Decision Tree
+## Quality Checklist
 
-For each piece of information:
-
-```
-Is it about PURPOSE/WHY?
-    YES → Objective
-    NO ↓
-
-Is it about CONTEXT/HOW IT WORKS generally?
-    YES → Description
-    NO ↓
-
-Is it an OBSERVABLE BEHAVIOR the system must perform?
-    YES → FR
-    NO ↓
-
-Is it a QUALITY ATTRIBUTE (performance, security, UX)?
-    YES → NFR
-    NO ↓
-
-Is it a TECHNICAL/BUSINESS LIMIT or REQUIREMENT?
-    YES → Constraints
-    NO ↓
-
-Is it SECONDARY, OPTIONAL, or FOR LATER?
-    YES → Important Notes
-    NO → Probably noise, discard
-```
-
----
-
-## 8. Final Checklist
-
-Before outputting the brief:
+Before outputting brief:
 
 ### Structure
-- [ ] All 7 sections present (or 3 for compact mode)
-- [ ] Metadata header included
+- [ ] All sections present (or absence markers)
 - [ ] Valid Markdown syntax
+- [ ] Header with complexity/time/confidence
 
 ### Content
 - [ ] No transcript references ("le transcript", "la transcription")
-- [ ] No user references ("l'utilisateur demande", "vous voulez")
+- [ ] No user references ("l'utilisateur demande")
 - [ ] No invented requirements
 - [ ] Contradictions resolved (latest version only)
 - [ ] Technical terms preserved exactly
@@ -269,16 +282,16 @@ Before outputting the brief:
 - [ ] Self-contained (readable without source)
 - [ ] Professional tone
 - [ ] Absence markers where needed
-- [ ] Confidence level appropriate
+- [ ] Confidence level appropriate to content
 
 ---
 
-## 9. Edge Cases
+## Edge Cases
 
 | Scenario | Handling |
 |----------|----------|
-| Multiple distinct features | Produce brief for most developed one, note others exist |
-| No clear intent at all | LOW confidence, generic title, note ambiguity |
+| Multiple distinct features | Multi-task detection |
+| No clear intent at all | LOW confidence, generic title |
 | All constraints, no features | Focus on context, note FR needs definition |
-| Technical jargon unknown | Preserve exactly as stated, don't interpret |
+| Technical jargon unknown | Preserve exactly, don't interpret |
 | Contradictory final statements | Flag as unresolved, LOW confidence |

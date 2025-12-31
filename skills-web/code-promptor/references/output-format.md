@@ -1,264 +1,387 @@
 # Output Format — Brief Structure Reference
 
-> Complete specification for PROMPTOR brief output
+> Complete specification for Code-Promptor brief output
 
 ---
 
-## Standard Mode Structure
+## Overview
 
-Every standard brief follows this exact structure. All sections are **mandatory**. Use explicit absence markers when information is not available.
-
----
-
-### Header (Metadata)
-
-```markdown
-<!-- PROMPTOR_META
-confidence: high|medium|low
-mode: standard
-source_complexity: short|medium|long
-extraction_gaps: 0|1-2|3+
--->
-```
-
-**Confidence determination**:
-- **high**: Clear single intent + ≥2 explicit FR + no contradictions
-- **medium**: Clear intent + some gaps OR resolved contradictions
-- **low**: Vague intent OR major gaps OR unresolved ambiguities
+Code-Promptor produces briefs in 3 formats based on detected complexity. All formats follow the same core principles:
+- **Title**: Notion-ready (Action verb + Object)
+- **Self-contained**: Readable without source transcript
+- **Actionable**: Ready for development workflow
 
 ---
 
-### Section 1: Feature Title
+## Complexity Detection
 
-```markdown
-# [Concise Descriptive Title]
-```
+### Criteria Matrix
 
-**Rules**:
-- Short and descriptive (5-10 words max)
-- Reformulation of main intent
-- No person names, no transcript references
-- Action-oriented when possible
+| Level | Word Count | Verb Type | Scope | Components |
+|-------|------------|-----------|-------|------------|
+| **Quick fix** | < 50 | Corrective | Very limited | 1 |
+| **Standard** | 50-200 | Creative | Clear | 1-2 |
+| **Major** | > 200 | Architectural | Complex | 3+ |
 
-**Examples**:
-- ✅ "Module de gestion des factures avec synchronisation API"
-- ✅ "Dashboard temps réel pour KPIs commerciaux"
-- ❌ "Ce que Jean veut pour le projet X"
-- ❌ "Feature demandée dans le transcript"
+### Verb Classification
 
----
+| Level | Verbs |
+|-------|-------|
+| Quick fix | corriger, fixer, débugger, réparer, ajuster, résoudre |
+| Standard | créer, ajouter, implémenter, développer, intégrer |
+| Major | concevoir, architecturer, refondre, migrer, transformer |
 
-### Section 2: Objective
+### Override Triggers
 
-```markdown
-## Objective
-
-[2-4 sentences describing the purpose]
-```
-
-**Rules**:
-- Answers "What is this for? Why build it?"
-- Reflects **final version** of intent (if changed during transcript)
-- No implementation details
-- Written in present tense, neutral voice
-
-**Template**:
-```
-Cette fonctionnalité vise à [GOAL]. Elle permettra de [BENEFIT 1] et [BENEFIT 2]. 
-Le besoin principal est de [CORE NEED].
-```
+Force **Major** regardless of word count:
+- Multiple external integrations mentioned
+- Database schema changes
+- Authentication/security changes
+- Multiple domains (backend + frontend + devops)
 
 ---
 
-### Section 3: Description
+## Common Header
+
+All briefs start with:
 
 ```markdown
-## Description
+# [Title — Action Verb + Object]
 
-[1-3 short paragraphs]
+📦 **[Complexity]** | ⏱️ [Time] | 🎯 Confidence: [HIGH|MEDIUM|LOW]
 ```
 
-**Content**:
-- Context in which the feature operates
-- High-level functioning overview
-- Key elements mentioned narratively
-- **Not** a copy of the transcript
+### Title Rules
 
-**Rules**:
-- Factual, no speculation
-- Third person, neutral tone
-- Connects objective to requirements
+| Rule | Example ✅ | Counter-example ❌ |
+|------|-----------|-------------------|
+| Start with action verb | "Implémenter le calcul TCB" | "Calcul TCB" |
+| 5-12 words max | "Créer l'export PDF rapports" | "Créer un système complet d'export PDF pour tous les rapports avec filtres" |
+| No person references | "Développer l'API auth" | "Ce que Pierre veut pour l'auth" |
+| Specific | "Intégrer Stripe pour paiements" | "Faire les paiements" |
+
+### Confidence Levels
+
+| Level | Criteria |
+|-------|----------|
+| 🟢 HIGH | Clear intent, explicit requirements, no contradictions |
+| 🟡 MEDIUM | Clear intent, some gaps in FR/NFR |
+| 🔴 LOW | Vague intent, major gaps, unresolved ambiguities |
 
 ---
 
-### Section 4: Functional Requirements
+## Format 1: Quick Fix (1h)
+
+### Structure
 
 ```markdown
-## Functional Requirements
-
-- [FR1] [Observable behavior description]
-- [FR2] [Observable behavior description]
-- [FR3] [Observable behavior description]
-```
-
-**If none explicitly mentioned**:
-```markdown
-## Functional Requirements
-
-- Aucun FR explicitement mentionné dans la source.
-```
-
-**FR Criteria** (must meet ALL):
-1. Describes **observable behavior** (what system does)
-2. **Explicitly stated** or **directly deductible**
-3. Testable (can verify if implemented)
-
-**FR Categories**:
-| Type | Examples |
-|------|----------|
-| CRUD | "L'utilisateur peut créer/lire/modifier/supprimer..." |
-| Business rules | "Le système calcule X selon la formule Y" |
-| Interactions | "Un clic sur Z déclenche l'action W" |
-| Integrations | "Les données sont synchronisées avec le système X" |
-
----
-
-### Section 5: Non-Functional Requirements
-
-```markdown
-## Non-Functional Requirements
-
-- [NFR1] [Quality attribute description]
-- [NFR2] [Quality attribute description]
-```
-
-**If none explicitly mentioned**:
-```markdown
-## Non-Functional Requirements
-
-- Aucun NFR explicitement mentionné dans la source.
-```
-
-**NFR Categories**:
-| Category | Examples |
-|----------|----------|
-| Performance | "Temps de réponse < 2 secondes" |
-| Security | "Authentification requise", "Données chiffrées" |
-| UX | "Interface responsive", "Accessible WCAG 2.1" |
-| Reliability | "Disponibilité 99.9%", "Sauvegarde automatique" |
-| Scalability | "Supporte 1000 utilisateurs simultanés" |
-
----
-
-### Section 6: Constraints & Technical Context
-
-```markdown
-## Constraints & Technical Context
-
-- [Stack or technology constraint]
-- [External system constraint]
-- [Data format constraint]
-- [Business/regulatory constraint]
-```
-
-**If none explicitly mentioned**:
-```markdown
-## Constraints & Technical Context
-
-- Aucune contrainte technique ou métier explicitement mentionnée.
-```
-
-**Constraint Types**:
-| Type | Examples |
-|------|----------|
-| Stack | "Symfony 7", "React 18", "PostgreSQL" |
-| External systems | "API bancaire X", "ERP existant" |
-| Data | "Format CSV requis", "Max 10 Mo par fichier" |
-| Business | "Conformité RGPD", "Process interne Y" |
-| Timeline | "Livraison avant Q2" (if explicitly stated) |
-
----
-
-### Section 7: Important Notes
-
-```markdown
-## Important Notes
-
-- [Secondary idea or future consideration]
-- [Abandoned alternative (if useful context)]
-- [Explicit "to be defined later" items]
-```
-
-**If none applicable**:
-```markdown
-## Important Notes
-
-- Aucune note complémentaire spécifique.
-```
-
-**What goes here**:
-- Secondary intents (not primary objective)
-- Ideas marked as "optional", "later", "maybe"
-- Abandoned approaches (only if provides useful context)
-- Explicit uncertainties from source
-
----
-
-## Compact Mode Structure
-
-For transcripts < 100 words with single clear intent:
-
-```markdown
-<!-- PROMPTOR_META
-confidence: high|medium|low
-mode: compact
--->
-
 # [Title]
 
-## Objective
+📦 **Quick fix** | ⏱️ 1h | 🎯 Confidence: [LEVEL]
 
-[2-3 sentences]
+## Objectif
 
-## Quick Notes
+[2-3 sentences describing the fix purpose]
 
-- [Key point 1]
-- [Key point 2]
-- Or: Aucune note complémentaire.
+## Contexte
+
+[Brief context where the issue occurs]
+
+## Correction attendue
+
+- [Action 1]
+- [Action 2]
+- [Verification step]
+
+## Notes
+
+- [Additional notes or "Aucune note complémentaire."]
+```
+
+### Characteristics
+
+- No implementation plan (too simple)
+- "Correction attendue" instead of formal FR
+- Short and actionable
+- ~100-150 words total
+
+### Example
+
+```markdown
+# Corriger l'affichage des dates format FR
+
+📦 **Quick fix** | ⏱️ 1h | 🎯 Confidence: HIGH
+
+## Objectif
+
+Corriger l'affichage incorrect des dates dans le module laboratoire qui montre le format US (MM/DD/YYYY) au lieu du format français (DD/MM/YYYY).
+
+## Contexte
+
+Le problème apparaît sur la page de résultats d'analyses. Toutes les dates de prélèvement s'affichent en format américain.
+
+## Correction attendue
+
+- Identifier le composant DateDisplay utilisé dans la vue
+- Appliquer le formateur avec pattern `d/m/Y`
+- Vérifier la cohérence sur les autres vues du module
+
+## Notes
+
+- Aucune note complémentaire.
 ```
 
 ---
 
-## Formatting Rules
+## Format 2: Standard (4h)
 
-### General
-- Markdown format, valid syntax
-- Headings with `##` (except title with `#`)
-- Lists with `- ` (hyphen + space)
-- No emojis in body content
-- No bold/italic abuse
+### Structure
 
-### Language
-- Match source language
-- Mixed source → French structure, English technical terms preserved
-- Professional register, no colloquialisms
+```markdown
+# [Title]
 
-### Absence Markers
-Always use these exact phrases:
-- `Aucun FR explicitement mentionné dans la source.`
-- `Aucun NFR explicitement mentionné dans la source.`
-- `Aucune contrainte technique ou métier explicitement mentionnée.`
-- `Aucune note complémentaire spécifique.`
+📦 **Standard** | ⏱️ 4h | 🎯 Confidence: [LEVEL]
+
+## Objectif
+
+[2-4 sentences describing purpose and benefit]
+
+## Description
+
+[1-2 paragraphs on context and high-level functioning]
+
+## Exigences fonctionnelles
+
+- [FR1] [Observable behavior]
+- [FR2] [Observable behavior]
+- [FR3] [Observable behavior]
+
+## Contraintes techniques
+
+- [Constraint 1]
+- [Constraint 2]
+- [Or: "Aucune contrainte explicitement mentionnée."]
+
+## Plan d'implémentation
+
+1. **[Phase 1 Name]**
+   - [ ] Subtask 1
+   - [ ] Subtask 2
+
+2. **[Phase 2 Name]**
+   - [ ] Subtask 1
+   - [ ] Subtask 2
+
+3. **Finalisation**
+   - [ ] Tests
+   - [ ] Documentation
+
+## Notes
+
+- [Secondary considerations or "Aucune note complémentaire."]
+```
+
+### Characteristics
+
+- Implementation plan with subtasks grouped by phase
+- Subtasks auto-generated based on type/domain
+- ~200-300 words total
+- Balance between detail and concision
+
+### Example
+
+```markdown
+# Implémenter l'export PDF des rapports d'analyses
+
+📦 **Standard** | ⏱️ 4h | 🎯 Confidence: HIGH
+
+## Objectif
+
+Permettre aux utilisateurs d'exporter les rapports d'analyses au format PDF pour archivage et partage externe. Cette fonctionnalité répond au besoin de traçabilité documentaire.
+
+## Description
+
+La fonctionnalité s'intègre au module rapports existant. Un bouton "Exporter PDF" sera ajouté sur la page de détail. Le PDF généré reprend la mise en forme actuelle avec en-tête laboratoire et pied de page légal.
+
+## Exigences fonctionnelles
+
+- Le système génère un PDF à partir des données du rapport affiché
+- Le PDF inclut l'en-tête avec logo et informations laboratoire
+- Le PDF inclut un pied de page avec mentions légales et date
+- L'utilisateur télécharge le fichier directement via le navigateur
+
+## Contraintes techniques
+
+- Utiliser la librairie PDF existante (wkhtmltopdf)
+- Respecter la charte graphique définie
+
+## Plan d'implémentation
+
+1. **Backend — Service PDF**
+   - [ ] Créer le service `RapportPdfGenerator`
+   - [ ] Configurer le template HTML de conversion
+   - [ ] Ajouter l'endpoint API `/api/rapports/{id}/pdf`
+
+2. **Frontend — Interface**
+   - [ ] Ajouter le bouton "Exporter PDF" sur `RapportDetail`
+   - [ ] Gérer l'état de chargement pendant génération
+   - [ ] Déclencher le téléchargement automatique
+
+3. **Finalisation**
+   - [ ] Tests avec différents formats de rapports
+   - [ ] Vérifier le rendu multi-navigateurs
+
+## Notes
+
+- Évolution future possible : export batch de plusieurs rapports
+```
 
 ---
 
-## Anti-Patterns to Avoid
+## Format 3: Major (8h)
+
+### Structure
+
+```markdown
+# [Title]
+
+📦 **Feature majeure** | ⏱️ 8h | 🎯 Confidence: [LEVEL]
+
+## Objectif
+
+[3-4 sentences on purpose, benefit, and strategic importance]
+
+## Description
+
+[2-3 paragraphs on context, functioning, and key considerations]
+
+## Exigences fonctionnelles
+
+- [FR1] [Detailed observable behavior]
+- [FR2] [Detailed observable behavior]
+- [FR3] [Detailed observable behavior]
+- [FR4] [Detailed observable behavior]
+
+## Exigences non-fonctionnelles
+
+- [NFR1] Performance/security/reliability requirement
+- [NFR2] Scalability/maintainability requirement
+
+## Contraintes techniques
+
+- [Technical stack constraints]
+- [External system constraints]
+- [Data format constraints]
+
+## Plan d'implémentation
+
+1. **Architecture & Préparation**
+   - [ ] Define data models
+   - [ ] Create migrations
+   - [ ] Document interfaces
+
+2. **Backend — Core Logic**
+   - [ ] Create main service
+   - [ ] Implement business rules
+   - [ ] Add validation
+
+3. **Backend — Integration**
+   - [ ] External API client
+   - [ ] Error handling & retry
+   - [ ] Async tasks if needed
+
+4. **Frontend — Main Views**
+   - [ ] Dashboard/main component
+   - [ ] Forms and interactions
+   - [ ] Loading/error states
+
+5. **Frontend — Administration**
+   - [ ] Configuration interface
+   - [ ] Monitoring views
+
+6. **Finalisation**
+   - [ ] Unit tests (coverage >80%)
+   - [ ] Integration tests
+   - [ ] Technical documentation
+   - [ ] User documentation
+
+## Notes
+
+- [Important decisions pending]
+- [Risks or dependencies]
+- [Future evolution considerations]
+```
+
+### Characteristics
+
+- NFR section included
+- Detailed plan with 5-6 phases
+- Specific subtasks for each phase
+- ~400-500 words total
+
+---
+
+## Multi-Brief Separator
+
+When generating multiple briefs:
+
+```markdown
+═══════════════════════════════════════════════════════════════════
+📋 TÂCHE 1/3 — Copier dans Notion
+═══════════════════════════════════════════════════════════════════
+
+[Brief 1 content]
+
+═══════════════════════════════════════════════════════════════════
+📋 TÂCHE 2/3 — Copier dans Notion
+═══════════════════════════════════════════════════════════════════
+
+[Brief 2 content]
+
+═══════════════════════════════════════════════════════════════════
+📋 TÂCHE 3/3 — Copier dans Notion
+═══════════════════════════════════════════════════════════════════
+
+[Brief 3 content]
+
+═══════════════════════════════════════════════════════════════════
+✅ 3 briefs générés — Prêts pour Notion
+═══════════════════════════════════════════════════════════════════
+```
+
+---
+
+## Dependencies Section
+
+When `ref [n]` command is used:
+
+```markdown
+## Dépendances
+
+- ⚠️ Requiert : [Tâche N — Title](notion_link)
+```
+
+---
+
+## Absence Markers
+
+Use these exact phrases when information is missing:
+
+| Section | Marker |
+|---------|--------|
+| FR | "Aucun FR explicitement mentionné dans la source." |
+| NFR | "Aucun NFR explicitement mentionné dans la source." |
+| Constraints | "Aucune contrainte technique explicitement mentionnée." |
+| Notes | "Aucune note complémentaire." |
+
+---
+
+## Anti-Patterns
 
 | Anti-Pattern | Problem | Correct Approach |
 |--------------|---------|------------------|
-| "Le transcript mentionne..." | References source | Write self-contained content |
+| "Le transcript mentionne..." | References source | Self-contained content |
 | "L'utilisateur souhaite..." | References person | "La fonctionnalité vise à..." |
-| Inventing FR not mentioned | Scope creep | Mark as absent |
-| Combining multiple features | Confusion | One brief per intent |
-| Keeping contradictions | Ambiguity | Latest version wins |
-| Meta-commentary | Noise | Facts only |
+| Inventing FR | Scope creep | Mark as absent |
+| Generic subtasks | Not actionable | Context-specific subtasks |
+| No verb in title | Not actionable | Start with action verb |
