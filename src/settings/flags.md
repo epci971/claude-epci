@@ -390,6 +390,80 @@ MCPs are auto-activated based on:
 
 ---
 
+## Quick Workflow Flags (F13)
+
+Control `/quick` command behavior for TINY and SMALL features.
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--autonomous` | Skip plan breakpoint, continuous execution | TINY detected by `/brief` |
+| `--quick-turbo` | Force Haiku model everywhere (TINY only) | Never (explicit only) |
+| `--no-bp` | Alias for `--autonomous` | - |
+
+### `--autonomous` Mode
+
+When `--autonomous` is active:
+- Skip the lightweight 3s breakpoint at Plan phase
+- Execute all EPCT phases without interruption
+- Session still persisted for tracking
+
+**Auto-Activation:**
+```
+IF complexity == TINY:
+   /brief routes to `/quick --autonomous`
+   Display: "Mode TINY → exécution autonome"
+```
+
+### `--quick-turbo` Mode
+
+Forces Haiku model on ALL phases (Explore, Plan, Code, Test).
+
+**Constraints:**
+- Only valid for TINY features
+- If SMALL detected: Error + suggest removing flag
+- Maximum speed, suitable for trivial changes
+
+**Error on SMALL:**
+```
+⚠️ **FLAG INCOMPATIBLE**
+
+--quick-turbo requires TINY complexity.
+Detected: SMALL ({file_count} files, ~{loc} LOC)
+
+Options:
+1. Remove --quick-turbo and retry
+2. Switch to /epci for larger features
+```
+
+### Flag Interactions
+
+| Combination | Result |
+|-------------|--------|
+| `--autonomous` only | Skip plan BP, continue EPCT |
+| `--quick-turbo` only | Haiku everywhere (TINY required) |
+| `--autonomous --quick-turbo` | Both active (fastest possible) |
+| `--turbo --autonomous` | `--turbo` precedence (legacy turbo mode) |
+| `--safe --autonomous` | `--safe` wins (breakpoints maintained) |
+| `--quick-turbo` + SMALL | Error, flag rejected |
+
+### Examples
+
+```bash
+# Automatic for TINY (routed by /brief)
+/quick --autonomous
+
+# Maximum speed for trivial fix
+/quick --autonomous --quick-turbo
+
+# Explicit breakpoint for SMALL
+/quick
+
+# Combined with compression
+/quick --autonomous --uc
+```
+
+---
+
 ## Quick Reference
 
 ### All Flags
@@ -400,6 +474,7 @@ MCPs are auto-activated based on:
 | Compression | `--uc`, `--verbose` |
 | Workflow | `--safe`, `--no-hooks` |
 | **Speed** | **`--turbo`** |
+| **Quick (F13)** | **`--autonomous`**, **`--quick-turbo`**, `--no-bp` |
 | Persona | `--persona-architect`, `--persona-frontend`, `--persona-backend`, `--persona-security`, `--persona-qa`, `--persona-doc` |
 | MCP | `--c7`, `--seq`, `--magic`, `--play`, `--no-mcp` |
 | Wave | `--wave`, `--wave-strategy` |

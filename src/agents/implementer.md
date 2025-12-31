@@ -19,8 +19,11 @@ Optimized for --turbo mode workflows with TDD approach.
 ## When to Use
 
 - `/epci --turbo` Phase 2: Rapid task execution
-- `/quick --turbo`: Quick implementation
+- `/quick` SMALL features: Code phase implementation
+- `/quick --turbo`: Quick implementation (legacy mode)
 - Any workflow where plan is validated and tasks are atomic
+
+**Note:** For `/quick` EPCT workflow, this agent is invoked during the [C] CODE phase for SMALL complexity features.
 
 ## Input Requirements
 

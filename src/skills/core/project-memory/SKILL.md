@@ -274,6 +274,8 @@ At workflow start, display loaded context summary:
 ├── context.json        # Project metadata
 ├── conventions.json    # Naming & style rules
 ├── settings.json       # EPCI configuration
+├── sessions/           # Quick workflow sessions (NEW)
+│   └── quick-{timestamp}.json
 ├── history/
 │   ├── features/       # Feature completion records
 │   └── decisions/      # Architecture decisions
@@ -286,6 +288,66 @@ At workflow start, display loaded context summary:
 └── learning/
     ├── corrections.json    # Applied corrections
     └── preferences.json    # User preferences
+```
+
+### Sessions Directory (Quick Workflow)
+
+The `sessions/` directory stores execution records for `/quick` EPCT workflows.
+
+**File naming:** `quick-{YYYYMMDD-HHMMSS}.json` (e.g., `quick-20251231-143022.json`)
+
+**Schema:**
+```json
+{
+  "timestamp": "2025-12-31T14:30:22Z",
+  "description": "fix typo in README",
+  "complexity": "TINY | SMALL",
+  "plan": [
+    {
+      "task": "Task description",
+      "status": "pending | in_progress | completed | failed"
+    }
+  ],
+  "files_modified": ["path/to/file.ext"],
+  "duration_seconds": 45,
+  "models_used": {
+    "explore": "haiku",
+    "plan": "haiku | sonnet",
+    "code": "haiku | sonnet",
+    "test": "haiku | sonnet"
+  },
+  "retries": 0,
+  "flags": ["--autonomous", "--quick-turbo"],
+  "outcome": "success | failed | escalated"
+}
+```
+
+**Usage:**
+- Created at Plan phase start
+- Updated after each EPCT phase
+- Enables workflow resume if interrupted
+- Used for metrics calibration and learning
+
+**Session Write Process:**
+```python
+# In /quick [P] PLAN phase:
+session_id = f"quick-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+session_path = f".project-memory/sessions/{session_id}.json"
+
+# Create sessions/ directory if not exists
+os.makedirs(".project-memory/sessions", exist_ok=True)
+
+# Write initial session
+with open(session_path, 'w') as f:
+    json.dump(session_data, f, indent=2)
+```
+
+**Session Resume:**
+```python
+# To resume an interrupted session:
+# 1. Find latest session in sessions/
+# 2. Check last completed phase
+# 3. Resume from next phase
 ```
 
 ## Commands
