@@ -413,6 +413,36 @@ Examples:
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+### 🪝 Memory Update (MANDATORY)
+
+**⚠️ CRITICAL: Always execute this hook after displaying completion message.**
+
+After every successful `/quick` completion, you MUST execute the `post-phase-3` hook to save feature history:
+
+```bash
+python3 src/hooks/runner.py post-phase-3 --context '{
+  "phase": "quick-complete",
+  "feature_slug": "<brief-slug>",
+  "complexity": "<TINY|SMALL>",
+  "files_modified": ["<list of modified files>"],
+  "loc_added": <number>,
+  "loc_removed": <number>,
+  "estimated_time": null,
+  "actual_time": "<duration in seconds>s",
+  "commit_hash": null,
+  "commit_status": "pending",
+  "test_results": {"status": "<passed|skipped>", "count": <n>}
+}'
+```
+
+**Why this is mandatory:**
+- Updates `.project-memory/history/features/` with feature record
+- Enables velocity tracking and calibration
+- Maintains feature history for `/memory` command
+- Required for accurate project metrics
+
+**Note:** If `--no-hooks` flag is active, skip this step.
+
 ---
 
 ## Error Handling

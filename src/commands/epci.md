@@ -704,14 +704,16 @@ python3 src/hooks/runner.py pre-commit --context '{
 1. Return to Phase 2 breakpoint
 2. Allow user to make corrections
 
-**🪝 Execute `post-phase-3` hooks** (always, for cleanup and metrics)
+### 🪝 Memory Update (MANDATORY)
+
+**⚠️ CRITICAL: You MUST execute this hook before displaying completion message.**
 
 ```bash
 python3 src/hooks/runner.py post-phase-3 --context '{
   "phase": "phase-3",
   "feature_slug": "<slug>",
   "complexity": "<complexity>",
-  "files_modified": [...],
+  "files_modified": ["<list of files>"],
   "estimated_time": "<estimated>",
   "actual_time": "<actual>",
   "commit_hash": "<hash or null>",
@@ -720,7 +722,13 @@ python3 src/hooks/runner.py post-phase-3 --context '{
 }'
 ```
 
-**Important:** This hook updates `.project-memory/` with feature history and velocity metrics.
+**Why this is mandatory:**
+- Saves feature to `.project-memory/history/features/`
+- Updates velocity metrics for calibration
+- Increments `features_completed` counter
+- Required for `/memory` command accuracy
+
+**Note:** Skip only if `--no-hooks` flag is active.
 
 ### ✅ COMPLETION
 
