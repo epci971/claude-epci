@@ -1,0 +1,265 @@
+---
+name: promptor
+description: >-
+  Transform voice dictations or raw text into structured development briefs with
+  intelligent multi-task detection. Supports session mode for batch processing,
+  auto-generates implementation plans with subtasks, and exports directly to Notion
+  via MCP. Features 3 complexity levels (quick fix 1h, standard 4h, major 8h).
+  Use when: processing voice memos, dictated specifications, "promptor session",
+  structuring project notes into actionable Notion tasks.
+  Not for: email writing, meeting minutes, executing code, EPCI workflow tasks.
+allowed-tools: [Read, Glob, Grep, Write, Bash]
+---
+
+# Promptor — Dictation to Notion Tasks
+
+## Overview
+
+Promptor transforms raw voice dictations or unstructured text into clean, professional
+development briefs and exports them directly to Notion. Standalone tool, independent
+from EPCI workflow.
+
+**Core Principle**: Faithful extraction, never invention. Generate actionable briefs
+with intelligent subtask suggestions.
+
+**Language**: Output matches input language. Mixed input defaults to French structure
+with English technical terms preserved.
+
+## Decision Tree
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    How is Promptor activated?                    │
+└─────────────────────────────────────────────────────────────────┘
+                            │
+            ┌───────────────┴───────────────┐
+            ▼                               ▼
+┌───────────────────────┐       ┌───────────────────────┐
+│   ONE-SHOT MODE       │       │   SESSION MODE        │
+│  /promptor [input]    │       │  /promptor session    │
+└───────────┬───────────┘       └───────────┬───────────┘
+            │                               │
+            ▼                               ▼
+    Process one dictation           Init session + project
+    Generate brief(s)               → Each input isolated
+    Export to Notion                → Multi-task detection
+    Done                            → Direct Notion export
+                                    → "fin session" to end
+```
+
+## Configuration
+
+| Element | Value |
+|---------|-------|
+| **Thinking** | `think` (default) |
+| **Skills** | promptor (self) |
+| **MCP** | Notion (if configured) |
+
+### Notion Configuration
+
+Read from `.claude/settings.local.json`:
+
+```json
+{
+  "notion": {
+    "token": "ntn_xxx",
+    "tasks_database_id": "xxx",
+    "default_project_id": "xxx"
+  }
+}
+```
+
+If not configured, briefs are displayed as text only (no Notion export).
+
+## Session Mode
+
+### Activation
+
+- `/promptor session`
+
+### Session Workflow
+
+```
+1. INIT: User activates session
+   → Read Notion config from settings.local.json
+   → Confirm session active
+
+2. DICTATION RECEIVED:
+   → Clean voice artifacts
+   → Detect mono vs multi-task
+   → If multi: show checkpoint for validation
+   → Generate brief(s)
+   → Export to Notion (if configured)
+   → Reset context for next dictation
+
+3. END: "fin session"
+   → Show summary with all created tasks
+```
+
+### Session Commands
+
+| Command | Action |
+|---------|--------|
+| `status` | Show session state |
+| `fin session` | End and show summary |
+
+→ See [Checkpoint Format](templates/checkpoint-format.md)
+
+## Multi-Task Detection
+
+### Mode: AGGRESSIVE
+
+The skill tends toward detecting multiple tasks. User can merge if needed.
+
+### Detection Algorithm
+
+1. **Clean** dictation (keep rupture markers)
+2. **Segment** on explicit/implicit markers
+3. **Score** each segment for independence
+4. **Decide**: ≥2 segments with score ≥40 → MULTI-TASK
+
+### Rupture Markers
+
+| Type | Markers | Points |
+|------|---------|--------|
+| Explicit | "aussi", "et puis", "autre chose", "ah et", "sinon" | +30 |
+| Implicit | Domain change, subject change | +15-25 |
+
+→ See [Multi-Task Detection](references/multi-task-detection.md)
+
+## Checkpoint Validation
+
+When multi-task detected, show validation checkpoint:
+
+```
+📋 **N tâches détectées**
+
+┌───┬─────────────────────────┬──────────┬────────────┬───────┐
+│ # │ Titre suggéré           │ Type     │ Complexité │ Temps │
+├───┼─────────────────────────┼──────────┼────────────┼───────┤
+│ 1 │ [Title]                 │ [Type]   │ [Level]    │ [Est] │
+└───┴─────────────────────────┴──────────┴────────────┴───────┘
+
+📖 Commandes: ok | ok 1,2 | merge 1,2 | edit N "x" | drop N
+```
+
+→ See [Checkpoint Format](templates/checkpoint-format.md)
+
+## Complexity Levels
+
+| Level | Criteria | Time | Plan |
+|-------|----------|------|------|
+| **Quick fix** | <50 words, corrective verb | 1h | No |
+| **Standard** | 50-200 words, clear scope | 4h | Yes |
+| **Major** | >200 words, multi-component | 8h | Yes (detailed) |
+
+→ See [Output Format](references/output-format.md)
+
+## Brief Structure
+
+### Common Elements (all levels)
+
+```markdown
+# [Action Verb] + [Object] — Notion-ready title
+
+📦 **[Complexity]** | ⏱️ [Time] | 🎯 Confidence: [Level]
+
+## Objectif
+[2-4 sentences]
+
+## Description  
+[Context and functioning]
+
+## Exigences fonctionnelles
+- [FR list]
+```
+
+### Standard/Major additions
+
+```markdown
+## Plan d'implémentation
+
+1. **[Phase 1]**
+   - [ ] Subtask auto-generated
+```
+
+→ See [Subtask Templates](references/subtask-templates.md)
+
+## Notion Integration
+
+### MCP Tools Used
+
+If MCP Notion is available:
+- `create-a-page` — Create task in Notion database
+- `query-data-source` — Search projects (optional)
+
+### Properties Filled
+
+| Property | Source | Default |
+|----------|--------|---------|
+| `Nom` | Brief title | - |
+| `Description` | Brief content (markdown) | - |
+| `Type` | Auto-detected | "Tache" |
+| `Temps estimé` | Complexity (1/4/8) | 4 |
+| `État` | Fixed | "En attente" |
+| `DAY` | Fixed | "BACKLOG" |
+| `Projet` | Config default | From settings |
+
+### Type Mapping
+
+| Detection | Notion Type |
+|-----------|-------------|
+| Bug, fix, corriger | Bloquant |
+| Feature, créer | Evolution |
+| Backend (API, service) | Backend |
+| Frontend (UI, composant) | Frontend |
+| Default | Tache |
+
+→ See [Type Mapping](references/type-mapping.md)
+
+### Fallback (No MCP)
+
+If Notion MCP not configured or unavailable:
+1. Display complete brief as text
+2. Show message: "📋 Brief prêt — Copier dans Notion manuellement"
+3. Continue workflow normally
+
+## Critical Rules
+
+1. **Never ask questions** — Produce brief with available info
+2. **Never invent requirements** — Mark absent if not mentioned
+3. **Never reference source** — Brief is self-contained
+4. **Each dictation = isolated context** — No pollution between inputs
+5. **Later wins** — Last stated version overrides earlier
+
+## Knowledge Base
+
+### References
+- [Multi-Task Detection](references/multi-task-detection.md) — Detection algorithm
+- [Output Format](references/output-format.md) — 3 brief templates
+- [Voice Cleaning](references/voice-cleaning.md) — Dictation cleanup
+- [Subtask Templates](references/subtask-templates.md) — Auto-generation rules
+- [Processing Rules](references/processing-rules.md) — Extraction methodology
+- [Type Mapping](references/type-mapping.md) — Notion type detection
+
+### Config
+- [Notion Config](config/notion-config.md) — Database configuration
+
+### Templates
+- [Checkpoint Format](templates/checkpoint-format.md) — Validation display
+- [Brief Quick Fix](templates/brief-quickfix.md) — 1h template
+- [Brief Standard](templates/brief-standard.md) — 4h template
+- [Brief Major](templates/brief-major.md) — 8h template
+
+## Limitations
+
+This skill does NOT:
+- Ask clarifying questions (produces with available info)
+- Execute development tasks (brief generator only)
+- Modify existing Notion tasks
+- Integrate with EPCI workflow (/brief, /epci)
+
+## Version
+
+- **Current**: v1.0.0 (Claude Code)
+- **Based on**: code-promptor v2.1.0 (web)
