@@ -31,6 +31,7 @@ Diagnose and fix bugs systematically with:
 | `--turbo` | Speed mode: Haiku diagnostic, auto-apply best solution, skip breakpoint |
 | `--no-report` | Complet mode without Debug Report file |
 | `--context <path>` | Link to existing Feature Document |
+| `--commit` | Generate commit context after fix, suggest /commit |
 
 ### --turbo Mode (MANDATORY Instructions)
 
@@ -345,6 +346,25 @@ Generate multiple solutions with scores:
 
 ## Completion
 
+### If --commit flag active
+
+**Generate commit context before displaying completion:**
+
+```json
+{
+  "source": "debug",
+  "type": "fix",
+  "scope": "<detected module from bug location>",
+  "description": "<bug fix description>",
+  "files": ["<list of modified files>"],
+  "featureDoc": null,
+  "breaking": false,
+  "ticket": null
+}
+```
+
+**Write to `.epci-commit-context.json`** at project root.
+
 ### Trivial/Quick
 ```
 ✅ **DEBUG COMPLETE**
@@ -352,6 +372,7 @@ Generate multiple solutions with scores:
 Mode: [Trivial | Quick]
 Cause: [Root cause]
 Fix: [Summary]
+{If --commit: 📝 Contexte commit préparé → /commit}
 ```
 
 ### Complet
@@ -365,6 +386,7 @@ Reviews:
 - @code-reviewer: [Verdict]
 - @security-auditor: [Verdict or N/A]
 
+{If --commit: 📝 Contexte commit préparé → /commit}
 Next: Verify fix in production environment
 ```
 

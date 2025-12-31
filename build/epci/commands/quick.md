@@ -1,18 +1,24 @@
 ---
 description: >-
-  Condensed EPCI workflow for TINY and SMALL features. Single-pass without
-  formal Feature Document. TINY mode: <50 LOC, 1 file, no tests.
-  SMALL mode: <200 LOC, 2-3 files, optional tests.
-argument-hint: "[--uc] [--turbo] [--no-hooks]"
+  Autonomous EPCT workflow for TINY and SMALL features. Four phases:
+  Explore, Plan, Code, Test with adaptive model switching (Haiku/Sonnet).
+  TINY mode: <50 LOC, 1 file. SMALL mode: <200 LOC, 2-3 files.
+argument-hint: "[--autonomous] [--quick-turbo] [--uc] [--turbo] [--no-hooks]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
-# EPCI Quick — Condensed Workflow
+# EPCI Quick — EPCT Workflow
 
 ## Overview
 
-Simplified workflow for small modifications.
-No formal Feature Document, no breakpoints.
+Autonomous workflow following EPCT logic (Explore, Plan, Code, Test) for TINY and SMALL features.
+Optimized for speed with adaptive model switching and minimal breakpoints.
+
+**Key Features:**
+- 4-phase EPCT structure
+- Adaptive model switching (Haiku for speed, Sonnet for quality)
+- Lightweight breakpoint with 3s auto-continue
+- Session persistence for resume/tracking
 
 ## Modes
 
@@ -23,7 +29,7 @@ No formal Feature Document, no breakpoints.
 | Files | 1 only |
 | LOC | < 50 |
 | Tests | Not required |
-| Duration | < 15 minutes |
+| Duration | < 30 seconds target |
 | Examples | Typo, config, small fix |
 
 ### SMALL Mode
@@ -33,261 +39,451 @@ No formal Feature Document, no breakpoints.
 | Files | 2-3 |
 | LOC | < 200 |
 | Tests | Optional |
-| Duration | 15-60 minutes |
+| Duration | < 90 seconds target |
 | Examples | Small feature, local refactor |
 
+---
+
 ## Supported Flags
+
+### Quick-Specific Flags (F13)
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--autonomous` | Skip plan breakpoint, continuous execution | TINY detected |
+| `--quick-turbo` | Force Haiku model everywhere (TINY only) | Never (explicit) |
+| `--no-bp` | Alias for `--autonomous` | - (alias) |
+
+### Inherited Flags
 
 | Flag | Effect | Auto-Trigger |
 |------|--------|--------------|
 | `--uc` | Compressed output | context > 75% |
-| `--turbo` | Speed mode: @implementer (Sonnet), skip optional review, auto-commit |
+| `--turbo` | Use existing turbo mode (@implementer, auto-commit) | Never |
 | `--no-hooks` | Disable all hook execution | Never |
+| `--safe` | Force breakpoints even with `--autonomous` | Sensitive files |
 
 **Note:** Thinking flags (`--think-hard`, `--ultrathink`) trigger escalation to `/epci`.
 
-### --turbo Mode (MANDATORY Instructions)
+### Flag Interactions
 
-**⚠️ MANDATORY: When `--turbo` flag is active, you MUST follow these rules:**
+| Combination | Behavior |
+|-------------|----------|
+| `--autonomous` alone | Skip BP plan, continuous execution |
+| `--quick-turbo` alone | Haiku everywhere (TINY only, error if SMALL) |
+| `--autonomous --quick-turbo` | Skip BP + Haiku everywhere |
+| `--turbo --autonomous` | `--turbo` takes precedence (existing turbo workflow) |
+| `--safe --autonomous` | `--safe` wins, breakpoints maintained |
 
-1. **Use @implementer agent** (Sonnet model) for SMALL features:
-   ```
-   Invoke @implementer via Task tool with model: sonnet
-   Input: Brief + target files
-   Output: Implementation with minimal tests
-   ```
+---
 
-2. **Skip optional review** — No @code-reviewer for SMALL (keep for TINY if needed)
+## Model Matrix (Adaptive Switching)
 
-3. **Auto-commit** — Skip pre-commit breakpoint, commit directly with prepared message
+| Phase | TINY | SMALL | On Error/Retry |
+|-------|------|-------|----------------|
+| **[E] Explore** | Haiku | Haiku | - |
+| **[P] Plan** | Haiku | Sonnet + `think` | `think hard` |
+| **[C] Code** | Haiku | Sonnet | Sonnet + `think` |
+| **[T] Test** | Haiku | Haiku | Sonnet + `think hard` |
 
-4. **Compact output** — Summary only, no detailed change descriptions
+**Model Selection Rules:**
+- TINY: Always use Haiku for maximum speed
+- SMALL: Use Sonnet for Plan/Code phases (quality matters)
+- Error/Retry: Escalate thinking mode for problem resolution
+- `--quick-turbo`: Force Haiku everywhere (TINY only)
 
-**Turbo Process:**
+**Escalation Thresholds (Haiku → Sonnet):**
+| Criteria | Threshold |
+|----------|-----------|
+| LOC estimated | > 30 |
+| Files | > 1 |
+| New imports/deps | > 3 |
+| Complex patterns | async, state, API detected |
+
+---
+
+## Subagent Matrix (By Complexity)
+
+| Phase | TINY | SMALL | SMALL+ (near limit) |
+|-------|------|-------|---------------------|
+| **[E] Explore** | - | @Explore (Haiku) | @Explore + @clarifier |
+| **[P] Plan** | - | - | @planner (Sonnet) |
+| **[C] Code** | - | @implementer | @implementer |
+| **[T] Test** | - | - | - |
+
+**Subagent Invocation:**
 ```
-TINY:  Read → Fix → Auto-commit → Done
-SMALL: Read → @implementer (Sonnet) → Auto-commit → Done
+Invoke via Task tool with model: {specified_model}
+Examples:
+- Task tool with subagent_type="Explore", model="haiku"
+- Task tool with subagent_type="epci:planner", model="sonnet"
+- Task tool with subagent_type="epci:implementer", model="sonnet"
 ```
 
-**Turbo vs Standard Comparison:**
-
-| Aspect | Standard | Turbo |
-|--------|----------|-------|
-| Breakpoints | 1 (pre-commit) | 0 (auto-commit) |
-| Implementation | Manual | @implementer (Sonnet) for SMALL |
-| Review | @code-reviewer light | Skipped |
-| Commit | User approval | Auto-commit |
-
-### MCP Flags (F12 — Lightweight)
-
-For SMALL features only, MCP servers can be used in lightweight mode:
-
-| Flag | Effect | Note |
-|------|--------|------|
-| `--c7` | Context7 for quick doc lookup | Recommended for SMALL |
-| `--no-mcp` | Disable all MCP servers | Default for TINY |
-
-**Note:** Sequential, Magic, and Playwright are not recommended for TINY/SMALL. Use `/epci` for complex MCP needs.
+---
 
 ## Configuration
 
 | Element | Value |
 |---------|-------|
-| **Thinking** | `think` (standard) |
-| **Skills** | project-memory, epci-core, code-conventions, flags-system, mcp, [stack] |
-| **Subagents** | @code-reviewer (light mode, SMALL only)
-
-## Pre-Workflow: Memory Context
-
-**Memory is loaded once by `/brief`** and passed via the inline brief (Memory Summary section).
-
-**Reading memory context:**
-1. Check inline brief for "Memory Summary" section
-2. If present: Use conventions and patterns from brief
-3. If absent: Continue with defaults (no separate load needed for TINY/SMALL)
-
-**Note:** For TINY/SMALL features, memory context is lightweight. Full memory loading is not required.
+| **Thinking** | Adaptive per phase (see Model Matrix) |
+| **Skills** | project-memory, epci-core, code-conventions, flags-system, [stack] |
+| **Subagents** | @Explore, @clarifier, @planner, @implementer (conditional) |
 
 ---
 
-## Process
+## EPCT Workflow
 
-**⚠️ IMPORTANT: Follow ALL steps in sequence. Do NOT skip the Output step.**
-
-### 1. Brief Reception (MANDATORY)
-
-The structured brief is provided by `/brief`.
-It already contains:
-- Target files identified
-- Detected stack
-- Mode (TINY/SMALL) determined
-- Acceptance criteria
-
-**If brief is absent or incomplete** → Suggest `/brief` first.
-
-### 2. Direct Implementation (MANDATORY)
-
-**⚠️ DO NOT SKIP:** Apply changes using Edit tool. Follow the mode-specific steps below.
-
-#### TINY Mode
+**⚠️ IMPORTANT: Follow ALL phases in sequence.**
 
 ```
-1. Read target file
-2. Identify modification
-3. Apply change
-4. Verify (lint, syntax)
-5. Done
+/quick "description" [--autonomous] [--quick-turbo]
+    │
+    ▼
+[E] EXPLORE ──────────────────────────────────────────────────────────
+    │
+    ▼
+[P] PLAN ─────────────────────────────────────────────────────────────
+    │                         ⏸️ Lightweight BP (3s auto-continue)
+    ▼                         [skip if --autonomous]
+[C] CODE ─────────────────────────────────────────────────────────────
+    │
+    ▼
+[T] TEST ─────────────────────────────────────────────────────────────
+    │
+    ▼
+[RESUME FINAL] ───────────────────────────────────────────────────────
 ```
 
-#### SMALL Mode
+---
 
-```
-1. Read concerned files
-2. Plan mentally (no formal doc)
-3. For each modification:
-   a. If test requested → write test first
-   b. Implement change
-   c. Verify
-4. Run existing tests
-5. Quick review if needed
-```
+### [E] EXPLORE Phase (5-10s)
 
-### 3. Review (optional)
+**Model:** Haiku (both TINY and SMALL)
 
-For SMALL only, invoke @code-reviewer in light mode:
-- Focus on obvious bugs
-- Syntax/typing errors
-- Missing tests (if requested)
+**Purpose:** Quick context gathering and complexity verification.
 
-**No architecture or optimization review.**
+#### Process
 
-### 4. Commit Preparation
+1. **Receive Brief** from `/brief`
+   - Extract: target files, detected stack, mode, acceptance criteria
+   - If brief absent → Suggest `/brief` first
 
-Prepare Conventional Commits message (do not execute yet):
+2. **Quick Scan** (SMALL only)
+   - Invoke @Explore (Haiku) via Task tool:
+     ```
+     Task tool with subagent_type="Explore", model="haiku"
+     Focus: File identification, pattern detection
+     Skip: Deep analysis (defer to implementation)
+     ```
 
-```
-fix(scope): short description
-```
+3. **Ambiguity Check** (SMALL+ only)
+   - If ambiguity detected → Invoke @clarifier (Haiku)
+   - Maximum 1-2 clarification questions
 
-or
+4. **Complexity Guard**
+   - If complexity > SMALL detected → Escalate to `/epci`
+   ```
+   ⚠️ **ESCALATION REQUIRED**
+   
+   Complexity exceeds SMALL threshold:
+   - [Reason: e.g., >3 files, integration tests needed]
+   
+   → Switching to `/epci` for structured workflow.
+   ```
 
-```
-feat(scope): short description
-```
+#### Output (Internal)
+- Confirmed mode (TINY/SMALL)
+- Target files list
+- Stack/patterns detected
+- Ready for Plan phase
 
-### ⏸️ BREAKPOINT PRE-COMMIT (MANDATORY — WAIT FOR USER)
+---
 
-**⚠️ MANDATORY:** Display this breakpoint and WAIT for user choice before proceeding.
+### [P] PLAN Phase (10-15s)
+
+**Model:** Haiku (TINY) | Sonnet + `think` (SMALL)
+
+**Purpose:** Generate atomic task breakdown.
+
+#### Process
+
+1. **Task Generation**
+   - TINY: 1-2 tasks maximum
+   - SMALL: 3-5 atomic tasks (2-10 min each)
+
+2. **Complex Planning** (SMALL+ only)
+   - If near SMALL limit → Invoke @planner (Sonnet):
+     ```
+     Task tool with subagent_type="epci:planner", model="sonnet"
+     Input: Brief + identified files
+     Output: Ordered task list with dependencies
+     ```
+
+3. **Session Initialization**
+   - Create session file: `.project-memory/sessions/quick-{timestamp}.json`
+   - Record: timestamp, description, complexity, plan tasks
+
+#### ⏸️ Lightweight Breakpoint (unless --autonomous)
+
+**⚠️ Display this breakpoint and auto-continue after 3 seconds.**
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│ ⏸️  BREAKPOINT — Validation Commit                                  │
+│ 📋 PLAN: {N} tâches | ~{LOC} LOC | {FILE_COUNT} fichier(s)         │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│ 📝 COMMIT SUGGÉRÉ                                                   │
-│    {TYPE}({SCOPE}): {DESCRIPTION}                                  │
+│ [1] {Task 1 description}                                           │
+│ [2] {Task 2 description}                                           │
+│ [3] {Task 3 description}                                           │
 │                                                                     │
-│ 📋 RÉSUMÉ                                                           │
-│ ├── Mode: {TINY | SMALL}                                           │
-│ ├── Fichiers: {FILE_LIST}                                          │
-│ └── Tests: {TEST_STATUS}                                           │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ Options:                                                            │
-│   • Tapez "Commiter" → Exécuter le commit                          │
-│   • Tapez "Terminer" → Finaliser sans commit                       │
-│   • Tapez "Modifier" → Éditer le message                           │
-│   • Tapez "Annuler" → Abandonner                                   │
+│ Auto-continue dans 3s... (Entrée=modifier, Échap=annuler)          │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-**Awaiting user choice:**
+**Behavior:**
+- **Default (3s timeout):** Auto-continue to Code phase
+- **Enter pressed:** User wants to modify plan → prompt for changes
+- **Escape pressed:** Cancel workflow
+- **`--autonomous` flag:** Skip breakpoint entirely
 
-#### If user chose "Commiter"
+---
 
-Execute git commit and continue to output.
+### [C] CODE Phase (variable)
 
-#### If user chose "Terminer"
+**Model:** Haiku (TINY) | Sonnet (SMALL)
 
-Skip commit, continue to output with "Commit: Pending".
+**Purpose:** Execute implementation tasks.
 
-#### If user chose "Modifier"
+#### Process
 
-Ask for new message, return to breakpoint.
+1. **Task Execution**
+   - TINY: Direct implementation (no subagent)
+   - SMALL: Invoke @implementer (Sonnet):
+     ```
+     Task tool with subagent_type="epci:implementer", model="sonnet"
+     Input: Single task from plan
+     Output: Implemented code
+     ```
 
-#### If user chose "Annuler"
+2. **For Each Task:**
+   ```
+   a. Read target file
+   b. Apply change (Edit tool)
+   c. Micro-validate (syntax check)
+   d. Mark task complete in session
+   ```
 
-Abort workflow.
+3. **Auto-Fix**
+   - Run lint/format on changed files
+   - Apply automatic fixes
 
-## Output (MANDATORY)
+4. **Error Handling**
+   - On error: Activate `think` mode
+   - Retry with same model (max 1x)
+   - If still failing: Escalate model (Haiku→Sonnet, Sonnet→Opus)
+   - After 2 retries: Stop and request intervention
 
-**⚠️ MANDATORY:** Always display the completion message in this exact format.
+   ```
+   ⚠️ **IMPLEMENTATION BLOCKED**
+   
+   Error persists after 2 retries:
+   - [Error description]
+   
+   Please review and provide guidance.
+   ```
 
-### TINY Mode
+#### Output (Internal)
+- Files modified list
+- LOC changes (+/-)
+- Errors encountered (if any)
+
+---
+
+### [T] TEST Phase (5-10s)
+
+**Model:** Haiku (validation) | Sonnet + `think hard` (if fix needed)
+
+**Purpose:** Verify implementation correctness.
+
+#### Process
+
+1. **Run Existing Tests**
+   ```bash
+   # Detect test runner and execute
+   npm test / pytest / php bin/phpunit / etc.
+   ```
+
+2. **Lint/Format Check**
+   ```bash
+   # Run project linter
+   eslint / flake8 / phpcs / etc.
+   ```
+
+3. **Coherence Verification**
+   - Check imports are valid
+   - Verify no syntax errors
+   - Confirm changes match acceptance criteria
+
+4. **On Test Failure:**
+   - Activate `think hard` mode
+   - Attempt auto-fix (Sonnet model)
+   - If fix fails → Report and stop
+
+#### Output (Internal)
+- Test results (pass/fail count)
+- Lint status (clean/issues)
+- Ready for final resume
+
+---
+
+### Session Persistence
+
+**Location:** `.project-memory/sessions/quick-{timestamp}.json`
+
+**Schema:**
+```json
+{
+  "timestamp": "2025-12-31T14:30:22Z",
+  "description": "fix typo in README",
+  "complexity": "TINY",
+  "plan": [
+    {"task": "Fix typo line 42", "status": "completed"}
+  ],
+  "files_modified": ["README.md"],
+  "duration_seconds": 45,
+  "models_used": {
+    "explore": "haiku",
+    "plan": "haiku",
+    "code": "haiku",
+    "test": "haiku"
+  },
+  "retries": 0,
+  "flags": ["--autonomous"]
+}
+```
+
+**Session Management:**
+- Created at Plan phase start
+- Updated after each phase completion
+- Enables resume if workflow interrupted
+- Used for metrics calibration
+
+---
+
+## Resume Final (MANDATORY)
+
+**⚠️ MANDATORY:** Always display the completion message.
+
+### Generate Commit Context
+
+**Before displaying completion, generate `.epci-commit-context.json`:**
+
+```json
+{
+  "source": "quick",
+  "type": "feat|fix",
+  "scope": "<detected module>",
+  "description": "<from brief description>",
+  "files": ["<list of modified files>"],
+  "featureDoc": null,
+  "breaking": false,
+  "ticket": null
+}
+```
+
+### TINY Mode Output
 
 ```markdown
-✅ **TINY COMPLETE**
-FLAGS: [active flags if any] | (none)
-
-Modification applied to `path/to/file.ext`
-- Change: [description]
-- Lines: +X / -Y
-
-Commit: {COMMITTED | PENDING}
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ QUICK COMPLETE — TINY                                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Fichier modifié: `{path/to/file.ext}`                              │
+│ Changement: {description}                                          │
+│ Lignes: +{X} / -{Y}                                                │
+│                                                                     │
+│ Temps total: {N}s                                                  │
+│ Session: .project-memory/sessions/quick-{timestamp}.json           │
+│                                                                     │
+│ 📝 Contexte commit préparé → /commit                               │
+│    (ou /commit --auto-commit pour commit direct)                   │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-### SMALL Mode
+### SMALL Mode Output
 
 ```markdown
-✅ **SMALL COMPLETE**
-FLAGS: [active flags if any] | (none)
-
-Modified files:
-- `path/to/file1.ext` (+X / -Y)
-- `path/to/file2.ext` (+Z / -W)
-
-Tests: [X passing | Not required]
-Review: [@code-reviewer light | Not required]
-
-Commit: {COMMITTED | PENDING}
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ QUICK COMPLETE — SMALL                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Fichiers modifiés:                                                 │
+│ ├── `{path/to/file1.ext}` (+{X} / -{Y})                           │
+│ ├── `{path/to/file2.ext}` (+{Z} / -{W})                           │
+│ └── `{path/to/file3.ext}` (+{A} / -{B})                           │
+│                                                                     │
+│ Tests: {N} passing                                                 │
+│ Temps total: {N}s                                                  │
+│ Session: .project-memory/sessions/quick-{timestamp}.json           │
+│                                                                     │
+│ 📝 Contexte commit préparé → /commit                               │
+│    (ou /commit --auto-commit pour commit direct)                   │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
-## Examples
+### 🪝 Memory Update (MANDATORY)
 
-### TINY Example
+**⚠️ CRITICAL: Always execute this hook after displaying completion message.**
 
-**Brief:** "Fix typo 'recieve' to 'receive' in UserService"
+After every successful `/quick` completion, you MUST execute the `post-phase-3` hook to save feature history:
 
-```
-→ Mode: TINY
-→ File: src/Service/UserService.php
-→ Action: Search/replace
-→ Commit: fix(user): correct typo in UserService
-```
-
-### SMALL Example
-
-**Brief:** "Add isActive() method to User entity"
-
-```
-→ Mode: SMALL
-→ Files:
-  - src/Entity/User.php (add method)
-  - tests/Unit/Entity/UserTest.php (add test)
-→ Actions:
-  1. Write test for isActive()
-  2. Implement isActive()
-  3. Verify tests
-→ Commit: feat(user): add isActive method
+```bash
+python3 src/hooks/runner.py post-phase-3 --context '{
+  "phase": "quick-complete",
+  "feature_slug": "<brief-slug>",
+  "complexity": "<TINY|SMALL>",
+  "files_modified": ["<list of modified files>"],
+  "loc_added": <number>,
+  "loc_removed": <number>,
+  "estimated_time": null,
+  "actual_time": "<duration in seconds>s",
+  "commit_hash": null,
+  "commit_status": "pending",
+  "test_results": {"status": "<passed|skipped>", "count": <n>}
+}'
 ```
 
-## When to Escalate to /epci
+**Why this is mandatory:**
+- Updates `.project-memory/history/features/` with feature record
+- Enables velocity tracking and calibration
+- Maintains feature history for `/memory` command
+- Required for accurate project metrics
 
-**Note**: Mode detection is now done by `/brief`. However, escalate if during implementation you discover:
+**Note:** If `--no-hooks` flag is active, skip this step.
+
+---
+
+## Error Handling
+
+### Retry Strategy
+
+| Situation | Action |
+|-----------|--------|
+| Error detected | Activate `think` mode |
+| 1st retry fails | Escalate model (Haiku→Sonnet) |
+| 2nd retry fails | Stop, request intervention |
+| Tests fail | Activate `think hard`, attempt auto-fix |
+| Tests still fail | Report failure, stop |
+
+### Escalation to /epci
+
+Escalate if during implementation you discover:
 - More than 3 impacted files
 - Regression risk identified
 - Underestimated complexity
 - Integration tests needed
+- Security-sensitive changes
 
 ```
 ⚠️ **ESCALATION RECOMMENDED**
@@ -299,15 +495,88 @@ The modification is more complex than anticipated:
 Recommendation: Switch to `/epci` for structured workflow.
 ```
 
-## Differences with /epci
+---
+
+## --turbo Mode (Legacy)
+
+**⚠️ MANDATORY: When `--turbo` flag is active, use existing turbo workflow:**
+
+1. **Use @implementer agent** (Sonnet model) for SMALL features
+2. **Skip optional review** — No @code-reviewer
+3. **Auto-commit** — Skip pre-commit breakpoint
+4. **Compact output** — Summary only
+
+**Note:** `--turbo` and `--autonomous` are different:
+- `--turbo`: Uses existing turbo infrastructure, auto-commit
+- `--autonomous`: Uses new EPCT workflow, skips plan BP only
+
+---
+
+## MCP Flags (F12 — Lightweight)
+
+For SMALL features only:
+
+| Flag | Effect | Note |
+|------|--------|------|
+| `--c7` | Context7 for quick doc lookup | Recommended for SMALL |
+| `--no-mcp` | Disable all MCP servers | Default for TINY |
+
+**Note:** Sequential, Magic, and Playwright are not recommended for TINY/SMALL.
+
+---
+
+## Comparison with /epci
 
 | Aspect | /quick | /epci |
-|--------|-------------|-------|
+|--------|--------|-------|
+| Workflow | EPCT (4 phases) | 3 phases |
 | Feature Document | No | Yes |
-| Breakpoints | Yes (1: pre-commit) | Yes (3: P1, P2, pre-commit) |
+| Breakpoints | 1 lightweight (3s) | 3 full |
+| Model switching | Adaptive Haiku/Sonnet | Flag-based |
 | @plan-validator | No | Yes |
-| @code-reviewer | Light (SMALL) | Full |
+| @code-reviewer | No | Full |
 | @security-auditor | No | Conditional |
-| @qa-reviewer | No | Conditional |
-| @doc-generator | No | Yes |
-| Thinking | Standard | think / think hard |
+| Session persistence | Yes (.project-memory/sessions/) | Via hooks |
+| Target duration | <30s TINY, <90s SMALL | Variable |
+
+---
+
+## Examples
+
+### TINY Example
+
+**Brief:** "Fix typo 'recieve' to 'receive' in UserService"
+
+```
+[E] Explore: UserService.php identified, TINY confirmed
+[P] Plan: 1 task — Replace typo line 42
+    (--autonomous: BP skipped)
+[C] Code: Edit applied, syntax OK
+[T] Test: Existing tests pass
+
+✅ QUICK COMPLETE — TINY
+Fichier: src/Service/UserService.php
+Temps: 12s
+```
+
+### SMALL Example
+
+**Brief:** "Add isActive() method to User entity"
+
+```
+[E] Explore: 2 files identified, SMALL confirmed
+    @Explore (Haiku): patterns detected
+[P] Plan: 3 tasks generated
+    ┌─────────────────────────────────────────┐
+    │ [1] Write test for isActive()           │
+    │ [2] Implement isActive() method         │
+    │ [3] Verify tests pass                   │
+    │ Auto-continue dans 3s...                │
+    └─────────────────────────────────────────┘
+[C] Code: @implementer (Sonnet) executed
+[T] Test: 3/3 tests passing
+
+✅ QUICK COMPLETE — SMALL
+Fichiers: User.php (+15/-0), UserTest.php (+22/-0)
+Temps: 67s
+```

@@ -405,11 +405,19 @@ Generate inline brief with exploration focus (no Feature Document).
 
 | Category | Command              | Output           | Typical Flags               |
 | -------- | -------------------- | ---------------- | --------------------------- |
-| TINY     | `/epci:quick`        | Inline brief     | (none)                      |
+| TINY     | `/epci:quick --autonomous` | Inline brief | `--autonomous` (auto)      |
 | SMALL    | `/epci:quick`        | Inline brief     | `--think` if 3+ files       |
 | STANDARD | `/epci:epci`         | Feature Document | `--think` or `--think-hard` |
 | LARGE    | `/epci:epci --large` | Feature Document | `--think-hard --wave`       |
 | SPIKE    | `/epci:spike`        | Inline brief     | `--think-hard` if complex   |
+
+**TINY Optimized Routing:**
+```
+IF category == TINY:
+   Skip clarification questions (no ambiguity expected)
+   Route directly to /quick --autonomous
+   Display: "Mode TINY détecté → exécution autonome"
+```
 
 **Note:** `--large` is an alias for `--think-hard --wave`. Both forms are accepted.
 

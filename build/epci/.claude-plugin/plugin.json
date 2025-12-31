@@ -1,6 +1,6 @@
 {
   "name": "epci",
-  "version": "4.2.1",
+  "version": "4.4.0",
   "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability and project memory",
   "author": {
     "name": "EPCI Team"
@@ -10,10 +10,8 @@
     "./commands/brief.md",
     "./commands/epci.md",
     "./commands/quick.md",
-    "./commands/spike.md",
     "./commands/decompose.md",
     "./commands/memory.md",
-    "./commands/learn.md",
     "./commands/create.md",
     "./commands/brainstorm.md",
     "./commands/debug.md"

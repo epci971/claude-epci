@@ -19,8 +19,11 @@ Optimized for --turbo mode workflows where speed matters.
 ## When to Use
 
 - `/epci --turbo` Phase 1: Replace full planning with rapid task breakdown
-- `/quick --turbo`: Quick task identification
+- `/quick` SMALL+ features: Plan phase when near SMALL complexity limit
+- `/quick --turbo`: Quick task identification (legacy mode)
 - Any workflow where exploration is already complete
+
+**Note:** For `/quick` EPCT workflow, this agent is invoked during the [P] PLAN phase only for SMALL+ complexity (near SMALL limit with 3 files or complex patterns).
 
 ## Input Requirements
 

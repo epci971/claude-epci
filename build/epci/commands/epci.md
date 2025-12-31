@@ -591,17 +591,6 @@ Generate an enriched breakpoint using the `breakpoint-metrics` skill:
 > **Note (v3.2):** Append this content after the Reviews/Deviations section in §3.
 
 ```markdown
-### Commit Message (Prepared)
-```
-feat(user): add email validation
-
-- Create EmailValidator service
-- Add validation to User entity
-- Update registration controller
-
-Refs: docs/features/user-email-validation.md
-```
-
 ### Documentation
 - **@doc-generator**: 2 files updated
   - README.md (Configuration section)
@@ -614,104 +603,59 @@ Refs: docs/features/user-email-validation.md
 - Docs: ✅ Up to date
 ```
 
-**🪝 Execute `pre-commit` hooks** (if configured)
+### Generate Commit Context (MANDATORY)
 
-```bash
-python3 src/hooks/runner.py pre-commit --context '{
-  "phase": "phase-3",
-  "feature_slug": "<slug>",
-  "complexity": "<complexity>",
-  "files_modified": [...],
-  "commit_message": "<prepared message>",
-  "pending_commit": true
-}'
+**⚠️ MANDATORY:** Generate the commit context file for `/commit` command.
+
+**Write `.epci-commit-context.json`** to project root:
+
+```json
+{
+  "source": "epci",
+  "type": "<type from commit message>",
+  "scope": "<scope from feature>",
+  "description": "<description from plan>",
+  "files": ["<list of modified files>"],
+  "featureDoc": "docs/features/<slug>.md",
+  "breaking": false,
+  "ticket": null
+}
 ```
 
-### ⏸️ BREAKPOINT PRE-COMMIT (MANDATORY — WAIT FOR USER)
-
-**⚠️ MANDATORY:** Display this breakpoint and WAIT for user choice before proceeding.
-
-**🪝 Execute `on-breakpoint` hooks** (if configured)
+**Display commit suggestion:**
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│ ⏸️  BREAKPOINT PHASE 3 — Validation Commit                          │
+│ 📝 CONTEXTE COMMIT PRÉPARÉ                                          │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│ 📝 MESSAGE DE COMMIT PRÉPARÉ                                        │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ {COMMIT_TYPE}({SCOPE}): {DESCRIPTION}                           │ │
-│ │                                                                 │ │
-│ │ - {DETAIL_1}                                                    │ │
-│ │ - {DETAIL_2}                                                    │ │
-│ │                                                                 │ │
-│ │ Refs: docs/features/{SLUG}.md                                   │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
+│ Message proposé:                                                   │
+│ {TYPE}({SCOPE}): {DESCRIPTION}                                     │
 │                                                                     │
-│ 📋 RÉSUMÉ                                                           │
-│ ├── Fichiers modifiés: {FILE_COUNT}                                │
-│ ├── Documentation: {DOC_STATUS}                                    │
-│ └── PR prête: {PR_STATUS}                                          │
+│ Fichiers: {FILE_COUNT}                                             │
+│ Feature Document: docs/features/{slug}.md                          │
 │                                                                     │
-│ 🔗 Feature Document: docs/features/{slug}.md                       │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ Options:                                                            │
-│   • Tapez "Commiter" → Exécuter git commit + continuer             │
-│   • Tapez "Finaliser" → Terminer sans commit                       │
-│   • Tapez "Modifier" → Éditer le message de commit                 │
-│   • Tapez "Annuler" → Retourner au breakpoint Phase 2              │
+│ → Lancez /commit pour finaliser                                    │
+│ → Ou /commit --auto-commit pour commit direct                      │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-**Awaiting user choice:**
+**Note:** The `/commit` command handles:
+- Pre-commit breakpoint with user confirmation
+- Git commit execution
+- Pre/post-commit hooks
+- Context file cleanup after success
 
-#### If user chose "Commiter"
+### 🪝 Memory Update (MANDATORY)
 
-1. Execute git commit:
-   ```bash
-   git add <files>
-   git commit -m "<prepared message>"
-   ```
-
-2. **🪝 Execute `post-commit` hooks** (if configured):
-   ```bash
-   python3 src/hooks/runner.py post-commit --context '{
-     "phase": "phase-3",
-     "feature_slug": "<slug>",
-     "commit_hash": "<hash>",
-     "branch": "<branch>",
-     "files_committed": [...]
-   }'
-   ```
-
-3. Update §4 with commit hash
-
-#### If user chose "Finaliser"
-
-1. Skip git commit
-2. Update §4 with: `Commit: Pending (manual commit requested)`
-3. Continue to completion
-
-#### If user chose "Modifier"
-
-1. Ask user for new commit message
-2. Update prepared message
-3. Return to breakpoint display
-
-#### If user chose "Annuler"
-
-1. Return to Phase 2 breakpoint
-2. Allow user to make corrections
-
-**🪝 Execute `post-phase-3` hooks** (always, for cleanup and metrics)
+**⚠️ CRITICAL: You MUST execute this hook before displaying completion message.**
 
 ```bash
 python3 src/hooks/runner.py post-phase-3 --context '{
   "phase": "phase-3",
   "feature_slug": "<slug>",
   "complexity": "<complexity>",
-  "files_modified": [...],
+  "files_modified": ["<list of files>"],
   "estimated_time": "<estimated>",
   "actual_time": "<actual>",
   "commit_hash": "<hash or null>",
@@ -720,7 +664,13 @@ python3 src/hooks/runner.py post-phase-3 --context '{
 }'
 ```
 
-**Important:** This hook updates `.project-memory/` with feature history and velocity metrics.
+**Why this is mandatory:**
+- Saves feature to `.project-memory/history/features/`
+- Updates velocity metrics for calibration
+- Increments `features_completed` counter
+- Required for `/memory` command accuracy
+
+**Note:** Skip only if `--no-hooks` flag is active.
 
 ### ✅ COMPLETION
 
