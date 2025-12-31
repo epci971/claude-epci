@@ -127,7 +127,7 @@ Legend:
 
 ## Integration Points
 
-### In /epci-brief
+### In /brief
 
 After persona detection (Step 5):
 1. Calculate MCP activation based on personas
@@ -140,7 +140,7 @@ After persona detection (Step 5):
 - **Phase 2**: Use Sequential for complex debugging, Magic for UI
 - **Phase 3**: Context7 for documentation standards
 
-### In /epci-quick
+### In /quick
 
 Lightweight MCP activation for SMALL features only.
 

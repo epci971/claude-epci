@@ -2,7 +2,7 @@
 name: debugging-strategy
 description: >-
   Structured debugging methodology with thought tree analysis, solution scoring,
-  and adaptive routing. Auto-invoke when: /epci-debug called, error/bug mentioned,
+  and adaptive routing. Auto-invoke when: /debug called, error/bug mentioned,
   stack trace provided. Do NOT load for: feature development, refactoring without bugs.
 allowed-tools: [Read, Glob, Grep, WebSearch, WebFetch]
 ---
@@ -196,9 +196,9 @@ File: `docs/debug/<slug>-<date>.md`
 If error encountered during implementation:
 1. Skill auto-loads
 2. Quick diagnostic
-3. Inline fix or suggest `/epci-debug`
+3. Inline fix or suggest `/debug`
 
-### Standalone /epci-debug
+### Standalone /debug
 
 Full debugging workflow with all phases.
 

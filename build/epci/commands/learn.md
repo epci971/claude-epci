@@ -27,7 +27,7 @@ Manages the EPCI continuous learning system which:
 
 ---
 
-## /epci-learn status
+## /learn status
 
 Display the current state of the learning system.
 
@@ -89,7 +89,7 @@ Display the current state of the learning system.
 
 ---
 
-## /epci-learn reset
+## /learn reset
 
 Reset learning data with confirmation.
 
@@ -134,7 +134,7 @@ To start fresh: Run some features with `/epci` to collect new data.
 
 ---
 
-## /epci-learn export
+## /learn export
 
 Export all learning data as JSON.
 
@@ -185,15 +185,15 @@ Export all learning data as JSON.
 
 ```bash
 # Display in terminal
-/epci-learn export
+/learn export
 
 # Save to file (user copies output)
-# Or redirect in shell: claude-code "/epci-learn export" > learning-backup.json
+# Or redirect in shell: claude-code "/learn export" > learning-backup.json
 ```
 
 ---
 
-## /epci-learn calibrate
+## /learn calibrate
 
 Force recalibration from feature history.
 
@@ -238,7 +238,7 @@ Force recalibration from feature history.
 
 | Error | Response |
 |-------|----------|
-| Memory not initialized | Suggest `/epci-memory init` |
+| Memory not initialized | Suggest `/memory init` |
 | No learning data | Show empty status, suggest running features |
 | Corrupted files | Warn and use defaults, suggest reset |
 | No feature history | Cannot recalibrate, show message |

@@ -40,7 +40,7 @@ Hooks in `active/` are executed automatically at their respective trigger points
 
 | Hook Type | Trigger Point | Use Case |
 |-----------|--------------|----------|
-| `pre-brief` | Before /epci-brief exploration | Load external config, validate environment |
+| `pre-brief` | Before /brief exploration | Load external config, validate environment |
 | `post-brief` | After complexity evaluation | Notify feature start, create tickets |
 | `pre-phase-1` | Before Phase 1 starts | Load context, check prerequisites |
 | `post-phase-1` | After plan validation | Notify team, update tickets |

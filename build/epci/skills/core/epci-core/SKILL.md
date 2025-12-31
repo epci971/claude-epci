@@ -27,11 +27,11 @@ with validation at each phase.
 
 | Category | Files | LOC | Risk | Workflow |
 |----------|-------|-----|------|----------|
-| TINY | 1 | <50 | None | /epci-quick |
-| SMALL | 2-3 | <200 | Low | /epci-quick |
+| TINY | 1 | <50 | None | /quick |
+| SMALL | 2-3 | <200 | Low | /quick |
 | STANDARD | 4-10 | <1000 | Medium | /epci |
 | LARGE | 10+ | 1000+ | High | /epci |
-| SPIKE | ? | ? | Unknown | /epci-spike |
+| SPIKE | ? | ? | Unknown | /spike |
 
 ## Feature Document
 
@@ -99,15 +99,15 @@ See `breakpoint-metrics` skill for scoring algorithm and templates.
 User brief
     │
     ▼
-/epci-brief (evaluation)
+/brief (evaluation)
     │
-    ├─► TINY/SMALL ──► /epci-quick
+    ├─► TINY/SMALL ──► /quick
     │
     ├─► STANDARD ────► /epci
     │
     ├─► LARGE ───────► /epci --large
     │
-    └─► Uncertain ───► /epci-spike
+    └─► Uncertain ───► /spike
 ```
 
 ## EPCI Principles

@@ -169,7 +169,7 @@ def validate_command(command_path_str: str) -> int:
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python validate_command.py <path-to-command.md>")
-        print("Example: python validate_command.py src/commands/epci-brief.md")
+        print("Example: python validate_command.py src/commands/brief.md")
         sys.exit(1)
 
     sys.exit(validate_command(sys.argv[1]))

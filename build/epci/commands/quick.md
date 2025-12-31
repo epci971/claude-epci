@@ -99,7 +99,7 @@ For SMALL features only, MCP servers can be used in lightweight mode:
 
 ## Pre-Workflow: Memory Context
 
-**Memory is loaded once by `/epci-brief`** and passed via the inline brief (Memory Summary section).
+**Memory is loaded once by `/brief`** and passed via the inline brief (Memory Summary section).
 
 **Reading memory context:**
 1. Check inline brief for "Memory Summary" section
@@ -116,14 +116,14 @@ For SMALL features only, MCP servers can be used in lightweight mode:
 
 ### 1. Brief Reception (MANDATORY)
 
-The structured brief is provided by `/epci-brief`.
+The structured brief is provided by `/brief`.
 It already contains:
 - Target files identified
 - Detected stack
 - Mode (TINY/SMALL) determined
 - Acceptance criteria
 
-**If brief is absent or incomplete** → Suggest `/epci-brief` first.
+**If brief is absent or incomplete** → Suggest `/brief` first.
 
 ### 2. Direct Implementation (MANDATORY)
 
@@ -283,7 +283,7 @@ Commit: {COMMITTED | PENDING}
 
 ## When to Escalate to /epci
 
-**Note**: Mode detection is now done by `/epci-brief`. However, escalate if during implementation you discover:
+**Note**: Mode detection is now done by `/brief`. However, escalate if during implementation you discover:
 - More than 3 impacted files
 - Regression risk identified
 - Underestimated complexity
@@ -301,7 +301,7 @@ Recommendation: Switch to `/epci` for structured workflow.
 
 ## Differences with /epci
 
-| Aspect | /epci-quick | /epci |
+| Aspect | /quick | /epci |
 |--------|-------------|-------|
 | Feature Document | No | Yes |
 | Breakpoints | Yes (1: pre-commit) | Yes (3: P1, P2, pre-commit) |

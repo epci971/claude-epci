@@ -4,7 +4,7 @@ Reference catalog of all existing EPCI commands for consistency and inspiration.
 
 ## Commands Overview (5)
 
-### /epci-brief
+### /brief
 - **Purpose**: Entry point - analyzes brief, evaluates complexity, routes to workflow
 - **Arguments**: None (receives raw brief)
 - **Output**: Structured functional brief + routing recommendation
@@ -21,14 +21,14 @@ Reference catalog of all existing EPCI commands for consistency and inspiration.
   2. Code → @code-reviewer, @security-auditor*, @qa-reviewer*
   3. Finalize → @doc-generator
 
-### /epci-quick
+### /quick
 - **Purpose**: Condensed workflow for TINY/SMALL features
 - **Arguments**: None
 - **Output**: Implemented code (no Feature Document)
 - **Tools**: Read, Write, Edit, Bash, Grep, Glob, Task
 - **Modes**: TINY (<50 LOC), SMALL (<200 LOC)
 
-### /epci-spike
+### /spike
 - **Purpose**: Time-boxed exploration for technical uncertainty
 - **Arguments**: `[duration]` `[question]`
 - **Output**: Spike Report with GO/NO-GO verdict

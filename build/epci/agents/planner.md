@@ -19,7 +19,7 @@ Optimized for --turbo mode workflows where speed matters.
 ## When to Use
 
 - `/epci --turbo` Phase 1: Replace full planning with rapid task breakdown
-- `/epci-quick --turbo`: Quick task identification
+- `/quick --turbo`: Quick task identification
 - Any workflow where exploration is already complete
 
 ## Input Requirements
@@ -29,7 +29,7 @@ Optimized for --turbo mode workflows where speed matters.
    - Identified files (from prior exploration)
    - Technical stack information
 
-2. **Exploration Summary** (from @Explore or /epci-brief)
+2. **Exploration Summary** (from @Explore or /brief)
 
 ## Process
 

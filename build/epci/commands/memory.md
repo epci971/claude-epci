@@ -25,7 +25,7 @@ This directory stores project context, conventions, feature history, and metrics
 
 ---
 
-## /epci-memory status
+## /memory status
 
 Display the current state of project memory.
 
@@ -68,7 +68,7 @@ Display the current state of project memory.
 
 ---
 
-## /epci-memory init
+## /memory init
 
 Initialize project memory with auto-detection.
 
@@ -133,7 +133,7 @@ Initialize project memory with auto-detection.
 
 ---
 
-## /epci-memory reset
+## /memory reset
 
 Reset project memory with confirmation.
 
@@ -166,12 +166,12 @@ Type "RESET" to confirm, or anything else to cancel:
 ✅ Project memory has been reset.
 📦 Backup created: .project-memory-backup-20251216-143022/
 
-To reinitialize: /epci-memory init
+To reinitialize: /memory init
 ```
 
 ---
 
-## /epci-memory export
+## /memory export
 
 Export all memory data as JSON.
 
@@ -205,10 +205,10 @@ Export all memory data as JSON.
 
 ```bash
 # Display in terminal
-/epci-memory export
+/memory export
 
 # Save to file (user copies output)
-/epci-memory export > memory-backup.json
+/memory export > memory-backup.json
 ```
 
 ---
@@ -217,7 +217,7 @@ Export all memory data as JSON.
 
 | Error | Response |
 |-------|----------|
-| Memory not initialized | Suggest `/epci-memory init` |
+| Memory not initialized | Suggest `/memory init` |
 | Corrupted files | Warn and use defaults |
 | Permission denied | Display error with path |
 | Already initialized (init) | Ask for confirmation |
@@ -230,7 +230,7 @@ Project memory is automatically used by:
 
 | Command | Usage |
 |---------|-------|
-| `/epci-brief` | Loads context for stack detection |
+| `/brief` | Loads context for stack detection |
 | `/epci` | Saves feature history after Phase 3 |
 | Breakpoints | Displays velocity metrics |
 | Hooks | Receives memory context |

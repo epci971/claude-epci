@@ -19,7 +19,7 @@ Optimized for --turbo mode workflows with TDD approach.
 ## When to Use
 
 - `/epci --turbo` Phase 2: Rapid task execution
-- `/epci-quick --turbo`: Quick implementation
+- `/quick --turbo`: Quick implementation
 - Any workflow where plan is validated and tasks are atomic
 
 ## Input Requirements

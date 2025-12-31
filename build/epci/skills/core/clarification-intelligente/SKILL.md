@@ -1,10 +1,10 @@
 ---
 name: clarification-intelligente
 description: >-
-  Système de clarification contextuelle intelligent pour EPCI.
-  Use when: /epci-brief needs to generate clarification questions,
-  analyzing briefs for domain detection, or finding similar features.
-  Not for: direct implementation tasks, code generation, or when brief is already complete.
+    Système de clarification contextuelle intelligent pour EPCI.
+    Use when: /brief needs to generate clarification questions,
+    analyzing briefs for domain detection, or finding similar features.
+    Not for: direct implementation tasks, code generation, or when brief is already complete.
 allowed-tools: [Read]
 ---
 
@@ -27,6 +27,7 @@ Il transforme les questions génériques en questions contextuelles basées sur:
 **Module**: `src/project-memory/clarification_analyzer.py`
 
 Analyse le brief pour extraire:
+
 - **Keywords**: Mots-clés significatifs
 - **Domain**: Domaine technique (auth, api, ui, data, etc.)
 - **Gaps**: Informations manquantes
@@ -68,13 +69,13 @@ result = generate_clarification(brief, manager, persona='backend')
 
 ## Question Types
 
-| Type | Déclencheur | Exemple |
-|------|-------------|---------|
-| **REUSE** | Feature similaire trouvée | "La feature X utilise le pattern Y. Réutiliser ?" |
-| **TECHNICAL** | Lacune technique détectée | "Quelle méthode d'authentification ?" |
-| **SCOPE** | Périmètre flou | "Quel est le périmètre exact ?" |
-| **INTEGRATION** | Composants existants | "Intégration avec Messenger existant ?" |
-| **PRIORITY** | Persona-specific | "Quelle garantie de fiabilité requise ?" |
+| Type            | Déclencheur               | Exemple                                           |
+| --------------- | ------------------------- | ------------------------------------------------- |
+| **REUSE**       | Feature similaire trouvée | "La feature X utilise le pattern Y. Réutiliser ?" |
+| **TECHNICAL**   | Lacune technique détectée | "Quelle méthode d'authentification ?"             |
+| **SCOPE**       | Périmètre flou            | "Quel est le périmètre exact ?"                   |
+| **INTEGRATION** | Composants existants      | "Intégration avec Messenger existant ?"           |
+| **PRIORITY**    | Persona-specific          | "Quelle garantie de fiabilité requise ?"          |
 
 ## Rules
 
@@ -84,14 +85,15 @@ result = generate_clarification(brief, manager, persona='backend')
 4. **Priorisation** - questions bloquantes d'abord
 5. **Suggestions** - proposer des réponses par défaut basées sur l'historique
 
-## Integration with epci-brief
+## Integration with brief
 
-Le système est intégré dans Step 2 de `/epci-brief`:
+Le système est intégré dans Step 2 de `/brief`:
 
 ```markdown
 ### Step 2: Clarification Loop
 
 If Project Memory available:
+
 1. Analyze brief → extract keywords, detect domain
 2. Find similar features → suggest reuse
 3. Identify gaps → generate targeted questions
@@ -105,6 +107,7 @@ If Project Memory unavailable:
 ## Graceful Degradation
 
 Si Project Memory est indisponible ou corrompu:
+
 - Le système retourne des questions génériques
 - Aucune erreur n'est propagée
 - Le workflow continue normalement
@@ -112,6 +115,7 @@ Si Project Memory est indisponible ou corrompu:
 ## Future Enhancements (F09)
 
 Quand le système de Personas sera implémenté:
+
 - Questions adaptées au focus de la persona
 - Priorisation différente selon le rôle
 - Suggestions contextualisées

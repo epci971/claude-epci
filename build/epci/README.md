@@ -40,7 +40,7 @@ cp -r src/ ~/.claude/
 
 ```bash
 # 1. Décrivez votre besoin
-/epci-brief "Ajouter une fonctionnalité d'authentification OAuth2"
+/brief "Ajouter une fonctionnalité d'authentification OAuth2"
 
 # 2. Le plugin évalue la complexité et recommande un workflow
 # 3. Suivez le workflow recommandé
@@ -49,7 +49,7 @@ cp -r src/ ~/.claude/
 ### Workflow Typique
 
 ```
-Utilisateur: /epci-brief "Ajouter un endpoint API pour les utilisateurs"
+Utilisateur: /brief "Ajouter un endpoint API pour les utilisateurs"
 
 Claude: Analyse du brief...
         Complexité: STANDARD
@@ -107,7 +107,7 @@ Chaque feature STANDARD/LARGE génère un document de traçabilité :
 ```
 docs/features/<feature-slug>.md
 
-├── §1 Brief Fonctionnel      ← /epci-brief
+├── §1 Brief Fonctionnel      ← /brief
 ├── §2 Plan d'Implémentation  ← /epci Phase 1
 ├── §3 Rapport d'Implémentation ← /epci Phase 2
 └── §4 Finalisation           ← /epci Phase 3
@@ -121,19 +121,19 @@ docs/features/<feature-slug>.md
 
 | Commande | Description | Quand l'utiliser |
 |----------|-------------|------------------|
-| `/epci-brief` | Point d'entrée universel | Toujours commencer ici |
+| `/brief` | Point d'entrée universel | Toujours commencer ici |
 | `/epci` | Workflow complet 3 phases | Features STANDARD et LARGE |
-| `/epci-quick` | Workflow condensé | Features TINY et SMALL |
-| `/epci-spike` | Exploration time-boxée | Incertitude technique |
-| `/epci-decompose` | Décomposition de features | Planification tâches complexes |
-| `/epci-memory` | Gestion mémoire projet | Initialiser, exporter, réinitialiser |
-| `/epci-learn` | Apprentissage projet | Analyser patterns et calibrer |
+| `/quick` | Workflow condensé | Features TINY et SMALL |
+| `/spike` | Exploration time-boxée | Incertitude technique |
+| `/decompose` | Décomposition de features | Planification tâches complexes |
+| `/memory` | Gestion mémoire projet | Initialiser, exporter, réinitialiser |
+| `/learn` | Apprentissage projet | Analyser patterns et calibrer |
 | `/epci:create` | Factory de composants | Créer skills/commands/agents |
 
-### `/epci-brief` — Point d'entrée
+### `/brief` — Point d'entrée
 
 ```bash
-/epci-brief "Description de votre besoin"
+/brief "Description de votre besoin"
 ```
 
 **Processus :**
@@ -172,10 +172,10 @@ docs/features/<feature-slug>.md
 - Agent : `@doc-generator`
 - Output : §4 Finalisation (commits, docs, PR)
 
-### `/epci-quick` — Workflow Condensé
+### `/quick` — Workflow Condensé
 
 ```bash
-/epci-quick
+/quick
 ```
 
 | Mode | Fichiers | LOC | Tests | Durée |
@@ -186,11 +186,11 @@ docs/features/<feature-slug>.md
 **Exemples TINY :** Typos, fixes de config, petits ajustements
 **Exemples SMALL :** Petites features, refactoring local
 
-### `/epci-spike` — Exploration
+### `/spike` — Exploration
 
 ```bash
-/epci-spike 1h "Est-ce que GraphQL est viable pour notre API?"
-/epci-spike 30min "Comment intégrer ce SDK externe?"
+/spike 1h "Est-ce que GraphQL est viable pour notre API?"
+/spike 30min "Comment intégrer ce SDK externe?"
 ```
 
 **Output :** Spike Report avec verdict :
@@ -208,11 +208,11 @@ docs/features/<feature-slug>.md
 
 Crée des composants EPCI avec validation automatique.
 
-### `/epci-decompose` — Décomposition de Features
+### `/decompose` — Décomposition de Features
 
 ```bash
-/epci-decompose feature.md --output tasks/ --think hard
-/epci-decompose --min-days 2 --max-days 5
+/decompose feature.md --output tasks/ --think hard
+/decompose --min-days 2 --max-days 5
 ```
 
 Décompose une feature complexe en tâches atomiques :
@@ -221,24 +221,24 @@ Décompose une feature complexe en tâches atomiques :
 - Validation via `@decompose-validator`
 - Export au format markdown structuré
 
-### `/epci-memory` — Gestion Mémoire Projet
+### `/memory` — Gestion Mémoire Projet
 
 ```bash
-/epci-memory init       # Initialiser la mémoire projet
-/epci-memory status     # Voir l'état actuel
-/epci-memory export     # Exporter la configuration
-/epci-memory reset      # Réinitialiser
+/memory init       # Initialiser la mémoire projet
+/memory status     # Voir l'état actuel
+/memory export     # Exporter la configuration
+/memory reset      # Réinitialiser
 ```
 
 Gère la mémoire persistante du projet (conventions, préférences, historique).
 
-### `/epci-learn` — Apprentissage Projet
+### `/learn` — Apprentissage Projet
 
 ```bash
-/epci-learn status      # État de l'apprentissage
-/epci-learn calibrate   # Calibrer les estimations
-/epci-learn export      # Exporter les patterns appris
-/epci-learn reset       # Réinitialiser l'apprentissage
+/learn status      # État de l'apprentissage
+/learn calibrate   # Calibrer les estimations
+/learn export      # Exporter les patterns appris
+/learn reset       # Réinitialiser l'apprentissage
 ```
 
 Analyse les patterns du projet et optimise les suggestions futures.
@@ -252,7 +252,7 @@ Analyse les patterns du projet et optimise les suggestions futures.
                            │
                            ▼
                     ┌─────────────┐
-                    │ /epci-brief │
+                    │ /brief │
                     │ (Évaluation)│
                     └──────┬──────┘
                            │
@@ -266,7 +266,7 @@ Analyse les patterns du projet et optimise les suggestions futures.
         │                 │                  │
         ▼                 ▼                  ▼
   ┌───────────┐    ┌───────────┐      ┌───────────┐
-  │/epci-quick│    │   /epci   │      │/epci-spike│
+  │/quick│    │   /epci   │      │/spike│
   └───────────┘    └───────────┘      └───────────┘
 ```
 
@@ -274,11 +274,11 @@ Analyse les patterns du projet et optimise les suggestions futures.
 
 | Catégorie | Fichiers | LOC | Risque | Tests | Workflow |
 |-----------|----------|-----|--------|-------|----------|
-| **TINY** | 1 | < 50 | Aucun | Non | `/epci-quick` |
-| **SMALL** | 2-3 | < 200 | Faible | Optionnels | `/epci-quick` |
+| **TINY** | 1 | < 50 | Aucun | Non | `/quick` |
+| **SMALL** | 2-3 | < 200 | Faible | Optionnels | `/quick` |
 | **STANDARD** | 4-10 | Variable | Modéré | Requis | `/epci` |
 | **LARGE** | 10+ | Variable | Élevé | Complets | `/epci --large` |
-| **SPIKE** | - | - | Incertain | - | `/epci-spike` |
+| **SPIKE** | - | - | Incertain | - | `/spike` |
 
 ---
 
@@ -300,7 +300,7 @@ Analyse les patterns du projet et optimise les suggestions futures.
 | `@security-auditor` | Audit OWASP Top 10 | Phase 2 (conditionnel) | Read, Grep |
 | `@qa-reviewer` | Revue tests et couverture | Phase 2 (conditionnel) | Read, Grep, Bash |
 | `@doc-generator` | Génération documentation | Phase 3 | Read, Write, Glob |
-| `@decompose-validator` | Valide la décomposition des tâches | `/epci-decompose` | Read, Grep |
+| `@decompose-validator` | Valide la décomposition des tâches | `/decompose` | Read, Grep |
 
 ### Invocation Conditionnelle
 
@@ -383,16 +383,16 @@ Skills fondamentaux chargés selon le contexte du workflow.
 | Skill | Domaine | Chargé par |
 |-------|---------|------------|
 | `epci-core` | Concepts EPCI, Feature Document, Breakpoints | Toutes commandes |
-| `architecture-patterns` | SOLID, DDD, Clean Architecture | `/epci-brief`, Phase 1 |
+| `architecture-patterns` | SOLID, DDD, Clean Architecture | `/brief`, Phase 1 |
 | `code-conventions` | Naming, structure, DRY/KISS | Phase 2 |
 | `testing-strategy` | TDD, coverage, mocking | Phase 2 |
 | `git-workflow` | Conventional Commits, branching | Phase 3 |
 | `breakpoint-metrics` | Scoring complexité, estimation temps | Breakpoints enrichis |
 | `flags-system` | Flags universels, auto-activation | Toutes commandes |
-| `project-memory` | Contexte et chargement mémoire projet | `/epci-memory`, workflows |
-| `learning-optimizer` | Optimisation apprentissage | `/epci-learn` |
+| `project-memory` | Contexte et chargement mémoire projet | `/memory`, workflows |
+| `learning-optimizer` | Optimisation apprentissage | `/learn` |
 | `proactive-suggestions` | Suggestions proactives IA | Phase 2, breakpoints |
-| `clarification-intelligente` | Clarification intelligente | `/epci-brief` |
+| `clarification-intelligente` | Clarification intelligente | `/brief` |
 
 ### Stack Skills (4)
 
@@ -427,7 +427,7 @@ Skills pour la création de nouveaux composants.
 python scripts/validate_skill.py skills/core/epci-core/
 
 # Valider une commande
-python scripts/validate_command.py commands/epci-brief.md
+python scripts/validate_command.py commands/brief.md
 
 # Valider un subagent
 python scripts/validate_subagent.py agents/code-reviewer.md
@@ -499,10 +499,10 @@ project-memory/
 ### Commandes
 
 ```bash
-/epci-memory init      # Créer .epci-memory/ dans le projet
-/epci-memory status    # Afficher l'état de la mémoire
-/epci-memory export    # Exporter en JSON
-/epci-memory reset     # Réinitialiser
+/memory init      # Créer .project-memory/ dans le projet
+/memory status    # Afficher l'état de la mémoire
+/memory export    # Exporter en JSON
+/memory reset     # Réinitialiser
 ```
 
 ---
@@ -600,13 +600,13 @@ src/
 │   └── plugin.json              # Manifeste v3.8.3
 │
 ├── commands/                    # 8 commandes
-│   ├── epci-brief.md           # Point d'entrée + routing
+│   ├── brief.md           # Point d'entrée + routing
 │   ├── epci.md                 # Workflow complet 3 phases
-│   ├── epci-quick.md           # Workflow condensé TINY/SMALL
-│   ├── epci-spike.md           # Exploration time-boxée
-│   ├── epci-decompose.md       # Décomposition de features
-│   ├── epci-memory.md          # Gestion mémoire projet
-│   ├── epci-learn.md           # Apprentissage projet
+│   ├── quick.md           # Workflow condensé TINY/SMALL
+│   ├── spike.md           # Exploration time-boxée
+│   ├── decompose.md       # Décomposition de features
+│   ├── memory.md          # Gestion mémoire projet
+│   ├── learn.md           # Apprentissage projet
 │   └── create.md               # Factory dispatcher
 │
 ├── agents/                      # 6 subagents custom
@@ -680,7 +680,7 @@ src/
 
 | Élément | Convention | Exemple |
 |---------|------------|---------|
-| Commandes | kebab-case, `.md` | `epci-brief.md` |
+| Commandes | kebab-case, `.md` | `brief.md` |
 | Subagents | kebab-case, `.md` | `code-reviewer.md` |
 | Skills | kebab-case (dossier) | `python-django/SKILL.md` |
 | Scripts | snake_case, `.py` | `validate_skill.py` |
@@ -755,9 +755,9 @@ Le skill `skills-creator` guide la création en 6 phases :
 ### v3.8 (Décembre 2024) — Current
 
 **Nouvelles commandes :**
-- `/epci-decompose` — Décomposition de features en tâches
-- `/epci-memory` — Gestion mémoire projet
-- `/epci-learn` — Apprentissage et calibration
+- `/decompose` — Décomposition de features en tâches
+- `/memory` — Gestion mémoire projet
+- `/learn` — Apprentissage et calibration
 
 **Nouvel agent :**
 - `@decompose-validator` — Validation des décompositions
@@ -811,7 +811,7 @@ Le skill `skills-creator` guide la création en 6 phases :
 | Aspect | v2.7 | v3.0 |
 |--------|------|------|
 | Commandes | 12 fichiers | 5 fichiers |
-| Point d'entrée | Multiple | Unique (`/epci-brief`) |
+| Point d'entrée | Multiple | Unique (`/brief`) |
 | Routing | 5 niveaux | 3 workflows |
 
 **Nouveautés :**
@@ -825,14 +825,14 @@ Le skill `skills-creator` guide la création en 6 phases :
 
 | Commande v2.7 | Équivalent actuel |
 |---------------|-------------------|
-| `/epci-discover` | `/epci-brief` |
-| `/epci-0-briefing` | `/epci-brief` |
-| `/epci-micro` | `/epci-quick` (TINY) |
-| `/epci-soft` | `/epci-quick` (SMALL) |
+| `/epci-discover` | `/brief` |
+| `/epci-0-briefing` | `/brief` |
+| `/epci-micro` | `/quick` (TINY) |
+| `/epci-soft` | `/quick` (SMALL) |
 | `/epci-1-analyse` | `/epci` Phase 1 |
 | `/epci-2-code` | `/epci` Phase 2 |
 | `/epci-3-finalize` | `/epci` Phase 3 |
-| `/epci-hotfix` | `/epci-quick` + urgence |
+| `/epci-hotfix` | `/quick` + urgence |
 
 ---
 

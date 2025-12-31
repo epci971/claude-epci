@@ -34,7 +34,7 @@ Reference catalog of all existing EPCI subagents for consistency and inspiration
 ### @code-reviewer
 - **Purpose**: Code quality and maintainability review
 - **Tools**: Read, Grep, Glob
-- **Invoked by**: `/epci` Phase 2, `/epci-quick`
+- **Invoked by**: `/epci` Phase 2, `/quick`
 - **Output**: Review report with severity levels
 - **Checklist**: SOLID, DRY, KISS, naming, error handling
 
