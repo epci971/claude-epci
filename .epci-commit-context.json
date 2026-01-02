@@ -1,16 +1,18 @@
 {
   "source": "epci",
   "type": "feat",
-  "scope": "commit",
-  "description": "add unified /commit command for EPCI workflows",
+  "scope": "skills",
+  "description": "Add frontend-editor skill for Tailwind CSS presentation layer",
   "files": [
-    "src/commands/commit.md",
-    "src/commands/epci.md",
-    "src/commands/quick.md",
-    "src/commands/debug.md",
-    "docs/features/commit-command.md"
+    "src/skills/stack/frontend-editor/SKILL.md",
+    "src/skills/stack/frontend-editor/references/tailwind-conventions.md",
+    "src/skills/stack/frontend-editor/references/components-catalog.md",
+    "src/skills/stack/frontend-editor/references/accessibility.md",
+    "docs/features/frontend-editor.md",
+    "docs/briefs/frontend-editor/brief-frontend-editor-2026-01-02.md",
+    "docs/briefs/frontend-editor/journal-frontend-editor-2026-01-02.md"
   ],
-  "featureDoc": "docs/features/commit-command.md",
+  "featureDoc": "docs/features/frontend-editor.md",
   "breaking": false,
   "ticket": null
 }

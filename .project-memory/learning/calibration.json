@@ -12,12 +12,18 @@
       "samples": 1,
       "confidence": 0.3868528072345416,
       "last_updated": "2025-12-19T14:22:55.725594Z"
+    },
+    "STANDARD": {
+      "factor": 0.1,
+      "samples": 1,
+      "confidence": 0.3868528072345416,
+      "last_updated": "2026-01-02T16:29:47.238713Z"
     }
   },
   "global": {
-    "total_samples": 4,
-    "overall_accuracy": 0.6101923076923077,
-    "trend": "improving"
+    "total_samples": 5,
+    "overall_accuracy": 0.45713461538461536,
+    "trend": "stable"
   },
   "history": [
     {
@@ -51,7 +57,15 @@
       "actual": 180.0,
       "ratio": 0.6923076923076923,
       "timestamp": "2025-12-19T14:22:55.725594Z"
+    },
+    {
+      "feature_slug": "frontend-editor",
+      "complexity": "STANDARD",
+      "estimated": 150.0,
+      "actual": 15.0,
+      "ratio": 0.1,
+      "timestamp": "2026-01-02T16:29:47.238713Z"
     }
   ],
-  "updated_at": "2025-12-19T14:22:55.726062Z"
+  "updated_at": "2026-01-02T16:29:47.238743Z"
 }
