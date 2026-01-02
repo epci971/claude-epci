@@ -206,6 +206,22 @@ Configuration read from `.claude/settings.local.json`:
 - `notion.tasks_database_id` — Target database
 - `notion.default_project_id` — Project relation
 
+### Schema Auto-Discovery
+
+> **IMPORTANT**: Before creating pages, fetch and cache the database schema to use correct property types.
+
+```
+1. Check cache: .project-memory/cache/notion-schema.json
+2. If missing/stale (>24h): Fetch schema from Notion API
+3. Use cached schema to format properties correctly
+4. On 400 error: Refresh schema and retry once
+```
+
+This prevents errors like `"Type is expected to be multi_select"` by dynamically
+detecting property types instead of hardcoding them.
+
+→ See [Schema Cache](references/schema-cache.md) for implementation details.
+
 ### Properties Filled
 
 | Property | Source | Default |
@@ -254,6 +270,7 @@ If Notion not configured or API error:
 - [Subtask Templates](references/subtask-templates.md) — Auto-generation rules
 - [Processing Rules](references/processing-rules.md) — Extraction methodology
 - [Type Mapping](references/type-mapping.md) — Notion type detection
+- [Schema Cache](references/schema-cache.md) — Notion schema auto-discovery
 
 ### Config
 - [Notion Config](config/notion-config.md) — Database configuration

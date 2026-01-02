@@ -1,0 +1,326 @@
+{
+  "database_id": "12e6c549-39df-8004-9226-dc6215904a74",
+  "title": "Tâches",
+  "cached_at": "2026-01-02T15:48:36.000Z",
+  "properties": {
+    "ID projet": {
+      "id": "%3AznU",
+      "type": "rich_text",
+      "options": null
+    },
+    "Dépendances": {
+      "id": "%3BfI%3C",
+      "type": "rich_text",
+      "options": null
+    },
+    "ID": {
+      "id": "%3CBX%3C",
+      "type": "rich_text",
+      "options": null
+    },
+    "Date interne": {
+      "id": "%40JyH",
+      "type": "date",
+      "options": null
+    },
+    "Type": {
+      "id": "EGYe",
+      "type": "multi_select",
+      "options": [
+        "Tache",
+        "Ticket Interne",
+        "Ticket Client",
+        "Support",
+        "Réunion",
+        "Formation",
+        "Evolution",
+        "Bloquant",
+        "Tache interne",
+        "Backend",
+        "Frontend"
+      ]
+    },
+    "Sollicitation client ?": {
+      "id": "IHJL",
+      "type": "checkbox",
+      "options": null
+    },
+    "Sprint": {
+      "id": "KfCJ",
+      "type": "rich_text",
+      "options": null
+    },
+    "DAY": {
+      "id": "QUaJ",
+      "type": "multi_select",
+      "options": [
+        "BACKLOG",
+        "LUNDI",
+        "MARDI",
+        "MERCREDI",
+        "JEUDI",
+        "VENDREDI",
+        "SAMEDI",
+        "DIMANCHE"
+      ]
+    },
+    "Client": {
+      "id": "Tpc%5B",
+      "type": "rollup",
+      "options": null
+    },
+    "Fichiers et médias": {
+      "id": "WqDc",
+      "type": "files",
+      "options": null
+    },
+    "Progression": {
+      "id": "%5Dami",
+      "type": "formula",
+      "options": null
+    },
+    "Module": {
+      "id": "%5EOSP",
+      "type": "multi_select",
+      "options": [
+        "Design & rédaction",
+        "Setup & DevOps",
+        "Développement Backend",
+        "Développement Front",
+        "Contenus & SEO",
+        "Qualité & conformité",
+        "Mise en production & post-livraison"
+      ]
+    },
+    "Difficulté": {
+      "id": "%5EPhL",
+      "type": "select",
+      "options": [
+        "Facile",
+        "Moyenne",
+        "Difficile",
+        "Très difficile"
+      ]
+    },
+    "Session": {
+      "id": "_wKX",
+      "type": "relation",
+      "options": null
+    },
+    "MOMENT": {
+      "id": "jQt%3D",
+      "type": "multi_select",
+      "options": [
+        "MATIN",
+        "APRES-MIDI",
+        "SOIREE"
+      ]
+    },
+    "Temps estimé": {
+      "id": "ozbK",
+      "type": "number",
+      "options": null
+    },
+    "Validateur": {
+      "id": "vtVt",
+      "type": "people",
+      "options": null
+    },
+    "Description": {
+      "id": "%7CkZU",
+      "type": "rich_text",
+      "options": null
+    },
+    "Nom": {
+      "id": "title",
+      "type": "title",
+      "options": null
+    },
+    "Étiquettes": {
+      "id": "notion%3A%2F%2Ftasks%2Ftags_property",
+      "type": "multi_select",
+      "options": [
+        "Gestion de projet",
+        "Comptabilité",
+        "Notion",
+        "Mobile",
+        "Site Web",
+        "Amélioration",
+        "New",
+        "React",
+        "PHP",
+        "Spécification",
+        "Serveur",
+        "Développement",
+        "Base de données",
+        "Make",
+        "Location",
+        "Test",
+        "Slack",
+        "NoCode",
+        "IA",
+        "Recette",
+        "Stratégie",
+        "Marketing",
+        "Commercial",
+        "Graphisme",
+        "Optimisation",
+        "enrichissement",
+        "réservation",
+        "informations",
+        "indicateurs",
+        "visuels",
+        "états",
+        "twig",
+        "tailwind",
+        "Gestion des stages",
+        "calendrier",
+        "Statistiques",
+        "Paiement",
+        "Email Automation",
+        "Reminders",
+        "Éducation",
+        "Enseignement",
+        "Formation",
+        "fournisseur",
+        "gestion des fournisseurs",
+        "relation client",
+        "Client",
+        "paiement",
+        "tunnel d'achat",
+        "parcours client",
+        "expérience utilisateur",
+        "email",
+        "enregistrement",
+        "communication",
+        "Logo Design",
+        "Branding",
+        "Navigation",
+        "API",
+        "interface utilisateur",
+        "Symfony",
+        "facturation",
+        "gestion de factures",
+        "service client",
+        "UI/UX",
+        "windsurfing",
+        "gestion des tâches",
+        "système d’alerte",
+        "erreur",
+        "résumé PDF",
+        "montant",
+        "ticket client",
+        "En attente",
+        "Gpt",
+        "résumé",
+        "automatisation",
+        "dictor",
+        "Documentation",
+        "cours récurrents",
+        "Drag & Drop",
+        "planification",
+        "Gestion des données",
+        "Bug",
+        "section professeur",
+        "Enfant",
+        "Dashboard",
+        "formulaire",
+        "champs",
+        "ajout photo",
+        "gestion de contenu",
+        "mise à jour visuelle",
+        "UI",
+        "Suivi",
+        "SEO",
+        "Django Auth",
+        "sécurité",
+        "conformité",
+        "Frontend",
+        "Backend",
+        "modèles"
+      ]
+    },
+    "Assigné(s)": {
+      "id": "notion%3A%2F%2Ftasks%2Fassign_property",
+      "type": "people",
+      "options": null
+    },
+    "État": {
+      "id": "notion%3A%2F%2Ftasks%2Fstatus_property",
+      "type": "status",
+      "options": [
+        "A planifier",
+        "A affecter",
+        "En attente",
+        "À lire",
+        "À analyser",
+        "En cours",
+        "En pause",
+        "Attente élément",
+        "Retour interne",
+        "Retour client",
+        "Attente validation",
+        "A facturer",
+        "Annulé",
+        "Refusé",
+        "Archivé",
+        "Terminé"
+      ]
+    },
+    "Échéance": {
+      "id": "notion%3A%2F%2Ftasks%2Fdue_date_property",
+      "type": "date",
+      "options": null
+    },
+    "Priorité": {
+      "id": "notion%3A%2F%2Ftasks%2Fpriority_property",
+      "type": "select",
+      "options": [
+        "Basse",
+        "Moyenne",
+        "Haute",
+        "Critique"
+      ]
+    },
+    "Sous-tâches": {
+      "id": "notion%3A%2F%2Ftasks%2Fsub_task_relation",
+      "type": "relation",
+      "options": null
+    },
+    "Résumé": {
+      "id": "notion%3A%2F%2Ftasks%2Fai_summary_property",
+      "type": "rich_text",
+      "options": null
+    },
+    "Description 1": {
+      "id": "notion%3A%2F%2Ftasks%2Fdescription_property",
+      "type": "rich_text",
+      "options": null
+    },
+    "Tâche parent": {
+      "id": "notion%3A%2F%2Ftasks%2Fparent_task_relation",
+      "type": "relation",
+      "options": null
+    },
+    "Cycle": {
+      "id": "notion%3A%2F%2Ftasks%2Ftask_sprint_relation",
+      "type": "relation",
+      "options": null
+    },
+    "Projet": {
+      "id": "notion%3A%2F%2Ftasks%2Ftask_to_project_relation",
+      "type": "relation",
+      "options": null
+    },
+    "Identifiant de la tâche": {
+      "id": "notion%3A%2F%2Ftasks%2Fauto_increment_id_property",
+      "type": "unique_id",
+      "options": null
+    },
+    "Pull Requests GitHub": {
+      "id": "notion%3A%2F%2Ftasks%2Ftask_to_github_prs_relation",
+      "type": "relation",
+      "options": null
+    }
+  }
+}

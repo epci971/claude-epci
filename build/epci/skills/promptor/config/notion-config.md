@@ -34,6 +34,43 @@ Notion credentials in `.claude/settings.local.json`:
 
 ---
 
+## Schema Caching (Auto-Discovery)
+
+> **NEW**: Promptor auto-discovers database schema to use correct property formats.
+
+### How It Works
+
+1. **First call**: Fetch database schema from Notion API
+2. **Cache**: Store schema in `.project-memory/cache/notion-schema.json`
+3. **Use**: Apply correct property types (select vs multi_select, etc.)
+4. **Refresh**: Auto-refresh if cache > 24h or on API error
+
+### Cache Location
+
+```
+.project-memory/cache/notion-schema.json
+```
+
+### Manual Refresh
+
+Delete the cache file to force schema refresh:
+
+```bash
+rm .project-memory/cache/notion-schema.json
+```
+
+### Fetch Schema Command
+
+```bash
+curl -s -X GET "https://api.notion.com/v1/databases/${DATABASE_ID}" \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "Notion-Version: 2022-06-28" | jq '.properties | to_entries | map({key: .key, value: .value.type}) | from_entries'
+```
+
+→ See [Schema Cache Reference](../references/schema-cache.md) for full implementation.
+
+---
+
 ## Properties Mapping
 
 ### Properties Filled by Promptor
