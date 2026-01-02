@@ -53,7 +53,7 @@ with English technical terms preserved.
 |---------|-------|
 | **Thinking** | `think` (default) |
 | **Skills** | promptor (self) |
-| **MCP** | Notion (if configured) |
+| **Notion** | API directe via Bash/curl |
 
 ### Notion Configuration
 
@@ -187,11 +187,24 @@ When multi-task detected, show validation checkpoint:
 
 ## Notion Integration
 
-### MCP Tools Used
+### API Direct (via Bash/curl)
 
-If MCP Notion is available:
-- `create-a-page` — Create task in Notion database
-- `query-data-source` — Search projects (optional)
+> **Note**: Uses direct Notion API instead of MCP due to serialization bug.
+
+Export to Notion via `curl` command in Bash tool:
+
+```bash
+curl -s -X POST 'https://api.notion.com/v1/pages' \
+  -H "Authorization: Bearer $NOTION_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -H 'Notion-Version: 2022-06-28' \
+  -d "$JSON_PAYLOAD"
+```
+
+Configuration read from `.claude/settings.local.json`:
+- `notion.token` — Bearer token
+- `notion.tasks_database_id` — Target database
+- `notion.default_project_id` — Project relation
 
 ### Properties Filled
 
@@ -217,9 +230,9 @@ If MCP Notion is available:
 
 → See [Type Mapping](references/type-mapping.md)
 
-### Fallback (No MCP)
+### Fallback (No Config / Error)
 
-If Notion MCP not configured or unavailable:
+If Notion not configured or API error:
 1. Display complete brief as text
 2. Show message: "📋 Brief prêt — Copier dans Notion manuellement"
 3. Continue workflow normally

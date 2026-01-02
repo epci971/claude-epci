@@ -2,7 +2,7 @@
 description: >-
   Transform voice dictations into structured Notion tasks. Supports one-shot
   and session modes with multi-task detection. Generates briefs (1h/4h/8h)
-  and exports directly to Notion via MCP. Standalone tool, independent from
+  and exports directly to Notion via API. Standalone tool, independent from
   EPCI workflow.
 argument-hint: "[dictation] | session"
 allowed-tools: [Read, Glob, Grep, Write, Bash]
@@ -31,7 +31,7 @@ and export them directly to Notion. Standalone pense-bête tool.
 |---------|-------|
 | **Thinking** | `think` |
 | **Skills** | promptor |
-| **MCP** | Notion (if configured) |
+| **Notion** | API directe via Bash/curl |
 
 ### Notion Setup
 
@@ -177,9 +177,10 @@ See `.claude/settings.local.json.example` for template.
 ### When Configured
 
 After generating brief:
-1. Create page in tasks database via MCP `create-a-page`
-2. Map properties (Type, Temps estimé, État, DAY, Projet)
-3. Display confirmation with link
+1. Create page in tasks database via API (curl)
+2. Map properties (Nom, Type, Temps estimé, DAY, Projet)
+3. Add page content (children blocks)
+4. Display confirmation with link
 
 ### When Not Configured
 

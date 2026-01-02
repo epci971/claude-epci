@@ -100,34 +100,75 @@ Default: `BACKLOG`
 
 ---
 
-## MCP Notion API
+## Notion API (Direct)
+
+> **Note**: Uses direct API via curl instead of MCP due to serialization bug in MCP Notion.
 
 ### Create Task
 
-Using MCP tool `create-a-page`:
+Using Bash tool with curl:
 
-```json
-{
-  "parent": {
-    "data_source_id": "{tasks_database_id}"
-  },
-  "properties": {
-    "Nom": "Task title",
-    "Temps estimé": 4,
-    "État": "En attente",
-    "Type": "[\"Evolution\"]",
-    "DAY": "[\"BACKLOG\"]",
-    "Projet": "[\"https://www.notion.so/{project_id}\"]"
-  },
-  "content": "Markdown content of the brief"
-}
+```bash
+curl -s -X POST 'https://api.notion.com/v1/pages' \
+  -H 'Authorization: Bearer {token}' \
+  -H 'Content-Type: application/json' \
+  -H 'Notion-Version: 2022-06-28' \
+  -d '{
+    "parent": {"database_id": "{tasks_database_id}"},
+    "properties": {
+      "Nom": {"title": [{"text": {"content": "Task title"}}]},
+      "Type": {"multi_select": [{"name": "Evolution"}]},
+      "Temps estimé": {"number": 4},
+      "DAY": {"multi_select": [{"name": "BACKLOG"}]},
+      "Projet": {"relation": [{"id": "{default_project_id}"}]}
+    },
+    "children": [
+      {"type": "callout", "callout": {"icon": {"emoji": "📦"}, "rich_text": [{"text": {"content": "Standard | ⏱️ 4h"}}]}},
+      {"type": "heading_2", "heading_2": {"rich_text": [{"text": {"content": "Objectif"}}]}},
+      {"type": "paragraph", "paragraph": {"rich_text": [{"text": {"content": "Description here..."}}]}},
+      {"type": "heading_2", "heading_2": {"rich_text": [{"text": {"content": "Exigences fonctionnelles"}}]}},
+      {"type": "bulleted_list_item", "bulleted_list_item": {"rich_text": [{"text": {"content": "Requirement 1"}}]}},
+      {"type": "heading_2", "heading_2": {"rich_text": [{"text": {"content": "Notes"}}]}},
+      {"type": "paragraph", "paragraph": {"rich_text": [{"text": {"content": "Additional notes..."}}]}}
+    ]
+  }'
 ```
 
-### Notes
+### Property Formats
 
-- Multi-select properties use JSON array format: `"[\"Value\"]"`
-- Relation properties use URL format: `"[\"https://www.notion.so/{page_id}\"]"`
-- `data_source_id` format: Add hyphens to database ID (UUID format)
+| Property | Format |
+|----------|--------|
+| `title` | `{"title": [{"text": {"content": "..."}}]}` |
+| `multi_select` | `{"multi_select": [{"name": "Value"}]}` |
+| `number` | `{"number": 4}` |
+| `relation` | `{"relation": [{"id": "page_id"}]}` |
+| `rich_text` | `{"rich_text": [{"text": {"content": "..."}}]}` |
+
+### Block Types for Children
+
+| Block | Format |
+|-------|--------|
+| `heading_2` | `{"type": "heading_2", "heading_2": {"rich_text": [{"text": {"content": "..."}}]}}` |
+| `paragraph` | `{"type": "paragraph", "paragraph": {"rich_text": [{"text": {"content": "..."}}]}}` |
+| `bulleted_list_item` | `{"type": "bulleted_list_item", "bulleted_list_item": {"rich_text": [{"text": {"content": "..."}}]}}` |
+| `callout` | `{"type": "callout", "callout": {"icon": {"emoji": "📦"}, "rich_text": [{"text": {"content": "..."}}]}}` |
+
+### Response Handling
+
+On success, extract from response:
+- `id`: Page ID (for URL construction)
+- `properties.Identifiant de la tâche.unique_id.number`: Task number (QDT-xxx)
+- `url`: Direct Notion URL
+
+### Error Handling
+
+```bash
+# Check response for error
+if echo "$response" | grep -q '"object":"error"'; then
+  # Display brief for manual copy
+  echo "⚠️ Erreur Notion — Copier manuellement"
+fi
+```
 
 ---
 
