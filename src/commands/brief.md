@@ -422,3 +422,17 @@ IF category == TINY:
 **Note:** `--large` is an alias for `--think-hard --wave`. Both forms are accepted.
 
 **Action:** Use the SlashCommand tool to execute the recommended command with flags.
+
+---
+
+### Step 7: Rules Suggestion (Optional)
+
+If `.claude/` directory does not exist in the project:
+
+```
+💡 Aucune règle projet détectée (.claude/ absent).
+   → Lancez /rules pour générer les conventions projet automatiquement.
+```
+
+This suggestion appears at the end of the breakpoint, after the recommended command.
+The user can run `/rules` before or after the main workflow.

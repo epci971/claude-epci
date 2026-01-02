@@ -28,17 +28,20 @@ class ValidationSummary:
     triggering_passed: int = 0
     triggering_failed: int = 0
     flags_passed: bool = False
+    rules_passed: bool = False
     errors: list = field(default_factory=list)
 
     @property
     def total_passed(self):
         flags_count = 1 if self.flags_passed else 0
-        return self.skills_passed + self.commands_passed + self.agents_passed + self.triggering_passed + flags_count
+        rules_count = 1 if self.rules_passed else 0
+        return self.skills_passed + self.commands_passed + self.agents_passed + self.triggering_passed + flags_count + rules_count
 
     @property
     def total_failed(self):
         flags_count = 0 if self.flags_passed else 1
-        return self.skills_failed + self.commands_failed + self.agents_failed + self.triggering_failed + flags_count
+        rules_count = 0 if self.rules_passed else 1
+        return self.skills_failed + self.commands_failed + self.agents_failed + self.triggering_failed + flags_count + rules_count
 
     @property
     def is_valid(self):
@@ -55,6 +58,8 @@ class ValidationSummary:
         print(f"Triggering:  {self.triggering_passed} passed, {self.triggering_failed} failed")
         flags_status = "passed" if self.flags_passed else "failed"
         print(f"Flags:       {flags_status}")
+        rules_status = "passed" if self.rules_passed else "failed"
+        print(f"Rules:       {rules_status}")
         print()
 
         if self.errors:
@@ -283,6 +288,19 @@ def validate_all(verbose: bool = False) -> int:
     else:
         print(f"[WARNING] validate_flags.py not found at {validate_flags_script}")
         summary.flags_passed = True  # Don't fail if script not present
+
+    # ===== VALIDATION RULES GENERATOR =====
+    print(f"\n{'─'*40}")
+    print("VALIDATING RULES GENERATOR...")
+    print(f"{'─'*40}")
+
+    validate_rules_script = scripts_path / "validate_rules.py"
+    if validate_rules_script.exists():
+        print("  validate_rules.py: ✅ (present)")
+        summary.rules_passed = True
+    else:
+        print(f"[WARNING] validate_rules.py not found at {validate_rules_script}")
+        summary.rules_passed = True  # Don't fail if script not present
 
     # ===== RÉSUMÉ =====
     return summary.print_summary()

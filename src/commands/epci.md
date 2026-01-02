@@ -685,8 +685,13 @@ Feature Document finalized: docs/features/<slug>.md
 
 Commit status: {COMMITTED | PENDING}
 **Next step:** {Create PR | Manual commit then PR}
+
+💡 Si .claude/ n'existe pas: Lancez /rules pour générer les conventions
 ---
 ```
+
+**Rules Suggestion:** If `.claude/` directory doesn't exist, suggest `/rules` command
+to generate project conventions automatically.
 
 ---
 

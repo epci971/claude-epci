@@ -168,7 +168,10 @@ Load the following files in order:
   },
   "breakpoints": {
     "require_confirmation": true
-  }
+  },
+  "rules_initialized": true,
+  "rules_generated_at": "2024-01-15T10:30:00Z",
+  "rules_stacks": ["django", "react"]
 }
 ```
 
@@ -176,6 +179,7 @@ Load the following files in order:
 - Apply default flags if not explicitly set
 - Configure hook behavior
 - Set breakpoint behavior
+- Track `.claude/rules/` generation status via `rules_initialized`
 
 #### 2.4 Patterns — `.project-memory/patterns/detected.json`
 

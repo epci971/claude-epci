@@ -100,7 +100,7 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 4. Commands (10)
+## 4. Commands (11)
 
 | Commande      | Rôle                                                        |
 | ------------- | ----------------------------------------------------------- |
@@ -108,6 +108,7 @@ Brief brut → /brief → Évaluation
 | `/epci`       | Workflow complet 3 phases (STD/LARGE)                       |
 | `/quick`      | Workflow condensé EPCT (TINY/SMALL)                         |
 | `/commit`     | Finalisation git avec contexte EPCI                         |
+| `/rules`      | Génère .claude/rules/ — conventions projet automatiques     |
 | `/brainstorm` | Feature discovery + exploration technique (spike intégré)   |
 | `/debug`      | Diagnostic bugs structuré                                   |
 | `/decompose`  | Décomposition PRD en sous-specs                             |
@@ -117,9 +118,9 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 5. Subagents (9)
+## 5. Subagents (10)
 
-### Core Subagents (6)
+### Core Subagents (7)
 
 | Subagent               | Model | Rôle                       | Invoqué par     |
 | ---------------------- | ----- | -------------------------- | --------------- |
@@ -129,6 +130,7 @@ Brief brut → /brief → Évaluation
 | `@qa-reviewer`         | sonnet | Revue tests (conditionnel) | `/epci` Phase 2 |
 | `@doc-generator`       | sonnet | Génération documentation   | `/epci` Phase 3 |
 | `@decompose-validator` | opus  | Valide décomposition PRD   | `/decompose`    |
+| `@rules-validator`     | opus  | Valide .claude/rules/      | `/rules`        |
 
 ### Turbo/Quick Subagents (3) — v4.4+
 
@@ -140,14 +142,14 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 6. Skills (24)
+## 6. Skills (25)
 
-### Core (13)
+### Core (14)
 
 `epci-core`, `architecture-patterns`, `code-conventions`, `testing-strategy`,
 `git-workflow`, `flags-system`, `project-memory`, `brainstormer`,
 `debugging-strategy`, `learning-optimizer`, `breakpoint-metrics`,
-`clarification-intelligente`, `proactive-suggestions`
+`clarification-intelligente`, `proactive-suggestions`, `rules-generator`
 
 ### Stack (4) — Auto-détectés
 
