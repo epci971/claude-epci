@@ -1,14 +1,15 @@
 ---
 description: >-
-  Brainstorming guide v4 pour decouvrir et specifier une feature.
+  Brainstorming guide v4.1 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
-  Inclut exploration technique (spike) pour valider la faisabilite.
+  v4.1: One-at-a-Time questions, Section-by-Section validation,
+  @planner/@security-auditor integration, spike pour validation technique.
   Use when: idee vague a transformer en specs, incertitude technique a valider.
-argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--no-hmw] [--c7] [--seq]"
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--no-hmw] [--no-security] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
-# /brainstorm — Feature Discovery v4.0
+# /brainstorm — Feature Discovery v4.1
 
 ## Overview
 
@@ -39,10 +40,11 @@ la faisabilite avant de finaliser les specs.
 |---------|--------|
 | **Thinking** | `think hard` (adaptatif selon complexite) |
 | **Skills** | `brainstormer`, `project-memory`, `architecture-patterns`, `mcp` |
-| **Subagents** | `@Explore` (analyse codebase) |
+| **Subagents** | `@Explore` (codebase), `@clarifier` (turbo), `@planner` (convergent), `@security-auditor` (conditionnel) |
 | **Personas** | 📐 Architecte (defaut), 🥊 Sparring, 🛠️ Pragmatique |
 | **Phases** | 🔀 Divergent → 🎯 Convergent |
 | **MCP** | Context7 (patterns architecture), Sequential (raisonnement complexe) |
+| **v4.1** | One-at-a-Time questions, Section-by-Section validation |
 
 ## Process
 
@@ -88,16 +90,70 @@ Boucle jusqu'a `finish` :
    - Calculer le score composite
    - Determiner le delta depuis la derniere iteration
 3. **Appliquer frameworks** si pertinent (MoSCoW, 5 Whys, etc.)
-4. **Generer questions/suggestions** suivantes (basees sur les axes faibles)
+4. **Generer UNE question** avec suggestion (voir One-at-a-Time pattern)
 5. **Afficher breakpoint compact avec EMS visible**
 
 **NEVER skip EMS calculation or display — it's the core metric of brainstorming progress.**
+
+---
+
+## One-at-a-Time Question Pattern (v4.1 — SuperPowers)
+
+**CRITICAL: Poser UNE seule question a la fois pour reduire la charge cognitive.**
+
+### Regles
+
+1. **Une question par iteration** (sauf mode turbo)
+2. **Choix multiples preferes** — Options claires A/B/C
+3. **Suggestion incluse** — "Recommande: option B parce que..."
+4. **Focus sur les blocages** — Ignorer les nice-to-have
+
+### Format Question
+
+```
+-------------------------------------------------------
+🔀 DIVERGENT | 📐 Architecte | Iter X | EMS: XX/100 (+Y)
+-------------------------------------------------------
+Done: [elements valides]
+
+Question: [Question claire avec contexte]
+
+Options:
+  A) [Option 1] — [consequence]
+  B) [Option 2] — [consequence] (Recommande)
+  C) [Option 3] — [consequence]
+  D) Autre (preciser)
+
+-> A, B, C, D, ou reponse libre | skip | finish
+-------------------------------------------------------
+```
+
+### Exemple
+
+```
+Question: Quel systeme de cache pour les sessions utilisateur?
+
+Options:
+  A) Redis — Plus rapide, necessite infra supplementaire
+  B) Memcached — Simple, pas de persistence
+  C) Database — Deja en place, plus lent (Recommande si < 1000 users)
+  D) Autre
+```
+
+### Quand poser plusieurs questions
+
+- Mode `--turbo` : 2-3 questions max
+- Commande `batch` : Grouper les questions connexes
+- Phase finale : Confirmer plusieurs points mineurs
+
+---
 
 **Commandes disponibles :**
 
 | Commande | Action |
 |----------|--------|
-| `continue` | Iteration suivante avec nouvelles questions |
+| `continue` | Question suivante |
+| `batch` | Poser 3-5 questions groupees (mode classique) |
 | `dive [topic]` | Approfondir un aspect specifique |
 | `pivot` | Reorienter si le vrai besoin emerge |
 | `status` | Afficher EMS detaille (5 axes) |
@@ -105,11 +161,12 @@ Boucle jusqu'a `finish` :
 | `mode [nom]` | Forcer un persona (architecte/sparring/pragmatique) |
 | `premortem` | Lancer exercice d'anticipation des risques |
 | `diverge` | Forcer phase Divergent |
-| `converge` | Forcer phase Convergent |
+| `converge` | Forcer phase Convergent + invoquer @planner |
 | `scoring` | Evaluer et prioriser les idees |
 | `framework [x]` | Appliquer un framework (moscow/5whys/swot) |
 | `spike [duration] [question]` | Lancer exploration technique time-boxed |
-| `finish` | Generer brief + journal |
+| `security-check` | Invoquer @security-auditor (auto si auth/security detecte) |
+| `finish` | Generer brief + journal avec validation section par section |
 
 ---
 
@@ -207,9 +264,200 @@ Le verdict et les decouvertes sont integres :
 
 ---
 
+## @planner — Quick Plan en Phase Convergent (v4.1)
+
+**Objectif**: Generer un plan preliminaire pour valider la faisabilite et estimer la complexite.
+
+### Quand invoquer @planner
+
+- **Auto**: Commande `converge` (passage en phase Convergent)
+- **Auto**: EMS >= 70 et Actionnabilite >= 60
+- **Manuel**: Commande `plan-preview`
+
+### Process
+
+1. **Invoquer @planner** via Task tool (model: sonnet)
+   ```
+   Input: Brief actuel + contexte codebase
+   Output: Plan preliminaire avec taches atomiques
+   ```
+
+2. **Afficher le plan preview**
+   ```
+   -------------------------------------------------------
+   📋 PLAN PREVIEW (by @planner)
+   -------------------------------------------------------
+   Estimated complexity: [TINY|SMALL|STANDARD|LARGE]
+   Estimated tasks: X tasks
+   Estimated duration: X-Y hours
+
+   Critical path:
+   1. [Task 1] (X min) → file.ext
+   2. [Task 2] (X min) → file2.ext
+   ...
+
+   Risks identified:
+   - [Risk 1] — [Mitigation]
+
+   -> continue brainstorm | finish | adjust scope
+   -------------------------------------------------------
+   ```
+
+3. **Integrer dans le brief**
+   - Section "Preliminary Plan" avec estimation
+   - Section "Estimated Complexity" mise a jour
+
+### Avantages
+
+- Valide la faisabilite technique pendant le brainstorm
+- Detecte les risques plus tot
+- Affine l'estimation de complexite (TINY → LARGE)
+- Evite les surprises en Phase 1 de /epci
+
+---
+
+## @security-auditor — Analyse Securite Conditionnelle (v4.1)
+
+**Objectif**: Detecter les considerations securite des la phase de specs.
+
+### Detection Automatique
+
+**@security-auditor est invoque automatiquement si le brief contient:**
+
+| Pattern | Exemples |
+|---------|----------|
+| Auth keywords | `auth`, `login`, `password`, `jwt`, `oauth`, `session` |
+| Security keywords | `security`, `permission`, `role`, `access`, `admin` |
+| Data sensitive | `payment`, `stripe`, `pci`, `gdpr`, `personal data` |
+| API exposed | `api public`, `webhook`, `external endpoint` |
+
+### Process
+
+1. **Detection** pendant Phase 2 (iteration)
+   ```
+   ⚠️ Security patterns detected: [auth, payment]
+   -> Invoking @security-auditor for early analysis...
+   ```
+
+2. **Invoquer @security-auditor** via Task tool (model: opus)
+   ```
+   Input: Brief actuel + patterns detectes
+   Output: Security considerations report
+   ```
+
+3. **Afficher le rapport**
+   ```
+   -------------------------------------------------------
+   🔒 SECURITY CONSIDERATIONS (by @security-auditor)
+   -------------------------------------------------------
+   Risk level: [LOW|MEDIUM|HIGH|CRITICAL]
+
+   OWASP concerns:
+   - A01 (Access Control): [Concern if any]
+   - A02 (Crypto): [Concern if any]
+   - A03 (Injection): [Concern if any]
+
+   Recommendations:
+   1. [Recommendation 1]
+   2. [Recommendation 2]
+
+   Questions for brief:
+   - [Security question to add to iteration]
+
+   -> continue (questions added) | acknowledge | skip security
+   -------------------------------------------------------
+   ```
+
+4. **Integrer dans le brief**
+   - Section "Security Considerations" avec analyse
+   - Questions securite ajoutees aux iterations
+   - Risques securite dans Pre-mortem si applicable
+
+### Invocation Manuelle
+
+Commande `security-check` pour forcer l'analyse meme sans detection.
+
+### Desactiver
+
+Flag `--no-security` pour skipper l'analyse automatique.
+
+---
+
 ### Phase 3 — Generation (USE WRITE TOOL)
 
 **MANDATORY: You MUST use the Write tool to create BOTH files. Do NOT just display the content.**
+
+---
+
+## Section-by-Section Validation (v4.1 — SuperPowers)
+
+**CRITICAL: Valider chaque section du brief avec l'utilisateur AVANT de passer a la suivante.**
+
+### Process
+
+Au lieu de generer le brief complet d'un coup, proceder section par section :
+
+```
+1. Afficher section Contexte (200-300 mots max)
+   -> "Does this look right? [y/edit/skip]"
+
+2. SI "y" -> Afficher section Objectif
+   SI "edit" -> Permettre modification puis reafficher
+   SI "skip" -> Passer a la section suivante
+
+3. Continuer pour chaque section majeure:
+   - Contexte ✓
+   - Objectif
+   - Specifications Fonctionnelles
+   - Regles Metier
+   - Contraintes Techniques
+   - Criteres d'Acceptation
+
+4. Une fois toutes sections validees -> Ecrire le fichier complet
+```
+
+### Format Validation Section
+
+```
+-------------------------------------------------------
+📝 BRIEF SECTION: [Nom Section] (X/6)
+-------------------------------------------------------
+
+[Contenu de la section - 200-300 mots max]
+
+-------------------------------------------------------
+-> y (valider) | edit (modifier) | skip (passer)
+-------------------------------------------------------
+```
+
+### Exemple
+
+```
+-------------------------------------------------------
+📝 BRIEF SECTION: Contexte (1/6)
+-------------------------------------------------------
+
+Le systeme actuel de notifications utilise un pattern polling
+qui consomme des ressources inutiles. Les utilisateurs ne
+recoivent pas les alertes en temps reel, ce qui impacte
+l'experience sur les workflows critiques (paiements, alertes).
+
+Le projet vise a implementer un systeme push-based avec
+WebSockets pour les notifications temps reel, tout en
+gardant le fallback email pour les notifications non-urgentes.
+
+-------------------------------------------------------
+-> y (valider) | edit (modifier) | skip (passer)
+-------------------------------------------------------
+```
+
+### Quand skipper la validation
+
+- Flag `--quick` : Generer directement sans validation
+- Flag `--turbo` : Validation groupee a la fin
+- EMS >= 85 : Proposer skip de la validation
+
+---
 
 #### Step 3.1: Create Brief File
 
@@ -217,6 +465,8 @@ Le verdict et les decouvertes sont integres :
 - Format: voir `references/brief-format.md`
 - **Inclure la section "Exploration Summary"** avec stack, patterns, fichiers candidats
 - **Si spike effectue:** Inclure section "Technical Validation" avec verdict et decouvertes
+- **Si @planner invoque:** Inclure section "Preliminary Plan" avec estimation
+- **Si @security-auditor invoque:** Inclure section "Security Considerations"
 - Create `./docs/briefs/[slug]` directory first if it doesn't exist (use Bash: `mkdir -p ./docs/briefs/[slug]`)
 
 #### Step 3.2: Create Journal File
@@ -226,6 +476,7 @@ Le verdict et les decouvertes sont integres :
 - Decisions prises
 - Questions resolues
 - **Si spike effectue:** Section dedicee avec details de l'exploration
+- **Si agents invoques:** Section avec outputs de @planner et/ou @security-auditor
 
 #### Step 3.3: Display Confirmation
 
@@ -233,14 +484,15 @@ Le verdict et les decouvertes sont integres :
 
 ```
 -------------------------------------------------------
-BRAINSTORM COMPLETE
+✅ BRAINSTORM COMPLETE
 -------------------------------------------------------
 EMS Final: XX/100 [emoji]
 Spikes: [X spike(s) effectue(s) | Aucun]
+Agents: [@planner | @security-auditor | Aucun]
 
 Fichiers generes:
-   - Brief: ./docs/briefs/brief-[slug]-[date].md
-   - Journal: ./docs/briefs/journal-[slug]-[date].md
+   - Brief: ./docs/briefs/[slug]/brief-[slug]-[date].md
+   - Journal: ./docs/briefs/[slug]/journal-[slug]-[date].md
 
 Prochaine etape:
    Lancer /brief avec le contenu du brief ci-dessus.
@@ -272,8 +524,10 @@ Questions:
 |------|-------|
 | `--template [name]` | Forcer template (feature/problem/decision) |
 | `--no-hmw` | Desactiver generation des questions HMW |
-| `--quick` | Mode rapide (3 iter max, EMS simplifie) |
-| `--turbo` | Mode turbo: @clarifier (Haiku), max 3 iter, auto-accept si EMS > 60 |
+| `--quick` | Mode rapide (3 iter max, skip section validation) |
+| `--turbo` | Mode turbo: @clarifier (Haiku), max 3 iter, 2-3 questions groupees |
+| `--no-security` | Desactiver @security-auditor auto-detection |
+| `--no-plan` | Desactiver @planner auto-invocation en phase Convergent |
 
 ### --turbo Mode (MANDATORY Instructions)
 

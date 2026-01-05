@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 4.4.0 | **Date** : Décembre 2024
+> **Version** : 4.5.0 | **Date** : Janvier 2025
 
 ---
 
@@ -12,10 +12,19 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
-| **Simplicité**      | 10 commandes spécialisées                                     |
-| **Modularité**      | 24 Skills, 9 Subagents, Hooks natifs                          |
+| **Simplicité**      | 11 commandes spécialisées                                     |
+| **Modularité**      | 25 Skills, 10 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v4.5 (Brainstorming v4.1 — SuperPowers Integration)
+
+- **One-at-a-Time Questions** : Une question à la fois avec choix multiples A/B/C (pattern SuperPowers)
+- **Section-by-Section Validation** : Validation incrémentale du brief section par section
+- **@planner in Brainstorm** : Plan préliminaire automatique en phase Convergent
+- **@security-auditor in Brainstorm** : Analyse sécurité conditionnelle si patterns auth/payment détectés
+- **Nouvelles commandes brainstorm** : `batch`, `plan-preview`, `security-check`
+- **Nouveaux flags** : `--no-security`, `--no-plan`
 
 ### Nouveautés v4.4
 
@@ -109,7 +118,7 @@ Brief brut → /brief → Évaluation
 | `/quick`      | Workflow condensé EPCT (TINY/SMALL)                         |
 | `/commit`     | Finalisation git avec contexte EPCI                         |
 | `/rules`      | Génère .claude/rules/ — conventions projet automatiques     |
-| `/brainstorm` | Feature discovery + exploration technique (spike intégré)   |
+| `/brainstorm` | Feature discovery v4.1 — One-at-a-Time, Section validation, @planner/@security |
 | `/debug`      | Diagnostic bugs structuré                                   |
 | `/decompose`  | Décomposition PRD en sous-specs                             |
 | `/memory`     | Gestion mémoire projet + learning (calibration, préférences)|
@@ -126,7 +135,7 @@ Brief brut → /brief → Évaluation
 | ---------------------- | ----- | -------------------------- | --------------- |
 | `@plan-validator`      | opus  | Valide plan avant Phase 2  | `/epci` Phase 1 |
 | `@code-reviewer`       | opus  | Revue qualité code         | `/epci` Phase 2, `/debug` |
-| `@security-auditor`    | opus  | Audit OWASP (conditionnel) | `/epci` Phase 2 |
+| `@security-auditor`    | opus  | Audit OWASP (conditionnel) | `/epci` Phase 2, `/brainstorm` (si auth/payment) |
 | `@qa-reviewer`         | sonnet | Revue tests (conditionnel) | `/epci` Phase 2 |
 | `@doc-generator`       | sonnet | Génération documentation   | `/epci` Phase 3 |
 | `@decompose-validator` | opus  | Valide décomposition PRD   | `/decompose`    |
@@ -137,7 +146,7 @@ Brief brut → /brief → Évaluation
 | Subagent        | Model  | Rôle                        | Invoqué par     |
 | --------------- | ------ | --------------------------- | --------------- |
 | `@clarifier`    | haiku  | Questions clarification rapides | `/brief --turbo`, `/brainstorm --turbo` |
-| `@planner`      | sonnet | Planification rapide        | `/epci --turbo` P1, `/quick` [P] |
+| `@planner`      | sonnet | Planification rapide        | `/epci --turbo` P1, `/quick` [P], `/brainstorm` (converge) |
 | `@implementer`  | sonnet | Implémentation TDD rapide   | `/epci --turbo` P2, `/quick` [C] |
 
 ---

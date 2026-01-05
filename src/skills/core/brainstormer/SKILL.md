@@ -1,21 +1,28 @@
 ---
 name: brainstormer
 description: >-
-  Feature discovery et brainstorming guide pour EPCI v3.0. Workflow avec
+  Feature discovery et brainstorming guide pour EPCI v4.1. Workflow avec
   personas adaptatifs (Architecte, Sparring, Pragmatique), phases Divergent/
   Convergent, scoring EMS v2 et frameworks d'analyse incluant pre-mortem.
+  v4.1: One-at-a-Time questions, Section-by-Section validation, @planner/@security integration.
   Use when: /brainstorm invoked, feature discovery needed.
   Not for: implementation tasks, code generation, simple questions.
-allowed-tools: [Read, Write, Glob, Grep]
+allowed-tools: [Read, Write, Glob, Grep, Task]
 ---
 
-# Brainstormer v3.0
+# Brainstormer v4.1
 
 ## Overview
 
 Skill de brainstorming specialise pour la decouverte de features.
 Transforme des idees vagues en briefs fonctionnels complets via
 un processus iteratif guide avec personas adaptatifs.
+
+**Nouveautes v4.1 (SuperPowers Integration):**
+- **One-at-a-Time Questions** — Une question a la fois avec choix multiples
+- **Section-by-Section Validation** — Validation incrementale du brief
+- **@planner Integration** — Plan preliminaire en phase Convergent
+- **@security-auditor Integration** — Analyse securite conditionnelle
 
 **Reference Documents:**
 - [Personas](references/personas.md) — 3 modes de facilitation
@@ -100,8 +107,32 @@ It MUST be calculated and displayed at every iteration.
    - Actionnabilite (15%) — Pret pour action
 3. **Calculer le delta** depuis la derniere iteration
 4. Detecter si un framework est applicable (basé sur les axes faibles)
-5. Generer questions suivantes (3-5 max) — cibler les axes les plus faibles
+5. **Generer UNE question** avec choix multiples (voir One-at-a-Time pattern)
 6. **Afficher breakpoint compact AVEC EMS visible**
+
+### One-at-a-Time Question Pattern (v4.1)
+
+**CRITICAL: Poser UNE seule question a la fois.**
+
+**Regles:**
+- Une question par iteration (sauf turbo: 2-3)
+- Choix multiples A/B/C preferes
+- Suggestion incluse avec justification
+- Focus sur les blocages uniquement
+
+**Format:**
+```
+Question: [Question claire]
+
+Options:
+  A) [Option 1] — [consequence]
+  B) [Option 2] — [consequence] (Recommande)
+  C) Autre (preciser)
+
+-> A, B, C ou reponse libre
+```
+
+**Commande `batch`**: Pour grouper plusieurs questions si necessaire.
 
 **⚠️ NEVER skip EMS display in breakpoint header:**
 ```
@@ -112,7 +143,8 @@ It MUST be calculated and displayed at every iteration.
 
 | Commande | Comportement |
 |----------|--------------|
-| `continue` | Integrer reponses, nouvelles questions |
+| `continue` | Question suivante |
+| `batch` | Poser 3-5 questions groupees |
 | `dive [topic]` | Focus profond sur un aspect |
 | `pivot` | Reorienter l'exploration |
 | `status` | Afficher EMS detaille (5 axes) |
@@ -120,9 +152,11 @@ It MUST be calculated and displayed at every iteration.
 | `mode [nom]` | Forcer un persona |
 | `premortem` | Lancer exercice pre-mortem |
 | `diverge` | Forcer phase Divergent |
-| `converge` | Forcer phase Convergent |
+| `converge` | Forcer phase Convergent + invoquer @planner |
 | `scoring` | Evaluer les idees |
 | `framework [x]` | Appliquer un framework |
+| `plan-preview` | Invoquer @planner manuellement |
+| `security-check` | Invoquer @security-auditor manuellement |
 | `finish` | Passer en Phase 3 |
 
 **Criteres de suggestion `finish`:**
@@ -130,30 +164,78 @@ It MUST be calculated and displayed at every iteration.
 - Axe Clarte >= 80/100
 - Axe Actionnabilite >= 60/100
 
+### @planner Integration (v4.1)
+
+**Auto-invocation:** En phase Convergent OU quand EMS >= 70
+
+Invoquer via Task tool (model: sonnet) pour generer un plan preliminaire.
+Integre dans brief final section "Preliminary Plan".
+
+### @security-auditor Integration (v4.1)
+
+**Auto-detection:** Si brief contient patterns auth/security/payment/api
+
+Invoquer via Task tool (model: opus) pour analyse securite.
+Integre dans brief final section "Security Considerations".
+
 ### Phase 3 — Generation (USE WRITE TOOL)
 
-**Objectif**: Produire les livrables finaux.
+**Objectif**: Produire les livrables finaux avec validation incrementale.
 
 **⚠️ MANDATORY: You MUST use the Write tool to create BOTH files. Do NOT just display content.**
 
+### Section-by-Section Validation (v4.1)
+
+**Avant d'ecrire le brief, valider chaque section avec l'utilisateur:**
+
+```
+1. Afficher section Contexte (200-300 mots)
+   -> "Does this look right? [y/edit/skip]"
+
+2. Continuer pour chaque section majeure:
+   - Contexte -> Objectif -> Specifications -> Regles Metier
+   - Contraintes Techniques -> Criteres d'Acceptation
+
+3. Une fois validees -> Ecrire le fichier complet
+```
+
+**Format validation section:**
+```
+-------------------------------------------------------
+📝 BRIEF SECTION: [Nom] (X/6)
+-------------------------------------------------------
+
+[Contenu 200-300 mots]
+
+-> y (valider) | edit (modifier) | skip
+-------------------------------------------------------
+```
+
+**Quand skipper:** `--quick`, `--turbo`, ou EMS >= 85
+
 **Actions:**
-1. Create directory: `mkdir -p ./docs/briefs` (use Bash tool)
-2. **USE WRITE TOOL** to create `./docs/briefs/brief-[slug]-[date].md`:
+1. Create directory: `mkdir -p ./docs/briefs/[slug]` (use Bash tool)
+2. **Validation section par section** (si pas --quick/--turbo)
+3. **USE WRITE TOOL** to create `./docs/briefs/[slug]/brief-[slug]-[date].md`:
    - Compiler toutes les decisions en brief structure
-   - **Inclure la section "Exploration Summary"** (stack, patterns, fichiers)
-3. **USE WRITE TOOL** to create `./docs/briefs/journal-[slug]-[date].md`:
+   - **Inclure "Exploration Summary"** (stack, patterns, fichiers)
+   - **Si @planner:** Inclure "Preliminary Plan"
+   - **Si @security-auditor:** Inclure "Security Considerations"
+4. **USE WRITE TOOL** to create `./docs/briefs/[slug]/journal-[slug]-[date].md`:
    - Historique des iterations, decisions prises, questions resolues
-4. **After BOTH files written**, afficher resume final (MANDATORY):
+   - Section agents invoques si applicable
+5. **After BOTH files written**, afficher resume final (MANDATORY):
 
 ```
 -------------------------------------------------------
 ✅ BRAINSTORM COMPLETE
 -------------------------------------------------------
 EMS Final: XX/100 [emoji]
+Agents: [@planner | @security-auditor | Aucun]
 
 📄 Fichiers generes:
-   • Brief: ./docs/briefs/brief-[slug]-[date].md
-   • Journal: ./docs/briefs/journal-[slug]-[date].md
+   • Brief: ./docs/briefs/[slug]/brief-[slug]-[date].md
+   • Journal: ./docs/briefs/[slug]/journal-[slug]-[date].md
 
 🚀 Prochaine etape:
    Lancer /brief avec le contenu du brief.
