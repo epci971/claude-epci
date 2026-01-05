@@ -1,0 +1,431 @@
+{
+  "commands": {
+    "brainstorm": {
+      "name": "brainstorm",
+      "flags": [
+        "--c7",
+        "--no-hmw",
+        "--no-plan",
+        "--no-security",
+        "--quick",
+        "--seq",
+        "--turbo"
+      ],
+      "agents": [
+        "@Explore",
+        "@clarifier",
+        "@planner",
+        "@security-auditor"
+      ],
+      "skills": [],
+      "hooks": [],
+      "tools": [
+        "Bash",
+        "Glob",
+        "Grep",
+        "Read",
+        "Task",
+        "WebFetch",
+        "WebSearch",
+        "Write"
+      ],
+      "mcp_servers": [
+        "context7",
+        "sequential"
+      ]
+    },
+    "brief": {
+      "name": "brief",
+      "flags": [
+        "--no-mcp",
+        "--safe",
+        "--think",
+        "--think-hard",
+        "--turbo",
+        "--wave"
+      ],
+      "agents": [
+        "@Explore"
+      ],
+      "skills": [],
+      "hooks": [
+        "post-brief",
+        "pre-brief"
+      ],
+      "tools": [
+        "Bash",
+        "Glob",
+        "Grep",
+        "Read",
+        "Task",
+        "Write"
+      ],
+      "mcp_servers": [
+        "context7"
+      ]
+    },
+    "commit": {
+      "name": "commit",
+      "flags": [
+        "--amend",
+        "--auto-commit",
+        "--dry-run",
+        "--no-hooks",
+        "--turbo"
+      ],
+      "agents": [],
+      "skills": [],
+      "hooks": [
+        "post-commit",
+        "pre-commit"
+      ],
+      "tools": [
+        "Bash",
+        "Glob",
+        "Read",
+        "Write"
+      ],
+      "mcp_servers": []
+    },
+    "create": {
+      "name": "create",
+      "flags": [],
+      "agents": [],
+      "skills": [],
+      "hooks": [
+        "post-create"
+      ],
+      "tools": [
+        "Bash",
+        "Glob",
+        "Read",
+        "Write"
+      ],
+      "mcp_servers": []
+    },
+    "debug": {
+      "name": "debug",
+      "flags": [
+        "--c7",
+        "--commit",
+        "--full",
+        "--no-report",
+        "--seq",
+        "--turbo"
+      ],
+      "agents": [
+        "@code-reviewer",
+        "@security-auditor"
+      ],
+      "skills": [],
+      "hooks": [
+        "post-debug",
+        "post-diagnostic",
+        "pre-debug"
+      ],
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Task",
+        "WebFetch",
+        "WebSearch",
+        "Write"
+      ],
+      "mcp_servers": [
+        "context7",
+        "sequential"
+      ]
+    },
+    "decompose": {
+      "name": "decompose",
+      "flags": [
+        "--c7"
+      ],
+      "agents": [
+        "@decompose-validator"
+      ],
+      "skills": [],
+      "hooks": [],
+      "tools": [
+        "Bash",
+        "Glob",
+        "Grep",
+        "Read",
+        "Task",
+        "WebFetch",
+        "Write"
+      ],
+      "mcp_servers": [
+        "context7"
+      ]
+    },
+    "epci": {
+      "name": "epci",
+      "flags": [
+        "--c7",
+        "--continue",
+        "--large",
+        "--magic",
+        "--no-hooks",
+        "--no-mcp",
+        "--parallel",
+        "--play",
+        "--safe",
+        "--seq",
+        "--sequential",
+        "--think",
+        "--think-hard",
+        "--turbo",
+        "--uc",
+        "--ultrathink",
+        "--verbose",
+        "--wave",
+        "--wave-strategy"
+      ],
+      "agents": [
+        "@code-reviewer",
+        "@doc-generator",
+        "@implementer",
+        "@plan-validator",
+        "@planner",
+        "@qa-reviewer",
+        "@security-auditor"
+      ],
+      "skills": [
+        "architecture-patterns",
+        "epci-core",
+        "flags-system",
+        "project-memory"
+      ],
+      "hooks": [
+        "on-breakpoint",
+        "post-agent",
+        "post-phase-1",
+        "post-phase-2",
+        "post-phase-3",
+        "pre-agent",
+        "pre-phase-1",
+        "pre-phase-2",
+        "pre-phase-3"
+      ],
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Task",
+        "Write"
+      ],
+      "mcp_servers": [
+        "context7",
+        "magic",
+        "playwright",
+        "sequential"
+      ]
+    },
+    "memory": {
+      "name": "memory",
+      "flags": [
+        "--dry-run",
+        "--force"
+      ],
+      "agents": [],
+      "skills": [],
+      "hooks": [],
+      "tools": [
+        "Bash",
+        "Glob",
+        "Read",
+        "Write"
+      ],
+      "mcp_servers": [
+        "context7"
+      ]
+    },
+    "promptor": {
+      "name": "promptor",
+      "flags": [],
+      "agents": [],
+      "skills": [],
+      "hooks": [],
+      "tools": [
+        "Bash",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "mcp_servers": []
+    },
+    "quick": {
+      "name": "quick",
+      "flags": [
+        "--autonomous",
+        "--c7",
+        "--no-bp",
+        "--quick-turbo",
+        "--safe",
+        "--turbo",
+        "--uc"
+      ],
+      "agents": [
+        "@Explore",
+        "@clarifier",
+        "@code-reviewer",
+        "@implementer",
+        "@plan-validator",
+        "@planner"
+      ],
+      "skills": [],
+      "hooks": [
+        "post-phase-3"
+      ],
+      "tools": [
+        "Bash",
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Task",
+        "Write"
+      ],
+      "mcp_servers": [
+        "context7"
+      ]
+    },
+    "rules": {
+      "name": "rules",
+      "flags": [
+        "--c7",
+        "--dry-run",
+        "--force",
+        "--no-mcp",
+        "--no-validate",
+        "--refresh-libs",
+        "--skip-libs",
+        "--stack",
+        "--validate-only"
+      ],
+      "agents": [
+        "@Explore",
+        "@rules-validator"
+      ],
+      "skills": [],
+      "hooks": [
+        "post-rules-init"
+      ],
+      "tools": [
+        "Bash",
+        "Glob",
+        "Grep",
+        "Read",
+        "Task",
+        "Write"
+      ],
+      "mcp_servers": [
+        "context7"
+      ]
+    }
+  },
+  "all_flags": [
+    "--amend",
+    "--auto-commit",
+    "--autonomous",
+    "--c7",
+    "--commit",
+    "--continue",
+    "--dry-run",
+    "--force",
+    "--full",
+    "--large",
+    "--magic",
+    "--no-bp",
+    "--no-hmw",
+    "--no-hooks",
+    "--no-mcp",
+    "--no-plan",
+    "--no-report",
+    "--no-security",
+    "--no-validate",
+    "--parallel",
+    "--play",
+    "--quick",
+    "--quick-turbo",
+    "--refresh-libs",
+    "--safe",
+    "--seq",
+    "--sequential",
+    "--skip-libs",
+    "--stack",
+    "--think",
+    "--think-hard",
+    "--turbo",
+    "--uc",
+    "--ultrathink",
+    "--validate-only",
+    "--verbose",
+    "--wave",
+    "--wave-strategy"
+  ],
+  "all_agents": [
+    "@Explore",
+    "@clarifier",
+    "@code-reviewer",
+    "@decompose-validator",
+    "@doc-generator",
+    "@implementer",
+    "@plan-validator",
+    "@planner",
+    "@qa-reviewer",
+    "@rules-validator",
+    "@security-auditor"
+  ],
+  "all_skills": [
+    "architecture-patterns",
+    "epci-core",
+    "flags-system",
+    "project-memory"
+  ],
+  "all_hooks": [
+    "on-breakpoint",
+    "on-critical",
+    "post-agent",
+    "post-brief",
+    "post-commit",
+    "post-create",
+    "post-debug",
+    "post-diagnostic",
+    "post-phase-1",
+    "post-phase-2",
+    "post-phase-3",
+    "post-rules-init",
+    "pre-agent",
+    "pre-brief",
+    "pre-commit",
+    "pre-debug",
+    "pre-phase-1",
+    "pre-phase-2",
+    "pre-phase-3"
+  ],
+  "all_tools": [
+    "Bash",
+    "Edit",
+    "Glob",
+    "Grep",
+    "Read",
+    "Task",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ],
+  "all_mcp_servers": [
+    "context7",
+    "magic",
+    "playwright",
+    "sequential"
+  ]
+}
