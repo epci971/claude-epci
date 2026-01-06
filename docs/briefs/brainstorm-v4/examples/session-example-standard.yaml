@@ -1,0 +1,102 @@
+# Session Example: Standard Mode
+# This example shows a typical brainstorm session without special flags
+# Demonstrates progression from Divergent to Convergent phase
+
+format_version: "1.0"
+
+session:
+  id: "auth-refactor-2026-01-06"
+  slug: "auth-refactor"
+  status: "completed"
+  phase: "convergent"
+  ems: 78
+  persona: "architecte"
+  iteration: 5
+  techniques_used: ["5whys", "moscow", "premortem"]
+
+  ideas:
+    - id: 1
+      content: "OAuth2 avec refresh tokens rotatifs"
+      score: 9
+    - id: 2
+      content: "JWT stateless avec blacklist Redis"
+      score: 8
+    - id: 3
+      content: "Magic links pour login simplifie"
+      score: 6
+    - id: 4
+      content: "Session server-side avec Redis"
+      score: 7
+
+  history:
+    - iteration: 1
+      phase: "divergent"
+      ems: 22
+      ems_delta: 0
+      questions:
+        - "Quel type d'authentification privilegier?"
+        - "Quels sont les utilisateurs cibles?"
+        - "Y a-t-il des contraintes reglementaires?"
+      responses:
+        - "OAuth2 pour les integrations tierces"
+        - "Developpeurs et admins internes"
+        - "RGPD pour les donnees utilisateur"
+      timestamp: "2026-01-06T10:30:00Z"
+
+    - iteration: 2
+      phase: "divergent"
+      ems: 38
+      ems_delta: 16
+      questions:
+        - "Comment gerer les sessions longues?"
+        - "Quelle strategie de refresh token?"
+        - "Besoin de support multi-device?"
+      responses:
+        - "Sliding window avec timeout configurable"
+        - "Rotation a chaque refresh"
+        - "Oui, limite a 5 devices simultanes"
+      timestamp: "2026-01-06T10:45:00Z"
+
+    - iteration: 3
+      phase: "divergent"
+      ems: 52
+      ems_delta: 14
+      questions:
+        - "Quel mecanisme de revocation?"
+        - "Comment gerer le logout global?"
+        - "Faut-il un rate limiting?"
+      responses:
+        - "Blacklist Redis avec TTL"
+        - "Invalider tous les refresh tokens"
+        - "Oui, 5 tentatives puis blocage 15min"
+      timestamp: "2026-01-06T11:00:00Z"
+
+    - iteration: 4
+      phase: "convergent"
+      ems: 65
+      ems_delta: 13
+      questions:
+        - "Priorisation MoSCoW des features auth?"
+        - "Quelle approche pour la migration?"
+        - "Tests de securite prevus?"
+      responses:
+        - "Must: OAuth2 base, Should: multi-device, Could: magic links"
+        - "Migration progressive avec feature flag"
+        - "OWASP top 10 + pentest externe"
+      timestamp: "2026-01-06T11:15:00Z"
+
+    - iteration: 5
+      phase: "convergent"
+      ems: 78
+      ems_delta: 13
+      questions:
+        - "Risques principaux identifies (premortem)?"
+        - "Plan de rollback?"
+      responses:
+        - "Token leakage, session fixation, brute force"
+        - "Feature flag pour revenir a l'ancien systeme"
+      timestamp: "2026-01-06T11:30:00Z"
+
+  last_question: "Brief pret a generer?"
+  created: "2026-01-06T10:30:00Z"
+  updated: "2026-01-06T11:30:00Z"

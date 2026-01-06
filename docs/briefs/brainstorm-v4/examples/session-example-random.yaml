@@ -1,0 +1,102 @@
+# Session Example: Random Mode (--random)
+# This example shows a session with random technique selection
+# Techniques are selected based on phase weights and exclude already used ones
+
+format_version: "1.0"
+
+session:
+  id: "cache-system-2026-01-06"
+  slug: "cache-system"
+  status: "in_progress"
+  phase: "divergent"
+  ems: 48
+  persona: "architecte"
+  iteration: 4
+  techniques_used: ["scamper", "six-hats", "what-if"]
+  mode: "random"  # Indicates --random flag was used
+
+  # Random mode specific: tracks which categories have been used
+  random_state:
+    last_category: "ideation"
+    category_counts:
+      ideation: 2
+      perspective: 1
+      breakthrough: 0
+      analysis: 0
+
+  ideas:
+    - id: 1
+      content: "Redis cluster avec sharding automatique"
+      score: 8
+    - id: 2
+      content: "Cache multi-niveau (L1 local + L2 distribue)"
+      score: 9
+    - id: 3
+      content: "Invalidation event-driven via message queue"
+      score: 7
+    - id: 4
+      content: "Cache predictif base sur les patterns d'acces"
+      score: 6
+
+  history:
+    - iteration: 1
+      phase: "divergent"
+      ems: 18
+      ems_delta: 0
+      technique_selected: "scamper"
+      technique_category: "ideation"
+      questions:
+        - "[SCAMPER-Substitute] Quel autre systeme pourrait remplacer le cache actuel?"
+        - "[SCAMPER-Combine] Comment combiner cache et CDN?"
+        - "[SCAMPER-Adapt] Quels patterns de cache d'autres systemes utiliser?"
+      responses:
+        - "Redis pourrait remplacer Memcached"
+        - "CDN pour assets statiques + Redis pour donnees dynamiques"
+        - "Pattern aside du framework Laravel"
+      timestamp: "2026-01-06T14:00:00Z"
+
+    - iteration: 2
+      phase: "divergent"
+      ems: 32
+      ems_delta: 14
+      technique_selected: "six-hats"
+      technique_category: "ideation"
+      questions:
+        - "[White Hat] Quelles sont les metriques actuelles du cache?"
+        - "[Red Hat] Quelle intuition sur la meilleure approche?"
+        - "[Black Hat] Quels risques avec un cache distribue?"
+      responses:
+        - "Hit rate 72%, latence P99 45ms, evictions 15%/jour"
+        - "Redis Cluster semble le plus adapte"
+        - "Complexite ops, cout infra, coherence des donnees"
+      timestamp: "2026-01-06T14:15:00Z"
+
+    - iteration: 3
+      phase: "divergent"
+      ems: 41
+      ems_delta: 9
+      technique_selected: "what-if"
+      technique_category: "perspective"
+      questions:
+        - "[What-If] Et si le cache devait supporter 10x le trafic actuel?"
+        - "[What-If] Et si on n'avait pas de cache du tout?"
+        - "[What-If] Et si le cache etait geographiquement distribue?"
+      responses:
+        - "Redis Cluster avec autoscaling horizontal"
+        - "La DB ne tiendrait pas, 500ms+ de latence"
+        - "Multi-region avec replication async"
+      timestamp: "2026-01-06T14:30:00Z"
+
+    - iteration: 4
+      phase: "divergent"
+      ems: 48
+      ems_delta: 7
+      technique_selected: null  # Awaiting selection
+      technique_category: null
+      questions: []
+      responses: []
+      timestamp: "2026-01-06T14:45:00Z"
+
+  last_question: "Technique aleatoire suivante..."
+  created: "2026-01-06T14:00:00Z"
+  updated: "2026-01-06T14:45:00Z"

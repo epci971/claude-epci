@@ -5,7 +5,7 @@ description: >-
   v4.2: Session persistence, back command, energy checkpoints, 3-5 questions,
   agent confirmation [Y/n]. Spike pour validation technique.
   Use when: idee vague a transformer en specs, incertitude technique a valider.
-argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--no-hmw] [--no-security] [--c7] [--seq]"
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
@@ -93,9 +93,11 @@ Session existante detectee: "[slug]" (EMS: XX)
    - Si `.project-memory/` existe → charger
    - Sinon → continuer sans contexte
 
-2. **Analyser le codebase**
-   - Invoquer `@Explore` avec Task tool
+2. **Analyser le codebase (parallelise)**
+   - Invoquer `@Explore` avec Task tool et `run_in_background: true`
    - Scan complet : structure, stack, patterns, fichiers pertinents
+   - **Continue avec etapes 3-6 pendant que @Explore tourne**
+   - Integrer les resultats @Explore avant etape 7 (breakpoint)
 
 3. **Reformuler le besoin**
    - Paraphraser la demande utilisateur
@@ -791,6 +793,8 @@ Open: [elements a clarifier]
 | `--no-hmw` | Desactiver generation des questions HMW |
 | `--quick` | Mode rapide (3 iter max, skip section validation) |
 | `--turbo` | Mode turbo: @clarifier (Haiku), max 3 iter, 2-3 questions groupees |
+| `--random` | Selection aleatoire ponderee de techniques par phase |
+| `--progressive` | Mode 3 phases structurees: Divergent → Transition → Convergent |
 | `--no-security` | Desactiver @security-auditor auto-detection |
 | `--no-plan` | Desactiver @planner auto-invocation en phase Convergent |
 
@@ -820,6 +824,106 @@ Open: [elements a clarifier]
 Init -> @clarifier (Haiku) -> Iter 1 -> Iter 2 -> Iter 3 (max) -> finish
                               |
                         EMS > 60? -> Auto-suggest finish
+```
+
+### --random Mode (MANDATORY Instructions)
+
+**When `--random` flag is active, you MUST follow these rules:**
+
+1. **Weighted technique selection** based on current phase:
+
+   | Phase | Ideation | Perspective | Breakthrough | Analysis |
+   |-------|----------|-------------|--------------|----------|
+   | Divergent | 0.4 | 0.3 | 0.2 | 0.1 |
+   | Convergent | 0.1 | 0.2 | 0.2 | 0.5 |
+
+2. **Exclude used techniques** — Check `session.techniques_used` array and exclude from selection pool
+
+3. **Update techniques_used** — After selecting a technique, add it to `session.techniques_used`
+
+4. **Display format** at each iteration:
+   ```
+   -------------------------------------------------------
+   🎲 RANDOM MODE | Technique: [NAME] ([CATEGORY])
+   -------------------------------------------------------
+   [Apply selected technique's questions to current context]
+   ```
+
+5. **Fallback behavior** — If all techniques in a category are used, expand to other categories
+
+**Random Process:**
+```
+Check phase -> Calculate weights -> Filter used techniques -> Weighted random select -> Apply technique -> Update techniques_used
+```
+
+**Usage:**
+```
+/brainstorm --random "ameliorer le systeme de cache"
+```
+
+### --progressive Mode (MANDATORY Instructions)
+
+**When `--progressive` flag is active, you MUST follow these rules:**
+
+1. **Three structured phases:**
+
+   | Phase | EMS Range | Focus | Techniques |
+   |-------|-----------|-------|------------|
+   | DIVERGENT | 0-49 | Exploration, generation | Ideation, Perspective, Breakthrough |
+   | TRANSITION | ~50 | Energy check + summary | Forced pause |
+   | CONVERGENT | 50-100 | Decisions, prioritization | Analysis |
+
+2. **Forced transition at EMS 50:**
+   - When EMS reaches 50, MUST trigger energy check
+   - Display mid-session summary
+   - Auto-switch to Convergent phase after validation
+
+3. **Phase-specific technique auto-selection:**
+   - Divergent: Prioritize creative techniques (SCAMPER, Six Hats, What-If)
+   - Convergent: Prioritize analytical techniques (MoSCoW, Scoring, Pre-mortem)
+
+4. **Transition checkpoint format:**
+   ```
+   -------------------------------------------------------
+   ⚡ TRANSITION | EMS: 50/100 | Phase: 🔀 → 🎯
+   -------------------------------------------------------
+   Mi-parcours atteint! Resume des idees explorees:
+
+   ✅ Valide:
+   - [Idea 1]
+   - [Idea 2]
+
+   🔄 A approfondir:
+   - [Idea 3]
+
+   [1] Continuer vers Convergent
+   [2] Pause — Sauvegarder
+   [3] Revenir en Divergent (annuler transition)
+   -------------------------------------------------------
+   ```
+
+5. **@planner availability** — Auto-available at EMS 70+ in Convergent phase
+
+**Progressive Process:**
+```
+DIVERGENT (EMS 0-49)
+       │
+       ▼ (EMS reaches 50)
+   TRANSITION
+   ├── Energy check
+   ├── Summary display
+   └── Direction validation
+       │
+       ▼
+CONVERGENT (EMS 50-100)
+       │
+       ▼ (EMS reaches 70)
+   @planner available
+```
+
+**Usage:**
+```
+/brainstorm --progressive "nouveau module de paiement"
 ```
 
 ## Output

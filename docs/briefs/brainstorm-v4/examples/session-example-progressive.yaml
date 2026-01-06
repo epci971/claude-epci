@@ -1,0 +1,152 @@
+# Session Example: Progressive Mode (--progressive)
+# This example shows a session with structured 3-phase progression
+# Forced transition at EMS 50 with energy check and mid-session summary
+
+format_version: "1.0"
+
+session:
+  id: "payment-module-2026-01-06"
+  slug: "payment-module"
+  status: "in_progress"
+  phase: "convergent"
+  ems: 68
+  persona: "architecte"
+  iteration: 6
+  techniques_used: ["mind-mapping", "analogical", "moscow", "scoring"]
+  mode: "progressive"  # Indicates --progressive flag was used
+
+  # Progressive mode specific: tracks phase transitions
+  progressive_state:
+    divergent_completed: true
+    transition_completed: true
+    transition_summary:
+      validated_ideas: 4
+      ideas_to_deepen: 2
+      direction_confirmed: "Stripe integration with fallback provider"
+    convergent_started_at_iteration: 5
+
+  ideas:
+    - id: 1
+      content: "Integration Stripe comme provider principal"
+      score: 9
+    - id: 2
+      content: "Provider de fallback (Adyen) pour resilience"
+      score: 8
+    - id: 3
+      content: "Webhook async pour confirmation paiement"
+      score: 8
+    - id: 4
+      content: "Retry automatique avec backoff exponentiel"
+      score: 7
+    - id: 5
+      content: "Dashboard temps reel des transactions"
+      score: 6
+    - id: 6
+      content: "Alerting sur taux d'echec anormal"
+      score: 7
+
+  history:
+    # PHASE 1: DIVERGENT (EMS 0-49)
+    - iteration: 1
+      phase: "divergent"
+      ems: 20
+      ems_delta: 0
+      technique_selected: "mind-mapping"
+      questions:
+        - "Quels sont tous les flux de paiement a supporter?"
+        - "Quels providers de paiement considerer?"
+        - "Quelles methodes de paiement (CB, virement, etc.)?"
+      responses:
+        - "Checkout one-shot, abonnement recurrent, remboursement"
+        - "Stripe, Adyen, PayPal, GoCardless"
+        - "CB (Visa/MC), Apple Pay, Google Pay, SEPA"
+      timestamp: "2026-01-06T09:00:00Z"
+
+    - iteration: 2
+      phase: "divergent"
+      ems: 35
+      ems_delta: 15
+      technique_selected: "analogical"
+      questions:
+        - "[Analogie] Comment Netflix gere-t-il les paiements recurrents?"
+        - "[Analogie] Quelles lecons du e-commerce traditionnel?"
+        - "Quels patterns anti-fraude adopter?"
+      responses:
+        - "Pre-autorisation puis capture, retry intelligent"
+        - "Panier abandonne, relance, paiement en plusieurs fois"
+        - "3D Secure, velocity checks, device fingerprinting"
+      timestamp: "2026-01-06T09:20:00Z"
+
+    - iteration: 3
+      phase: "divergent"
+      ems: 48
+      ems_delta: 13
+      questions:
+        - "Architecture technique envisagee?"
+        - "Comment gerer les webhooks de facon resiliente?"
+        - "Besoins de reporting et analytics?"
+      responses:
+        - "Service dedie avec queue async"
+        - "Idempotency keys + dead letter queue"
+        - "Dashboard temps reel + export comptable"
+      timestamp: "2026-01-06T09:40:00Z"
+
+    # PHASE 2: TRANSITION (EMS ~50)
+    - iteration: 4
+      phase: "transition"
+      ems: 50
+      ems_delta: 2
+      energy_check_triggered: true
+      transition_summary:
+        validated:
+          - "Stripe comme provider principal"
+          - "Architecture service dedie async"
+          - "Webhooks avec idempotency"
+          - "3D Secure obligatoire"
+        to_deepen:
+          - "Choix du fallback provider"
+          - "Strategie de retry exacte"
+        direction: "Confirme: Integration Stripe + fallback"
+      user_choice: 1  # Continuer vers Convergent
+      questions:
+        - "[TRANSITION] Mi-parcours atteint! Resume ci-dessus."
+      responses:
+        - "OK, on passe en convergent"
+      timestamp: "2026-01-06T10:00:00Z"
+
+    # PHASE 3: CONVERGENT (EMS 50-100)
+    - iteration: 5
+      phase: "convergent"
+      ems: 58
+      ems_delta: 8
+      technique_selected: "moscow"
+      questions:
+        - "[MoSCoW] Quelles features sont MUST pour le MVP?"
+        - "[MoSCoW] Quelles features sont SHOULD?"
+        - "[MoSCoW] Quelles features sont COULD/WON'T?"
+      responses:
+        - "Must: Stripe checkout, webhooks, 3DS"
+        - "Should: Fallback provider, retry auto"
+        - "Could: Dashboard RT. Won't: multi-devise (v2)"
+      timestamp: "2026-01-06T10:15:00Z"
+
+    - iteration: 6
+      phase: "convergent"
+      ems: 68
+      ems_delta: 10
+      technique_selected: "scoring"
+      questions:
+        - "[Scoring] Evaluer Adyen vs PayPal comme fallback?"
+        - "[Scoring] Priorite entre dashboard RT et alerting?"
+      responses:
+        - "Adyen: 8/10 (API, support), PayPal: 6/10 (friction UX)"
+        - "Alerting > Dashboard (detection incidents critique)"
+      timestamp: "2026-01-06T10:30:00Z"
+
+  # @planner will be available soon (EMS >= 70)
+  planner_available: false
+  planner_threshold: 70
+
+  last_question: "EMS 68 - Encore 2 points pour @planner"
+  created: "2026-01-06T09:00:00Z"
+  updated: "2026-01-06T10:30:00Z"

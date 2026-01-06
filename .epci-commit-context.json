@@ -1,18 +1,19 @@
 {
   "source": "epci",
   "type": "feat",
-  "scope": "brainstormer",
-  "description": "Add 20 techniques library for brainstorming (S02)",
+  "scope": "brainstorm",
+  "description": "Add --random and --progressive modes for v4.2 (S03)",
   "files": [
-    "src/skills/core/brainstormer/references/techniques/analysis.md",
-    "src/skills/core/brainstormer/references/techniques/ideation.md",
-    "src/skills/core/brainstormer/references/techniques/perspective.md",
-    "src/skills/core/brainstormer/references/techniques/breakthrough.md",
-    "src/skills/core/brainstormer/SKILL.md",
     "src/commands/brainstorm.md",
-    "docs/features/brainstorm-techniques-s02.md"
+    "src/skills/core/brainstormer/SKILL.md",
+    "src/skills/core/brainstormer/references/session-format.md",
+    "src/scripts/test_brainstorm_session.py",
+    "docs/briefs/brainstorm-v4/examples/session-example-standard.yaml",
+    "docs/briefs/brainstorm-v4/examples/session-example-random.yaml",
+    "docs/briefs/brainstorm-v4/examples/session-example-progressive.yaml",
+    "docs/features/brainstorm-v42-s03-modes-finish.md"
   ],
-  "featureDoc": "docs/features/brainstorm-techniques-s02.md",
+  "featureDoc": "docs/features/brainstorm-v42-s03-modes-finish.md",
   "breaking": false,
   "ticket": null
 }

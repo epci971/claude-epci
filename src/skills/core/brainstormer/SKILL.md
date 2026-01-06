@@ -6,6 +6,7 @@ description: >-
   Convergent, scoring EMS v2 et frameworks d'analyse incluant pre-mortem.
   v4.2: Session persistence, back command, energy checkpoints, 3-5 questions,
   agent confirmation [Y/n], @planner/@security integration.
+  Flags: --random (weighted technique selection), --progressive (3-phase structure).
   Use when: /brainstorm invoked, feature discovery needed.
   Not for: implementation tasks, code generation, simple questions.
 allowed-tools: [Read, Write, Glob, Grep, Task]

@@ -55,6 +55,19 @@ session:
 | `session.ems` | integer | Yes | Current EMS score (0-100) |
 | `session.persona` | string | Yes | Active persona |
 | `session.iteration` | integer | Yes | Current iteration number |
+| `session.mode` | string | No | Mode flag: `random`, `progressive`, or null (v4.2) |
+
+### Mode-Specific State (v4.2)
+
+| Field | Type | When | Description |
+|-------|------|------|-------------|
+| `session.random_state` | object | `--random` | Tracks random selection state |
+| `session.random_state.last_category` | string | | Last selected category |
+| `session.random_state.category_counts` | object | | Count per category |
+| `session.progressive_state` | object | `--progressive` | Tracks phase progression state |
+| `session.progressive_state.divergent_completed` | bool | | Divergent phase done |
+| `session.progressive_state.transition_completed` | bool | | Transition done |
+| `session.progressive_state.transition_summary` | object | | Summary at EMS 50 |
 
 ### Ideas
 
