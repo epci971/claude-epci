@@ -14,16 +14,16 @@
       "last_updated": "2025-12-19T14:22:55.725594Z"
     },
     "STANDARD": {
-      "factor": 0.1,
-      "samples": 1,
-      "confidence": 0.3868528072345416,
-      "last_updated": "2026-01-02T16:29:47.238713Z"
+      "factor": 0.295,
+      "samples": 2,
+      "confidence": 0.6131471927654585,
+      "last_updated": "2026-01-06T13:32:22.312185Z"
     }
   },
   "global": {
-    "total_samples": 5,
-    "overall_accuracy": 0.45713461538461536,
-    "trend": "stable"
+    "total_samples": 6,
+    "overall_accuracy": 0.5449942307692307,
+    "trend": "declining"
   },
   "history": [
     {
@@ -65,7 +65,15 @@
       "actual": 15.0,
       "ratio": 0.1,
       "timestamp": "2026-01-02T16:29:47.238713Z"
+    },
+    {
+      "feature_slug": "brainstorm-v42-s01-core",
+      "complexity": "STANDARD",
+      "estimated": 120.0,
+      "actual": 90.0,
+      "ratio": 0.75,
+      "timestamp": "2026-01-06T13:32:22.312185Z"
     }
   ],
-  "updated_at": "2026-01-02T16:29:47.238743Z"
+  "updated_at": "2026-01-06T13:32:22.312220Z"
 }

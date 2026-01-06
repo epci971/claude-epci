@@ -1,16 +1,17 @@
 ---
 name: brainstormer
 description: >-
-  Feature discovery et brainstorming guide pour EPCI v4.1. Workflow avec
+  Feature discovery et brainstorming guide pour EPCI v4.2. Workflow avec
   personas adaptatifs (Architecte, Sparring, Pragmatique), phases Divergent/
   Convergent, scoring EMS v2 et frameworks d'analyse incluant pre-mortem.
-  v4.1: One-at-a-Time questions, Section-by-Section validation, @planner/@security integration.
+  v4.2: Session persistence, back command, energy checkpoints, 3-5 questions,
+  agent confirmation [Y/n], @planner/@security integration.
   Use when: /brainstorm invoked, feature discovery needed.
   Not for: implementation tasks, code generation, simple questions.
 allowed-tools: [Read, Write, Glob, Grep, Task]
 ---
 
-# Brainstormer v4.1
+# Brainstormer v4.2
 
 ## Overview
 
@@ -18,17 +19,27 @@ Skill de brainstorming specialise pour la decouverte de features.
 Transforme des idees vagues en briefs fonctionnels complets via
 un processus iteratif guide avec personas adaptatifs.
 
-**Nouveautes v4.1 (SuperPowers Integration):**
-- **One-at-a-Time Questions** — Une question a la fois avec choix multiples
-- **Section-by-Section Validation** — Validation incrementale du brief
+**Nouveautes v4.2:**
+- **Session Persistence** — Sauvegarder et reprendre les sessions (`save`, `back`)
+- **Energy Checkpoints** — Points de controle pour gerer la fatigue cognitive
+- **3-5 Questions** — Plusieurs questions par iteration avec suggestions A/B/C
+- **Agent Confirmation** — Prompt [Y/n] avant @planner/@security-auditor
 - **@planner Integration** — Plan preliminaire en phase Convergent
 - **@security-auditor Integration** — Analyse securite conditionnelle
 
 **Reference Documents:**
 - [Personas](references/personas.md) — 3 modes de facilitation
 - [EMS System](references/ems-system.md) — Scoring v2 avec ancres objectives
-- [Frameworks](references/frameworks.md) — Outils d'analyse (+ pre-mortem)
+- [Frameworks](references/frameworks.md) — Outils d'analyse rapide (5 frameworks)
+- **[Techniques](references/techniques/)** — Bibliotheque etendue (20 techniques v4.2)
+  - [Analysis](references/techniques/analysis.md) — 8 techniques (priorisation, causalite, decision)
+  - [Ideation](references/techniques/ideation.md) — 6 techniques (generation d'idees)
+  - [Perspective](references/techniques/perspective.md) — 3 techniques (changement de point de vue)
+  - [Breakthrough](references/techniques/breakthrough.md) — 3 techniques (deblocage creatif)
 - [Brief Format](references/brief-format.md) — Template de sortie
+- [Session Format](references/session-format.md) — Format YAML pour persistence (v4.2)
+
+**Session Storage:** `.project-memory/brainstorm-sessions/[slug].yaml`
 
 ## Personas
 
@@ -107,44 +118,45 @@ It MUST be calculated and displayed at every iteration.
    - Actionnabilite (15%) — Pret pour action
 3. **Calculer le delta** depuis la derniere iteration
 4. Detecter si un framework est applicable (basé sur les axes faibles)
-5. **Generer UNE question** avec choix multiples (voir One-at-a-Time pattern)
+5. **Generer 3-5 questions** avec choix multiples A/B/C (voir Question Format v4.2)
 6. **Afficher breakpoint compact AVEC EMS visible**
 
-### One-at-a-Time Question Pattern (v4.1)
+### Question Format (v4.2)
 
-**CRITICAL: Poser UNE seule question a la fois.**
+**3-5 questions par iteration avec choix multiples A/B/C.**
 
 **Regles:**
-- Une question par iteration (sauf turbo: 2-3)
-- Choix multiples A/B/C preferes
-- Suggestion incluse avec justification
+- 3-5 questions par iteration (defaut v4.2)
+- Choix multiples A/B/C par question
+- Suggestions incluses quand pertinent
 - Focus sur les blocages uniquement
 
 **Format:**
 ```
-Question: [Question claire]
+1. [Question 1]
+   A) Option A  B) Option B  C) Option C
+   → Suggestion: B
 
-Options:
-  A) [Option 1] — [consequence]
-  B) [Option 2] — [consequence] (Recommande)
-  C) Autre (preciser)
+2. [Question 2]
+   A) Option A  B) Option B  C) Option C
+   → Suggestion: A
 
--> A, B, C ou reponse libre
+3. [Question 3]
+   A) Option A  B) Option B  C) Option C
 ```
 
-**Commande `batch`**: Pour grouper plusieurs questions si necessaire.
+**Une seule question**: Pour decisions complexes ou `dive` command.
 
 **⚠️ NEVER skip EMS display in breakpoint header:**
 ```
 🔀 DIVERGENT | 📐 Architecte | Iter X | EMS: XX/100 (+Y) [emoji]
 ```
 
-**Commandes:**
+**Commandes (v4.2):**
 
 | Commande | Comportement |
 |----------|--------------|
-| `continue` | Question suivante |
-| `batch` | Poser 3-5 questions groupees |
+| `continue` | Iteration suivante (3-5 questions) |
 | `dive [topic]` | Focus profond sur un aspect |
 | `pivot` | Reorienter l'exploration |
 | `status` | Afficher EMS detaille (5 axes) |
@@ -157,6 +169,9 @@ Options:
 | `framework [x]` | Appliquer un framework |
 | `plan-preview` | Invoquer @planner manuellement |
 | `security-check` | Invoquer @security-auditor manuellement |
+| `save` | Sauvegarder session (v4.2) |
+| `back` | Revenir a l'iteration precedente (v4.2) |
+| `energy` | Forcer energy check (v4.2) |
 | `finish` | Passer en Phase 3 |
 
 **Criteres de suggestion `finish`:**
@@ -164,16 +179,28 @@ Options:
 - Axe Clarte >= 80/100
 - Axe Actionnabilite >= 60/100
 
-### @planner Integration (v4.1)
+### @planner Integration (v4.2)
 
 **Auto-invocation:** En phase Convergent OU quand EMS >= 70
+
+**Confirmation [Y/n] (v4.2):** Demander confirmation avant invocation auto.
+```
+🎯 EMS atteint 72 — Pret pour un plan preliminaire?
+   Lancer @planner? [Y/n]
+```
 
 Invoquer via Task tool (model: sonnet) pour generer un plan preliminaire.
 Integre dans brief final section "Preliminary Plan".
 
-### @security-auditor Integration (v4.1)
+### @security-auditor Integration (v4.2)
 
 **Auto-detection:** Si brief contient patterns auth/security/payment/api
+
+**Confirmation [Y/n] (v4.2):** Demander confirmation avant invocation auto.
+```
+🔒 Patterns securite detectes: [auth, payment]
+   Lancer @security-auditor? [Y/n]
+```
 
 Invoquer via Task tool (model: opus) pour analyse securite.
 Integre dans brief final section "Security Considerations".
@@ -184,7 +211,7 @@ Integre dans brief final section "Security Considerations".
 
 **⚠️ MANDATORY: You MUST use the Write tool to create BOTH files. Do NOT just display content.**
 
-### Section-by-Section Validation (v4.1)
+### Section-by-Section Validation
 
 **Avant d'ecrire le brief, valider chaque section avec l'utilisateur:**
 
@@ -258,7 +285,7 @@ Questions:
 2. [Question]
 3. [Question]
 
--> continue | dive [topic] | premortem | modes | finish
+-> continue | dive [topic] | back | save | energy | finish
 -------------------------------------------------------
 ```
 
@@ -338,3 +365,22 @@ et oui on peut passer aux endpoints.
 - Mettre a jour EMS a chaque iteration
 - Respecter le format compact CLI
 - Inclure les elements decides/ouverts
+
+## Mapping Techniques → Phases (v4.2)
+
+Guide de selection des techniques selon la phase du brainstorm.
+
+| Phase | Techniques Recommandees |
+|-------|------------------------|
+| 🔀 **Divergent** | SCAMPER, Six Thinking Hats, Mind Mapping, What If Scenarios, Analogical Thinking, First Principles, Time Travel, Inner Child Conference, Chaos Engineering, Nature's Solutions |
+| 🎯 **Convergent** | MoSCoW, 5 Whys, SWOT, Scoring, Pre-mortem, Constraint Mapping, Assumption Reversal, Role Playing |
+| ⚡ **Deblocage** | Reversal Inversion, Question Storming |
+
+**Usage:** Commande `technique [nom]` pour afficher la documentation complete d'une technique.
+
+**Auto-suggestion:** Selon les axes EMS faibles:
+- Clarte faible → Question Storming, 5 Whys
+- Profondeur faible → First Principles, Dive
+- Couverture faible → SCAMPER, Six Thinking Hats
+- Decisions faible → MoSCoW, Scoring
+- Actionnabilite faible → Pre-mortem, Constraint Mapping

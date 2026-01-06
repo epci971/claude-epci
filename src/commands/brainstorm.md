@@ -1,15 +1,15 @@
 ---
 description: >-
-  Brainstorming guide v4.1 pour decouvrir et specifier une feature.
+  Brainstorming guide v4.2 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
-  v4.1: One-at-a-Time questions, Section-by-Section validation,
-  @planner/@security-auditor integration, spike pour validation technique.
+  v4.2: Session persistence, back command, energy checkpoints, 3-5 questions,
+  agent confirmation [Y/n]. Spike pour validation technique.
   Use when: idee vague a transformer en specs, incertitude technique a valider.
 argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--no-hmw] [--no-security] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
-# /brainstorm — Feature Discovery v4.1
+# /brainstorm — Feature Discovery v4.2
 
 ## Overview
 
@@ -17,8 +17,12 @@ Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
 
-**Nouveau v4:** Integre l'exploration technique (spike) pour valider
-la faisabilite avant de finaliser les specs.
+**Nouveau v4.2:**
+- **Session persistence** — Sauvegarder et reprendre les sessions (`save`, `back`)
+- **Energy checkpoints** — Points de controle pour gerer la fatigue cognitive
+- **3-5 questions** — Plusieurs questions par iteration avec suggestions A/B/C
+- **Agent confirmation** — Prompt [Y/n] avant @planner/@security-auditor
+- **Spike integre** — Exploration technique time-boxed
 
 ## Usage
 
@@ -44,9 +48,43 @@ la faisabilite avant de finaliser les specs.
 | **Personas** | 📐 Architecte (defaut), 🥊 Sparring, 🛠️ Pragmatique |
 | **Phases** | 🔀 Divergent → 🎯 Convergent |
 | **MCP** | Context7 (patterns architecture), Sequential (raisonnement complexe) |
-| **v4.1** | One-at-a-Time questions, Section-by-Section validation |
+| **v4.2** | Session persistence, energy checkpoints, 3-5 questions, agent confirmation |
+| **Storage** | `.project-memory/brainstorm-sessions/[slug].yaml` |
 
 ## Process
+
+### Phase 0 — Session Detection (v4.2)
+
+**MANDATORY: Check for existing session before starting.**
+
+1. **Check for existing session**
+   - Look in `.project-memory/brainstorm-sessions/` for matching slug
+   - If found and `status: in_progress`:
+
+```
+-------------------------------------------------------
+Session existante detectee: "[slug]" (EMS: XX)
+   Derniere activite: [time ago]
+   Phase: [phase] | Iteration: [n]
+
+[1] Reprendre cette session
+[2] Nouvelle session
+-------------------------------------------------------
+```
+
+2. **If user chooses [1] Resume**:
+   - Load session from YAML
+   - Restore `ems`, `phase`, `persona`, `iteration`
+   - Display last questions from `history`
+   - Continue from where left off
+
+3. **If user chooses [2] New**:
+   - Archive existing session (rename to `{slug}-archived-{timestamp}.yaml`)
+   - Start fresh Phase 1
+
+4. **If no existing session**: Proceed to Phase 1
+
+---
 
 ### Phase 1 — Initialisation
 
@@ -89,71 +127,83 @@ Boucle jusqu'a `finish` :
    - Evaluer chaque axe (Clarte, Profondeur, Couverture, Decisions, Actionnabilite)
    - Calculer le score composite
    - Determiner le delta depuis la derniere iteration
-3. **Appliquer frameworks** si pertinent (MoSCoW, 5 Whys, etc.)
-4. **Generer UNE question** avec suggestion (voir One-at-a-Time pattern)
+3. **Appliquer frameworks/techniques** si pertinent (voir auto-suggestion)
+4. **Generer 3-5 questions** avec suggestions A/B/C (voir Question Format v4.2)
 5. **Afficher breakpoint compact avec EMS visible**
 
 **NEVER skip EMS calculation or display — it's the core metric of brainstorming progress.**
 
 ---
 
-## One-at-a-Time Question Pattern (v4.1 — SuperPowers)
+## Question Format (v4.2)
 
-**CRITICAL: Poser UNE seule question a la fois pour reduire la charge cognitive.**
+**3-5 questions par iteration avec choix multiples A/B/C et suggestions.**
 
 ### Regles
 
-1. **Une question par iteration** (sauf mode turbo)
-2. **Choix multiples preferes** — Options claires A/B/C
-3. **Suggestion incluse** — "Recommande: option B parce que..."
+1. **3-5 questions par iteration** (defaut v4.2)
+2. **Choix multiples preferes** — Options claires A/B/C par question
+3. **Suggestions incluses** — Pour chaque question quand pertinent
 4. **Focus sur les blocages** — Ignorer les nice-to-have
 
-### Format Question
+### Format Breakpoint (v4.2)
 
 ```
 -------------------------------------------------------
 🔀 DIVERGENT | 📐 Architecte | Iter X | EMS: XX/100 (+Y)
 -------------------------------------------------------
 Done: [elements valides]
+Open: [elements a clarifier]
 
-Question: [Question claire avec contexte]
+1. [Question 1]
+   A) Option A  B) Option B  C) Option C
+   → Suggestion: B
 
-Options:
-  A) [Option 1] — [consequence]
-  B) [Option 2] — [consequence] (Recommande)
-  C) [Option 3] — [consequence]
-  D) Autre (preciser)
+2. [Question 2]
+   A) Option A  B) Option B  C) Option C
+   → Suggestion: A
 
--> A, B, C, D, ou reponse libre | skip | finish
+3. [Question 3]
+   A) Option A  B) Option B  C) Option C
+
+-> continue | dive [topic] | back | save | energy | finish
 -------------------------------------------------------
 ```
 
 ### Exemple
 
 ```
-Question: Quel systeme de cache pour les sessions utilisateur?
+1. Quel systeme de cache pour les sessions?
+   A) Redis — Plus rapide, infra supplementaire
+   B) Memcached — Simple, pas de persistence
+   C) Database — Deja en place, plus lent
+   → Suggestion: A (si > 1000 users concurrents)
 
-Options:
-  A) Redis — Plus rapide, necessite infra supplementaire
-  B) Memcached — Simple, pas de persistence
-  C) Database — Deja en place, plus lent (Recommande si < 1000 users)
-  D) Autre
+2. Strategie de refresh token?
+   A) Rotation a chaque refresh
+   B) Expiration fixe sans rotation
+   C) Sliding window
+   → Suggestion: A (securite optimale)
+
+3. Gestion multi-device?
+   A) Un token par device
+   B) Token unique partage
+   C) Limite configurable de devices
 ```
 
-### Quand poser plusieurs questions
+### Quand utiliser une seule question
 
-- Mode `--turbo` : 2-3 questions max
-- Commande `batch` : Grouper les questions connexes
-- Phase finale : Confirmer plusieurs points mineurs
+- **Decisions complexes** — Choix architectural majeur
+- **Mode `--turbo`** avec `--single` — Force une question
+- **Commande `dive`** — Focus profond sur un aspect
 
 ---
 
-**Commandes disponibles :**
+**Commandes disponibles (v4.2) :**
 
 | Commande | Action |
 |----------|--------|
-| `continue` | Question suivante |
-| `batch` | Poser 3-5 questions groupees (mode classique) |
+| `continue` | Iteration suivante (3-5 questions) |
 | `dive [topic]` | Approfondir un aspect specifique |
 | `pivot` | Reorienter si le vrai besoin emerge |
 | `status` | Afficher EMS detaille (5 axes) |
@@ -164,8 +214,12 @@ Options:
 | `converge` | Forcer phase Convergent + invoquer @planner |
 | `scoring` | Evaluer et prioriser les idees |
 | `framework [x]` | Appliquer un framework (moscow/5whys/swot) |
+| `technique [x]` | Afficher documentation complete d'une technique (v4.2) |
 | `spike [duration] [question]` | Lancer exploration technique time-boxed |
 | `security-check` | Invoquer @security-auditor (auto si auth/security detecte) |
+| `save` | Sauvegarder session (v4.2) |
+| `back` | Revenir a l'iteration precedente (v4.2) |
+| `energy` | Forcer un energy check (v4.2) |
 | `finish` | Generer brief + journal avec validation section par section |
 
 ---
@@ -264,7 +318,177 @@ Le verdict et les decouvertes sont integres :
 
 ---
 
-## @planner — Quick Plan en Phase Convergent (v4.1)
+## Technique — Bibliotheque de Techniques (v4.2)
+
+### Overview
+
+Commande pour afficher la documentation complete d'une technique de brainstorming.
+Contrairement a `framework [x]` qui applique un format rapide, `technique [x]` affiche
+la methodologie complete avec exemples.
+
+### Commande
+
+```
+technique [nom]
+```
+
+**Exemples:**
+```
+technique scamper
+technique first-principles
+technique six-hats
+technique moscow
+```
+
+### Techniques Disponibles (20)
+
+| Categorie | Techniques | Phase |
+|-----------|------------|-------|
+| **Analysis** (8) | moscow, 5whys, swot, scoring, premortem, constraint-mapping, assumption-reversal, question-storming | Convergent |
+| **Ideation** (6) | scamper, six-hats, mind-mapping, what-if, analogical, first-principles | Divergent |
+| **Perspective** (3) | role-playing, time-travel, reversal | Les deux |
+| **Breakthrough** (3) | inner-child, chaos-engineering, nature-solutions | Deblocage |
+
+### Output Format
+
+```
+-------------------------------------------------------
+📚 TECHNIQUE: [Nom]
+-------------------------------------------------------
+**Description:** [2-3 lignes]
+
+**Quand utiliser:**
+- [Situation 1]
+- [Situation 2]
+
+**Phase recommandee:** [Divergent | Convergent | Deblocage]
+
+**Questions types:**
+1. [Question guidee 1]
+2. [Question guidee 2]
+3. [Question guidee 3]
+
+**Exemple:**
+> [Exemple concret dans contexte dev]
+
+-> continue | appliquer | autre technique
+-------------------------------------------------------
+```
+
+### Auto-suggestion
+
+Les techniques sont suggerees automatiquement selon les axes EMS faibles:
+
+| Axe faible | Techniques suggerees |
+|------------|---------------------|
+| Clarte | question-storming, 5whys |
+| Profondeur | first-principles, dive |
+| Couverture | scamper, six-hats |
+| Decisions | moscow, scoring |
+| Actionnabilite | premortem, constraint-mapping |
+
+---
+
+## Energy Checkpoints (v4.2)
+
+**Objectif**: Points de controle pour gerer la fatigue cognitive et maintenir l'engagement.
+
+### Triggers (4 conditions)
+
+| Trigger | Condition | Raison |
+|---------|-----------|--------|
+| **EMS 50** | EMS atteint 50 | Mi-parcours, verification du flow |
+| **EMS 75** | EMS atteint 75 | Pres de la fin, suggerer finish |
+| **Iter 7+** | Iteration >= 7 sans commande | Session longue, risque de fatigue |
+| **Phase change** | Divergent → Convergent | Transition importante |
+
+### Format Energy Check
+
+```
+-------------------------------------------------------
+⚡ ENERGY CHECK | EMS: XX/100 | Phase: [emoji] [phase]
+-------------------------------------------------------
+On a bien avance sur l'exploration. Comment tu te sens?
+
+[1] Continuer — Je suis dans le flow
+[2] Pause — Sauvegarder et reprendre plus tard
+[3] Accelerer — Passons a la convergence
+[4] Pivoter — Je veux changer d'angle
+-------------------------------------------------------
+```
+
+### Actions par choix
+
+| Choix | Action |
+|-------|--------|
+| **[1] Continuer** | Poursuivre l'iteration normale |
+| **[2] Pause** | Executer `save`, afficher instructions pour reprendre |
+| **[3] Accelerer** | Executer `converge`, passer en phase Convergent |
+| **[4] Pivoter** | Executer `pivot`, reorienter l'exploration |
+
+### Commande `energy`
+
+Force un energy check a tout moment:
+```
+> energy
+```
+
+Utile pour:
+- Faire une pause planifiee
+- Evaluer son etat avant une decision importante
+- Changer de direction explicitement
+
+---
+
+## Session Commands (v4.2)
+
+### Commande `save`
+
+Sauvegarde explicite de la session en cours.
+
+```
+> save
+
+-------------------------------------------------------
+💾 Session sauvegardee
+   Fichier: .project-memory/brainstorm-sessions/feature-auth.yaml
+   EMS: 52/100 | Phase: Divergent | Iteration: 3
+
+   Pour reprendre: /brainstorm feature-auth
+-------------------------------------------------------
+```
+
+**Auto-save**: La session est aussi sauvegardee automatiquement:
+- A chaque changement de phase
+- Avant `finish`
+- Apres chaque energy check
+
+### Commande `back`
+
+Revient a l'iteration precedente.
+
+```
+> back
+
+-------------------------------------------------------
+⏪ Retour a l'iteration 2
+   EMS: 38/100 (etait 52)
+   Phase: Divergent
+
+   Questions restaurees:
+   1. [Question de l'iteration 2]
+   2. [Question de l'iteration 2]
+-------------------------------------------------------
+```
+
+**Limitations**:
+- 1 step back uniquement (pas de back multiple)
+- Impossible si iteration == 1
+- L'historique de l'iteration annulee est conserve (peut revenir en avant avec `continue`)
+
+---
+
+## @planner — Quick Plan en Phase Convergent (v4.2)
 
 **Objectif**: Generer un plan preliminaire pour valider la faisabilite et estimer la complexite.
 
@@ -273,6 +497,25 @@ Le verdict et les decouvertes sont integres :
 - **Auto**: Commande `converge` (passage en phase Convergent)
 - **Auto**: EMS >= 70 et Actionnabilite >= 60
 - **Manuel**: Commande `plan-preview`
+
+### Confirmation [Y/n] (v4.2)
+
+**MANDATORY: Demander confirmation avant de lancer @planner automatiquement.**
+
+```
+-------------------------------------------------------
+🎯 EMS atteint 72 — Pret pour un plan preliminaire?
+   Lancer @planner? [Y/n]
+-------------------------------------------------------
+```
+
+- Si **Y** (ou Enter): Invoquer @planner
+- Si **n**: Continuer le brainstorm sans plan
+- Si autre input: Interpreter comme reponse a la question en cours
+
+**Note**: La confirmation n'est pas demandee pour:
+- Commande manuelle `plan-preview`
+- Flag `--no-confirm` (futur)
 
 ### Process
 
@@ -316,7 +559,7 @@ Le verdict et les decouvertes sont integres :
 
 ---
 
-## @security-auditor — Analyse Securite Conditionnelle (v4.1)
+## @security-auditor — Analyse Securite Conditionnelle (v4.2)
 
 **Objectif**: Detecter les considerations securite des la phase de specs.
 
@@ -331,13 +574,29 @@ Le verdict et les decouvertes sont integres :
 | Data sensitive | `payment`, `stripe`, `pci`, `gdpr`, `personal data` |
 | API exposed | `api public`, `webhook`, `external endpoint` |
 
+### Confirmation [Y/n] (v4.2)
+
+**MANDATORY: Demander confirmation avant de lancer @security-auditor automatiquement.**
+
+```
+-------------------------------------------------------
+🔒 Patterns securite detectes: [auth, payment]
+   Lancer @security-auditor? [Y/n]
+-------------------------------------------------------
+```
+
+- Si **Y** (ou Enter): Invoquer @security-auditor
+- Si **n**: Continuer sans analyse securite
+- Si autre input: Interpreter comme reponse a la question en cours
+
+**Note**: La confirmation n'est pas demandee pour:
+- Commande manuelle `security-check`
+- Flag `--no-confirm` (futur)
+
 ### Process
 
 1. **Detection** pendant Phase 2 (iteration)
-   ```
-   ⚠️ Security patterns detected: [auth, payment]
-   -> Invoking @security-auditor for early analysis...
-   ```
+   - Patterns detectes mais confirmation demandee d'abord
 
 2. **Invoquer @security-auditor** via Task tool (model: opus)
    ```
@@ -389,7 +648,7 @@ Flag `--no-security` pour skipper l'analyse automatique.
 
 ---
 
-## Section-by-Section Validation (v4.1 — SuperPowers)
+## Section-by-Section Validation
 
 **CRITICAL: Valider chaque section du brief avec l'utilisateur AVANT de passer a la suivante.**
 
@@ -500,7 +759,7 @@ Prochaine etape:
 -------------------------------------------------------
 ```
 
-## Format Breakpoint (compact pour CLI)
+## Format Breakpoint (compact pour CLI — v4.2)
 
 ```
 -------------------------------------------------------
@@ -509,12 +768,18 @@ Prochaine etape:
 Done: [elements valides]
 Open: [elements a clarifier]
 
-Questions:
-1. [Question] -> Suggestion: [si applicable]
-2. [Question]
-3. [Question]
+1. [Question 1]
+   A) Option A  B) Option B  C) Option C
+   → Suggestion: B
 
--> continue | dive [topic] | spike [duration] [q] | finish
+2. [Question 2]
+   A) Option A  B) Option B  C) Option C
+   → Suggestion: A
+
+3. [Question 3]
+   A) Option A  B) Option B  C) Option C
+
+-> continue | dive [topic] | back | save | energy | finish
 -------------------------------------------------------
 ```
 

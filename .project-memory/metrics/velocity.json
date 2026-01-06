@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "summary": {
-    "total_features": 11,
+    "total_features": 13,
     "avg_time_tiny": null,
     "avg_time_small": null,
     "avg_time_standard": null,
@@ -22,7 +22,7 @@
       "avg_loc": null
     },
     "STANDARD": {
-      "count": 1,
+      "count": 3,
       "avg_time": null,
       "avg_files": null,
       "avg_loc": null
@@ -36,18 +36,6 @@
   },
   "trend": {
     "last_5_features": [
-      {
-        "slug": "f07-orchestration-multi-agents",
-        "complexity": "LARGE",
-        "estimated": null,
-        "actual": null
-      },
-      {
-        "slug": "f07-orchestration-multi-agents",
-        "complexity": "LARGE",
-        "estimated": "4h20min",
-        "actual": null
-      },
       {
         "slug": "f09-systeme-personas",
         "complexity": "LARGE",
@@ -65,9 +53,21 @@
         "complexity": "STANDARD",
         "estimated": "2h30",
         "actual": "15min"
+      },
+      {
+        "slug": "brainstorm-v42-s01-core",
+        "complexity": "STANDARD",
+        "estimated": "2h",
+        "actual": "1h30"
+      },
+      {
+        "slug": "brainstorm-techniques-s02",
+        "complexity": "STANDARD",
+        "estimated": "2h20",
+        "actual": "~1h"
       }
     ],
     "velocity_trend": "stable"
   },
-  "updated_at": "2026-01-02T16:29:47.231934Z"
+  "updated_at": "2026-01-06T13:33:22.988197Z"
 }
