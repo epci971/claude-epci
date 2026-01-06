@@ -1,6 +1,6 @@
 {
   "name": "epci",
-  "version": "4.6.2",
+  "version": "4.7.0",
   "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability and project memory",
   "author": {
     "name": "EPCI Team"
@@ -26,7 +26,10 @@
     "./agents/qa-reviewer.md",
     "./agents/doc-generator.md",
     "./agents/decompose-validator.md",
-    "./agents/rules-validator.md"
+    "./agents/rules-validator.md",
+    "./agents/clarifier.md",
+    "./agents/planner.md",
+    "./agents/implementer.md"
   ],
   "skills": [
     "./skills/core/epci-core/SKILL.md",
@@ -47,6 +50,7 @@
     "./skills/stack/javascript-react/SKILL.md",
     "./skills/stack/python-django/SKILL.md",
     "./skills/stack/java-springboot/SKILL.md",
+    "./skills/stack/frontend-editor/SKILL.md",
     "./skills/factory/skills-creator/SKILL.md",
     "./skills/factory/commands-creator/SKILL.md",
     "./skills/factory/subagents-creator/SKILL.md",

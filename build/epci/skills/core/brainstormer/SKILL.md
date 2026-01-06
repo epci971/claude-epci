@@ -1,15 +1,18 @@
 ---
 name: brainstormer
 description: >-
-  Feature discovery et brainstorming guide pour EPCI v3.0. Workflow avec
+  Feature discovery et brainstorming guide pour EPCI v4.2. Workflow avec
   personas adaptatifs (Architecte, Sparring, Pragmatique), phases Divergent/
   Convergent, scoring EMS v2 et frameworks d'analyse incluant pre-mortem.
+  v4.2: Session persistence, back command, energy checkpoints, 3-5 questions,
+  agent confirmation [Y/n], @planner/@security integration.
+  Flags: --random (weighted technique selection), --progressive (3-phase structure).
   Use when: /brainstorm invoked, feature discovery needed.
   Not for: implementation tasks, code generation, simple questions.
-allowed-tools: [Read, Write, Glob, Grep]
+allowed-tools: [Read, Write, Glob, Grep, Task]
 ---
 
-# Brainstormer v3.0
+# Brainstormer v4.2
 
 ## Overview
 
@@ -17,11 +20,27 @@ Skill de brainstorming specialise pour la decouverte de features.
 Transforme des idees vagues en briefs fonctionnels complets via
 un processus iteratif guide avec personas adaptatifs.
 
+**Nouveautes v4.2:**
+- **Session Persistence** — Sauvegarder et reprendre les sessions (`save`, `back`)
+- **Energy Checkpoints** — Points de controle pour gerer la fatigue cognitive
+- **3-5 Questions** — Plusieurs questions par iteration avec suggestions A/B/C
+- **Agent Confirmation** — Prompt [Y/n] avant @planner/@security-auditor
+- **@planner Integration** — Plan preliminaire en phase Convergent
+- **@security-auditor Integration** — Analyse securite conditionnelle
+
 **Reference Documents:**
 - [Personas](references/personas.md) — 3 modes de facilitation
 - [EMS System](references/ems-system.md) — Scoring v2 avec ancres objectives
-- [Frameworks](references/frameworks.md) — Outils d'analyse (+ pre-mortem)
+- [Frameworks](references/frameworks.md) — Outils d'analyse rapide (5 frameworks)
+- **[Techniques](references/techniques/)** — Bibliotheque etendue (20 techniques v4.2)
+  - [Analysis](references/techniques/analysis.md) — 8 techniques (priorisation, causalite, decision)
+  - [Ideation](references/techniques/ideation.md) — 6 techniques (generation d'idees)
+  - [Perspective](references/techniques/perspective.md) — 3 techniques (changement de point de vue)
+  - [Breakthrough](references/techniques/breakthrough.md) — 3 techniques (deblocage creatif)
 - [Brief Format](references/brief-format.md) — Template de sortie
+- [Session Format](references/session-format.md) — Format YAML pour persistence (v4.2)
+
+**Session Storage:** `.project-memory/brainstorm-sessions/[slug].yaml`
 
 ## Personas
 
@@ -100,19 +119,45 @@ It MUST be calculated and displayed at every iteration.
    - Actionnabilite (15%) — Pret pour action
 3. **Calculer le delta** depuis la derniere iteration
 4. Detecter si un framework est applicable (basé sur les axes faibles)
-5. Generer questions suivantes (3-5 max) — cibler les axes les plus faibles
+5. **Generer 3-5 questions** avec choix multiples A/B/C (voir Question Format v4.2)
 6. **Afficher breakpoint compact AVEC EMS visible**
+
+### Question Format (v4.2)
+
+**3-5 questions par iteration avec choix multiples A/B/C.**
+
+**Regles:**
+- 3-5 questions par iteration (defaut v4.2)
+- Choix multiples A/B/C par question
+- Suggestions incluses quand pertinent
+- Focus sur les blocages uniquement
+
+**Format:**
+```
+1. [Question 1]
+   A) Option A  B) Option B  C) Option C
+   → Suggestion: B
+
+2. [Question 2]
+   A) Option A  B) Option B  C) Option C
+   → Suggestion: A
+
+3. [Question 3]
+   A) Option A  B) Option B  C) Option C
+```
+
+**Une seule question**: Pour decisions complexes ou `dive` command.
 
 **⚠️ NEVER skip EMS display in breakpoint header:**
 ```
 🔀 DIVERGENT | 📐 Architecte | Iter X | EMS: XX/100 (+Y) [emoji]
 ```
 
-**Commandes:**
+**Commandes (v4.2):**
 
 | Commande | Comportement |
 |----------|--------------|
-| `continue` | Integrer reponses, nouvelles questions |
+| `continue` | Iteration suivante (3-5 questions) |
 | `dive [topic]` | Focus profond sur un aspect |
 | `pivot` | Reorienter l'exploration |
 | `status` | Afficher EMS detaille (5 axes) |
@@ -120,9 +165,14 @@ It MUST be calculated and displayed at every iteration.
 | `mode [nom]` | Forcer un persona |
 | `premortem` | Lancer exercice pre-mortem |
 | `diverge` | Forcer phase Divergent |
-| `converge` | Forcer phase Convergent |
+| `converge` | Forcer phase Convergent + invoquer @planner |
 | `scoring` | Evaluer les idees |
 | `framework [x]` | Appliquer un framework |
+| `plan-preview` | Invoquer @planner manuellement |
+| `security-check` | Invoquer @security-auditor manuellement |
+| `save` | Sauvegarder session (v4.2) |
+| `back` | Revenir a l'iteration precedente (v4.2) |
+| `energy` | Forcer energy check (v4.2) |
 | `finish` | Passer en Phase 3 |
 
 **Criteres de suggestion `finish`:**
@@ -130,30 +180,90 @@ It MUST be calculated and displayed at every iteration.
 - Axe Clarte >= 80/100
 - Axe Actionnabilite >= 60/100
 
+### @planner Integration (v4.2)
+
+**Auto-invocation:** En phase Convergent OU quand EMS >= 70
+
+**Confirmation [Y/n] (v4.2):** Demander confirmation avant invocation auto.
+```
+🎯 EMS atteint 72 — Pret pour un plan preliminaire?
+   Lancer @planner? [Y/n]
+```
+
+Invoquer via Task tool (model: sonnet) pour generer un plan preliminaire.
+Integre dans brief final section "Preliminary Plan".
+
+### @security-auditor Integration (v4.2)
+
+**Auto-detection:** Si brief contient patterns auth/security/payment/api
+
+**Confirmation [Y/n] (v4.2):** Demander confirmation avant invocation auto.
+```
+🔒 Patterns securite detectes: [auth, payment]
+   Lancer @security-auditor? [Y/n]
+```
+
+Invoquer via Task tool (model: opus) pour analyse securite.
+Integre dans brief final section "Security Considerations".
+
 ### Phase 3 — Generation (USE WRITE TOOL)
 
-**Objectif**: Produire les livrables finaux.
+**Objectif**: Produire les livrables finaux avec validation incrementale.
 
 **⚠️ MANDATORY: You MUST use the Write tool to create BOTH files. Do NOT just display content.**
 
+### Section-by-Section Validation
+
+**Avant d'ecrire le brief, valider chaque section avec l'utilisateur:**
+
+```
+1. Afficher section Contexte (200-300 mots)
+   -> "Does this look right? [y/edit/skip]"
+
+2. Continuer pour chaque section majeure:
+   - Contexte -> Objectif -> Specifications -> Regles Metier
+   - Contraintes Techniques -> Criteres d'Acceptation
+
+3. Une fois validees -> Ecrire le fichier complet
+```
+
+**Format validation section:**
+```
+-------------------------------------------------------
+📝 BRIEF SECTION: [Nom] (X/6)
+-------------------------------------------------------
+
+[Contenu 200-300 mots]
+
+-> y (valider) | edit (modifier) | skip
+-------------------------------------------------------
+```
+
+**Quand skipper:** `--quick`, `--turbo`, ou EMS >= 85
+
 **Actions:**
-1. Create directory: `mkdir -p ./docs/briefs` (use Bash tool)
-2. **USE WRITE TOOL** to create `./docs/briefs/brief-[slug]-[date].md`:
+1. Create directory: `mkdir -p ./docs/briefs/[slug]` (use Bash tool)
+2. **Validation section par section** (si pas --quick/--turbo)
+3. **USE WRITE TOOL** to create `./docs/briefs/[slug]/brief-[slug]-[date].md`:
    - Compiler toutes les decisions en brief structure
-   - **Inclure la section "Exploration Summary"** (stack, patterns, fichiers)
-3. **USE WRITE TOOL** to create `./docs/briefs/journal-[slug]-[date].md`:
+   - **Inclure "Exploration Summary"** (stack, patterns, fichiers)
+   - **Si @planner:** Inclure "Preliminary Plan"
+   - **Si @security-auditor:** Inclure "Security Considerations"
+4. **USE WRITE TOOL** to create `./docs/briefs/[slug]/journal-[slug]-[date].md`:
    - Historique des iterations, decisions prises, questions resolues
-4. **After BOTH files written**, afficher resume final (MANDATORY):
+   - Section agents invoques si applicable
+5. **After BOTH files written**, afficher resume final (MANDATORY):
 
 ```
 -------------------------------------------------------
 ✅ BRAINSTORM COMPLETE
 -------------------------------------------------------
 EMS Final: XX/100 [emoji]
+Agents: [@planner | @security-auditor | Aucun]
 
 📄 Fichiers generes:
-   • Brief: ./docs/briefs/brief-[slug]-[date].md
-   • Journal: ./docs/briefs/journal-[slug]-[date].md
+   • Brief: ./docs/briefs/[slug]/brief-[slug]-[date].md
+   • Journal: ./docs/briefs/[slug]/journal-[slug]-[date].md
 
 🚀 Prochaine etape:
    Lancer /brief avec le contenu du brief.
@@ -176,7 +286,7 @@ Questions:
 2. [Question]
 3. [Question]
 
--> continue | dive [topic] | premortem | modes | finish
+-> continue | dive [topic] | back | save | energy | finish
 -------------------------------------------------------
 ```
 
@@ -256,3 +366,22 @@ et oui on peut passer aux endpoints.
 - Mettre a jour EMS a chaque iteration
 - Respecter le format compact CLI
 - Inclure les elements decides/ouverts
+
+## Mapping Techniques → Phases (v4.2)
+
+Guide de selection des techniques selon la phase du brainstorm.
+
+| Phase | Techniques Recommandees |
+|-------|------------------------|
+| 🔀 **Divergent** | SCAMPER, Six Thinking Hats, Mind Mapping, What If Scenarios, Analogical Thinking, First Principles, Time Travel, Inner Child Conference, Chaos Engineering, Nature's Solutions |
+| 🎯 **Convergent** | MoSCoW, 5 Whys, SWOT, Scoring, Pre-mortem, Constraint Mapping, Assumption Reversal, Role Playing |
+| ⚡ **Deblocage** | Reversal Inversion, Question Storming |
+
+**Usage:** Commande `technique [nom]` pour afficher la documentation complete d'une technique.
+
+**Auto-suggestion:** Selon les axes EMS faibles:
+- Clarte faible → Question Storming, 5 Whys
+- Profondeur faible → First Principles, Dive
+- Couverture faible → SCAMPER, Six Thinking Hats
+- Decisions faible → MoSCoW, Scoring
+- Actionnabilite faible → Pre-mortem, Constraint Mapping

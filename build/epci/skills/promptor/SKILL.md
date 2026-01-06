@@ -69,7 +69,39 @@ Read from `.claude/settings.local.json`:
 }
 ```
 
-If not configured, briefs are displayed as text only (no Notion export).
+### ⚠️ Validation Stricte Projet (MANDATORY)
+
+> **CRITICAL**: Le projet est OBLIGATOIRE pour l'export Notion. Pas de fallback silencieux.
+
+**Au démarrage de session ou one-shot :**
+
+```
+1. Lire .claude/settings.local.json
+2. Vérifier présence des 3 champs notion:
+   ├─ token         → ERREUR si absent/vide
+   ├─ tasks_database_id → ERREUR si absent/vide
+   └─ default_project_id → ERREUR si absent/vide (MANDATORY)
+3. Si validation échoue:
+   └─ STOP avec message explicite (pas de fallback)
+```
+
+**Messages d'erreur :**
+
+| Champ manquant | Message |
+|----------------|---------|
+| `token` | ⛔ Config Notion manquante: token requis dans .claude/settings.local.json |
+| `tasks_database_id` | ⛔ Config Notion manquante: tasks_database_id requis |
+| `default_project_id` | ⛔ **Projet non configuré** - Ajouter default_project_id dans settings.local.json |
+
+**Comportement :**
+- ❌ **INTERDIT** : Export sans projet → tâche orpheline
+- ❌ **INTERDIT** : Fallback silencieux vers affichage texte si projet manquant
+- ✅ **REQUIS** : Bloquer et demander configuration avant export
+
+**Validation script :**
+```bash
+python src/scripts/validate_notion_config.py
+```
 
 ## Session Mode
 
@@ -246,12 +278,17 @@ detecting property types instead of hardcoding them.
 
 → See [Type Mapping](references/type-mapping.md)
 
-### Fallback (No Config / Error)
+### Fallback (API Error Only)
 
-If Notion not configured or API error:
+> **Note**: Fallback s'applique UNIQUEMENT aux erreurs API, PAS à la config manquante.
+
+**Config manquante → STOP (voir Validation Stricte Projet)**
+
+**Erreur API Notion (après validation config OK) :**
 1. Display complete brief as text
-2. Show message: "📋 Brief prêt — Copier dans Notion manuellement"
-3. Continue workflow normally
+2. Show message: "⚠️ Erreur API Notion — Brief affiché pour copie manuelle"
+3. Afficher le brief complet formaté
+4. Log l'erreur pour diagnostic
 
 ## Critical Rules
 

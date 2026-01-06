@@ -20,11 +20,25 @@ Notion credentials in `.claude/settings.local.json`:
 
 ### Fields
 
-| Field | Description | Required |
-|-------|-------------|----------|
-| `token` | Notion integration token (ntn_xxx) | Yes |
-| `tasks_database_id` | Database ID where tasks are created | Yes |
-| `default_project_id` | Default project page ID | Yes |
+| Field | Description | Required | Validation |
+|-------|-------------|----------|------------|
+| `token` | Notion integration token (ntn_xxx) | **MANDATORY** | Non vide, format ntn_* |
+| `tasks_database_id` | Database ID where tasks are created | **MANDATORY** | UUID 32 chars |
+| `default_project_id` | Project page ID for task association | **MANDATORY** | UUID 32 chars |
+
+### ⚠️ IMPORTANT: Validation Stricte
+
+> **Tous les champs sont OBLIGATOIRES**. L'export Notion est **BLOQUÉ** si un champ est manquant ou vide.
+
+```
+⛔ INTERDIT: Export sans default_project_id → crée des tâches orphelines
+✅ REQUIS: Configurer les 3 champs AVANT d'utiliser /promptor
+```
+
+**Vérifier la config :**
+```bash
+python src/scripts/validate_notion_config.py
+```
 
 ### How to Get IDs
 
@@ -211,10 +225,18 @@ fi
 
 ## Fallback Behavior
 
-If Notion is not configured or unavailable:
+### Config Manquante → ERREUR (pas de fallback)
 
+Si configuration Notion incomplète :
+1. **STOP** — Export bloqué
+2. Message explicite : "⛔ Config Notion incomplète - Configurer settings.local.json"
+3. Afficher les champs manquants
+4. Ne PAS afficher le brief (forcer la correction config)
+
+### Erreur API → Fallback texte
+
+Si config OK mais erreur API Notion :
 1. Display brief as formatted text
-2. Show message: "📋 Brief prêt — Copier dans Notion manuellement"
-3. Continue session normally
-
-No error thrown — graceful degradation.
+2. Show message: "⚠️ Erreur API Notion — Brief affiché pour copie manuelle"
+3. Log l'erreur pour diagnostic
+4. Continue session normally
