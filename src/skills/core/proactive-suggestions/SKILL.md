@@ -4,7 +4,7 @@ description: >-
   Generates and manages proactive code suggestions during EPCI workflow.
   Auto-invoke when: /epci reaches BP2 (post-Phase 2), or when code review
   findings need to be transformed into actionable suggestions.
-  Do NOT load for: /quick (no formal breakpoints), /spike (exploration only),
+  Do NOT load for: /quick (no formal breakpoints), /brainstorm (discovery only),
   or when suggestions are explicitly disabled via learning preferences.
 ---
 

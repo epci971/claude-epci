@@ -31,7 +31,6 @@ with validation at each phase.
 | SMALL | 2-3 | <200 | Low | /quick |
 | STANDARD | 4-10 | <1000 | Medium | /epci |
 | LARGE | 10+ | 1000+ | High | /epci |
-| SPIKE | ? | ? | Unknown | /spike |
 
 ## Feature Document
 
@@ -105,9 +104,7 @@ User brief
     │
     ├─► STANDARD ────► /epci
     │
-    ├─► LARGE ───────► /epci --large
-    │
-    └─► Uncertain ───► /spike
+    └─► LARGE ───────► /epci --large
 ```
 
 ## EPCI Principles

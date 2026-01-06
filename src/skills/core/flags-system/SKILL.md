@@ -171,7 +171,7 @@ When `--large` is detected:
 | `/brief` | Evaluate and suggest flags |
 | `/epci` | Full flag support, display in breakpoints |
 | `/quick` | Limited (--uc, --no-hooks) |
-| `/spike` | Thinking flags only |
+| `/brainstorm` | Thinking flags, --no-security, --no-plan |
 
 ### Hooks
 

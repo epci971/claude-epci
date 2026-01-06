@@ -446,10 +446,10 @@ Input: "Intermittent authentication failures in production"
 
 ## Differences with Other Workflows
 
-| Aspect | /debug | /epci | /spike |
+| Aspect | /debug | /epci | /brainstorm |
 |--------|-------------|-------|-------------|
-| Trigger | Bug/error | Feature | Uncertainty |
-| Output | Fix + Report | Feature Doc | Spike Report |
+| Trigger | Bug/error | Feature | Uncertainty/Discovery |
+| Output | Fix + Report | Feature Doc | Brief/Spike Report |
 | Thought tree | Yes | No | No |
 | Scoring | Complet only | No | No |
 | Routing | Adaptive | Fixed | Fixed |

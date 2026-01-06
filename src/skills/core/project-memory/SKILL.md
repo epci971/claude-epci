@@ -4,7 +4,7 @@ description: >-
   Comprehensive Project Memory management for EPCI workflows. Loads context
   at workflow start, persists feature history, and provides conventions/patterns
   for consistent code generation. Auto-invoke at start of /brief, /epci,
-  /quick, /spike, /decompose.
+  /quick, /brainstorm, /decompose.
 allowed-tools: [Read, Glob, Write]
 ---
 
@@ -85,7 +85,7 @@ Access development velocity:
 - `/brief` — Before exploration
 - `/epci` — Before each phase
 - `/quick` — Before implementation
-- `/spike` — Before exploration
+- `/brainstorm` — Before discovery/exploration
 - `/decompose` — Before analysis
 
 ## Loading Process
