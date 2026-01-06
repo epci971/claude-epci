@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "summary": {
-    "total_features": 14,
+    "total_features": 15,
     "avg_time_tiny": null,
     "avg_time_small": null,
     "avg_time_standard": null,
@@ -22,7 +22,7 @@
       "avg_loc": null
     },
     "STANDARD": {
-      "count": 4,
+      "count": 5,
       "avg_time": null,
       "avg_files": null,
       "avg_loc": null
@@ -36,12 +36,6 @@
   },
   "trend": {
     "last_5_features": [
-      {
-        "slug": "test-memory-fix",
-        "complexity": "TINY",
-        "estimated": null,
-        "actual": "30s"
-      },
       {
         "slug": "frontend-editor",
         "complexity": "STANDARD",
@@ -65,9 +59,15 @@
         "complexity": "STANDARD",
         "estimated": "1h30",
         "actual": "1h15"
+      },
+      {
+        "slug": "brainstorm-v43-optimization",
+        "complexity": "STANDARD",
+        "estimated": null,
+        "actual": "45min"
       }
     ],
     "velocity_trend": "stable"
   },
-  "updated_at": "2026-01-06T13:50:51.430313Z"
+  "updated_at": "2026-01-06T16:43:30.765968Z"
 }

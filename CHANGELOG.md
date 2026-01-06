@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.7.0] - 2026-01-06
+
+### Added
+
+- **Brainstorm v4.3 Optimization**: Major performance refactoring
+  - 6 new reference files in `src/commands/references/` for modular documentation
+  - 2 new Haiku agents: `@ems-evaluator` (EMS scoring), `@technique-advisor` (technique selection)
+  - New brainstorm modes: `--random`, `--progressive`
+  - Integrated spike process via `spike [duration] [question]` command
+  - Session commands: `status`, `technique`, `finish`, `batch`
+  - Energy checkpoints with automatic EMS evaluation
+
+### Changed
+
+- **Refactored `/brainstorm` command**: 949 → 164 lines (-83% tokens)
+- **Refactored `brainstormer` skill**: 387 → 193 lines (-50% tokens)
+- **Updated subagent count**: 10 → 12 agents (added @ems-evaluator, @technique-advisor)
+- Brainstorm documentation externalized into modular reference files
+
+### Technical Details
+
+- New reference files:
+  - `brainstorm-turbo-mode.md` - Turbo mode with @clarifier
+  - `brainstorm-random-mode.md` - Random technique selection
+  - `brainstorm-progressive-mode.md` - Progressive disclosure pattern
+  - `brainstorm-spike-process.md` - Integrated spike exploration
+  - `brainstorm-session-commands.md` - Session command reference
+  - `brainstorm-energy-checkpoints.md` - EMS checkpoint system
+- Agent allocation: Haiku for fast scoring/selection, preserves Opus budget
+- Maintained backward compatibility with existing brainstorm flags
+
 ## [4.2.0] - 2024-12-31
 
 ### Changed

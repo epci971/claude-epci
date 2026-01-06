@@ -13,7 +13,7 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
 | **Simplicité**      | 11 commandes spécialisées                                     |
-| **Modularité**      | 25 Skills, 10 Subagents, Hooks natifs                         |
+| **Modularité**      | 25 Skills, 12 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
 

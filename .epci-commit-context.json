@@ -1,19 +1,24 @@
 {
   "source": "epci",
-  "type": "feat",
+  "type": "refactor",
   "scope": "brainstorm",
-  "description": "Add --random and --progressive modes for v4.2 (S03)",
+  "description": "Optimize brainstorm command and skill for 83% token reduction",
   "files": [
+    "CLAUDE.md",
+    "CHANGELOG.md",
     "src/commands/brainstorm.md",
     "src/skills/core/brainstormer/SKILL.md",
-    "src/skills/core/brainstormer/references/session-format.md",
-    "src/scripts/test_brainstorm_session.py",
-    "docs/briefs/brainstorm-v4/examples/session-example-standard.yaml",
-    "docs/briefs/brainstorm-v4/examples/session-example-random.yaml",
-    "docs/briefs/brainstorm-v4/examples/session-example-progressive.yaml",
-    "docs/features/brainstorm-v42-s03-modes-finish.md"
+    "src/agents/ems-evaluator.md",
+    "src/agents/technique-advisor.md",
+    "src/commands/references/brainstorm-turbo-mode.md",
+    "src/commands/references/brainstorm-random-mode.md",
+    "src/commands/references/brainstorm-progressive-mode.md",
+    "src/commands/references/brainstorm-spike-process.md",
+    "src/commands/references/brainstorm-session-commands.md",
+    "src/commands/references/brainstorm-energy-checkpoints.md",
+    "docs/features/brainstorm-v43-optimization.md"
   ],
-  "featureDoc": "docs/features/brainstorm-v42-s03-modes-finish.md",
+  "featureDoc": "docs/features/brainstorm-v43-optimization.md",
   "breaking": false,
   "ticket": null
 }
