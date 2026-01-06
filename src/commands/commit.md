@@ -96,7 +96,7 @@ fi
    ```
 
 3. **Handle breaking changes:**
-   - If `breaking: true` → Add `!` after type: `feat(scope)!: description`
+   - If breaking is true, add exclamation mark: `feat(scope)!: description`
    - Add `BREAKING CHANGE:` footer
 
 4. **Proceed to Step 3** (Breakpoint)
