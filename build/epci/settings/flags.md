@@ -70,6 +70,93 @@ When `--uc` is active:
 
 ---
 
+## Reformulation Flags
+
+Control brief reformulation for fuzzy/voice-dictated inputs.
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--rephrase` | Force reformulation of brief before analysis | Never (explicit only) |
+| `--no-rephrase` | Skip reformulation even if brief is fuzzy | Never (explicit only) |
+
+### Fuzziness Score Auto-Trigger
+
+Reformulation is auto-triggered based on a **fuzziness score** (0-100%):
+
+```
+Fuzziness Score = (
+    (1 - domain_confidence) × 35% +
+    (gap_count / 8) × 25% +
+    (1 - scope_clarity) × 20% +
+    hesitation_density × 20%
+)
+
+Thresholds:
+- > 60%  → Auto-trigger reformulation
+- 40-60% → Suggest reformulation
+- < 40%  → Skip reformulation
+```
+
+### Components
+
+| Component | Weight | Description |
+|-----------|--------|-------------|
+| Domain confidence | 35% | Low domain detection = fuzzy |
+| Gap count | 25% | Many high-priority gaps = fuzzy |
+| Scope clarity | 20% | Vague terms + short brief = fuzzy |
+| Hesitation density | 20% | Voice artifacts (euh, um...) detected |
+
+### Voice Artifact Detection
+
+Hesitations and fillers that increase fuzziness score:
+
+| Type | French | English |
+|------|--------|---------|
+| Hesitations | euh, heu, hum, hmm, bah, ben | uh, um, er, erm, ah |
+| Fillers | tu vois, genre, quoi, voilà, en fait | you know, like, actually, so |
+
+### Reformulation Output
+
+When triggered, the brief is restructured into:
+
+```
+**Objectif**: [What to achieve]
+**Contexte**: [Technical context from exploration]
+**Contraintes**: [Identified constraints]
+**Critères de succès**: [Success criteria based on template type]
+```
+
+### --turbo Mode Behavior
+
+| Aspect | Standard | Turbo |
+|--------|----------|-------|
+| Auto-trigger threshold | > 60% | > 70% |
+| Auto-accept reformulation | Never | If confidence > 80% |
+| Breakpoint format | Full | Compact |
+
+### Examples
+
+```bash
+# Force reformulation for voice-dictated brief
+/brief --rephrase "euh faudrait un truc pour gérer les users"
+
+# Skip reformulation even if detected as fuzzy
+/brief --no-rephrase "quick dirty fix asap"
+
+# Combined with turbo (higher threshold)
+/brief --turbo --rephrase "add auth feature"
+```
+
+### Precedence
+
+| Flag Combination | Result |
+|------------------|--------|
+| `--rephrase` + `--no-rephrase` | `--no-rephrase` wins (explicit skip) |
+| `--rephrase` + `--turbo` | Rephrase with turbo thresholds (70%) |
+| `--no-rephrase` + high fuzziness | Skip reformulation (explicit override) |
+
+---
+
 ## Workflow Flags
 
 Control execution safety and hooks.
@@ -472,6 +559,7 @@ Options:
 |----------|-------|
 | Thinking | `--think`, `--think-hard`, `--ultrathink` |
 | Compression | `--uc`, `--verbose` |
+| **Reformulation** | **`--rephrase`**, **`--no-rephrase`** |
 | Workflow | `--safe`, `--no-hooks` |
 | **Speed** | **`--turbo`** |
 | **Quick (F13)** | **`--autonomous`**, **`--quick-turbo`**, `--no-bp` |
