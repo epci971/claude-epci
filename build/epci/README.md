@@ -124,7 +124,7 @@ docs/features/<feature-slug>.md
 | `/brief` | Point d'entrée universel | Toujours commencer ici |
 | `/epci` | Workflow complet 3 phases | Features STANDARD et LARGE |
 | `/quick` | Workflow condensé | Features TINY et SMALL |
-| `/spike` | Exploration time-boxée | Incertitude technique |
+| `/brainstorm` | Feature discovery + exploration technique | Incertitude, discovery |
 | `/decompose` | Décomposition de features | Planification tâches complexes |
 | `/memory` | Gestion mémoire projet | Initialiser, exporter, réinitialiser |
 | `/learn` | Apprentissage projet | Analyser patterns et calibrer |
@@ -186,17 +186,14 @@ docs/features/<feature-slug>.md
 **Exemples TINY :** Typos, fixes de config, petits ajustements
 **Exemples SMALL :** Petites features, refactoring local
 
-### `/spike` — Exploration
+### `/brainstorm` — Feature Discovery & Exploration
 
 ```bash
-/spike 1h "Est-ce que GraphQL est viable pour notre API?"
-/spike 30min "Comment intégrer ce SDK externe?"
+/brainstorm "Nouvelle feature d'export CSV"
+/brainstorm spike 1h "Est-ce que GraphQL est viable pour notre API?"
 ```
 
-**Output :** Spike Report avec verdict :
-- **GO** : Approche recommandée, effort estimé
-- **NO-GO** : Raison, alternatives suggérées
-- **MORE_RESEARCH** : Questions restantes
+**Output :** Brief structuré ou Spike Report avec verdict (GO/NO-GO/MORE_RESEARCH).
 
 ### `/epci:create` — Component Factory
 
@@ -256,18 +253,18 @@ Analyse les patterns du projet et optimise les suggestions futures.
                     │ (Évaluation)│
                     └──────┬──────┘
                            │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-        ▼                  ▼                  ▼
-   ┌─────────┐       ┌──────────┐       ┌─────────┐
-   │  TINY   │       │ STANDARD │       │  SPIKE  │
-   │  SMALL  │       │  LARGE   │       │         │
-   └────┬────┘       └────┬─────┘       └────┬────┘
-        │                 │                  │
-        ▼                 ▼                  ▼
-  ┌───────────┐    ┌───────────┐      ┌───────────┐
-  │/quick│    │   /epci   │      │/spike│
-  └───────────┘    └───────────┘      └───────────┘
+        ┌──────────────────┴──────────────────┐
+        │                                     │
+        ▼                                     ▼
+   ┌─────────┐                          ┌──────────┐
+   │  TINY   │                          │ STANDARD │
+   │  SMALL  │                          │  LARGE   │
+   └────┬────┘                          └────┬─────┘
+        │                                    │
+        ▼                                    ▼
+  ┌───────────┐                       ┌───────────┐
+  │  /quick   │                       │   /epci   │
+  └───────────┘                       └───────────┘
 ```
 
 ### Critères de Complexité
@@ -278,7 +275,6 @@ Analyse les patterns du projet et optimise les suggestions futures.
 | **SMALL** | 2-3 | < 200 | Faible | Optionnels | `/quick` |
 | **STANDARD** | 4-10 | Variable | Modéré | Requis | `/epci` |
 | **LARGE** | 10+ | Variable | Élevé | Complets | `/epci --large` |
-| **SPIKE** | - | - | Incertain | - | `/spike` |
 
 ---
 
@@ -603,7 +599,7 @@ src/
 │   ├── brief.md           # Point d'entrée + routing
 │   ├── epci.md                 # Workflow complet 3 phases
 │   ├── quick.md           # Workflow condensé TINY/SMALL
-│   ├── spike.md           # Exploration time-boxée
+│   ├── brainstorm.md      # Feature discovery + exploration
 │   ├── decompose.md       # Décomposition de features
 │   ├── memory.md          # Gestion mémoire projet
 │   ├── learn.md           # Apprentissage projet

@@ -2,7 +2,7 @@
 
 Reference catalog of all existing EPCI commands for consistency and inspiration.
 
-## Commands Overview (5)
+## Commands Overview (6)
 
 ### /brief
 - **Purpose**: Entry point - analyzes brief, evaluates complexity, routes to workflow
@@ -28,10 +28,10 @@ Reference catalog of all existing EPCI commands for consistency and inspiration.
 - **Tools**: Read, Write, Edit, Bash, Grep, Glob, Task
 - **Modes**: TINY (<50 LOC), SMALL (<200 LOC)
 
-### /spike
-- **Purpose**: Time-boxed exploration for technical uncertainty
-- **Arguments**: `[duration]` `[question]`
-- **Output**: Spike Report with GO/NO-GO verdict
+### /brainstorm
+- **Purpose**: Feature discovery and technical exploration (includes spike command)
+- **Arguments**: `[topic]` or `spike [duration] [question]`
+- **Output**: Structured brief or Spike Report with GO/NO-GO verdict
 - **Tools**: Read, Glob, Grep, Bash, Task, WebFetch
 
 ### /epci:create

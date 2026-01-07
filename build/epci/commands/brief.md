@@ -2,7 +2,7 @@
 description: >-
     EPCI entry point. Performs thorough exploration, clarifies ambiguities,
     evaluates complexity, generates output (inline brief or Feature Document),
-    and routes to appropriate workflow (/quick, /epci, /spike).
+    and routes to appropriate workflow (/quick, /epci).
 argument-hint: "[brief] [--turbo] [--c7] [--seq]"
 allowed-tools: [Read, Write, Glob, Grep, Bash, Task]
 ---
@@ -124,7 +124,7 @@ Analyze the brief and exploration results to prepare:
     - Count impacted files
     - Estimate LOC
     - Assess risk level
-    - Determine category (TINY/SMALL/STANDARD/LARGE/SPIKE)
+    - Determine category (TINY/SMALL/STANDARD/LARGE)
 
 4. **Flag Detection**:
     - Auto-detect flags based on thresholds
@@ -409,7 +409,6 @@ Generate inline brief with exploration focus (no Feature Document).
 | SMALL    | `/epci:quick`        | Inline brief     | `--think` if 3+ files       |
 | STANDARD | `/epci:epci`         | Feature Document | `--think` or `--think-hard` |
 | LARGE    | `/epci:epci --large` | Feature Document | `--think-hard --wave`       |
-| SPIKE    | `/epci:spike`        | Inline brief     | `--think-hard` if complex   |
 
 **TINY Optimized Routing:**
 ```

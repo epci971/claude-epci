@@ -3,7 +3,7 @@ description: >-
     EPCI entry point. Performs thorough exploration, clarifies ambiguities,
     evaluates complexity, generates output (inline brief or Feature Document),
     and routes to appropriate workflow (/quick, /epci).
-argument-hint: "[brief] [--turbo] [--c7] [--seq]"
+argument-hint: "[brief] [--turbo] [--rephrase] [--no-rephrase] [--c7] [--seq]"
 allowed-tools: [Read, Write, Glob, Grep, Bash, Task]
 ---
 
@@ -101,6 +101,72 @@ Load project context from `.project-memory/` directory. The skill handles:
 - Detailed technical stack
 - Detected architectural patterns
 - Identified risks
+
+---
+
+### Step 1.5: Reformulation (Conditional)
+
+**Trigger:** Auto-activated if fuzziness score > 60% OR `--rephrase` flag is present.
+**Skip:** If `--no-rephrase` flag is present OR score < 40%.
+
+This step detects and reformulates fuzzy/voice-dictated briefs before analysis.
+
+**Action:** Using `brief_reformulator` module:
+
+1. **Calculate fuzziness score** (weighted components):
+   - Domain confidence (35%): Low confidence = fuzzy
+   - Gap count (25%): More high-priority gaps = fuzzy
+   - Scope clarity (20%): Vague terms + short brief = fuzzy
+   - Hesitation density (20%): Voice artifacts detected = fuzzy
+
+2. **If score > 60% OR `--rephrase`:**
+   - Clean voice artifacts (hesitations, fillers)
+   - Detect template type (feature/problem/decision)
+   - Restructure into Objectif/Contexte/Contraintes/Critères
+
+3. **Display reformulation breakpoint:**
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📝 REFORMULATION SUGGÉRÉE                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ 📊 DÉTECTION                                                        │
+│ ├── Score fuzziness: {SCORE}% (seuil: 60%)                         │
+│ ├── Artefacts vocaux: {COUNT} détectés                             │
+│ ├── Domaine: {DOMAIN} (confiance: {CONF}%)                         │
+│ └── Template: {TEMPLATE}                                            │
+│                                                                     │
+│ 📄 BRIEF ORIGINAL                                                   │
+│ "{raw_brief}"                                                       │
+│                                                                     │
+│ ✨ BRIEF REFORMULÉ                                                  │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ **Objectif**: {goal}                                            │ │
+│ │ **Contexte**: {context}                                         │ │
+│ │ **Contraintes**: {constraints}                                  │ │
+│ │ **Critères de succès**: {success_criteria}                      │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ OPTIONS:                                                            │
+│   [1] Valider la reformulation → Utiliser le brief reformulé       │
+│   [2] Modifier la reformulation → Ajuster avant de continuer       │
+│   [3] Utiliser le brief original → Skip reformulation              │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+4. **Process user choice:**
+   - **[1] Valider**: Use reformulated brief for Step 2 analysis
+   - **[2] Modifier**: Wait for user edits, then use modified version
+   - **[3] Original**: Skip reformulation, use raw brief as-is
+
+**--turbo mode behavior:**
+- Threshold raised to 70% (fewer auto-triggers)
+- Auto-accept reformulation if confidence > 80%
+- Compact breakpoint format
+
+**If score < 40% AND no `--rephrase`:** Skip directly to Step 2.
 
 ---
 
