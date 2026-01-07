@@ -104,27 +104,54 @@ Load project context from `.project-memory/` directory. The skill handles:
 
 ---
 
-### Step 1.5: Reformulation (Conditional)
+### Step 1.5: Reformulation (MANDATORY when triggered)
 
-**Trigger:** Auto-activated if fuzziness score > 60% OR `--rephrase` flag is present.
-**Skip:** If `--no-rephrase` flag is present OR score < 40%.
+**⚠️ MANDATORY EVALUATION:** You MUST evaluate this step for EVERY brief. Skip ONLY if conditions below are met.
 
-This step detects and reformulates fuzzy/voice-dictated briefs before analysis.
+#### SKIP CONDITIONS (if ANY is true → go directly to Step 2)
 
-**Action:** Using `brief_reformulator` module:
+| Condition | How to detect | Action |
+|-----------|---------------|--------|
+| **Brief already structured** | Contains "Objectif:", "## Context", "## Critères" or similar headers | SKIP — already from /brainstorm |
+| **Brief is a file path** | Starts with `/`, `./`, or references `.md` file | SKIP — read file content instead |
+| **Flag `--no-rephrase`** | User explicitly skipped | SKIP |
+| **Clean technical brief** | No hesitations, clear domain, specific requirements | SKIP |
 
-1. **Calculate fuzziness score** (weighted components):
-   - Domain confidence (35%): Low confidence = fuzzy
-   - Gap count (25%): More high-priority gaps = fuzzy
-   - Scope clarity (20%): Vague terms + short brief = fuzzy
-   - Hesitation density (20%): Voice artifacts detected = fuzzy
+#### TRIGGER CONDITIONS (if ANY is true → MUST reformulate)
 
-2. **If score > 60% OR `--rephrase`:**
-   - Clean voice artifacts (hesitations, fillers)
-   - Detect template type (feature/problem/decision)
-   - Restructure into Objectif/Contexte/Contraintes/Critères
+| Condition | How to detect |
+|-----------|---------------|
+| **Flag `--rephrase`** | User explicitly requested |
+| **Voice artifacts detected** | Contains: `euh`, `hum`, `genre`, `tu vois`, `quoi`, `en fait`, `du coup`, `truc`, `machin` |
+| **Vague/incomplete brief** | < 30 words AND contains vague terms: `système`, `améliorer`, `ajouter`, `truc`, `chose`, `something` |
+| **No clear action verb** | Missing: `implémenter`, `créer`, `ajouter`, `corriger`, `fixer`, `add`, `create`, `fix`, `implement` |
+| **Self-corrections detected** | Contains: `non`, `pardon`, `enfin`, `plutôt`, `je veux dire` |
 
-3. **Display reformulation breakpoint:**
+#### ACTION: Reformulation Process
+
+**If triggered, you MUST:**
+
+1. **Clean the brief:**
+   - Remove hesitations: `euh`, `hum`, `uh`, `um`, `bah`, `ben`
+   - Remove fillers: `tu vois`, `genre`, `quoi`, `en fait`, `du coup`
+   - Apply self-corrections: "CSV non pardon JSON" → "JSON"
+   - Normalize voice: "je veux" → "Le système doit", "faudrait que" → "doit"
+
+2. **Detect template type:**
+   - **FEATURE**: Keywords `ajouter`, `créer`, `implémenter`, `nouveau`, `add`, `create`
+   - **PROBLEM**: Keywords `bug`, `erreur`, `fixer`, `corriger`, `cassé`, `fix`, `broken`
+   - **DECISION**: Keywords `choisir`, `quelle`, `comment`, `stratégie`, `which`, `how`
+
+3. **Restructure into format:**
+
+```
+**Objectif**: [Action verb] + [what] + [purpose]
+**Contexte**: [Domain detected] | [Related existing components from Step 1]
+**Contraintes**: [Extracted from brief OR "À définir"]
+**Critères de succès**: [Based on template type]
+```
+
+4. **Display BREAKPOINT:**
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -132,10 +159,9 @@ This step detects and reformulates fuzzy/voice-dictated briefs before analysis.
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │ 📊 DÉTECTION                                                        │
-│ ├── Score fuzziness: {SCORE}% (seuil: 60%)                         │
-│ ├── Artefacts vocaux: {COUNT} détectés                             │
-│ ├── Domaine: {DOMAIN} (confiance: {CONF}%)                         │
-│ └── Template: {TEMPLATE}                                            │
+│ ├── Artefacts vocaux: {COUNT} trouvés                              │
+│ ├── Domaine détecté: {DOMAIN}                                      │
+│ └── Template: {FEATURE|PROBLEM|DECISION}                           │
 │                                                                     │
 │ 📄 BRIEF ORIGINAL                                                   │
 │ "{raw_brief}"                                                       │
@@ -150,23 +176,34 @@ This step detects and reformulates fuzzy/voice-dictated briefs before analysis.
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │ OPTIONS:                                                            │
-│   [1] Valider la reformulation → Utiliser le brief reformulé       │
-│   [2] Modifier la reformulation → Ajuster avant de continuer       │
-│   [3] Utiliser le brief original → Skip reformulation              │
+│   [1] Valider la reformulation → Continuer avec le brief reformulé │
+│   [2] Modifier → Je corrige avant de continuer                     │
+│   [3] Garder l'original → Ignorer la reformulation                 │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-4. **Process user choice:**
-   - **[1] Valider**: Use reformulated brief for Step 2 analysis
-   - **[2] Modifier**: Wait for user edits, then use modified version
-   - **[3] Original**: Skip reformulation, use raw brief as-is
+5. **Wait for user choice** then proceed to Step 2 with chosen brief.
 
-**--turbo mode behavior:**
-- Threshold raised to 70% (fewer auto-triggers)
-- Auto-accept reformulation if confidence > 80%
-- Compact breakpoint format
+#### --turbo mode behavior
 
-**If score < 40% AND no `--rephrase`:** Skip directly to Step 2.
+- Only trigger if > 3 voice artifacts detected
+- Auto-accept reformulation (skip breakpoint) if brief is very short (< 15 words)
+- Display compact format
+
+#### Examples
+
+**SKIP example:**
+```
+Brief: "## Objectif\nAjouter authentification OAuth\n## Critères\n- Login fonctionnel"
+→ SKIP (already structured from /brainstorm)
+```
+
+**TRIGGER example:**
+```
+Brief: "euh faudrait genre un truc pour les users tu vois pour qu'ils puissent se connecter quoi"
+→ TRIGGER (5 voice artifacts: euh, genre, truc, tu vois, quoi)
+→ Reformulate to: "Objectif: Implémenter l'authentification utilisateur..."
+```
 
 ---
 
