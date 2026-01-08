@@ -9,7 +9,7 @@
 
 Points de controle pour gerer la fatigue cognitive et maintenir l'engagement.
 
-## Triggers (4 conditions)
+## Triggers (5 conditions)
 
 | Trigger | Condition | Raison |
 |---------|-----------|--------|
@@ -17,6 +17,7 @@ Points de controle pour gerer la fatigue cognitive et maintenir l'engagement.
 | **EMS 75** | EMS atteint 75 | Pres de la fin, suggerer finish |
 | **Iter 7+** | Iteration >= 7 sans commande | Session longue, risque de fatigue |
 | **Phase change** | Divergent -> Convergent | Transition importante |
+| **EMS stagnant** | Delta EMS < 3 sur 2 iterations | Exploration peut-etre bloquee |
 
 ## Format Energy Check
 

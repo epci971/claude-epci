@@ -1,0 +1,16 @@
+{
+  "total_sessions": 1,
+  "by_template": {
+    "feature": 1
+  },
+  "by_ems_bucket": {
+    "low": 0,
+    "medium": 0,
+    "high": 1
+  },
+  "avg_iterations": 0,
+  "avg_duration_minutes": 0,
+  "personas_usage": {},
+  "techniques_usage": {},
+  "last_session": "2026-01-08T09:23:32.220453"
+}

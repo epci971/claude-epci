@@ -138,6 +138,21 @@ Boucle jusqu'a `finish`:
 
 **@security-auditor auto-detection**: Si patterns auth/security/payment/api detectes
 
+## Energy Checkpoints
+
+Points de controle automatiques pour gerer la fatigue cognitive.
+
+**Triggers automatiques**:
+- EMS atteint 50 (mi-parcours)
+- EMS atteint 75 (pres de la fin)
+- Iteration >= 7 sans commande (session longue)
+- Phase change (Divergent -> Convergent)
+- EMS stagne (delta < 3 sur 2 iterations)
+
+**Actions proposees**: continuer, pause (save), accelerer (converge), pivoter.
+
+Forcer manuellement: commande `energy`
+
 ## Skill Reference
 
 Pour les details complets (EMS system, personas, techniques, formats):

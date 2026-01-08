@@ -28,26 +28,62 @@ Session sauvegardee
 
 ## Commande `back`
 
-Revient a l'iteration precedente.
+Revient a une iteration precedente (1 a 5 steps).
+
+**Syntaxe**: `back [n]` ou n = 1-5 (defaut: 1)
+
+### Exemples
 
 ```
 > back
 
 -------------------------------------------------------
-Retour a l'iteration 2
-   EMS: 38/100 (etait 52)
+Retour de 1 iteration
+   Iteration: 3 → 2
+   EMS: 52/100 → 38/100 (-14)
    Phase: Divergent
 
    Questions restaurees:
-   1. [Question de l'iteration 2]
-   2. [Question de l'iteration 2]
+   - Comment gerer les sessions longues?
+   - Quelle strategie de refresh token?
 -------------------------------------------------------
 ```
 
-**Limitations**:
-- 1 step back uniquement (pas de back multiple)
-- Impossible si iteration == 1
-- L'historique de l'iteration annulee est conserve (peut revenir en avant avec `continue`)
+```
+> back 3
+
+-------------------------------------------------------
+Retour de 3 iterations
+   Iteration: 5 → 2
+   EMS: 68/100 → 38/100 (-30)
+   Phase: transition → divergent
+
+   Questions restaurees:
+   - Comment gerer les sessions longues?
+   - Quelle strategie de refresh token?
+-------------------------------------------------------
+```
+
+### Regles
+
+| Regle | Description |
+|-------|-------------|
+| Max steps | 5 iterations maximum par commande |
+| Min iteration | Impossible d'aller en dessous de iteration 1 |
+| Preservation | L'historique est conserve (peut revenir en avant avec `continue`) |
+| Validation | Si n > iteration actuelle, erreur affichee |
+
+### Erreur possible
+
+```
+> back 10
+
+-------------------------------------------------------
+Erreur: Impossible de revenir de 10 iterations
+   Iteration actuelle: 5
+   Maximum possible: back 4
+-------------------------------------------------------
+```
 
 ## Session Storage
 

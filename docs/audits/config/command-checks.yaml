@@ -145,7 +145,7 @@ brainstorm:
       verification: "EMS recalcule apres chaque reponse"
 
     - id: B021
-      check: "5 axes EMS evalues (clarity, feasibility, scope, risks, technical)"
+      check: "5 axes EMS evalues (Clarte, Profondeur, Couverture, Decisions, Actionnabilite)"
       severity: HIGH
       verification: "Tous les axes presents dans output"
 
