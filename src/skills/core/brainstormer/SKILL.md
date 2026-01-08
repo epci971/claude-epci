@@ -239,13 +239,25 @@ Output integre dans brief section "Security Considerations".
 
 ## Phase 3 — Generation
 
-**MANDATORY: Use Write tool for BOTH files.**
+**MANDATORY: Use Write tool for BOTH files using official templates.**
+
+**CRITICAL: Before generating, ALWAYS read the template:**
+```
+Read src/skills/core/brainstormer/references/brief-format.md
+```
 
 1. Create directory: `mkdir -p ./docs/briefs/[slug]`
-2. Section-by-section validation (si pas --quick/--turbo)
-3. Write `brief-[slug]-[date].md`
-4. Write `journal-[slug]-[date].md`
-5. Display completion summary
+2. **Read template** `references/brief-format.md` (MANDATORY)
+3. Section-by-section validation (si pas --quick/--turbo)
+4. Write `brief-[slug]-[date].md` — **Must include**:
+   - Personas section (min 1 primary persona)
+   - User Stories format (En tant que... je veux... afin de)
+   - Acceptance Criteria (Given/When/Then)
+   - Success Metrics (KPIs or "TBD")
+5. Write `journal-[slug]-[date].md` — Using Journal template
+6. Display completion summary
+
+**Anti-pattern**: Generating brief without reading template first = INVALID
 
 **Completion format:**
 ```
@@ -282,6 +294,10 @@ Prochaine etape: Lancer /brief avec le contenu du brief.
 - `finish` avant EMS 60
 - Finaliser automatiquement à EMS >= 85 (CRITIQUE)
 - Invoquer @planner sans choix explicite utilisateur
+- Generer brief SANS lire `references/brief-format.md` d'abord (CRITIQUE)
+- Omettre section Personas dans le brief
+- Utiliser format SF au lieu de User Stories
+- Omettre Acceptance Criteria Given/When/Then
 
 **Toujours faire:**
 - Invoquer @ems-evaluator a chaque iteration
@@ -289,3 +305,5 @@ Prochaine etape: Lancer /brief avec le contenu du brief.
 - Respecter format compact CLI
 - Afficher Finalization Checkpoint à EMS >= 85
 - Attendre réponse explicite [1]/[2]/[3] avant action
+- Lire `brief-format.md` AVANT de generer le brief
+- Inclure Personas, User Stories, Success Metrics dans le brief

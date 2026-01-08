@@ -110,16 +110,28 @@ Boucle jusqu'a `finish`:
 
 ### Phase 3 — Generation
 
-**MANDATORY: Use Write tool to create BOTH files.**
+**MANDATORY: Use Write tool to create BOTH files using official templates.**
+
+**Templates obligatoires** (dans `src/skills/core/brainstormer/references/`):
+- `brief-format.md` — Structure Brief v2.0 avec Personas, User Stories, Success Metrics
+- Section Journal d'Exploration dans le meme fichier
 
 1. **@planner** (si pas preview fait OU EMS >= 85)
 2. **@security-auditor** (si patterns auth ET pas preview)
 3. Create directory: `mkdir -p ./docs/briefs/[slug]`
-4. **Section-by-section validation** (si pas --quick/--turbo)
-5. Write `brief-[slug]-[date].md`
-6. Write `journal-[slug]-[date].md`
-7. **HOOK: post-brainstorm** — Invocation automatique (voir section Hooks)
-8. Display completion summary avec techniques utilisees
+4. **Lire template**: `Read src/skills/core/brainstormer/references/brief-format.md`
+5. **Section-by-section validation** (si pas --quick/--turbo)
+6. Write `brief-[slug]-[date].md` — **DOIT suivre la structure du template**
+7. Write `journal-[slug]-[date].md` — **DOIT suivre le Template Journal d'Exploration**
+8. **HOOK: post-brainstorm** — Invocation automatique (voir section Hooks)
+9. Display completion summary avec techniques utilisees
+
+**Sections OBLIGATOIRES dans le brief** (v2.0):
+- Personas (minimum 1 primaire)
+- User Stories format "En tant que... je veux... afin de" avec AC Given/When/Then
+- Success Metrics (KPIs ou "TBD")
+
+**Anti-pattern**: Generer un brief sans lire `brief-format.md` d'abord.
 
 ## Commands
 
