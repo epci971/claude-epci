@@ -1,20 +1,28 @@
 ---
 description: >-
-  Brainstorming guide v4.3 pour decouvrir et specifier une feature.
+  Brainstorming guide v4.7 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
+  Auto-selection techniques basee sur axes faibles, mix de techniques.
   Session persistence, energy checkpoints, 3-5 questions avec A/B/C.
   Use when: idee vague a transformer en specs, incertitude technique.
-argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--c7] [--seq]"
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
-# /brainstorm — Feature Discovery v4.3
+# /brainstorm — Feature Discovery v4.7
 
 ## Overview
 
 Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
+
+**Nouveautes v4.7**:
+- Auto-selection de techniques basee sur axes EMS faibles (< 50)
+- Mix de techniques quand 2+ axes faibles
+- Transition check explicite Divergent → Convergent
+- Preview @planner/@security en phase Convergent
+- Hook post-brainstorm documente
 
 ## Usage
 
@@ -46,22 +54,39 @@ iteratives pour construire des specifications exhaustives.
 ### Phase 1 — Initialisation
 
 1. **Charger contexte** — Skill: `project-memory`
-2. **Analyser codebase** — `@Explore` avec `run_in_background: true`
-3. **Reformuler besoin** — Detecter template (feature/problem/decision)
+2. **Reformuler besoin** — Detecter template (feature/problem/decision)
+3. **Analyser codebase** — `@Explore` avec `run_in_background: true`
 4. **Initialiser session** — Phase: Divergent, Persona: Architecte, EMS: ~25
-5. **Generer HMW** (si pas `--no-hmw`) — 3 questions "How Might We"
-6. **Questions de cadrage** — 3-5 max avec suggestions
-7. **Afficher breakpoint**
+5. **SYNC @Explore** — Attendre completion si non termine
+6. **Generer HMW** (si pas `--no-hmw`) — 3 questions "How Might We" **avec contexte codebase**
+7. **Questions de cadrage** — 3-5 max avec suggestions
+8. **Afficher breakpoint**
+
+> **Note v4.7**: HMW generes APRES @Explore pour questions contextuelles basees sur le codebase.
 
 ### Phase 2 — Iterations
 
 Boucle jusqu'a `finish`:
 
 1. **Integrer reponses** utilisateur
-2. **Recalculer EMS** via `@ems-evaluator` (5 axes, voir skill brainstormer)
-3. **Appliquer techniques** si pertinent via `@technique-advisor`
-4. **Generer 3-5 questions** avec suggestions A/B/C
-5. **Afficher breakpoint compact**
+2. **Recalculer EMS** via `@ems-evaluator`
+   - Output: scores, delta, `weak_axes[]` (axes < 50)
+3. **Auto-selection technique** (v4.7+):
+   - Si `weak_axes` non vide ET technique pas dans les 2 dernieres iterations:
+     - Invoquer `@technique-advisor` mode auto-select
+     - Proposer: `💡 Technique suggérée: [X] → Appliquer? [Y/n]`
+   - Si 2+ axes faibles: proposer mix de techniques
+   - Desactiver avec `--no-technique`
+4. **Transition check** (si EMS = 50 et Divergent):
+   ```
+   PHASE TRANSITION | EMS: 50/100
+   [1] Continuer Divergent  [2] Passer Convergent  [3] Technique
+   ```
+5. **Generer 3-5 questions** avec suggestions A/B/C
+6. **Afficher breakpoint compact**
+7. **Preview check** (si Convergent et EMS >= 65):
+   - Proposer `@planner preview? [Y/n]`
+   - Si patterns auth: `@security-auditor preview? [Y/n]`
 
 **NEVER skip EMS calculation — core metric of progress.**
 
@@ -69,11 +94,14 @@ Boucle jusqu'a `finish`:
 
 **MANDATORY: Use Write tool to create BOTH files.**
 
-1. Create directory: `mkdir -p ./docs/briefs/[slug]`
-2. **Section-by-section validation** (si pas --quick/--turbo)
-3. Write `brief-[slug]-[date].md`
-4. Write `journal-[slug]-[date].md`
-5. Display completion summary
+1. **@planner** (si pas preview fait OU EMS >= 70)
+2. **@security-auditor** (si patterns auth ET pas preview)
+3. Create directory: `mkdir -p ./docs/briefs/[slug]`
+4. **Section-by-section validation** (si pas --quick/--turbo)
+5. Write `brief-[slug]-[date].md`
+6. Write `journal-[slug]-[date].md`
+7. **HOOK: post-brainstorm** — Invocation automatique (voir section Hooks)
+8. Display completion summary avec techniques utilisees
 
 ## Commands
 
@@ -111,6 +139,7 @@ Boucle jusqu'a `finish`:
 | `--progressive` | Mode 3 phases (voir reference) |
 | `--no-security` | Desactiver @security-auditor auto |
 | `--no-plan` | Desactiver @planner auto |
+| `--no-technique` | Desactiver auto-suggestion techniques (v4.7+) |
 
 ## References
 
@@ -137,6 +166,19 @@ Boucle jusqu'a `finish`:
 **@planner auto-invocation**: En phase Convergent OU quand EMS >= 70
 
 **@security-auditor auto-detection**: Si patterns auth/security/payment/api detectes
+
+## Hooks
+
+| Hook | Quand | Donnees |
+|------|-------|---------|
+| `post-brainstorm` | Apres `finish` (Phase 3) | feature_slug, ems_score, techniques_applied, personas_used, iterations, duration_minutes |
+
+**Invocation automatique** a la fin de Phase 3 via hook runner.
+
+**Effets**:
+- Sauvegarde metriques dans `.project-memory/brainstorm-sessions/`
+- Tracking des techniques utilisees pour analyse
+- Mise a jour compteur sessions
 
 ## Energy Checkpoints
 
