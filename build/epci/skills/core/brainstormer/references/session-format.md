@@ -21,6 +21,8 @@ session:
   persona: string      # Current persona: architecte | sparring | pragmatique
   iteration: integer   # Current iteration number
   techniques_used: []  # List of technique slugs used
+  started_at: datetime # Session start timestamp (ISO 8601)
+  duration_minutes: integer  # Total session duration in minutes
 
   ideas:               # Collected ideas with scores
     - id: integer
@@ -35,6 +37,7 @@ session:
       questions: []
       responses: []
       timestamp: string
+      duration: integer  # Duration of this iteration in minutes
 
   last_question: string  # Last question asked (for context)
   created: datetime      # ISO 8601 format
@@ -55,6 +58,8 @@ session:
 | `session.ems` | integer | Yes | Current EMS score (0-100) |
 | `session.persona` | string | Yes | Active persona |
 | `session.iteration` | integer | Yes | Current iteration number |
+| `session.started_at` | datetime | Yes | Session start timestamp (ISO 8601) |
+| `session.duration_minutes` | integer | Yes | Total session duration in minutes |
 | `session.mode` | string | No | Mode flag: `random`, `progressive`, or null (v4.2) |
 
 ### Mode-Specific State (v4.2)
@@ -88,6 +93,7 @@ session:
 | `history[].questions` | array | Questions asked |
 | `history[].responses` | array | User responses |
 | `history[].timestamp` | string | ISO 8601 timestamp |
+| `history[].duration` | integer | Duration of iteration in minutes |
 
 ## Example
 
@@ -103,6 +109,8 @@ session:
   persona: "architecte"
   iteration: 3
   techniques_used: ["moscow", "5whys"]
+  started_at: "2026-01-06T10:30:00Z"
+  duration_minutes: 30
 
   ideas:
     - id: 1
@@ -186,12 +194,38 @@ Session existante detectee: "feature-auth" (EMS: 52)
 
 ### Back Command
 
-Uses `history` array to restore previous state:
-1. Pop last entry from `history`
-2. Restore `ems`, `phase`, `iteration` from previous entry
-3. Display restored questions
+**Syntax**: `back [n]` where n = 1-5 (default: 1)
 
-**Limitation**: 1 step back only (simple rollback)
+Uses `history` array to restore previous state:
+1. Validate that `iteration >= n` (can't go back more than available)
+2. Calculate `target_iteration = current_iteration - n`
+3. Restore state from `history[target_iteration - 1]`
+4. Restore `ems`, `phase`, `iteration` from target entry
+5. Display restored questions with jump summary
+
+**Examples**:
+- `back` → Go back 1 iteration
+- `back 2` → Go back 2 iterations
+- `back 5` → Go back 5 iterations (max allowed)
+
+**Jump Summary Display**:
+```
+-------------------------------------------------------
+Retour de 2 iterations
+   Iteration: 5 → 3
+   EMS: 68/100 → 52/100 (-16)
+   Phase: transition → divergent
+
+   Questions restaurees (iteration 3):
+   - Quel mecanisme de revocation?
+   - Comment gerer le multi-device?
+-------------------------------------------------------
+```
+
+**Limits**:
+- Maximum 5 steps back per command
+- Cannot go below iteration 1
+- History is preserved (can `continue` forward after back)
 
 ## Storage Rules
 

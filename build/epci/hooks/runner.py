@@ -142,6 +142,10 @@ class HookResult:
 VALID_HOOK_TYPES = [
     # Brief phase hooks (v3.2+)
     'pre-brief', 'post-brief',
+    # Debug phase hooks (v4.6+)
+    'pre-debug', 'post-debug',
+    # Brainstorm hooks (v4.7+)
+    'post-brainstorm',
     # Planning and implementation phase hooks
     'pre-phase-1', 'post-phase-1',
     'pre-phase-2', 'post-phase-2',

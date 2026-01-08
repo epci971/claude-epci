@@ -42,6 +42,9 @@ Hooks in `active/` are executed automatically at their respective trigger points
 |-----------|--------------|----------|
 | `pre-brief` | Before /brief exploration | Load external config, validate environment |
 | `post-brief` | After complexity evaluation | Notify feature start, create tickets |
+| `pre-debug` | Before /debug starts | Load debug context, prepare tools |
+| `post-debug` | After /debug completes | Record fix, update metrics |
+| `post-brainstorm` | After /brainstorm session | Save session to memory, update metrics |
 | `pre-phase-1` | Before Phase 1 starts | Load context, check prerequisites |
 | `post-phase-1` | After plan validation | Notify team, update tickets |
 | `pre-phase-2` | Before coding starts | Run linters, setup environment |
@@ -50,8 +53,12 @@ Hooks in `active/` are executed automatically at their respective trigger points
 | `post-commit` | After git commit | Notifications, CI trigger, webhooks |
 | `post-phase-3` | After Phase 3 complete | Cleanup, final metrics |
 | `on-breakpoint` | At each breakpoint | Logging, metrics collection |
+| `pre-agent` | Before subagent invocation | Prepare agent context |
+| `post-agent` | After subagent completes | Process agent results |
 
 > **Note (v3.2):** `pre-phase-3` was removed as redundant with `post-phase-2`. Use `post-phase-2` for pre-finalization checks.
+> **Note (v4.6):** Added `pre-debug` and `post-debug` for /debug workflow.
+> **Note (v4.7):** Added `post-brainstorm` for /brainstorm session memory update.
 
 ---
 
