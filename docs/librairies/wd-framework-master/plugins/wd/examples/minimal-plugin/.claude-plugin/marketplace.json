@@ -1,0 +1,19 @@
+{
+  "name": "hello-plugin",
+  "version": "1.0.0",
+  "displayName": "Hello Plugin",
+  "description": "Minimal example plugin with a single greeting command",
+  "author": {
+    "name": "Your Name",
+    "email": "you@example.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/hello-plugin"
+  },
+  "license": "MIT",
+  "keywords": ["example", "tutorial", "minimal"],
+  "components": {
+    "commands": "./commands"
+  }
+}

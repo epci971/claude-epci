@@ -1,0 +1,25 @@
+{
+  "name": "wd",
+  "version": "2.3.0",
+  "description": "BMAD-enhanced web development framework with 22 commands, 5 agents, 11 personas, 4 MCP servers, ADR & Story File patterns",
+  "author": {
+    "name": "Para CC-France",
+    "email": "contact@cc-france.org",
+    "url": "https://github.com/Para-FR"
+  },
+  "homepage": "https://github.com/Para-FR/wd-framework",
+  "repository": "https://github.com/Para-FR/wd-framework",
+  "license": "MIT",
+  "keywords": [
+    "webdev",
+    "web-development",
+    "react",
+    "nextjs",
+    "vue",
+    "typescript",
+    "frontend",
+    "backend",
+    "fullstack",
+    "claude-code"
+  ]
+}
