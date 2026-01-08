@@ -88,7 +88,7 @@ Output: 5-axis scores, composite, delta, weak_axes, recommendations
 | 70-84 | FINALIZATION_CHECKPOINT | Non (proche finish) | **Finalization** |
 | 85-100 | FINALIZATION_CHECKPOINT | Non | **Finalization** |
 
-**IMPORTANT**: À EMS >= 70, NE JAMAIS finaliser automatiquement.
+**IMPORTANT**: À EMS >= 85, NE JAMAIS finaliser automatiquement.
 Toujours afficher le Finalization Checkpoint et attendre le choix explicite.
 
 ## Technique Selection (via @technique-advisor)
@@ -280,12 +280,12 @@ Prochaine etape: Lancer /brief avec le contenu du brief.
 - Breakpoint > 15 lignes
 - Ignorer contexte codebase
 - `finish` avant EMS 60
-- Finaliser automatiquement à EMS >= 70 (CRITIQUE)
+- Finaliser automatiquement à EMS >= 85 (CRITIQUE)
 - Invoquer @planner sans choix explicite utilisateur
 
 **Toujours faire:**
 - Invoquer @ems-evaluator a chaque iteration
 - Proposer suggestions avec questions
 - Respecter format compact CLI
-- Afficher Finalization Checkpoint à EMS >= 70
+- Afficher Finalization Checkpoint à EMS >= 85
 - Attendre réponse explicite [1]/[2]/[3] avant action

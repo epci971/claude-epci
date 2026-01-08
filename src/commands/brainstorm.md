@@ -3,7 +3,7 @@ description: >-
   Brainstorming guide v4.8.1 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
   Auto-selection techniques basee sur axes faibles, mix de techniques.
-  Finalization Checkpoint obligatoire a EMS >= 70 (bloquant).
+  Finalization Checkpoint obligatoire a EMS >= 85 (bloquant).
   Session persistence, energy checkpoints, 3-5 questions avec A/B/C.
   Use when: idee vague a transformer en specs, incertitude technique.
 argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--c7] [--seq]"
@@ -19,7 +19,7 @@ Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
 
 **Nouveautes v4.8.1**:
-- **Finalization Checkpoint** obligatoire a EMS >= 70 (bloquant)
+- **Finalization Checkpoint** obligatoire a EMS >= 85 (bloquant)
 - Pas de finalisation automatique — toujours choix explicite
 
 **Nouveautes v4.8**:
