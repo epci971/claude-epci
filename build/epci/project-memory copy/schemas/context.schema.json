@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "epci-project-memory-context",
+  "title": "EPCI Project Context",
+  "description": "Schema for project context stored in .project-memory/context.json",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Schema version for migration support"
+    },
+    "project": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Project name (from package.json, composer.json, etc.)"
+        },
+        "stack": {
+          "type": "string",
+          "enum": ["php-symfony", "php-laravel", "javascript-react", "javascript-vue", "python-django", "python-fastapi", "java-springboot", "unknown"],
+          "description": "Detected technology stack"
+        },
+        "detected_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the stack was detected"
+        },
+        "framework_version": {
+          "type": "string",
+          "description": "Framework version if detected"
+        },
+        "language_version": {
+          "type": "string",
+          "description": "Language version (PHP 8.3, Python 3.12, etc.)"
+        },
+        "root_path": {
+          "type": "string",
+          "description": "Absolute path to project root"
+        }
+      },
+      "required": ["name", "stack"]
+    },
+    "team": {
+      "type": "object",
+      "properties": {
+        "primary_developer": {
+          "type": "string",
+          "description": "Primary developer name"
+        },
+        "code_style": {
+          "type": "string",
+          "description": "Code style standard (PSR-12, Airbnb, PEP8, etc.)"
+        }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "properties": {
+        "github": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "repository": { "type": "string" },
+            "branch_pattern": { "type": "string" }
+          }
+        },
+        "notion": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "workspace_id": { "type": "string" },
+            "features_database": { "type": "string" }
+          }
+        }
+      }
+    },
+    "epci": {
+      "type": "object",
+      "properties": {
+        "plugin_version": {
+          "type": "string",
+          "description": "EPCI plugin version used"
+        },
+        "features_completed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total features completed with EPCI"
+        },
+        "last_session": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last EPCI session timestamp"
+        },
+        "initialized_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When project memory was initialized"
+        }
+      },
+      "required": ["plugin_version", "initialized_at"]
+    }
+  },
+  "required": ["version", "project", "epci"]
+}

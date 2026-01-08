@@ -1,0 +1,28 @@
+{
+  "version": "1.0.0",
+  "naming": {
+    "entities": "PascalCase",
+    "services": "{Name}Service",
+    "repositories": "{Entity}Repository",
+    "controllers": "{Domain}Controller",
+    "components": "PascalCase",
+    "hooks": "use{Name}"
+  },
+  "structure": {
+    "src_location": "src/",
+    "tests_location": "tests/",
+    "test_suffix": "Test",
+    "test_pattern": "{Name}Test",
+    "feature_tests_pattern": null
+  },
+  "code_style": {
+    "max_line_length": 120,
+    "indent": "spaces",
+    "indent_size": 4,
+    "quotes": "single",
+    "semicolons": true,
+    "trailing_comma": "es5"
+  },
+  "detected_at": null,
+  "manual_overrides": []
+}
