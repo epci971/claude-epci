@@ -315,3 +315,98 @@ score_interpretation:
     label: "Critique"
     color: "#DD2C00"
     action: "Refonte majeure urgente"
+
+---
+
+# Phase 10 — Evolution Suggestions Scoring
+# Criteres pour scorer les suggestions d'evolution issues de sources externes
+evolution_scoring:
+  description: "Criteres pour scorer les suggestions d'evolution (Phase 10)"
+  version: "1.0"
+
+  # Criteres de scoring (total: 100%)
+  criteria:
+    valeur_ajoutee:
+      weight: 40
+      description: "Impact positif sur le workflow et l'experience developpeur"
+      scoring_guide:
+        90-100: "Transformation majeure, gain significatif mesurable"
+        75-89: "Amelioration notable, ROI clair et visible"
+        60-74: "Amelioration moderee, benefice perceptible"
+        40-59: "Amelioration mineure, benefice incertain"
+        0-39: "Peu ou pas de valeur ajoutee"
+
+    effort_implementation:
+      weight: 30
+      description: "Complexite et temps de mise en oeuvre (inverse: 100 - effort)"
+      scoring_guide:
+        90-100: "Trivial — quelques lignes, < 1h"
+        75-89: "Simple — modification localisee, < 4h"
+        60-74: "Modere — plusieurs fichiers, < 1 jour"
+        40-59: "Complexe — refactoring significatif, 1-3 jours"
+        0-39: "Majeur — architecture, > 3 jours"
+
+    alignement_epci:
+      weight: 20
+      description: "Coherence avec la philosophie EPCI (Explore, Plan, Code, Inspect)"
+      scoring_guide:
+        90-100: "Parfaitement aligne, renforce les principes EPCI"
+        75-89: "Bien aligne, extension naturelle du framework"
+        60-74: "Compatible, pas de contradiction"
+        40-59: "Partiellement compatible, adaptation requise"
+        0-39: "Contradictoire avec EPCI"
+
+    nouveaute:
+      weight: 10
+      description: "Apport par rapport a l'existant"
+      scoring_guide:
+        90-100: "Completement nouveau, innovation majeure"
+        75-89: "Nouvelle approche, pattern non utilise actuellement"
+        60-74: "Extension significative d'un existant"
+        40-59: "Variation mineure d'un existant"
+        0-39: "Deja present ou tres similaire"
+
+  # Configuration des sources
+  sources:
+    websearch:
+      priority: "MEDIUM"
+      max_suggestions: 3
+      freshness_months: 6
+      exclude_patterns:
+        - "marketing"
+        - "promotional"
+        - "sponsored"
+
+    context7:
+      priority: "HIGH"
+      max_suggestions: 5
+      libraries:
+        - "claude-code"
+        - "anthropic-api"
+        - "ai-coding-assistants"
+        - "llm-plugins"
+
+    reference_projects:
+      priority: "HIGH"
+      max_suggestions: 5
+      projects:
+        - name: "wd-framework-master"
+          focus: "Token optimization, Wave orchestration"
+        - name: "SuperClaude_Framework-master"
+          focus: "Modes, Business Panel, Agents"
+        - name: "superpowers-main"
+          focus: "One-at-a-time questions, Personas"
+        - name: "BMAD-METHOD-main"
+          focus: "Methodology structure"
+
+  # Configuration de sortie
+  output:
+    max_total_suggestions: 10
+    min_score_threshold: 50
+    quick_win_criteria:
+      min_score: 75
+      max_effort: 25
+    top_priorities_count: 5
+
+  # Formule de scoring
+  formula: "score = valeur * 0.4 + (100 - effort) * 0.3 + alignement * 0.2 + nouveaute * 0.1"

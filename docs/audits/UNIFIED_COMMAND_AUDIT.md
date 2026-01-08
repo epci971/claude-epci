@@ -470,6 +470,165 @@ Score Final = (Score Fixe * 0.60) + (Score Adaptatif * 0.40)
 
 ---
 
+## Phase 10 — Suggestions d'Evolution (Web-Enriched)
+
+> **Objectif**: Generer des suggestions proactives d'amelioration en utilisant des sources externes.
+> **Mode**: Full Auto — toutes les recherches sont executees automatiquement.
+
+### 10.1 Recherche WebSearch (Automatique)
+
+Executer les 3 queries suivantes:
+
+```
+Query 1: "Claude Code plugin best practices 2025"
+Query 2: "{{COMMAND}} workflow optimization AI coding assistant"
+Query 3: "EPCI methodology improvements developer experience"
+```
+
+**Format resultats:**
+
+| # | Source | Suggestion | Relevance | Applicable a {{COMMAND}}? |
+|---|--------|------------|-----------|---------------------------|
+| 1 | [URL] | [Description concise] | [HIGH/MEDIUM/LOW] | [OUI/NON + raison] |
+| 2 | ... | ... | ... | ... |
+| 3 | ... | ... | ... | ... |
+
+**Criteres de selection:**
+- Prioriter sources < 6 mois
+- Ignorer contenus marketing/promotionnels
+- Extraire patterns actionnables uniquement
+
+### 10.2 Recherche Context7
+
+**Step 1 — Resolve Library ID:**
+
+```bash
+# Rechercher documentation claude-code ou AI assistants
+mcp__context7__resolve-library-id(
+    libraryName="claude-code",
+    query="{{COMMAND}} plugin development patterns"
+)
+```
+
+**Step 2 — Query Documentation:**
+
+```bash
+mcp__context7__query-docs(
+    libraryId="<resolved-id>",
+    query="{{COMMAND}} breakpoints agents optimization best practices"
+)
+```
+
+**Patterns a rechercher:**
+- Command structure patterns (phases, breakpoints)
+- Agent orchestration patterns (invocation, fallback)
+- Hook system patterns (pre/post, context)
+- MCP integration patterns (auto-activation, fallback)
+
+**Format resultats:**
+
+| # | Pattern | Library | Applicabilite | Implementation |
+|---|---------|---------|---------------|----------------|
+| 1 | [Nom pattern] | [lib] | [Comment appliquer a {{COMMAND}}] | [Effort LOW/MED/HIGH] |
+
+### 10.3 Comparaison Reference Projects
+
+**Dossier source:** `docs/librairies/`
+
+**Projets de reference:**
+
+| Projet | Focus Principal | Fichiers Cles |
+|--------|-----------------|---------------|
+| wd-framework-master | Token optimization, Wave orchestration | `.claude/WORKFLOWS.md`, `commands/*.md` |
+| SuperClaude_Framework-master | Modes, Business Panel, Agents | `core/PRINCIPLES.md`, `agents/*.md` |
+| superpowers-main | One-at-a-time questions, Personas | Pattern documentation |
+| BMAD-METHOD-main | Methodology structure | Architecture patterns |
+
+**Comparaison automatique:**
+
+```bash
+# Pour chaque projet reference, rechercher patterns {{COMMAND}}
+grep -r "{{COMMAND}}\|workflow\|phase\|breakpoint" docs/librairies/[project]/
+```
+
+**Format resultats:**
+
+| # | Projet | Feature Identifiee | Delta vs {{COMMAND}} | Suggestion |
+|---|--------|-------------------|----------------------|------------|
+| 1 | WD Framework | [feature] | [ce qui manque ou differe] | [action proposee] |
+| 2 | SuperClaude | [feature] | [delta] | [action] |
+| 3 | ... | ... | ... | ... |
+
+### 10.4 Scoring des Suggestions
+
+**Criteres de scoring:**
+
+| Critere | Poids | Description | Guide |
+|---------|-------|-------------|-------|
+| Valeur ajoutee | 40% | Impact positif sur workflow/DX | 90-100: Transformation majeure |
+| Effort implementation | 30% | Complexite (inverse: 100 - effort) | 90-100: Trivial (<1h) |
+| Alignement EPCI | 20% | Coherence avec philosophie EPCI | 90-100: Renforce les principes |
+| Nouveaute | 10% | Apport vs existant | 90-100: Innovation complete |
+
+**Formule:**
+
+```
+score = valeur * 0.4 + (100 - effort) * 0.3 + alignement * 0.2 + nouveaute * 0.1
+```
+
+**Quick Win:** score >= 75 AND effort <= 25
+
+**Seuil minimum:** score >= 50 pour apparaitre dans le rapport
+
+### 10.5 Format de Sortie (Section 9 du Rapport)
+
+Ajouter cette section au rapport final:
+
+```markdown
+## 9. Suggestions d'Evolution
+
+### 9.1 WebSearch Insights
+
+| # | Suggestion | Source | Score | Impact | Quick Win? |
+|---|-----------|--------|-------|--------|------------|
+| 1 | [suggestion] | [url] | [X/100] | [HIGH/MED/LOW] | [OUI/NON] |
+
+### 9.2 Context7 Patterns
+
+| # | Pattern | Library | Score | Effort | Applicable |
+|---|---------|---------|-------|--------|------------|
+| 1 | [pattern] | [lib] | [X/100] | [LOW/MED/HIGH] | [comment] |
+
+### 9.3 Reference Projects Comparison
+
+| # | Projet | Feature | Delta | Score | Suggestion |
+|---|--------|---------|-------|-------|------------|
+| 1 | [projet] | [feature] | [difference] | [X/100] | [action] |
+
+### 9.4 Top 5 Evolution Priorities
+
+| Rang | Suggestion | Source | Score | Effort | Quick Win? |
+|------|-----------|--------|-------|--------|------------|
+| 1 | [suggestion prioritaire] | [web/c7/ref] | [X/100] | [LOW/MED/HIGH] | [OUI/NON] |
+| 2 | ... | ... | ... | ... | ... |
+| 3 | ... | ... | ... | ... | ... |
+| 4 | ... | ... | ... | ... | ... |
+| 5 | ... | ... | ... | ... | ... |
+
+### 9.5 Prochaines Etapes Recommandees
+
+1. **Quick Wins (implementer immediatement):**
+   - [Liste des quick wins identifies]
+
+2. **Ameliorations planifiees:**
+   - [Liste des ameliorations a scorer > 50, non quick win]
+
+3. **A investiguer:**
+   - [Suggestions necessitant analyse approfondie]
+```
+
+---
+
 ## Execution
 
 Pour auditer une commande specifique, remplacer `{{COMMAND}}` par:
