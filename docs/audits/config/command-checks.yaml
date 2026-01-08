@@ -1,0 +1,492 @@
+# Command Checks — Checklists de Verification Audit
+# Version: 1.0
+# Usage: Checklists pour audits individuels de commandes EPCI
+
+---
+
+# Checks Universels (toutes commandes)
+universal:
+  structure:
+    - id: U001
+      check: "Frontmatter YAML valide"
+      severity: CRITICAL
+      verification: "Debut du fichier avec --- ... ---"
+
+    - id: U002
+      check: "description presente et <= 1024 chars"
+      severity: HIGH
+      verification: "Champ description dans frontmatter"
+
+    - id: U003
+      check: "allowed-tools liste presente"
+      severity: HIGH
+      verification: "Liste des tools autorises dans frontmatter"
+
+    - id: U004
+      check: "argument-hint documente"
+      severity: MEDIUM
+      verification: "Champ argument-hint avec format des args"
+
+  skills:
+    - id: U010
+      check: "Tous les skills references existent dans src/skills/"
+      severity: CRITICAL
+      verification: "Pour chaque skill mentionne, verifier existence du dossier"
+
+    - id: U011
+      check: "Skills charges au bon moment dans le workflow"
+      severity: HIGH
+      verification: "Verifier que le skill est charge avant utilisation"
+
+    - id: U012
+      check: "Pas de skills obsoletes references"
+      severity: MEDIUM
+      verification: "Croiser avec liste des skills actifs"
+
+  agents:
+    - id: U020
+      check: "Tous les agents references existent dans src/agents/"
+      severity: CRITICAL
+      verification: "Pour chaque @agent, verifier existence du fichier .md"
+
+    - id: U021
+      check: "Modeles des agents corrects (opus/sonnet/haiku)"
+      severity: HIGH
+      verification: "Croiser avec recommandations de modeles"
+
+    - id: U022
+      check: "Agents invoques au bon point du workflow"
+      severity: HIGH
+      verification: "Verifier phase/etape d'invocation"
+
+    - id: U023
+      check: "Agents conditionnels avec conditions documentees"
+      severity: MEDIUM
+      verification: "Verifier que les conditions sont explicites"
+
+  hooks:
+    - id: U030
+      check: "Types de hooks valides (pre-|post-|on-)"
+      severity: HIGH
+      verification: "Verifier nomenclature standard"
+
+    - id: U031
+      check: "Hooks documentes correspondent aux actifs (hooks/active/)"
+      severity: MEDIUM
+      verification: "Croiser avec ls hooks/active/"
+
+    - id: U032
+      check: "Hook post-phase-3 present si workflow avec phases"
+      severity: HIGH
+      verification: "Obligatoire pour /epci, /quick"
+
+  mcp:
+    - id: U040
+      check: "MCP servers documentes avec conditions activation"
+      severity: MEDIUM
+      verification: "Verifier documentation des flags --c7, --seq, etc."
+
+    - id: U041
+      check: "Auto-activation MCP coherente avec personas"
+      severity: LOW
+      verification: "Verifier matrice d'activation"
+
+  flags:
+    - id: U050
+      check: "Tous les flags documentes dans argument-hint"
+      severity: HIGH
+      verification: "Extraire flags du texte, croiser avec frontmatter"
+
+    - id: U051
+      check: "Auto-activation flags documentee"
+      severity: MEDIUM
+      verification: "Conditions d'activation explicites"
+
+---
+
+# Checks Specifiques — /brainstorm
+brainstorm:
+  phase0_session:
+    - id: B001
+      check: "@Explore invoque en Phase 1 (Initialisation)"
+      severity: CRITICAL
+      verification: "Verifier presence de @Explore avec run_in_background"
+
+    - id: B002
+      check: "Detection session existante avant demarrage"
+      severity: HIGH
+      verification: "Check dans .project-memory/brainstorm-sessions/"
+
+    - id: B003
+      check: "Option resume ou nouvelle session proposee"
+      severity: MEDIUM
+      verification: "Prompt utilisateur si session trouvee"
+
+  phase1_init:
+    - id: B010
+      check: "Skill project-memory charge"
+      severity: HIGH
+      verification: "Charge au debut pour contexte"
+
+    - id: B011
+      check: "HMW generes (sauf --no-hmw)"
+      severity: MEDIUM
+      verification: "3 questions How Might We"
+
+    - id: B012
+      check: "Questions de cadrage 3-5 avec suggestions A/B/C"
+      severity: HIGH
+      verification: "Format questions avec options"
+
+  phase2_iterations:
+    - id: B020
+      check: "@ems-evaluator calcule EMS a chaque iteration"
+      severity: CRITICAL
+      verification: "EMS recalcule apres chaque reponse"
+
+    - id: B021
+      check: "5 axes EMS evalues (clarity, feasibility, scope, risks, technical)"
+      severity: HIGH
+      verification: "Tous les axes presents dans output"
+
+    - id: B022
+      check: "@technique-advisor disponible et utilise"
+      severity: MEDIUM
+      verification: "Peut etre invoque via commande technique"
+
+    - id: B023
+      check: "Personas adaptatifs fonctionnels (Architecte/Sparring/Pragmatique)"
+      severity: MEDIUM
+      verification: "Commande modes et mode [nom] documentees"
+
+  phase3_generation:
+    - id: B030
+      check: "@planner invoque en phase Convergent"
+      severity: HIGH
+      verification: "Via commande converge ou auto"
+
+    - id: B031
+      check: "@security-auditor conditionnel si patterns auth/payment"
+      severity: HIGH
+      verification: "Invoque si security-check ou auto-detect"
+
+    - id: B032
+      check: "Brief genere dans docs/briefs/[slug]/"
+      severity: CRITICAL
+      verification: "Fichier brief-[slug]-[date].md cree"
+
+    - id: B033
+      check: "Journal genere dans docs/briefs/[slug]/"
+      severity: HIGH
+      verification: "Fichier journal-[slug]-[date].md cree"
+
+    - id: B034
+      check: "Session sauvegardee dans .project-memory/brainstorm-sessions/"
+      severity: HIGH
+      verification: "Fichier YAML avec etat session"
+
+  commands:
+    - id: B040
+      check: "Commandes internes documentees (continue, dive, pivot, etc.)"
+      severity: MEDIUM
+      verification: "Tableau des commandes present"
+
+    - id: B041
+      check: "Commande spike integree avec duration et question"
+      severity: MEDIUM
+      verification: "Format spike [duration] [question]"
+
+---
+
+# Checks Specifiques — /brief
+brief:
+  exploration:
+    - id: BR001
+      check: "@Explore invoque avec thoroughness thorough"
+      severity: CRITICAL
+      verification: "Verifier niveau d'exploration"
+
+    - id: BR002
+      check: "Skill project-memory charge (Step 0)"
+      severity: HIGH
+      verification: "Context charge au debut"
+
+    - id: BR003
+      check: "Etape reformulation evaluee (Step 1.5)"
+      severity: HIGH
+      verification: "Detection artefacts vocaux"
+
+  detection:
+    - id: BR010
+      check: "Detection personas avec score > 0.6"
+      severity: HIGH
+      verification: "Seuil d'activation documente"
+
+    - id: BR011
+      check: "MCP auto-activation selon matrice"
+      severity: MEDIUM
+      verification: "Context7, Sequential, Magic, Playwright"
+
+    - id: BR012
+      check: "Stack detecte automatiquement"
+      severity: MEDIUM
+      verification: "Skills stack charges"
+
+    - id: BR013
+      check: "Flags suggeres selon contexte"
+      severity: LOW
+      verification: "Suggestions proactives"
+
+  routing:
+    - id: BR020
+      check: "Criteres complexite documentes (TINY/SMALL/STANDARD/LARGE)"
+      severity: CRITICAL
+      verification: "Tableau avec criteres"
+
+    - id: BR021
+      check: "Routing vers /quick pour TINY/SMALL"
+      severity: HIGH
+      verification: "Step 6 conditionnel"
+
+    - id: BR022
+      check: "Routing vers /epci pour STANDARD/LARGE"
+      severity: HIGH
+      verification: "Step 6 conditionnel"
+
+  output:
+    - id: BR030
+      check: "Inline brief pour TINY/SMALL"
+      severity: HIGH
+      verification: "Pas de Feature Document"
+
+    - id: BR031
+      check: "Feature Document cree pour STANDARD/LARGE"
+      severity: HIGH
+      verification: "Fichier avec §1 Brief Fonctionnel"
+
+    - id: BR032
+      check: "Breakpoint analyse (Step 3) avec questions clarification"
+      severity: HIGH
+      verification: "BP obligatoire avant generation"
+
+  turbo:
+    - id: BR040
+      check: "Mode --turbo documente"
+      severity: MEDIUM
+      verification: "Flag avec effets"
+
+    - id: BR041
+      check: "@clarifier utilise en mode turbo"
+      severity: MEDIUM
+      verification: "Agent Haiku pour questions rapides"
+
+---
+
+# Checks Specifiques — /epci
+epci:
+  phase1_planning:
+    - id: E001
+      check: "Feature Document §1 lu en debut Phase 1"
+      severity: CRITICAL
+      verification: "Read tool sur doc cree par /brief"
+
+    - id: E002
+      check: "@plan-validator invoque"
+      severity: CRITICAL
+      verification: "Validation du plan genere"
+
+    - id: E003
+      check: "Feature Document §2 mis a jour via Edit"
+      severity: HIGH
+      verification: "Section Implementation Plan ajoutee"
+
+    - id: E004
+      check: "Breakpoint BP1 apres Phase 1"
+      severity: HIGH
+      verification: "Arret pour validation utilisateur"
+
+    - id: E005
+      check: "Hook post-phase-1 execute"
+      severity: MEDIUM
+      verification: "Si hook actif"
+
+  phase2_implementation:
+    - id: E010
+      check: "TDD applique (RED-GREEN-REFACTOR)"
+      severity: HIGH
+      verification: "Cycle documente dans workflow"
+
+    - id: E011
+      check: "@code-reviewer invoque (mandatory)"
+      severity: CRITICAL
+      verification: "Toujours execute en Phase 2"
+
+    - id: E012
+      check: "@security-auditor conditionnel (si fichiers auth/security/api)"
+      severity: HIGH
+      verification: "Condition documentee"
+
+    - id: E013
+      check: "@qa-reviewer conditionnel (si 5+ test files)"
+      severity: MEDIUM
+      verification: "Condition documentee"
+
+    - id: E014
+      check: "Feature Document §3 (Part 1) mis a jour"
+      severity: HIGH
+      verification: "Progress, Tests, Reviews documentes"
+
+    - id: E015
+      check: "Breakpoint BP2 apres Phase 2"
+      severity: HIGH
+      verification: "Arret avant finalisation"
+
+    - id: E016
+      check: "Hook post-phase-2 execute"
+      severity: MEDIUM
+      verification: "Si hook actif"
+
+  phase3_finalization:
+    - id: E020
+      check: "@doc-generator invoque"
+      severity: HIGH
+      verification: "Documentation generee"
+
+    - id: E021
+      check: "Feature Document §3 (Part 2) complete"
+      severity: HIGH
+      verification: "Documentation finale"
+
+    - id: E022
+      check: ".epci-commit-context.json genere"
+      severity: CRITICAL
+      verification: "Fichier contexte pour /commit"
+
+    - id: E023
+      check: "Hook post-phase-3 execute (CRITICAL)"
+      severity: CRITICAL
+      verification: "Memory update obligatoire"
+
+  modes:
+    - id: E030
+      check: "Mode --turbo documente"
+      severity: MEDIUM
+      verification: "@planner + @implementer (Sonnet)"
+
+    - id: E031
+      check: "Mode --large documente"
+      severity: MEDIUM
+      verification: "Alias pour --think-hard --wave"
+
+    - id: E032
+      check: "Mode --safe documente"
+      severity: MEDIUM
+      verification: "Tous agents conditionnels deviennent mandatory"
+
+    - id: E033
+      check: "Mode --wave documente"
+      severity: MEDIUM
+      verification: "DAG-based orchestration"
+
+---
+
+# Checks Specifiques — /debug
+debug:
+  diagnostic:
+    - id: D001
+      check: "Evidence gathering documente"
+      severity: HIGH
+      verification: "Collecte preuves avant diagnostic"
+
+    - id: D002
+      check: "Recherche Context7 + web (si --c7 ou --seq)"
+      severity: MEDIUM
+      verification: "MCP utilises pour recherche"
+
+    - id: D003
+      check: "Thought tree genere (sauf mode Trivial)"
+      severity: HIGH
+      verification: "Arbre de pensee pour analyse"
+
+    - id: D004
+      check: "Skill debugging-strategy charge"
+      severity: HIGH
+      verification: "Strategies de debug disponibles"
+
+  routing:
+    - id: D010
+      check: "Seuils routing documentes (Trivial/Quick/Complet)"
+      severity: CRITICAL
+      verification: "Criteres de selection du mode"
+
+    - id: D011
+      check: "Mode Trivial: fix direct < 5 min"
+      severity: HIGH
+      verification: "Pas d'overhead"
+
+    - id: D012
+      check: "Mode Quick: @code-reviewer + TDD"
+      severity: HIGH
+      verification: "Review avant fix"
+
+    - id: D013
+      check: "Mode Complet: Full Debug Report"
+      severity: HIGH
+      verification: "Rapport complet genere"
+
+  resolution:
+    - id: D020
+      check: "Solution scoring pour mode Complet"
+      severity: HIGH
+      verification: "Plusieurs solutions evaluees"
+
+    - id: D021
+      check: "Breakpoint en mode Complet"
+      severity: HIGH
+      verification: "Validation avant application fix"
+
+    - id: D022
+      check: "Debug Report genere (sauf --no-report)"
+      severity: HIGH
+      verification: "Documentation du diagnostic"
+
+    - id: D023
+      check: "@code-reviewer invoque en mode Complet"
+      severity: HIGH
+      verification: "Review du fix"
+
+    - id: D024
+      check: "@security-auditor conditionnel (si bug securite)"
+      severity: HIGH
+      verification: "Audit si bug security-related"
+
+  turbo:
+    - id: D030
+      check: "Mode --turbo documente"
+      severity: MEDIUM
+      verification: "Haiku diagnostic → best solution auto-apply"
+
+    - id: D031
+      check: "Mode --full documente"
+      severity: MEDIUM
+      verification: "Force mode Complet"
+
+---
+
+# Severite des checks
+severity_levels:
+  CRITICAL:
+    description: "Bloque le fonctionnement - doit etre corrige immediatement"
+    weight: 1.0
+
+  HIGH:
+    description: "Impact significatif - doit etre corrige rapidement"
+    weight: 0.8
+
+  MEDIUM:
+    description: "Impact modere - devrait etre corrige"
+    weight: 0.5
+
+  LOW:
+    description: "Impact mineur - nice to have"
+    weight: 0.2

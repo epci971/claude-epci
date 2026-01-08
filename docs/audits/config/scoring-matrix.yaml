@@ -1,0 +1,317 @@
+# Scoring Matrix — Audit Commandes EPCI
+# Version: 1.0
+# Usage: Criteres de scoring pour audits individuels de commandes
+
+---
+
+# Criteres Fixes (appliques a toutes les commandes)
+# Total: 100% → 60% du score final
+fixed_criteria:
+  efficacite:
+    weight: 20
+    description: "Valeur delivree vs overhead — ratio benefice/cout"
+    scoring_guide:
+      90-100: "Workflow optimal, pas de surcharge inutile"
+      75-89: "Bon ratio, quelques etapes superflues"
+      60-74: "Overhead notable, simplifications possibles"
+      40-59: "Trop de ceremony pour la valeur apportee"
+      0-39: "Workflow contre-productif"
+    indicators:
+      - "Nombre d'etapes obligatoires vs optionnelles"
+      - "Temps moyen d'execution vs valeur produite"
+      - "Ratio actions automatiques vs manuelles"
+
+  robustesse:
+    weight: 15
+    description: "Gestion des erreurs, validations, breakpoints de securite"
+    scoring_guide:
+      90-100: "Gestion complete des erreurs, recovery automatique"
+      75-89: "Bonne gestion, quelques edge cases non couverts"
+      60-74: "Gestion basique, erreurs parfois silencieuses"
+      40-59: "Erreurs frequentes non gerees"
+      0-39: "Crashes frequents, pas de validation"
+    indicators:
+      - "Presence de breakpoints strategiques"
+      - "Validation des inputs"
+      - "Messages d'erreur explicites"
+      - "Mecanismes de rollback/recovery"
+
+  maintenabilite:
+    weight: 15
+    description: "Structure du code, fragmentation, facilite de modification"
+    scoring_guide:
+      90-100: "Structure claire, modular, facile a modifier"
+      75-89: "Bonne structure, quelques sections denses"
+      60-74: "Comprehensible mais refactoring souhaitable"
+      40-59: "Structure confuse, modifications risquees"
+      0-39: "Spaghetti code, impossible a maintenir"
+    indicators:
+      - "LOC < 500 (OK), 500-1000 (WARN), >1000 (ERROR)"
+      - "Separation des concerns"
+      - "References externes bien organisees"
+      - "Documentation inline"
+
+  experience_dev:
+    weight: 15
+    description: "UX developpeur — clarte des messages, feedback, guidance"
+    scoring_guide:
+      90-100: "UX excellente, messages clairs, guidance proactive"
+      75-89: "Bonne UX, quelques ambiguites"
+      60-74: "UX correcte, feedback parfois manquant"
+      40-59: "UX frustrante, messages confus"
+      0-39: "UX hostile, pas de feedback"
+    indicators:
+      - "Messages d'etat clairs a chaque etape"
+      - "Breakpoints avec instructions explicites"
+      - "Suggestions contextuelles"
+      - "Progression visible"
+
+  tracabilite:
+    weight: 10
+    description: "Documentation, logging, historique des actions"
+    scoring_guide:
+      90-100: "Tracabilite complete, audit trail"
+      75-89: "Bonne tracabilite, quelques gaps"
+      60-74: "Tracabilite basique"
+      40-59: "Peu de traces, debug difficile"
+      0-39: "Aucune tracabilite"
+    indicators:
+      - "Feature Document mis a jour"
+      - "Hooks de logging"
+      - "Historique dans project-memory"
+      - "Commit context genere"
+
+  flexibilite:
+    weight: 10
+    description: "Flags, modes, options de personnalisation"
+    scoring_guide:
+      90-100: "Tres flexible, nombreuses options coherentes"
+      75-89: "Bonne flexibilite, options principales couvertes"
+      60-74: "Options limitees mais suffisantes"
+      40-59: "Rigide, peu d'options"
+      0-39: "Aucune flexibilite"
+    indicators:
+      - "Nombre de flags documentes"
+      - "Modes alternatifs (turbo, safe, etc.)"
+      - "Auto-detection et suggestions"
+      - "Override possible"
+
+  performance:
+    weight: 10
+    description: "Vitesse, efficacite tokens, latence"
+    scoring_guide:
+      90-100: "Rapide, tokens optimises"
+      75-89: "Performance correcte, quelques lenteurs"
+      60-74: "Acceptable, optimisations possibles"
+      40-59: "Lent, consommation tokens excessive"
+      0-39: "Tres lent, timeouts frequents"
+    indicators:
+      - "Temps d'execution moyen"
+      - "Tokens estimes < 5000"
+      - "Appels paralleles utilises"
+      - "Caching/memoization"
+
+  adoption:
+    weight: 5
+    description: "Facilite d'apprentissage, documentation, onboarding"
+    scoring_guide:
+      90-100: "Courbe d'apprentissage douce, doc complete"
+      75-89: "Facile a prendre en main, doc suffisante"
+      60-74: "Apprentissage moyen, doc partielle"
+      40-59: "Difficile sans accompagnement"
+      0-39: "Quasi impossible a utiliser sans expertise"
+    indicators:
+      - "Documentation complete"
+      - "Exemples fournis"
+      - "Messages d'aide clairs"
+      - "Comportements par defaut sensibles"
+
+---
+
+# Criteres Adaptatifs (specifiques par commande)
+# Total: 100% → 40% du score final
+adaptive_criteria:
+
+  brainstorm:
+    description: "Criteres specifiques pour /brainstorm — Feature Discovery"
+    criteria:
+      progression_ems:
+        weight: 25
+        description: "Guidage de la maturation via EMS (Exploration Maturity Score)"
+        indicators:
+          - "EMS calcule a chaque iteration"
+          - "5 axes evalues (clarity, feasibility, scope, risks, technical)"
+          - "Progression visible vers EMS > 70"
+          - "Recommandations basees sur axes faibles"
+
+      qualite_convergence:
+        weight: 25
+        description: "Efficacite de la phase Convergent et generation du brief"
+        indicators:
+          - "@planner invoque en phase Convergent"
+          - "Section-by-section validation"
+          - "Brief complet genere (brief-[slug].md)"
+          - "Journal de session genere (journal-[slug].md)"
+
+      gestion_sessions:
+        weight: 25
+        description: "Persistence, resume, archive des sessions"
+        indicators:
+          - "Detection session existante"
+          - "Resume possible apres interruption"
+          - "Archive des sessions terminees"
+          - "Sauvegarde dans .project-memory/brainstorm-sessions/"
+
+      variete_techniques:
+        weight: 25
+        description: "Application appropriee des techniques de brainstorming"
+        indicators:
+          - "@technique-advisor disponible"
+          - "Techniques appliquees selon contexte (5whys, premortem, etc.)"
+          - "Spike integre pour incertitudes techniques"
+          - "Personas adaptatifs (Architecte, Sparring, Pragmatique)"
+
+  brief:
+    description: "Criteres specifiques pour /brief — Routing et Exploration"
+    criteria:
+      precision_routing:
+        weight: 30
+        description: "Detection correcte de la complexite (TINY/SMALL/STANDARD/LARGE)"
+        indicators:
+          - "Criteres de complexite documentes"
+          - "Routing vers /quick ou /epci correct"
+          - "Feature Document cree pour STANDARD/LARGE"
+          - "Inline brief pour TINY/SMALL"
+
+      detection_auto:
+        weight: 25
+        description: "Auto-detection personas, MCP, flags"
+        indicators:
+          - "Personas detectes avec score > 0.6"
+          - "MCP auto-active selon matrice"
+          - "Flags suggeres selon contexte"
+          - "Stack detecte automatiquement"
+
+      efficacite_turbo:
+        weight: 25
+        description: "Gain de temps en mode --turbo"
+        indicators:
+          - "Mode turbo documente"
+          - "@clarifier utilise pour questions rapides"
+          - "Reduction des breakpoints"
+          - "Temps d'execution reduit"
+
+      qualite_brief:
+        weight: 20
+        description: "Qualite du brief genere (inline ou Feature Document)"
+        indicators:
+          - "Brief fonctionnel complet"
+          - "Acceptance criteria definis"
+          - "Dependances identifiees"
+          - "Reformulation si artefacts vocaux detectes"
+
+  epci:
+    description: "Criteres specifiques pour /epci — Workflow Complet 3 Phases"
+    criteria:
+      conformite_tdd:
+        weight: 25
+        description: "Adherence au cycle RED-GREEN-REFACTOR"
+        indicators:
+          - "Tests ecrits AVANT implementation"
+          - "Cycle RED-GREEN-REFACTOR documente"
+          - "Tests executés et verifes"
+          - "Refactoring effectue"
+
+      transitions_phases:
+        weight: 25
+        description: "Efficacite des breakpoints entre phases"
+        indicators:
+          - "BP1 apres Phase 1 (plan valide)"
+          - "BP2 apres Phase 2 (code implemente)"
+          - "Instructions claires a chaque breakpoint"
+          - "Resume possible apres interruption"
+
+      orchestration_agents:
+        weight: 30
+        description: "Invocation correcte des subagents"
+        indicators:
+          - "@plan-validator en Phase 1"
+          - "@code-reviewer obligatoire en Phase 2"
+          - "@security-auditor si fichiers sensibles"
+          - "@qa-reviewer si tests complexes"
+          - "@doc-generator en Phase 3"
+
+      documentation:
+        weight: 20
+        description: "Completude du Feature Document"
+        indicators:
+          - "§1 Brief lu"
+          - "§2 Plan genere via Edit"
+          - "§3 Implementation documentee"
+          - ".epci-commit-context.json genere"
+
+  debug:
+    description: "Criteres specifiques pour /debug — Resolution de Bugs"
+    criteria:
+      vitesse_resolution:
+        weight: 25
+        description: "Temps de resolution par mode (Trivial/Quick/Complet)"
+        indicators:
+          - "Trivial: < 5 min"
+          - "Quick: < 30 min"
+          - "Complet: raisonnable selon complexite"
+          - "Pas de sur-investigation"
+
+      precision_diagnostic:
+        weight: 30
+        description: "Exactitude de l'identification de la cause racine"
+        indicators:
+          - "Evidence gathering documente"
+          - "Thought tree genere"
+          - "Cause racine identifiee avant fix"
+          - "Verification via Context7/web"
+
+      qualite_solution:
+        weight: 25
+        description: "Maintenabilite et robustesse du fix"
+        indicators:
+          - "Fix non-regressif"
+          - "Tests ajoutes si pertinent"
+          - "Code review si mode Complet"
+          - "Documentation du fix"
+
+      precision_routing:
+        weight: 20
+        description: "Choix correct du mode (Trivial/Quick/Complet)"
+        indicators:
+          - "Seuils de routing documentes"
+          - "Escalation si necessaire"
+          - "Pas de sur-qualification"
+          - "Pas de sous-qualification"
+
+---
+
+# Score Final
+# Formula: (Fixed Score * 0.60) + (Adaptive Score * 0.40)
+
+score_interpretation:
+  90-100:
+    label: "Excellent"
+    color: "#00C853"
+    action: "Maintenance preventive uniquement"
+  75-89:
+    label: "Bon"
+    color: "#64DD17"
+    action: "Ameliorations mineures recommandees"
+  60-74:
+    label: "Acceptable"
+    color: "#FFAB00"
+    action: "Ameliorations necessaires"
+  40-59:
+    label: "Insuffisant"
+    color: "#FF6D00"
+    action: "Refonte partielle requise"
+  0-39:
+    label: "Critique"
+    color: "#DD2C00"
+    action: "Refonte majeure urgente"
