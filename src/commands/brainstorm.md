@@ -1,21 +1,26 @@
 ---
 description: >-
-  Brainstorming guide v4.8 pour decouvrir et specifier une feature.
+  Brainstorming guide v4.8.1 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
   Auto-selection techniques basee sur axes faibles, mix de techniques.
+  Finalization Checkpoint obligatoire a EMS >= 70 (bloquant).
   Session persistence, energy checkpoints, 3-5 questions avec A/B/C.
   Use when: idee vague a transformer en specs, incertitude technique.
 argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
-# /brainstorm — Feature Discovery v4.8
+# /brainstorm — Feature Discovery v4.8.1
 
 ## Overview
 
 Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
+
+**Nouveautes v4.8.1**:
+- **Finalization Checkpoint** obligatoire a EMS >= 70 (bloquant)
+- Pas de finalisation automatique — toujours choix explicite
 
 **Nouveautes v4.8**:
 - Auto-selection de techniques basee sur axes EMS faibles (< 50)
@@ -82,9 +87,22 @@ Boucle jusqu'a `finish`:
    PHASE TRANSITION | EMS: 50/100
    [1] Continuer Divergent  [2] Passer Convergent  [3] Technique
    ```
-5. **Generer 3-5 questions** avec suggestions A/B/C
-6. **Afficher breakpoint compact**
-7. **Preview check** (si Convergent et EMS >= 65):
+5. **Finalization checkpoint** (si EMS >= 85):
+   ```
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   FINALIZATION CHECKPOINT | EMS: XX/100
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Le brief est suffisamment mature pour être finalisé.
+
+   [1] Continuer (plus d'itérations)
+   [2] Preview plan (@planner) sans finaliser
+   [3] Finaliser maintenant (finish)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ```
+   **IMPORTANT**: Ne JAMAIS finaliser automatiquement. Toujours attendre le choix explicite.
+6. **Generer 3-5 questions** avec suggestions A/B/C (si choix [1])
+7. **Afficher breakpoint compact**
+8. **Preview check** (si Convergent et EMS >= 65 et choix [2]):
    - Proposer `@planner preview? [Y/n]`
    - Si patterns auth: `@security-auditor preview? [Y/n]`
 
@@ -94,7 +112,7 @@ Boucle jusqu'a `finish`:
 
 **MANDATORY: Use Write tool to create BOTH files.**
 
-1. **@planner** (si pas preview fait OU EMS >= 70)
+1. **@planner** (si pas preview fait OU EMS >= 85)
 2. **@security-auditor** (si patterns auth ET pas preview)
 3. Create directory: `mkdir -p ./docs/briefs/[slug]`
 4. **Section-by-section validation** (si pas --quick/--turbo)
@@ -163,7 +181,7 @@ Boucle jusqu'a `finish`:
 | `@ems-evaluator` | haiku | Calcul EMS 5 axes |
 | `@technique-advisor` | haiku | Selection techniques |
 
-**@planner auto-invocation**: En phase Convergent OU quand EMS >= 70
+**@planner auto-invocation**: En phase Convergent OU quand EMS >= 85
 
 **@security-auditor auto-detection**: Si patterns auth/security/payment/api detectes
 

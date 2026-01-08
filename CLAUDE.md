@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 4.8.0 | **Date** : Janvier 2025
+> **Version** : 4.8.1 | **Date** : Janvier 2025
 
 ---
 
@@ -16,6 +16,12 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | **Modularité**      | 26 Skills, 12 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v4.8.1 (Finalization Checkpoint)
+
+- **Finalization Checkpoint obligatoire** : À EMS >= 70, checkpoint bloquant avec choix [1] Continuer / [2] Preview / [3] Finaliser
+- **Pas de finalisation automatique** : Ne JAMAIS passer en Phase 3 sans choix explicite utilisateur
+- **Preview sans finalisation** : Option [2] permet de voir le plan @planner puis revenir au brainstorm
 
 ### Nouveautés v4.8 (Auto-Techniques Brainstorm)
 

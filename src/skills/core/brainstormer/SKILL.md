@@ -9,7 +9,7 @@ description: >-
 allowed-tools: [Read, Write, Glob, Grep, Task]
 ---
 
-# Brainstormer v4.8
+# Brainstormer v4.8.1
 
 ## Overview
 
@@ -81,12 +81,15 @@ Output: 5-axis scores, composite, delta, weak_axes, recommendations
 
 **Thresholds:**
 
-| EMS Range | Recommendation | Technique Trigger |
-|-----------|----------------|-------------------|
-| 0-49 | CONTINUE | Si axe < 50 → SUGGEST_TECHNIQUE |
-| 50-69 | SUGGEST_CONVERGE | Si axe < 50 → SUGGEST_TECHNIQUE |
-| 70-84 | SUGGEST_FINISH | Non (proche finish) |
-| 85-100 | FINISH | Non |
+| EMS Range | Recommendation | Technique Trigger | Checkpoint |
+|-----------|----------------|-------------------|------------|
+| 0-49 | CONTINUE | Si axe < 50 → SUGGEST_TECHNIQUE | - |
+| 50-69 | SUGGEST_CONVERGE | Si axe < 50 → SUGGEST_TECHNIQUE | Transition (EMS=50) |
+| 70-84 | FINALIZATION_CHECKPOINT | Non (proche finish) | **Finalization** |
+| 85-100 | FINALIZATION_CHECKPOINT | Non | **Finalization** |
+
+**IMPORTANT**: À EMS >= 70, NE JAMAIS finaliser automatiquement.
+Toujours afficher le Finalization Checkpoint et attendre le choix explicite.
 
 ## Technique Selection (via @technique-advisor)
 
@@ -191,11 +194,36 @@ Questions:
 -------------------------------------------------------
 ```
 
+## Finalization Checkpoint
+
+**Trigger:** EMS >= 85 (première fois atteint dans la session)
+
+**Format obligatoire:**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FINALIZATION CHECKPOINT | EMS: XX/100
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Le brief est suffisamment mature pour être finalisé.
+
+[1] Continuer (plus d'itérations)
+[2] Preview plan (@planner) sans finaliser
+[3] Finaliser maintenant (finish)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Comportement selon choix:**
+- [1] Continuer → génère 3-5 questions, poursuit itérations normalement
+- [2] Preview → invoque @planner, affiche plan, PUIS redemande [1]/[3]
+- [3] Finaliser → passe en Phase 3 Generation
+
+**CRITICAL:** Ce checkpoint est BLOQUANT. Ne pas continuer sans réponse explicite.
+
 ## @planner Integration
 
-**Auto-invocation:** Phase Convergent OU EMS >= 70
+**Invocation:** Uniquement sur choix explicite [2] au Finalization Checkpoint
+ou commande `plan-preview`
 
-**Confirmation:** `Lancer @planner? [Y/n]`
+**Confirmation préalable:** `Lancer @planner? [Y/n]`
 
 Invoke via Task tool (model: sonnet).
 Output integre dans brief section "Preliminary Plan".
@@ -252,8 +280,12 @@ Prochaine etape: Lancer /brief avec le contenu du brief.
 - Breakpoint > 15 lignes
 - Ignorer contexte codebase
 - `finish` avant EMS 60
+- Finaliser automatiquement à EMS >= 70 (CRITIQUE)
+- Invoquer @planner sans choix explicite utilisateur
 
 **Toujours faire:**
 - Invoquer @ems-evaluator a chaque iteration
 - Proposer suggestions avec questions
 - Respecter format compact CLI
+- Afficher Finalization Checkpoint à EMS >= 70
+- Attendre réponse explicite [1]/[2]/[3] avant action
