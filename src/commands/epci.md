@@ -14,6 +14,27 @@ allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 Structured workflow in 3 phases with validation at each step.
 Generates a Feature Document as traceability thread.
 
+```mermaid
+flowchart LR
+    subgraph P1["Phase 1"]
+        FD["Read §1"] --> Plan["Plan"] --> PV["@plan-validator"]
+    end
+    subgraph P2["Phase 2"]
+        TDD["TDD"] --> CR["@code-reviewer"]
+    end
+    subgraph P3["Phase 3"]
+        Doc["@doc-generator"] --> Commit["Commit"]
+    end
+
+    PV --> BP1["BP1"]
+    BP1 -->|Continue| TDD
+    CR --> BP2["BP2"]
+    BP2 -->|Continue| Doc
+
+    style BP1 fill:#ffd700
+    style BP2 fill:#ffd700
+```
+
 ## Arguments
 
 ### Workflow Control
@@ -97,49 +118,20 @@ Generates a Feature Document as traceability thread.
 | Minor fixes | User approval | Auto-applied |
 | Est. time savings | - | 30-50% |
 
-### Thinking Flags
+### Key Flags for /epci
 
 | Flag | Effect | Auto-Trigger |
 |------|--------|--------------|
-| `--think` | Standard analysis (~4K tokens) | 3-10 files |
-| `--think-hard` | Deep analysis (~10K tokens) | >10 files, refactoring |
-| `--ultrathink` | Critical analysis (~32K tokens) | Never (explicit only) |
+| `--turbo` | Speed mode (@planner, @implementer, parallel reviews, 1 BP) | Suggested if `.project-memory/` exists |
+| `--large` | Alias for `--think-hard --wave` | Never |
+| `--safe` | Max validations, all conditional agents mandatory | Sensitive files |
+| `--wave` | DAG-based parallel agent execution | complexity > 0.7 |
+| `--no-hooks` | Disable all hook execution | Never |
 
-### Safety Flags
-
-| Flag | Effect | Auto-Trigger |
-|------|--------|--------------|
-| `--safe` | Maximum validations, extra confirmations | Sensitive files |
-
-### Output Flags
-
-| Flag | Effect | Auto-Trigger |
-|------|--------|--------------|
-| `--uc` | Ultra-compressed output (30-50% reduction) | context > 75% |
-| `--verbose` | Full detailed output | Never |
-
-### Orchestration Flags
-
-| Flag | Effect | Auto-Trigger |
-|------|--------|--------------|
-| `--wave` | Enable multi-wave DAG orchestration | complexity > 0.7 |
-| `--wave-strategy` | `progressive` (default) or `systematic` | With --wave |
-| `--sequential` | Force sequential agent execution | Never |
-| `--parallel` | Force all agents in parallel (ignores DAG) | Never |
-
-### MCP Flags (F12)
-
-| Flag | Effect | Auto-Trigger |
-|------|--------|--------------|
-| `--c7` | Enable Context7 (library docs) | persona architect/backend/doc |
-| `--seq` | Enable Sequential (multi-step reasoning) | `--think-hard`, persona architect/security |
-| `--magic` | Enable Magic (UI generation) | persona frontend |
-| `--play` | Enable Playwright (E2E tests) | persona frontend/qa |
-| `--no-mcp` | Disable all MCP servers | Never |
-
-**MCP Reference:** See `src/skills/mcp/SKILL.md` for complete documentation.
-
-**Flag Reference:** See `src/settings/flags.md` for complete documentation.
+**Full flag documentation:** `src/settings/flags.md`
+- Thinking flags (`--think`, `--think-hard`, `--ultrathink`)
+- Output flags (`--uc`, `--verbose`)
+- MCP flags (`--c7`, `--seq`, `--magic`, `--play`, `--no-mcp`) → see `src/skills/mcp/SKILL.md`
 
 ## Feature Document
 
@@ -249,6 +241,71 @@ overrides can be placed in `.project-memory/orchestration.yaml`.
 
 ---
 
+## Feature Document Prerequisite Check (MANDATORY)
+
+**⚠️ CRITICAL: This check MUST pass before Phase 1 can begin.**
+
+### Step 1: Verify Feature Document Exists
+
+```
+IF NOT exists(docs/features/<slug>.md):
+  ╔══════════════════════════════════════════════════════════════╗
+  ║ ❌ ERROR: Feature Document Not Found                         ║
+  ╠══════════════════════════════════════════════════════════════╣
+  ║ Expected: docs/features/<slug>.md                            ║
+  ║                                                              ║
+  ║ → Run `/brief "<feature description>"` first                 ║
+  ╚══════════════════════════════════════════════════════════════╝
+  ABORT workflow
+```
+
+### Step 2: Verify §1 Brief Fonctionnel Exists
+
+```
+IF NOT contains_section("## §1 — Brief Fonctionnel"):
+  ╔══════════════════════════════════════════════════════════════╗
+  ║ ❌ ERROR: §1 Brief Fonctionnel Missing                       ║
+  ╠══════════════════════════════════════════════════════════════╣
+  ║ Feature Document exists but §1 is incomplete.                ║
+  ║                                                              ║
+  ║ → Run `/brief` to complete functional brief                  ║
+  ╚══════════════════════════════════════════════════════════════╝
+  ABORT workflow
+```
+
+### Step 3: Verify Required Fields in §1
+
+Required fields:
+- Context technique (stack, dependencies)
+- Objectif (what to achieve)
+- At least 1 acceptance criterion
+
+```
+IF missing_required_fields:
+  ╔══════════════════════════════════════════════════════════════╗
+  ║ ⚠️ WARNING: Incomplete §1 Brief                              ║
+  ╠══════════════════════════════════════════════════════════════╣
+  ║ Missing fields:                                              ║
+  ║ • [list of missing fields]                                   ║
+  ╠══════════════════════════════════════════════════════════════╣
+  ║ OPTIONS:                                                     ║
+  ║ 1. "continue" → Proceed anyway (not recommended)             ║
+  ║ 2. "brief" → Run /brief to complete §1                       ║
+  ╚══════════════════════════════════════════════════════════════╝
+  WAIT for user choice
+```
+
+### Validation Passed
+
+```
+IF all_checks_pass:
+  ✅ Feature Document validated: docs/features/<slug>.md
+  ✅ §1 Brief Fonctionnel: Complete
+  → Proceeding to Phase 1: Planification
+```
+
+---
+
 ## Phase 1: Planification (MANDATORY)
 
 **⚠️ ALL steps in this phase are MANDATORY. Do NOT skip any step.**
@@ -326,58 +383,27 @@ overrides can be placed in `.project-memory/orchestration.yaml`.
 python3 src/hooks/runner.py post-phase-1 --context '{"phase": "phase-1", "feature_slug": "<slug>", "complexity": "<complexity>"}'
 ```
 
-### ⏸️ BREAKPOINT (MANDATORY — WAIT FOR USER)
+### ⏸️ BREAKPOINT BP1 (MANDATORY — WAIT FOR USER)
 
 **⚠️ MANDATORY:** Display this breakpoint and WAIT for user confirmation before proceeding.
 
 **🪝 Execute `on-breakpoint` hooks** (if configured)
 
-Generate an enriched breakpoint using the `breakpoint-metrics` skill:
+**Template:** Use `breakpoint-metrics/templates/bp1-template.md`
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ⏸️  BREAKPOINT PHASE 1 — Plan Validé                                │
-├─────────────────────────────────────────────────────────────────────┤
-│ FLAGS: {FLAG1} ({source}) | {FLAG2} ({source}) | ...               │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 📊 MÉTRIQUES                                                        │
-│ ├── Complexité: {CATEGORY} (score: {SCORE})                        │
-│ ├── Fichiers impactés: {FILE_COUNT}                                │
-│ ├── Temps estimé: {TIME_ESTIMATE}                                  │
-│ └── Risque: {RISK_LEVEL} ({RISK_DESCRIPTION})                      │
-│                                                                     │
-│ ✅ VALIDATIONS                                                      │
-│ ├── @plan-validator: {VERDICT}                                     │
-│ │   ├── Completeness: {STATUS}                                     │
-│ │   ├── Consistency: {STATUS}                                      │
-│ │   ├── Feasibility: {STATUS}                                      │
-│ │   └── Quality: {STATUS}                                          │
-│ └── Skills chargés: {SKILLS_LIST}                                  │
-│                                                                     │
-│ 📋 PREVIEW PHASE 2                                                  │
-│ ├── Tâche 1: {TASK_1} ({TIME})                                     │
-│ ├── Tâche 2: {TASK_2} ({TIME})                                     │
-│ ├── Tâche 3: {TASK_3} ({TIME})                                     │
-│ └── ... ({N} tâches restantes)                                     │
-│                                                                     │
-│ 🔗 Feature Document: docs/features/{slug}.md                       │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ Options:                                                            │
-│   • Tapez "Continuer" → Passer à Phase 2 (Implémentation)         │
-│   • Tapez "Modifier le plan" → Réviser le plan                     │
-│   • Tapez "Voir détails" → Afficher Feature Document complet       │
-│   • Tapez "Annuler" → Abandonner le workflow                       │
-└─────────────────────────────────────────────────────────────────────┘
-```
+**Variables to populate:**
+| Variable | Source |
+|----------|--------|
+| `FLAGS` | Active flags with sources (auto/explicit/alias) |
+| `CATEGORY`, `SCORE` | Complexity score from breakpoint-metrics formula |
+| `FILE_COUNT` | From §2 Implementation Plan |
+| `TIME_ESTIMATE` | Heuristic: TINY=15min, SMALL=1h, STANDARD=3h, LARGE=8h+ |
+| `RISK_LEVEL` | From identified risks in plan |
+| `PLAN_VALIDATOR_VERDICT` | From @plan-validator output |
+| `TASK_PREVIEW` | First 3 tasks from §2 |
+| `SLUG` | Feature slug |
 
-**Flag sources:** `(auto)` = auto-activated, `(explicit)` = user-specified, `(alias)` = expanded from --large
-
-**Metrics Calculation** (from `breakpoint-metrics` skill):
-- Complexity score: `files×0.3 + LOC×0.3 + deps×0.2 + risk×0.2`
-- Time estimate: Based on category heuristic (TINY=15min, SMALL=1h, STANDARD=3h, LARGE=8h+)
-- Risk: Derived from identified risks in plan
+**User options:** "Continuer" / "Modifier le plan" / "Voir détails" / "Annuler"
 
 **Awaiting confirmation:** User must type "Continuer" to proceed
 
@@ -487,58 +513,32 @@ OK (47 tests, 156 assertions)
 python3 src/hooks/runner.py post-phase-2 --context '{"phase": "phase-2", "feature_slug": "<slug>", "files_modified": [...], "test_results": {...}}'
 ```
 
-### ⏸️ BREAKPOINT (MANDATORY — WAIT FOR USER)
+### ⏸️ BREAKPOINT BP2 (MANDATORY — WAIT FOR USER)
 
 **⚠️ MANDATORY:** Display this breakpoint and WAIT for user confirmation before proceeding.
 
 **🪝 Execute `on-breakpoint` hooks** (if configured)
 
-Generate an enriched breakpoint using the `breakpoint-metrics` skill:
+**Template:** Use `breakpoint-metrics/templates/bp2-template.md`
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ⏸️  BREAKPOINT PHASE 2 — Code Implémenté                            │
-├─────────────────────────────────────────────────────────────────────┤
-│ FLAGS: {FLAG1} ({source}) | {FLAG2} ({source}) | ...               │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 📊 MÉTRIQUES                                                        │
-│ ├── Tâches: {COMPLETED}/{TOTAL} complétées                         │
-│ ├── Tests: {TEST_COUNT} {TEST_STATUS}                              │
-│ ├── Coverage: {COVERAGE}%                                          │
-│ └── Déviations: {DEVIATION_STATUS}                                 │
-│                                                                     │
-│ ✅ VALIDATIONS                                                      │
-│ ├── @code-reviewer: {CR_VERDICT} ({CR_SUMMARY})                    │
-│ ├── @security-auditor: {SA_VERDICT}                                │
-│ └── @qa-reviewer: {QA_VERDICT}                                     │
-│                                                                     │
-│ 📋 PREVIEW PHASE 3                                                  │
-│ ├── Commit structuré avec message conventionnel                    │
-│ ├── Génération documentation (@doc-generator)                      │
-│ └── Préparation PR                                                 │
-│                                                                     │
-│ 🔗 Feature Document: docs/features/{slug}.md                       │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ Options:                                                            │
-│   • Tapez "Continuer" → Passer à Phase 3 (Finalisation)           │
-│   • Tapez "Corriger issues" → Adresser les problèmes signalés     │
-│   • Tapez "Voir rapports" → Afficher rapports des agents          │
-│   • Tapez "Annuler" → Abandonner le workflow                       │
-└─────────────────────────────────────────────────────────────────────┘
-```
+**Variables to populate:**
+| Variable | Source |
+|----------|--------|
+| `FLAGS` | Active flags with sources |
+| `TASKS_COMPLETED`, `TASKS_TOTAL` | From §3 Progress checklist |
+| `TEST_COUNT`, `TEST_STATUS` | From test execution results |
+| `COVERAGE` | From coverage report (if available) |
+| `CODE_REVIEWER_VERDICT` | From @code-reviewer output |
+| `SECURITY_AUDITOR_VERDICT` | From @security-auditor (if invoked) |
+| `QA_REVIEWER_VERDICT` | From @qa-reviewer (if invoked) |
+| `SLUG` | Feature slug |
 
-**Metrics Collection**:
-- Tasks: From §3 Progress checklist
-- Tests: From test execution results
-- Coverage: From test coverage report (if available)
-- Agent verdicts: From review reports
+**Conditional agents display:**
+- @security-auditor: Show only if auth/security files detected
+- @qa-reviewer: Show only if 5+ test files
+- In `--safe` mode: All agents mandatory
 
-**Conditional Agents Display**:
-- @security-auditor: Show only if invoked (auth/security files detected)
-- @qa-reviewer: Show only if invoked (complex tests detected)
-- In `--large` mode: All agents shown as mandatory
+**User options:** "Continuer" / "Corriger issues" / "Voir rapports" / "Annuler"
 
 **Awaiting confirmation:** User must type "Continuer" to proceed
 
@@ -713,6 +713,57 @@ The `--large` flag is an alias for `--think-hard --wave`. When used:
 ```
 
 This expands to `--think-hard --wave --safe`.
+
+---
+
+## Quick Reference
+
+### Workflow Summary
+
+```
+/brief → Feature Document §1
+  ↓
+/epci (Phase 1) → §2 Implementation Plan → BP1
+  ↓
+/epci (Phase 2) → TDD + Reviews → §3 Part 1 → BP2
+  ↓
+/epci (Phase 3) → Commit + Docs → §3 Part 2 → Complete
+```
+
+### Key Agents
+
+| Agent | Phase | Model | Role |
+|-------|-------|-------|------|
+| @plan-validator | P1 | opus | Gate-keeper validation |
+| @code-reviewer | P2 | opus | Quality review (mandatory) |
+| @security-auditor | P2 | opus | Security audit (conditional) |
+| @qa-reviewer | P2 | sonnet | Test review (conditional) |
+| @doc-generator | P3 | sonnet | Documentation generation |
+
+### Breakpoints
+
+| BP | Phase | Required Action |
+|----|-------|-----------------|
+| BP1 | After Phase 1 | Approve implementation plan |
+| BP2 | After Phase 2 | Approve code before finalization |
+
+### Common Flag Combinations
+
+| Use Case | Flags |
+|----------|-------|
+| Fast standard feature | `--turbo` |
+| Fast with quality gate | `--turbo --safe` |
+| Large refactoring | `--large` or `--think-hard --wave` |
+| Security-sensitive | `--safe --think-hard` |
+| CI/CD pipeline | `--no-hooks --uc` |
+
+### See Also
+
+- Full flags: `src/settings/flags.md`
+- Breakpoint metrics: `src/skills/core/breakpoint-metrics/SKILL.md`
+- MCP servers: `src/skills/mcp/SKILL.md`
+
+---
 
 ## Flag Compatibility Matrix
 

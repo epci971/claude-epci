@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 4.5.0 | **Date** : Janvier 2025
+> **Version** : 4.6.0 | **Date** : Janvier 2025
 
 ---
 
@@ -16,6 +16,15 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | **Modularité**      | 25 Skills, 12 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v4.6 (Brief Refactoring)
+
+- **Inversion reformulation/exploration** : La reformulation est maintenant AVANT l'exploration dans `/brief`
+- **Breakpoint validation obligatoire** : Toujours afficher un breakpoint apres reformulation pour valider le besoin
+- **Hooks pre-brief et post-brief actifs** : Nouveaux hooks pour tracabilite complete
+- **Fusion Analysis + Complexity** : Step 2 et Step 4 fusionnees pour eliminer la redondance
+- **@clarifier explicite** : Invocation @clarifier (Haiku) documentee dans mode --turbo
+- **Gestion erreur @Explore** : Fallback documente si exploration echoue
 
 ### Nouveautés v4.5 (Brainstorming v4.1 — SuperPowers Integration)
 
@@ -318,6 +327,10 @@ python3 src/hooks/runner.py post-phase-3 --context '{
 
 | Hook | Type | Fichier |
 |------|------|---------|
+| Brief logging pre-exploration | pre-brief | `pre-brief.py` |
+| Brief completion logging | post-brief | `post-brief.py` |
+| Debug session start | pre-debug | `pre-debug.py` |
+| Debug session record | post-debug | `post-debug.py` |
 | Memory context at breakpoints | on-breakpoint | `on-breakpoint-memory-context.py` |
 | Suggestions post-P2 | post-phase-2 | `post-phase-2-suggestions.py` |
 | Memory update post-P3 | post-phase-3 | `post-phase-3-memory-update.py` |

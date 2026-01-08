@@ -1,0 +1,14 @@
+{
+  "total_bugs": 1,
+  "by_mode": {
+    "trivial": 0,
+    "quick": 1,
+    "complet": 0
+  },
+  "success_rate": 100.0,
+  "avg_duration_by_mode": {
+    "trivial": 0,
+    "quick": 0,
+    "complet": 0
+  }
+}

@@ -33,39 +33,31 @@ Diagnose and fix bugs systematically with:
 | `--context <path>` | Link to existing Feature Document |
 | `--commit` | Generate commit context after fix, suggest /commit |
 
-### --turbo Mode (MANDATORY Instructions)
+### --turbo Mode
 
-**⚠️ MANDATORY: When `--turbo` flag is active, you MUST follow these rules:**
+**Comparison: Standard vs Turbo**
 
-1. **Use Haiku model for initial diagnostic**:
-   ```
-   Use model: haiku for Phase 1 diagnostic
-   Focus: Fast root cause identification
-   Skip: Detailed thought tree elaboration
-   ```
+| Aspect | Standard | Turbo |
+|--------|----------|-------|
+| Diagnostic model | Sonnet | **@clarifier (Haiku)** |
+| Thought tree | Full | Simplified/Skip |
+| Solution selection | Multiple + scoring | Best only (auto-apply) |
+| Breakpoint | Required (Complet) | Skipped |
+| Confidence threshold | N/A | 70% (fallback if lower) |
+| Report | Full Debug Report | Summary only |
 
-2. **Single solution only** — No solution scoring, apply best solution immediately
+**Turbo Agent Invocation:**
 
-3. **Skip breakpoint** — No confirmation needed, auto-proceed with highest confidence solution
-
-4. **Minimal report** — If Complet mode, generate compact Debug Report (summary only)
-
-5. **Auto-verify** — Run tests immediately after fix, report result
-
-**Turbo Process:**
 ```
-Error → Haiku Diagnostic → Best Solution → Auto-Apply → Verify → Done
-                              ↓
-                      Confidence < 70%? → Fallback to standard mode
+Task: Launch @clarifier agent for Phase 1 diagnostic
+subagent_type: epci:clarifier
+model: haiku
+prompt: "Analyze this error and identify the most likely root cause with confidence %: [error]"
 ```
 
-**Turbo Routing Override:**
+**Turbo Process:** `Error → @clarifier → Best Solution → Auto-Apply → Verify → Done`
 
-| Standard Mode | Turbo Mode |
-|---------------|------------|
-| Trivial | Same (direct fix) |
-| Quick | Turbo (auto-apply, no tree) |
-| Complet | Turbo Complet (single solution, no BP) |
+**Fallback:** If @clarifier confidence < 70%, switch to standard mode automatically.
 
 ## Configuration
 
@@ -153,15 +145,17 @@ Collect available information:
 
 Apply thresholds:
 
-| Criterion | Value | Mode Indicated |
-|-----------|-------|----------------|
-| Causes | {count} | {mode} |
-| Est. LOC | {loc} | {mode} |
-| Files | {count} | {mode} |
-| Risk | {level} | {mode} |
-| Uncertainty | {%} | {mode} |
+| Criterion | Trivial | Quick | Complet |
+|-----------|---------|-------|---------|
+| Causes | 1 (obvious) | 1 | 2+ |
+| Est. LOC | < 10 | < 50 | >= 50 |
+| Files | 1 | 1-2 | 3+ |
+| Risk | None | Low | Medium+ |
+| Uncertainty | < 5% | < 20% | >= 20% |
 
-**Routing Decision**: {TRIVIAL | QUICK | COMPLET}
+**Rule**: >= 2 Complet criteria → Complet mode
+
+**Routing Decision**: Evaluate against thresholds above
 
 **🪝 Execute `post-diagnostic` hooks** (if configured)
 
@@ -197,8 +191,9 @@ No further action needed.
 **Process**:
 1. Display thought tree (simplified)
 2. Propose solution
-3. Implement fix
-4. Run verification
+3. **Write test(s) for the fix** (TDD approach)
+4. Implement fix
+5. Run verification (tests must pass)
 
 **Output**:
 ```
@@ -281,9 +276,15 @@ Generate multiple solutions with scores:
 2. Run tests
 3. Invoke @code-reviewer
 
-**Conditional**: Invoke @security-auditor if:
-- Files match: `**/auth/**`, `**/security/**`, `**/api/**`
-- Keywords: `password`, `secret`, `jwt`, `oauth`
+**Conditional agents**:
+
+- **@security-auditor** if:
+  - Files match: `**/auth/**`, `**/security/**`, `**/api/**`
+  - Keywords: `password`, `secret`, `jwt`, `oauth`
+
+- **@qa-reviewer** if:
+  - Test files created or modified
+  - >= 3 test cases added
 
 #### Step C.4: Generate Debug Report (USE WRITE TOOL)
 
