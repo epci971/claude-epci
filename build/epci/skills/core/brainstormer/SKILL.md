@@ -1,15 +1,15 @@
 ---
 name: brainstormer
 description: >-
-  Feature discovery et brainstorming guide pour EPCI v4.3. Workflow avec
+  Feature discovery et brainstorming guide pour EPCI v4.8. Workflow avec
   personas adaptatifs (Architecte, Sparring, Pragmatique), phases Divergent/
-  Convergent, scoring EMS v2 via @ems-evaluator, techniques via @technique-advisor.
+  Convergent, scoring EMS v2 via @ems-evaluator, auto-techniques via @technique-advisor.
   Use when: /brainstorm invoked, feature discovery needed.
   Not for: implementation tasks, code generation, simple questions.
 allowed-tools: [Read, Write, Glob, Grep, Task]
 ---
 
-# Brainstormer v4.3
+# Brainstormer v4.8
 
 ## Overview
 
@@ -54,8 +54,8 @@ un processus iteratif guide avec personas adaptatifs.
 | `@clarifier` | haiku | Questions turbo mode |
 | `@planner` | sonnet | Plan en phase Convergent |
 | `@security-auditor` | opus | Audit securite conditionnel |
-| `@ems-evaluator` | haiku | Calcul EMS 5 axes (v4.3) |
-| `@technique-advisor` | haiku | Selection techniques (v4.3) |
+| `@ems-evaluator` | haiku | Calcul EMS 5 axes + weak_axes (v4.8) |
+| `@technique-advisor` | haiku | Auto-selection techniques (v4.8) |
 
 ## EMS Calculation (via @ems-evaluator)
 
@@ -72,26 +72,92 @@ Axes (weights):
 ```
 Task tool -> @ems-evaluator (haiku)
 Input: current brief state, previous EMS, open questions
-Output: 5-axis scores, composite, delta, recommendations
+Output: 5-axis scores, composite, delta, weak_axes, recommendations
 ```
 
+**Output includes (v4.8+):**
+- `weak_axes[]` — Liste des axes avec score < 50
+- Trigger auto-technique si `weak_axes` non vide
+
 **Thresholds:**
-- EMS < 50: Continue Divergent
-- EMS 50-69: Suggest Converge
-- EMS >= 70: Suggest Finish or @planner
+
+| EMS Range | Recommendation | Technique Trigger |
+|-----------|----------------|-------------------|
+| 0-49 | CONTINUE | Si axe < 50 → SUGGEST_TECHNIQUE |
+| 50-69 | SUGGEST_CONVERGE | Si axe < 50 → SUGGEST_TECHNIQUE |
+| 70-84 | SUGGEST_FINISH | Non (proche finish) |
+| 85-100 | FINISH | Non |
 
 ## Technique Selection (via @technique-advisor)
 
-**Invoke @technique-advisor when:**
-- `technique [name]` command invoked
-- `--random` flag triggers selection
-- EMS axis weak and technique could help
+### Auto-Invocation (v4.8+)
 
-**Invocation:**
+**Declenchement automatique** a chaque iteration si:
+1. Au moins un axe EMS < 50 (retourne par `@ems-evaluator` dans `weak_axes`)
+2. Technique correspondante pas utilisee dans les 2 dernieres iterations
+3. Pas en mode `--no-technique`
+
+**Invocation manuelle:**
+- `technique [name]` — Applique technique specifique
+- `--random` flag — Selection aleatoire
+
+### Mapping EMS → Technique
+
+| Axe Faible | Technique Primaire | Techniques Secondaires |
+|------------|-------------------|------------------------|
+| Clarte < 50 | question-storming | 5whys, first-principles |
+| Profondeur < 50 | first-principles | 5whys, dive |
+| Couverture < 50 | six-hats | scamper, what-if |
+| Decisions < 50 | moscow | scoring, swot |
+| Actionnabilite < 50 | premortem | constraint-mapping |
+
+### Mix de Techniques
+
+Quand 2+ axes sont faibles:
+- Combiner 1 technique par axe faible (max 2)
+- Privilegier techniques complementaires (Divergent + Convergent)
+- Eviter 2 techniques de meme categorie
+- Ordre: Divergent d'abord, puis Convergent
+
+### Format Proposition
+
+**Technique unique:**
+```
+💡 Technique suggérée: [NOM] ([CATEGORIE])
+   Raison: Axe [X] à [Y]% — [effet attendu]
+
+→ Appliquer? [Y/n/autre]
+```
+
+**Mix (2+ axes faibles):**
+```
+💡 TECHNIQUES SUGGÉRÉES | Iteration [N]
+
+Axes faibles: [Axis1] ([X]%), [Axis2] ([Y]%)
+
+[1] [Technique1] → [Axis1]
+[2] [Technique2] → [Axis2]
+
+→ [1] / [2] / [b]oth / [n]one
+```
+
+### Session Tracking
+
+Ajouter dans session YAML (`techniques_history`):
+```yaml
+techniques_history:
+  - iteration: 3
+    suggested: ["six-hats", "moscow"]
+    applied: ["six-hats"]
+    reason: "Couverture 35%, Decisions 42%"
+```
+
+### Invocation Agent
+
 ```
 Task tool -> @technique-advisor (haiku)
-Input: phase, EMS scores, techniques_used
-Output: selected technique, adapted questions
+Input: phase, weak_axes, techniques_used
+Output: selected technique(s), adapted questions
 ```
 
 ## Question Format

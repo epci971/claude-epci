@@ -31,7 +31,7 @@ EMS weakness axes, and techniques already used in the session.
 - **Output**: Technique complete avec questions adaptees au contexte
 - **Usage**: Commande explicite utilisateur
 
-### Mode Auto-Select (v4.7+)
+### Mode Auto-Select (v4.8+)
 
 Invoque automatiquement quand `@ems-evaluator` retourne `weak_axes` non vide.
 
@@ -56,7 +56,7 @@ Raison: Axe [X] à [Y]% — [technique] aide à [effet]
 → Appliquer? [Y/n/autre]
 ```
 
-### Mode Mix (v4.7+)
+### Mode Mix (v4.8+)
 
 Declenche quand 2+ axes sont faibles (score < 50).
 

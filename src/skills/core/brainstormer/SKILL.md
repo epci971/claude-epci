@@ -1,7 +1,7 @@
 ---
 name: brainstormer
 description: >-
-  Feature discovery et brainstorming guide pour EPCI v4.7. Workflow avec
+  Feature discovery et brainstorming guide pour EPCI v4.8. Workflow avec
   personas adaptatifs (Architecte, Sparring, Pragmatique), phases Divergent/
   Convergent, scoring EMS v2 via @ems-evaluator, auto-techniques via @technique-advisor.
   Use when: /brainstorm invoked, feature discovery needed.
@@ -9,7 +9,7 @@ description: >-
 allowed-tools: [Read, Write, Glob, Grep, Task]
 ---
 
-# Brainstormer v4.7
+# Brainstormer v4.8
 
 ## Overview
 
@@ -54,8 +54,8 @@ un processus iteratif guide avec personas adaptatifs.
 | `@clarifier` | haiku | Questions turbo mode |
 | `@planner` | sonnet | Plan en phase Convergent |
 | `@security-auditor` | opus | Audit securite conditionnel |
-| `@ems-evaluator` | haiku | Calcul EMS 5 axes (v4.3) |
-| `@technique-advisor` | haiku | Selection techniques (v4.3) |
+| `@ems-evaluator` | haiku | Calcul EMS 5 axes + weak_axes (v4.8) |
+| `@technique-advisor` | haiku | Auto-selection techniques (v4.8) |
 
 ## EMS Calculation (via @ems-evaluator)
 
@@ -75,7 +75,7 @@ Input: current brief state, previous EMS, open questions
 Output: 5-axis scores, composite, delta, weak_axes, recommendations
 ```
 
-**Output includes (v4.7+):**
+**Output includes (v4.8+):**
 - `weak_axes[]` — Liste des axes avec score < 50
 - Trigger auto-technique si `weak_axes` non vide
 
@@ -90,7 +90,7 @@ Output: 5-axis scores, composite, delta, weak_axes, recommendations
 
 ## Technique Selection (via @technique-advisor)
 
-### Auto-Invocation (v4.7+)
+### Auto-Invocation (v4.8+)
 
 **Declenchement automatique** a chaque iteration si:
 1. Au moins un axe EMS < 50 (retourne par `@ems-evaluator` dans `weak_axes`)

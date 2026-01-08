@@ -1,6 +1,6 @@
 ---
 description: >-
-  Brainstorming guide v4.7 pour decouvrir et specifier une feature.
+  Brainstorming guide v4.8 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
   Auto-selection techniques basee sur axes faibles, mix de techniques.
   Session persistence, energy checkpoints, 3-5 questions avec A/B/C.
@@ -9,7 +9,7 @@ argument-hint: "[description] [--template feature|problem|decision] [--quick] [-
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
-# /brainstorm — Feature Discovery v4.7
+# /brainstorm — Feature Discovery v4.8
 
 ## Overview
 
@@ -17,7 +17,7 @@ Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
 
-**Nouveautes v4.7**:
+**Nouveautes v4.8**:
 - Auto-selection de techniques basee sur axes EMS faibles (< 50)
 - Mix de techniques quand 2+ axes faibles
 - Transition check explicite Divergent → Convergent
@@ -62,7 +62,7 @@ iteratives pour construire des specifications exhaustives.
 7. **Questions de cadrage** — 3-5 max avec suggestions
 8. **Afficher breakpoint**
 
-> **Note v4.7**: HMW generes APRES @Explore pour questions contextuelles basees sur le codebase.
+> **Note v4.8**: HMW generes APRES @Explore pour questions contextuelles basees sur le codebase.
 
 ### Phase 2 — Iterations
 
@@ -71,7 +71,7 @@ Boucle jusqu'a `finish`:
 1. **Integrer reponses** utilisateur
 2. **Recalculer EMS** via `@ems-evaluator`
    - Output: scores, delta, `weak_axes[]` (axes < 50)
-3. **Auto-selection technique** (v4.7+):
+3. **Auto-selection technique** (v4.8+):
    - Si `weak_axes` non vide ET technique pas dans les 2 dernieres iterations:
      - Invoquer `@technique-advisor` mode auto-select
      - Proposer: `💡 Technique suggérée: [X] → Appliquer? [Y/n]`
@@ -139,7 +139,7 @@ Boucle jusqu'a `finish`:
 | `--progressive` | Mode 3 phases (voir reference) |
 | `--no-security` | Desactiver @security-auditor auto |
 | `--no-plan` | Desactiver @planner auto |
-| `--no-technique` | Desactiver auto-suggestion techniques (v4.7+) |
+| `--no-technique` | Desactiver auto-suggestion techniques (v4.8+) |
 
 ## References
 

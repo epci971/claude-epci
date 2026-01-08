@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 4.7.3 | **Date** : Janvier 2025
+> **Version** : 4.8.0 | **Date** : Janvier 2025
 
 ---
 
@@ -13,9 +13,19 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
 | **Simplicité**      | 11 commandes spécialisées                                     |
-| **Modularité**      | 25 Skills, 12 Subagents, Hooks natifs                         |
+| **Modularité**      | 26 Skills, 12 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v4.8 (Auto-Techniques Brainstorm)
+
+- **Auto-sélection techniques** : Basée sur axes EMS faibles (< 50) via `@technique-advisor`
+- **Mix de techniques** : Proposition de 2 techniques complémentaires si 2+ axes faibles
+- **Transition check explicite** : Choix Divergent/Convergent à EMS=50
+- **Preview @planner/@security** : En phase Convergent à EMS >= 65
+- **Hook post-brainstorm documenté** : Tracking `techniques_applied` dans métriques
+- **Flag `--no-technique`** : Désactive l'auto-suggestion de techniques
+- **Workflow Phase 1 réordonné** : HMW générés après @Explore pour contexte codebase
 
 ### Nouveautés v4.6 (Brief Refactoring)
 
@@ -60,16 +70,16 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 ```
 src/
-├── agents/           # 9 subagents (6 core + 3 turbo/quick)
-├── commands/         # 10 commandes (brief, epci, quick, commit, promptor, etc.)
+├── agents/           # 12 subagents (7 core + 3 turbo + 2 brainstorm)
+├── commands/         # 11 commandes (brief, epci, quick, brainstorm, etc.)
 ├── hooks/            # Système hooks (runner.py, examples/, active/)
 ├── mcp/              # MCP Integration (config, activation, registry)
 ├── orchestration/    # Wave orchestration
 ├── scripts/          # Validation (validate_all.py, etc.)
 ├── settings/         # Configuration (flags.md)
-└── skills/           # 24 skills
-    ├── core/         # 13 skills fondamentaux
-    ├── stack/        # 4 skills technologie (react, django, symfony, spring)
+└── skills/           # 26 skills
+    ├── core/         # 14 skills fondamentaux
+    ├── stack/        # 5 skills technologie (react, django, symfony, spring, frontend)
     ├── personas/     # Système personas
     ├── mcp/          # MCP skill
     ├── promptor/     # Voice-to-brief + Notion export
@@ -127,7 +137,7 @@ Brief brut → /brief → Évaluation
 | `/quick`      | Workflow condensé EPCT (TINY/SMALL)                         |
 | `/commit`     | Finalisation git avec contexte EPCI                         |
 | `/rules`      | Génère .claude/rules/ — conventions projet automatiques     |
-| `/brainstorm` | Feature discovery v4.1 — One-at-a-Time, Section validation, @planner/@security |
+| `/brainstorm` | Feature discovery v4.8 — Auto-techniques, mix, transition checks |
 | `/debug`      | Diagnostic bugs structuré                                   |
 | `/decompose`  | Décomposition PRD en sous-specs                             |
 | `/memory`     | Gestion mémoire projet + learning (calibration, préférences)|
@@ -136,7 +146,7 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 5. Subagents (10)
+## 5. Subagents (12)
 
 ### Core Subagents (7)
 
@@ -158,9 +168,16 @@ Brief brut → /brief → Évaluation
 | `@planner`      | sonnet | Planification rapide        | `/epci --turbo` P1, `/quick` [P], `/brainstorm` (converge) |
 | `@implementer`  | sonnet | Implémentation TDD rapide   | `/epci --turbo` P2, `/quick` [C] |
 
+### Brainstorm Subagents (2) — v4.8+
+
+| Subagent             | Model | Rôle                          | Invoqué par     |
+| -------------------- | ----- | ----------------------------- | --------------- |
+| `@ems-evaluator`     | haiku | Calcul EMS 5 axes + weak_axes | `/brainstorm` (chaque itération) |
+| `@technique-advisor` | haiku | Auto-sélection techniques     | `/brainstorm` (si axe < 50) |
+
 ---
 
-## 6. Skills (25)
+## 6. Skills (26)
 
 ### Core (14)
 
@@ -169,12 +186,13 @@ Brief brut → /brief → Évaluation
 `debugging-strategy`, `learning-optimizer`, `breakpoint-metrics`,
 `clarification-intelligente`, `proactive-suggestions`, `rules-generator`
 
-### Stack (4) — Auto-détectés
+### Stack (5) — Auto-détectés
 
 | Skill              | Détection                             |
 | ------------------ | ------------------------------------- |
 | `php-symfony`      | `composer.json`                       |
 | `javascript-react` | `package.json` + react                |
+| `frontend-editor`  | Fichiers frontend (CSS, UI)           |
 | `python-django`    | `requirements.txt` / `pyproject.toml` |
 | `java-springboot`  | `pom.xml` / `build.gradle`            |
 

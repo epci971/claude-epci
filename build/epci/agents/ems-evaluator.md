@@ -48,13 +48,13 @@ with delta since last evaluation.
 
 ### Scores by Axis
 
-| Axis | Score | Weight | Weighted |
-|------|-------|--------|----------|
-| Clarte | XX/100 | 25% | XX |
-| Profondeur | XX/100 | 20% | XX |
-| Couverture | XX/100 | 20% | XX |
-| Decisions | XX/100 | 20% | XX |
-| Actionnabilite | XX/100 | 15% | XX |
+| Axis | Score | Weight | Weighted | Status |
+|------|-------|--------|----------|--------|
+| Clarte | XX/100 | 25% | XX | [OK/WEAK] |
+| Profondeur | XX/100 | 20% | XX | [OK/WEAK] |
+| Couverture | XX/100 | 20% | XX | [OK/WEAK] |
+| Decisions | XX/100 | 20% | XX | [OK/WEAK] |
+| Actionnabilite | XX/100 | 15% | XX | [OK/WEAK] |
 
 ### Composite Score
 
@@ -62,21 +62,41 @@ with delta since last evaluation.
 
 ### Weak Axes
 
+**weak_axes**: [liste des axes avec score < 50]
+
+Exemple: `["Couverture", "Decisions"]` si ces axes < 50
+
 - [Axis]: [Reason] -> [Suggested technique]
+
+### Technique Trigger
+
+Si weak_axes non vide, afficher:
+```
+⚡ Auto-technique trigger: [Axis1] ([score]%), [Axis2] ([score]%)
+```
 
 ### Recommendation
 
-[CONTINUE | SUGGEST_CONVERGE | SUGGEST_FINISH]
+[CONTINUE | SUGGEST_CONVERGE | SUGGEST_FINISH | SUGGEST_TECHNIQUE]
+
+**SUGGEST_TECHNIQUE**: Quand au moins un axe < 50 et aucune technique appliquee recemment.
 ```
 
 ## Thresholds
 
-| EMS Range | Recommendation |
-|-----------|----------------|
-| 0-49 | CONTINUE (Divergent) |
-| 50-69 | SUGGEST_CONVERGE |
-| 70-84 | SUGGEST_FINISH or continue |
-| 85-100 | FINISH recommended |
+| EMS Range | Recommendation | Technique Trigger |
+|-----------|----------------|-------------------|
+| 0-49 | CONTINUE (Divergent) | Si axe < 50 → SUGGEST_TECHNIQUE |
+| 50-69 | SUGGEST_CONVERGE | Si axe < 50 → SUGGEST_TECHNIQUE |
+| 70-84 | SUGGEST_FINISH or continue | Non (proche finish) |
+| 85-100 | FINISH recommended | Non |
+
+**Priorite des recommandations**:
+1. Si EMS >= 85 → FINISH
+2. Si EMS >= 70 → SUGGEST_FINISH
+3. Si weak_axes non vide ET EMS < 70 → SUGGEST_TECHNIQUE
+4. Si EMS >= 50 → SUGGEST_CONVERGE
+5. Sinon → CONTINUE
 
 ## Haiku Optimization
 
