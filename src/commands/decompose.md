@@ -81,6 +81,9 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 | ------------------------------- | -------------------------------- |
 | Headers `## Phase X`            | Level 1 decomposition candidates |
 | Headers `### Step X.Y`          | Sub-decomposition candidates     |
+| Headers `### US[N] —`           | User Story → sub-spec candidate  |
+| `**Complexité**: S/M/L`         | Effort estimate (S=1d, M=3d, L=5d) |
+| `**Priorité**: Must-have`       | Execution priority (MoSCoW)      |
 | Tables with "Effort"            | Reuse existing estimates         |
 | "Checklist" sections            | Validation boundaries            |
 | "Gate", "Prerequisite" mentions | Explicit dependencies            |
@@ -101,6 +104,23 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 | < min-days           | Merge with adjacent block |
 | min-days to max-days | Target granularity        |
 | > max-days           | Seek sub-decomposition    |
+
+**Input format detection:**
+
+The decompose command auto-detects the input format:
+
+| Format | Detection | Behavior |
+|--------|-----------|----------|
+| PRD/CDC | `## Phase`, `### Step` headers | Standard decomposition |
+| Brainstorm Brief | `### US[N] —` headers | User Story mapping |
+
+**User Story mapping (Brainstorm Brief):**
+
+When brainstorm brief format is detected:
+- Each `### USX — Title` becomes a sub-spec
+- `**Complexité**: S` → 1 day, `M` → 3 days, `L` → 5 days
+- `**Priorité**: Must-have` → Priority 1, Should-have → 2, Could-have → 3
+- Dependencies inferred from AC references ("see US1", "after US2")
 
 **Invoke @decompose-validator:**
 
@@ -126,11 +146,11 @@ Present decomposition proposal for user validation:
 │                                                                     │
 │ 📋 DÉCOUPAGE PROPOSÉ: {count} sous-specs                           │
 │                                                                     │
-│ | ID  | Nom                    | Effort | Dépendances |            │
-│ |-----|------------------------|--------|-------------|            │
-│ | S01 | {name_1}               | {d1}j  | —           |            │
-│ | S02 | {name_2}               | {d2}j  | S01         |            │
-│ | ... | ...                    | ...    | ...         |            │
+│ | ID  | Title        | Effort | Priority | Dependencies | Status  |│
+│ |-----|--------------|--------|----------|--------------|---------|│
+│ | S01 | {name_1}     | {d1}j  | -        | -            | Pending |│
+│ | S02 | {name_2}     | {d2}j  | -        | S01          | Pending |│
+│ | ... | ...          | ...    | ...      | ...          | ...     |│
 │                                                                     │
 │ 🔀 PARALLÉLISATION: {parallel_count} specs parallélisables         │
 │ ⏱️  DURÉE OPTIMISÉE: {optimized_days}j (vs {sequential_days}j seq) │
@@ -218,11 +238,11 @@ mkdir -p {output_dir}
 
 ## Overview
 
-| ID  | Sub-Spec | Effort | Dependencies | Parallelizable |
-| --- | -------- | ------ | ------------ | -------------- |
-| S01 | {name}   | {d}j   | —            | No             |
-| S02 | {name}   | {d}j   | S01          | No             |
-| ... | ...      | ...    | ...          | ...            |
+| ID | Title | Effort | Priority | Dependencies | Status |
+|----|-------|--------|----------|--------------|--------|
+| S01 | {name} | {d}j | - | - | Pending |
+| S02 | {name} | {d}j | - | S01 | Pending |
+| ... | ... | ... | ... | ... | ... |
 
 ---
 
@@ -255,16 +275,6 @@ gantt
     S03 {name}    :s03, after s02, {d3}d
     ...
 ```
-
----
-
-## Progress
-
-| Spec | Status | Comment |
-| ---- | ------ | ------- |
-| S01  | To do  |         |
-| S02  | To do  |         |
-| ...  | ...    |         |
 
 ---
 
@@ -443,6 +453,43 @@ Using default estimates based on:
 
 Estimates are indicative. Adjust if needed.
 ```
+
+### EC6: Brainstorm Brief Input
+
+**Detection:** `### US1 —` pattern found, no `## Phase` patterns.
+
+**Behavior:**
+
+```
+📋 Format détecté: Brief Brainstorm (User Stories)
+
+Mapping User Stories → Sous-specs:
+
+| US  | Titre           | Complexité | Effort | Priorité    |
+|-----|-----------------|------------|--------|-------------|
+| US1 | {title}         | M          | 3j     | Must-have   |
+| US2 | {title}         | S          | 1j     | Should-have |
+| US3 | {title}         | L          | 5j     | Could-have  |
+
+Dépendances détectées: US3 → US1 (via AC reference)
+
+Options: [Valider] [Modifier mapping] [Annuler]
+```
+
+**Mapping rules:**
+
+| Complexité | Effort |
+|------------|--------|
+| S (Small)  | 1 jour |
+| M (Medium) | 3 jours |
+| L (Large)  | 5 jours |
+
+| Priorité MoSCoW | Priority |
+|-----------------|----------|
+| Must-have       | 1        |
+| Should-have     | 2        |
+| Could-have      | 3        |
+| Won't-have      | Excluded |
 
 ## Examples
 

@@ -1,0 +1,43 @@
+{
+  "slug": "orchestrate-auto-priority",
+  "title": "Orchestrateur Automatique EPCI",
+  "created_at": "2026-01-09T20:35:44.831357Z",
+  "complexity": "LARGE",
+  "completed_at": "2026-01-09T20:35:44.831357Z",
+  "complexity_score": 0.5,
+  "files_modified": [
+    "CLAUDE.md",
+    "docs/features/orchestrate-auto-priority.md",
+    "src/commands/orchestrate.md",
+    "src/skills/core/orchestrator-batch/SKILL.md"
+  ],
+  "files_created": 8,
+  "files_updated": 4,
+  "loc_added": 2030,
+  "loc_removed": 25,
+  "tests_created": 10,
+  "test_coverage": null,
+  "estimated_time": "90min",
+  "actual_time": "85min",
+  "phases": {
+    "phase_1": "2026-01-09T20:35:44.831357Z",
+    "phase_2": "2026-01-09T20:35:44.831357Z",
+    "phase_3": "2026-01-09T20:35:44.831357Z"
+  },
+  "agents_used": [
+    "plan-validator",
+    "code-reviewer",
+    "security-auditor",
+    "qa-reviewer"
+  ],
+  "issues_found": {
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "details": []
+  },
+  "related_features": [],
+  "feature_document": "/home/epci/apps/claude-epci/docs/features/orchestrate-auto-priority.md",
+  "commit_hash": "f3e388f",
+  "branch": "master"
+}

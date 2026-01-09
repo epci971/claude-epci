@@ -8,10 +8,10 @@
       "last_updated": "2025-12-19T13:45:43.147357Z"
     },
     "LARGE": {
-      "factor": 0.6923076923076923,
-      "samples": 1,
-      "confidence": 0.3868528072345416,
-      "last_updated": "2025-12-19T14:22:55.725594Z"
+      "factor": 0.7679487179487179,
+      "samples": 2,
+      "confidence": 0.6131471927654585,
+      "last_updated": "2026-01-09T20:35:44.873497Z"
     },
     "STANDARD": {
       "factor": 0.4565,
@@ -21,9 +21,9 @@
     }
   },
   "global": {
-    "total_samples": 7,
-    "overall_accuracy": 0.6314959615384614,
-    "trend": "declining"
+    "total_samples": 8,
+    "overall_accuracy": 0.7253805064102563,
+    "trend": "improving"
   },
   "history": [
     {
@@ -81,7 +81,15 @@
       "actual": 75.0,
       "ratio": 0.8333333333333334,
       "timestamp": "2026-01-06T13:50:51.431861Z"
+    },
+    {
+      "feature_slug": "orchestrate-auto-priority",
+      "complexity": "LARGE",
+      "estimated": 90.0,
+      "actual": 85.0,
+      "ratio": 0.9444444444444444,
+      "timestamp": "2026-01-09T20:35:44.873497Z"
     }
   ],
-  "updated_at": "2026-01-06T13:50:51.431881Z"
+  "updated_at": "2026-01-09T20:35:44.873531Z"
 }
