@@ -12,8 +12,8 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
-| **Simplicité**      | 11 commandes spécialisées                                     |
-| **Modularité**      | 27 Skills, 15 Subagents, Hooks natifs                         |
+| **Simplicité**      | 12 commandes spécialisées                                     |
+| **Modularité**      | 28 Skills, 15 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
 
@@ -83,14 +83,14 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 ```
 src/
 ├── agents/           # 12 subagents (7 core + 3 turbo + 2 brainstorm)
-├── commands/         # 11 commandes (brief, epci, quick, brainstorm, etc.)
+├── commands/         # 12 commandes (brief, epci, quick, orchestrate, etc.)
 ├── hooks/            # Système hooks (runner.py, examples/, active/)
 ├── mcp/              # MCP Integration (config, activation, registry)
 ├── orchestration/    # Wave orchestration
 ├── scripts/          # Validation (validate_all.py, etc.)
 ├── settings/         # Configuration (flags.md)
-└── skills/           # 26 skills
-    ├── core/         # 14 skills fondamentaux
+└── skills/           # 27 skills
+    ├── core/         # 15 skills fondamentaux
     ├── stack/        # 5 skills technologie (react, django, symfony, spring, frontend)
     ├── personas/     # Système personas
     ├── mcp/          # MCP skill
@@ -140,13 +140,14 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 4. Commands (11)
+## 4. Commands (12)
 
 | Commande      | Rôle                                                        |
 | ------------- | ----------------------------------------------------------- |
 | `/brief`      | Point d'entrée unique — exploration, clarification, routing |
 | `/epci`       | Workflow complet 3 phases (STD/LARGE)                       |
 | `/quick`      | Workflow condensé EPCT (TINY/SMALL)                         |
+| `/orchestrate`| Exécution batch de specs — DAG, priorité, auto-retry        |
 | `/commit`     | Finalisation git avec contexte EPCI                         |
 | `/rules`      | Génère .claude/rules/ — conventions projet automatiques     |
 | `/brainstorm` | Feature discovery v4.8 — Auto-techniques, mix, transition checks |
@@ -192,15 +193,15 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 6. Skills (27)
+## 6. Skills (28)
 
-### Core (15)
+### Core (16)
 
 `epci-core`, `architecture-patterns`, `code-conventions`, `testing-strategy`,
 `git-workflow`, `flags-system`, `project-memory`, `brainstormer`,
 `debugging-strategy`, `learning-optimizer`, `breakpoint-metrics`,
 `clarification-intelligente`, `proactive-suggestions`, `rules-generator`,
-`input-clarifier`
+`input-clarifier`, `orchestrator-batch`
 
 ### Stack (5) — Auto-détectés
 
