@@ -1,7 +1,0 @@
-# This directory contains active hooks (symlinks to examples or custom hooks)
-#
-# To activate a hook:
-#   ln -s ../examples/pre-phase-2-lint.sh pre-phase-2-lint.sh
-#
-# To deactivate:
-#   rm pre-phase-2-lint.sh

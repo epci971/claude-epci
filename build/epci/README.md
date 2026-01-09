@@ -386,7 +386,7 @@ Skills fondamentaux chargés selon le contexte du workflow.
 | `breakpoint-metrics` | Scoring complexité, estimation temps | Breakpoints enrichis |
 | `flags-system` | Flags universels, auto-activation | Toutes commandes |
 | `project-memory` | Contexte et chargement mémoire projet | `/memory`, workflows |
-| `learning-optimizer` | Optimisation apprentissage | `/learn` |
+| `learning-optimizer` | Optimisation apprentissage | `/memory learn` |
 | `proactive-suggestions` | Suggestions proactives IA | Phase 2, breakpoints |
 | `clarification-intelligente` | Clarification intelligente | `/brief` |
 

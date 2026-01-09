@@ -1,15 +1,16 @@
 ---
 name: brainstormer
 description: >-
-  Feature discovery et brainstorming guide pour EPCI v4.8. Workflow avec
-  personas adaptatifs (Architecte, Sparring, Pragmatique), phases Divergent/
-  Convergent, scoring EMS v2 via @ems-evaluator, auto-techniques via @technique-advisor.
+  Feature discovery et brainstorming guide pour EPCI v5.0. Workflow avec
+  personas adaptatifs, phases Divergent/Convergent, scoring EMS v2 via @ems-evaluator,
+  auto-techniques via @technique-advisor (63 techniques CSV), Party Mode (5 personas),
+  Expert Panel (5 dev leaders). Modes: standard | party | panel.
   Use when: /brainstorm invoked, feature discovery needed.
   Not for: implementation tasks, code generation, simple questions.
 allowed-tools: [Read, Write, Glob, Grep, Task]
 ---
 
-# Brainstormer v4.8
+# Brainstormer v5.0
 
 ## Overview
 
@@ -17,13 +18,23 @@ Skill de brainstorming specialise pour la decouverte de features.
 Transforme des idees vagues en briefs fonctionnels complets via
 un processus iteratif guide avec personas adaptatifs.
 
+**Nouveautes v5.0:**
+- **63 techniques** en CSV (10 categories) remplacent les fichiers .md
+- **Party Mode** — Discussion multi-persona collaborative (5 personas EPCI)
+- **Expert Panel** — Panel 5 dev leaders (Martin, Fowler, Newman, Gamma, Beck)
+- **Modes mutuellement exclusifs** — standard | party | panel
+- **Random/Progressive modes** — Selection aleatoire ou par phase EMS
+
 **Reference Documents:**
 - [Personas](references/personas.md) — 3 modes de facilitation
 - [EMS System](references/ems-system.md) — Scoring v2 avec 5 axes
 - [Frameworks](references/frameworks.md) — 5 frameworks d'analyse
-- [Techniques](references/techniques/) — 20 techniques (4 categories)
+- [Techniques CSV](references/techniques.csv) — 63 techniques (10 categories)
+- [Technique Mapping](references/technique-mapping.md) — EMS → categories
+- [Party Personas](references/party-personas.md) — 5 personas collaboratifs (v5.0)
+- [Expert Panel](references/experts/) — 5 experts dev (v5.0)
 - [Brief Format](references/brief-format.md) — Template de sortie
-- [Session Format](references/session-format.md) — Format YAML persistence
+- [Session Format](references/session-format.md) — Format YAML v1.2
 
 **Session Storage:** `.project-memory/brainstorm-sessions/[slug].yaml`
 
@@ -48,14 +59,23 @@ un processus iteratif guide avec personas adaptatifs.
 
 ## Agents
 
+### Core Agents
+
 | Agent | Model | Role |
 |-------|-------|------|
 | `@Explore` | - | Analyse codebase initiale |
 | `@clarifier` | haiku | Questions turbo mode |
 | `@planner` | sonnet | Plan en phase Convergent |
 | `@security-auditor` | opus | Audit securite conditionnel |
-| `@ems-evaluator` | haiku | Calcul EMS 5 axes + weak_axes (v4.8) |
-| `@technique-advisor` | haiku | Auto-selection techniques (v4.8) |
+| `@ems-evaluator` | haiku | Calcul EMS 5 axes + weak_axes |
+| `@technique-advisor` | haiku | Auto-selection techniques (63 en CSV) |
+
+### v5.0 Agents
+
+| Agent | Model | Role |
+|-------|-------|------|
+| `@party-orchestrator` | sonnet | Orchestration multi-persona (5 personas) |
+| `@expert-panel` | sonnet | Panel 5 experts dev (3 phases) |
 
 ## EMS Calculation (via @ems-evaluator)
 
@@ -81,16 +101,43 @@ Output: 5-axis scores, composite, delta, weak_axes, recommendations
 
 **Thresholds:**
 
-| EMS Range | Recommendation | Technique Trigger |
-|-----------|----------------|-------------------|
-| 0-49 | CONTINUE | Si axe < 50 → SUGGEST_TECHNIQUE |
-| 50-69 | SUGGEST_CONVERGE | Si axe < 50 → SUGGEST_TECHNIQUE |
-| 70-84 | SUGGEST_FINISH | Non (proche finish) |
-| 85-100 | FINISH | Non |
+| EMS Range | Recommendation | Technique Trigger | Checkpoint |
+|-----------|----------------|-------------------|------------|
+| 0-49 | CONTINUE | Si axe < 50 → SUGGEST_TECHNIQUE | - |
+| 50-69 | SUGGEST_CONVERGE | Si axe < 50 → SUGGEST_TECHNIQUE | Transition (EMS=50) |
+| 70-84 | FINALIZATION_CHECKPOINT | Non (proche finish) | **Finalization** |
+| 85-100 | FINALIZATION_CHECKPOINT | Non | **Finalization** |
+
+**IMPORTANT**: À EMS >= 85, NE JAMAIS finaliser automatiquement.
+Toujours afficher le Finalization Checkpoint et attendre le choix explicite.
 
 ## Technique Selection (via @technique-advisor)
 
-### Auto-Invocation (v4.8+)
+### Technique Library (v5.0)
+
+**MANDATORY: Load techniques from CSV, not deprecated .md files.**
+
+```
+Read src/skills/core/brainstormer/references/techniques.csv
+Read src/skills/core/brainstormer/references/technique-mapping.md
+```
+
+**10 Categories (63 Techniques):**
+
+| Category | Count | Primary Phase |
+|----------|-------|---------------|
+| collaborative | 5 | Divergent |
+| creative | 11 | Divergent |
+| deep | 8 | Convergent |
+| introspective | 6 | Divergent |
+| structured | 9 | Convergent |
+| theatrical | 6 | Divergent |
+| wild | 8 | Divergent |
+| biomimetic | 3 | Divergent |
+| quantum | 3 | Convergent |
+| cultural | 4 | Divergent |
+
+### Auto-Invocation
 
 **Declenchement automatique** a chaque iteration si:
 1. Au moins un axe EMS < 50 (retourne par `@ems-evaluator` dans `weak_axes`)
@@ -99,17 +146,18 @@ Output: 5-axis scores, composite, delta, weak_axes, recommendations
 
 **Invocation manuelle:**
 - `technique [name]` — Applique technique specifique
-- `--random` flag — Selection aleatoire
+- `--random` flag — Selection aleatoire avec equilibrage categories
+- `--progressive` flag — Selection basee sur phase EMS
 
-### Mapping EMS → Technique
+### Mapping EMS → Categories
 
-| Axe Faible | Technique Primaire | Techniques Secondaires |
-|------------|-------------------|------------------------|
-| Clarte < 50 | question-storming | 5whys, first-principles |
-| Profondeur < 50 | first-principles | 5whys, dive |
-| Couverture < 50 | six-hats | scamper, what-if |
-| Decisions < 50 | moscow | scoring, swot |
-| Actionnabilite < 50 | premortem | constraint-mapping |
+| Axe Faible | Categories Primaires | Categories Secondaires |
+|------------|---------------------|------------------------|
+| Clarte < 50 | deep, structured | creative |
+| Profondeur < 50 | deep, introspective | creative, theatrical |
+| Couverture < 50 | creative, collaborative, wild | theatrical, biomimetic |
+| Decisions < 50 | structured, deep | collaborative |
+| Actionnabilite < 50 | structured | collaborative, wild |
 
 ### Mix de Techniques
 
@@ -191,11 +239,36 @@ Questions:
 -------------------------------------------------------
 ```
 
+## Finalization Checkpoint
+
+**Trigger:** EMS >= 85 (première fois atteint dans la session)
+
+**Format obligatoire:**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FINALIZATION CHECKPOINT | EMS: XX/100
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Le brief est suffisamment mature pour être finalisé.
+
+[1] Continuer (plus d'itérations)
+[2] Preview plan (@planner) sans finaliser
+[3] Finaliser maintenant (finish)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Comportement selon choix:**
+- [1] Continuer → génère 3-5 questions, poursuit itérations normalement
+- [2] Preview → invoque @planner, affiche plan, PUIS redemande [1]/[3]
+- [3] Finaliser → passe en Phase 3 Generation
+
+**CRITICAL:** Ce checkpoint est BLOQUANT. Ne pas continuer sans réponse explicite.
+
 ## @planner Integration
 
-**Auto-invocation:** Phase Convergent OU EMS >= 70
+**Invocation:** Uniquement sur choix explicite [2] au Finalization Checkpoint
+ou commande `plan-preview`
 
-**Confirmation:** `Lancer @planner? [Y/n]`
+**Confirmation préalable:** `Lancer @planner? [Y/n]`
 
 Invoke via Task tool (model: sonnet).
 Output integre dans brief section "Preliminary Plan".
@@ -211,13 +284,25 @@ Output integre dans brief section "Security Considerations".
 
 ## Phase 3 — Generation
 
-**MANDATORY: Use Write tool for BOTH files.**
+**MANDATORY: Use Write tool for BOTH files using official templates.**
+
+**CRITICAL: Before generating, ALWAYS read the template:**
+```
+Read src/skills/core/brainstormer/references/brief-format.md
+```
 
 1. Create directory: `mkdir -p ./docs/briefs/[slug]`
-2. Section-by-section validation (si pas --quick/--turbo)
-3. Write `brief-[slug]-[date].md`
-4. Write `journal-[slug]-[date].md`
-5. Display completion summary
+2. **Read template** `references/brief-format.md` (MANDATORY)
+3. Section-by-section validation (si pas --quick/--turbo)
+4. Write `brief-[slug]-[date].md` — **Must include**:
+   - Personas section (min 1 primary persona)
+   - User Stories format (En tant que... je veux... afin de)
+   - Acceptance Criteria (Given/When/Then)
+   - Success Metrics (KPIs or "TBD")
+5. Write `journal-[slug]-[date].md` — Using Journal template
+6. Display completion summary
+
+**Anti-pattern**: Generating brief without reading template first = INVALID
 
 **Completion format:**
 ```
@@ -252,8 +337,112 @@ Prochaine etape: Lancer /brief avec le contenu du brief.
 - Breakpoint > 15 lignes
 - Ignorer contexte codebase
 - `finish` avant EMS 60
+- Finaliser automatiquement à EMS >= 85 (CRITIQUE)
+- Invoquer @planner sans choix explicite utilisateur
+- Generer brief SANS lire `references/brief-format.md` d'abord (CRITIQUE)
+- Omettre section Personas dans le brief
+- Utiliser format SF au lieu de User Stories
+- Omettre Acceptance Criteria Given/When/Then
 
 **Toujours faire:**
 - Invoquer @ems-evaluator a chaque iteration
 - Proposer suggestions avec questions
 - Respecter format compact CLI
+- Afficher Finalization Checkpoint à EMS >= 85
+- Attendre réponse explicite [1]/[2]/[3] avant action
+- Lire `brief-format.md` AVANT de generer le brief
+- Inclure Personas, User Stories, Success Metrics dans le brief
+
+## Party Mode (v5.0)
+
+Discussion collaborative multi-persona pour explorer sous plusieurs angles.
+
+### 5 Personas EPCI
+
+| Persona | Icon | Focus |
+|---------|------|-------|
+| **Architect** | 🏗️ | System design, patterns, scalabilite |
+| **Security** | 🔒 | OWASP, auth, protection donnees |
+| **Frontend** | 🎨 | UI/UX, accessibilite, perf |
+| **Backend** | ⚙️ | APIs, data integrity, infra |
+| **QA** | 🧪 | Testing, edge cases, coverage |
+
+### Commandes
+
+| Commande | Action |
+|----------|--------|
+| `party` | Demarrer discussion party mode |
+| `party add [persona]` | Ajouter persona au round |
+| `party focus [persona]` | Deep dive d'un persona |
+| `party exit` | Retour mode standard |
+
+### Invocation
+
+```
+Task tool -> @party-orchestrator (sonnet)
+Input: current topic, selected personas, previous rounds
+Output: persona contributions, cross-talk, synthesis, question
+```
+
+**Regles MANDATORY:**
+- EMS continue d'etre calcule pendant party mode
+- Finalization Checkpoint se declenche normalement a EMS >= 85
+- `party exit` retourne au mode standard immediatement
+
+Voir [party-personas.md](references/party-personas.md) pour details.
+
+## Expert Panel (v5.0)
+
+Panel 5 dev thought leaders pour decisions techniques strategiques.
+
+### 5 Experts Dev
+
+| Expert | Icon | Framework | Focus |
+|--------|------|-----------|-------|
+| **Martin** | 📖 | SOLID, Clean Architecture | Code design, maintenabilite |
+| **Fowler** | 🔄 | Enterprise Patterns | Architecture, refactoring |
+| **Newman** | 🌐 | Distributed Systems | Scalabilite, decouplage |
+| **Gamma** | 📐 | Design Patterns (GoF) | Design OO |
+| **Beck** | ✅ | XP, TDD | Testing, agilite |
+
+### 3 Phases
+
+| Phase | Description |
+|-------|-------------|
+| **Discussion** | 3 experts analysent via leurs frameworks |
+| **Debate** | Stress-test des idees par desaccord structure |
+| **Socratic** | Questions guidees pour approfondir |
+
+### Commandes
+
+| Commande | Action |
+|----------|--------|
+| `panel` | Demarrer panel (phase discussion) |
+| `panel debate` | Passer en phase debate |
+| `panel socratic` | Passer en phase socratic |
+| `panel exit` | Retour mode standard |
+
+### Invocation
+
+```
+Task tool -> @expert-panel (sonnet)
+Input: topic, phase, selected experts, previous rounds
+Output: expert contributions, synthesis (convergent + tensions)
+```
+
+Voir [experts/](references/experts/) pour details par expert.
+
+## Session Modes (v5.0)
+
+Les modes sont **mutuellement exclusifs**:
+
+| Mode | Description | Commande |
+|------|-------------|----------|
+| `standard` | Workflow brainstorm classique | (defaut) |
+| `party` | Multi-persona collaboratif | `party` ou `--party` |
+| `panel` | Expert panel technique | `panel` ou `--panel` |
+
+**Changement de mode:**
+- `party` ou `panel` → active le mode correspondant
+- `party exit` ou `panel exit` → retourne en `standard`
+- On ne peut pas etre en `party` ET `panel` simultanement

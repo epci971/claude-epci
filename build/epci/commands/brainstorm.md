@@ -1,21 +1,26 @@
 ---
 description: >-
-  Brainstorming guide v4.8 pour decouvrir et specifier une feature.
+  Brainstorming guide v4.9 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
   Auto-selection techniques basee sur axes faibles, mix de techniques.
+  Finalization Checkpoint obligatoire a EMS >= 85 (bloquant).
   Session persistence, energy checkpoints, 3-5 questions avec A/B/C.
   Use when: idee vague a transformer en specs, incertitude technique.
-argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--c7] [--seq]"
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
-# /brainstorm — Feature Discovery v4.8
+# /brainstorm — Feature Discovery v4.9
 
 ## Overview
 
 Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
+
+**Nouveautes v4.9**:
+- **Finalization Checkpoint** obligatoire a EMS >= 85 (bloquant)
+- Pas de finalisation automatique — toujours choix explicite
 
 **Nouveautes v4.8**:
 - Auto-selection de techniques basee sur axes EMS faibles (< 50)
@@ -51,6 +56,39 @@ iteratives pour construire des specifications exhaustives.
 2. If found: Prompt resume or new session
 3. If new: Archive existing, start fresh
 
+### Step 0 — Input Clarification (Conditional)
+
+**Skill**: `input-clarifier`
+
+Clarify initial description if confusing (dictated input with hesitations, fillers, etc.).
+
+**Important**: Only applies to **initial input**, NOT to iteration responses during Phase 2.
+
+```
+IF --no-clarify flag:
+   → Skip to Phase 1
+
+ELSE:
+   → Calculate clarity score on initial description
+   → IF score < 0.6: Show reformulation prompt
+   → IF score >= 0.6: Continue to Phase 1
+```
+
+**Example trigger:**
+```
+Input: "euh une feature de notifications, genre tu vois pour les users"
+Score: 0.4 → Clarification triggered
+
+⚠️ Input confus détecté
+
+Original: "euh une feature de notifications, genre tu vois pour les users"
+Reformulation: "Une feature de notifications pour les utilisateurs"
+
+[1] ✅ Utiliser   [2] ✏️ Modifier   [3] ➡️ Garder
+```
+
+---
+
 ### Phase 1 — Initialisation
 
 1. **Charger contexte** — Skill: `project-memory`
@@ -63,6 +101,7 @@ iteratives pour construire des specifications exhaustives.
 8. **Afficher breakpoint**
 
 > **Note v4.8**: HMW generes APRES @Explore pour questions contextuelles basees sur le codebase.
+> **Note v4.9**: Input clarification en Step 0 ne s'applique qu'a l'input initial, pas aux iterations.
 
 ### Phase 2 — Iterations
 
@@ -82,9 +121,22 @@ Boucle jusqu'a `finish`:
    PHASE TRANSITION | EMS: 50/100
    [1] Continuer Divergent  [2] Passer Convergent  [3] Technique
    ```
-5. **Generer 3-5 questions** avec suggestions A/B/C
-6. **Afficher breakpoint compact**
-7. **Preview check** (si Convergent et EMS >= 65):
+5. **Finalization checkpoint** (si EMS >= 85):
+   ```
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   FINALIZATION CHECKPOINT | EMS: XX/100
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Le brief est suffisamment mature pour être finalisé.
+
+   [1] Continuer (plus d'itérations)
+   [2] Preview plan (@planner) sans finaliser
+   [3] Finaliser maintenant (finish)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ```
+   **IMPORTANT**: Ne JAMAIS finaliser automatiquement. Toujours attendre le choix explicite.
+6. **Generer 3-5 questions** avec suggestions A/B/C (si choix [1])
+7. **Afficher breakpoint compact**
+8. **Preview check** (si Convergent et EMS >= 65 et choix [2]):
    - Proposer `@planner preview? [Y/n]`
    - Si patterns auth: `@security-auditor preview? [Y/n]`
 
@@ -92,18 +144,32 @@ Boucle jusqu'a `finish`:
 
 ### Phase 3 — Generation
 
-**MANDATORY: Use Write tool to create BOTH files.**
+**MANDATORY: Use Write tool to create BOTH files using official templates.**
 
-1. **@planner** (si pas preview fait OU EMS >= 70)
+**Templates obligatoires** (dans `src/skills/core/brainstormer/references/`):
+- `brief-format.md` — Structure Brief v2.0 avec Personas, User Stories, Success Metrics
+- Section Journal d'Exploration dans le meme fichier
+
+1. **@planner** (si pas preview fait OU EMS >= 85)
 2. **@security-auditor** (si patterns auth ET pas preview)
 3. Create directory: `mkdir -p ./docs/briefs/[slug]`
-4. **Section-by-section validation** (si pas --quick/--turbo)
-5. Write `brief-[slug]-[date].md`
-6. Write `journal-[slug]-[date].md`
-7. **HOOK: post-brainstorm** — Invocation automatique (voir section Hooks)
-8. Display completion summary avec techniques utilisees
+4. **Lire template**: `Read src/skills/core/brainstormer/references/brief-format.md`
+5. **Section-by-section validation** (si pas --quick/--turbo)
+6. Write `brief-[slug]-[date].md` — **DOIT suivre la structure du template**
+7. Write `journal-[slug]-[date].md` — **DOIT suivre le Template Journal d'Exploration**
+8. **HOOK: post-brainstorm** — Invocation automatique (voir section Hooks)
+9. Display completion summary avec techniques utilisees
+
+**Sections OBLIGATOIRES dans le brief** (v2.0):
+- Personas (minimum 1 primaire)
+- User Stories format "En tant que... je veux... afin de" avec AC Given/When/Then
+- Success Metrics (KPIs ou "TBD")
+
+**Anti-pattern**: Generer un brief sans lire `brief-format.md` d'abord.
 
 ## Commands
+
+### Standard Commands
 
 | Commande | Action |
 |----------|--------|
@@ -127,7 +193,31 @@ Boucle jusqu'a `finish`:
 | `energy` | Forcer energy check |
 | `finish` | Generer brief + journal |
 
+### Party Mode Commands (v5.0)
+
+| Commande | Action |
+|----------|--------|
+| `party` | Demarrer discussion multi-persona |
+| `party add [persona]` | Ajouter persona au round actuel |
+| `party focus [persona]` | Deep dive d'un persona specifique |
+| `party exit` | Quitter party mode, retour standard |
+
+**Personas disponibles**: Architect, Security, Frontend, Backend, QA
+
+### Expert Panel Commands (v5.0)
+
+| Commande | Action |
+|----------|--------|
+| `panel` | Demarrer panel d'experts (phase discussion) |
+| `panel debate` | Passer en phase debate (stress-test) |
+| `panel socratic` | Passer en phase socratic (questions) |
+| `panel exit` | Quitter panel mode, retour standard |
+
+**Experts disponibles**: Martin, Fowler, Newman, Gamma, Beck
+
 ## Flags
+
+### Core Flags
 
 | Flag | Effet |
 |------|-------|
@@ -135,11 +225,27 @@ Boucle jusqu'a `finish`:
 | `--no-hmw` | Desactiver HMW |
 | `--quick` | 3 iter max, skip validation |
 | `--turbo` | Mode turbo (voir reference) |
-| `--random` | Selection aleatoire techniques (voir reference) |
-| `--progressive` | Mode 3 phases (voir reference) |
 | `--no-security` | Desactiver @security-auditor auto |
 | `--no-plan` | Desactiver @planner auto |
-| `--no-technique` | Desactiver auto-suggestion techniques (v4.8+) |
+| `--no-technique` | Desactiver auto-suggestion techniques |
+| `--no-clarify` | Desactiver clarification input initial |
+| `--force-clarify` | Forcer clarification meme si input clair |
+
+### Technique Mode Flags (v5.0)
+
+| Flag | Effet |
+|------|-------|
+| `--random` | Selection aleatoire techniques avec equilibrage categories |
+| `--progressive` | Mode 4 phases progressives (Expansion → Exploration → Convergence → Action) |
+
+### Collaboration Mode Flags (v5.0)
+
+| Flag | Effet |
+|------|-------|
+| `--party` | Demarrer en party mode (multi-persona) |
+| `--panel` | Demarrer en expert panel mode |
+
+**Note**: `--party` et `--panel` sont mutuellement exclusifs. Un seul mode actif a la fois.
 
 ## References
 
@@ -154,6 +260,8 @@ Boucle jusqu'a `finish`:
 
 ## Agents
 
+### Core Agents
+
 | Agent | Model | Role |
 |-------|-------|------|
 | `@Explore` | - | Analyse codebase |
@@ -161,11 +269,22 @@ Boucle jusqu'a `finish`:
 | `@planner` | sonnet | Plan convergent |
 | `@security-auditor` | opus | Audit securite |
 | `@ems-evaluator` | haiku | Calcul EMS 5 axes |
-| `@technique-advisor` | haiku | Selection techniques |
+| `@technique-advisor` | haiku | Selection techniques (63 en CSV) |
 
-**@planner auto-invocation**: En phase Convergent OU quand EMS >= 70
+### v5.0 Agents
+
+| Agent | Model | Role |
+|-------|-------|------|
+| `@party-orchestrator` | sonnet | Orchestration multi-persona (5 personas) |
+| `@expert-panel` | sonnet | Panel 5 experts dev (3 phases) |
+
+**@planner auto-invocation**: En phase Convergent OU quand EMS >= 85
 
 **@security-auditor auto-detection**: Si patterns auth/security/payment/api detectes
+
+**@party-orchestrator**: Invoque via commande `party` ou flag `--party`
+
+**@expert-panel**: Invoque via commande `panel` ou flag `--panel`
 
 ## Hooks
 

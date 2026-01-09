@@ -4,7 +4,7 @@ description: >-
   and session modes with multi-task detection. Generates briefs (1h/4h/8h)
   and exports directly to Notion via API. Standalone tool, independent from
   EPCI workflow.
-argument-hint: "[dictation] | session"
+argument-hint: "[dictation] | session [--no-clarify]"
 allowed-tools: [Read, Glob, Grep, Write, Bash]
 ---
 
@@ -30,7 +30,7 @@ and export them directly to Notion. Standalone pense-bête tool.
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think` |
-| **Skills** | promptor |
+| **Skills** | promptor, input-clarifier |
 | **Notion** | API directe via Bash/curl |
 
 ### Notion Setup
@@ -53,6 +53,39 @@ See `.claude/settings.local.json.example` for template.
 
 ## Process
 
+### Step 0: Input Clarification (Conditional)
+
+**Skill**: `input-clarifier`
+
+Since promptor is specifically designed for voice dictation, input clarification is particularly relevant here.
+
+```
+IF --no-clarify flag:
+   → Skip clarification, proceed to mode detection
+
+ELSE:
+   → Calculate clarity score on dictation
+   → IF score < 0.6: Show reformulation prompt
+   → IF score >= 0.6: Continue with original input
+```
+
+**Example trigger:**
+```
+Input: "euh faut fixer le login là, enfin non le formulaire, et puis ajouter genre l'export"
+Score: 0.3 → Clarification triggered
+
+⚠️ Input confus détecté
+
+Original: "euh faut fixer le login là, enfin non le formulaire, et puis ajouter genre l'export"
+Reformulation: "Fixer le formulaire et ajouter l'export"
+
+[1] ✅ Utiliser   [2] ✏️ Modifier   [3] ➡️ Garder
+```
+
+> **Note**: Even after clarification, the multi-task detection in Step 3 still segments the cleaned input.
+
+---
+
 ### Mode Detection
 
 ```
@@ -62,8 +95,8 @@ See `.claude/settings.local.json.example` for template.
 
 ### One-Shot Mode
 
-1. **Receive dictation** from command argument
-2. **Clean** voice artifacts (hesitations, fillers)
+1. **Input clarification** (conditional, Step 0)
+2. **Clean** any remaining voice artifacts
 3. **Detect** mono vs multi-task
 4. **If multi-task**: Show checkpoint, wait for user choice
 5. **Generate** brief(s) based on complexity

@@ -2,8 +2,9 @@
 description: >-
   Generate .claude/rules/ structure for a project. Performs 3-level detection
   (stack, architecture, conventions), generates CLAUDE.md and contextual rules,
-  then validates via @rules-validator.
-argument-hint: "[--force] [--validate-only] [--dry-run] [--stack <name>]"
+  then validates via @rules-validator. Also supports incremental rule addition
+  via auto-detection or --add flag.
+argument-hint: "[--force] [--validate-only] [--dry-run] [--stack <name>] [--add] [\"rule text\"]"
 allowed-tools: [Read, Write, Glob, Grep, Bash, Task]
 ---
 
@@ -21,7 +22,7 @@ contextual rules files tailored to the project.
 | ------------- | -------------------------------------------------------- |
 | **Thinking**  | `think` (default) / `think hard` (complex monorepo)      |
 | **Skills**    | rules-generator, project-memory, [stack-skill detected]  |
-| **Subagents** | @Explore (quick), @rules-validator                       |
+| **Subagents** | @Explore (quick), @rules-validator, @rule-clarifier      |
 
 ## Arguments
 
@@ -32,20 +33,240 @@ contextual rules files tailored to the project.
 | `--dry-run`       | Show what would be generated without writing     |
 | `--stack <name>`  | Force stack detection (django, symfony, react, springboot, frontend-editor) |
 | `--no-validate`   | Skip validation step after generation            |
+| `--add`           | Force incremental rule addition mode (auto-detected otherwise) |
 
 ## Process
 
-### Step 0: Pre-checks
+### Step 0: Input Classification & Routing
 
-1. **Check existing `.claude/`**
-   - If exists and `--force` not provided:
+**Reference**: `rules-generator/references/rule-classifier.md`
+
+1. **Parse input and flags**
+   - If `--add` flag present → **Mode ADD** (Step A1)
+   - If explicit flags (`--force`, `--validate-only`, `--dry-run`, `--stack`) → **Mode GENERATE** (Step 1)
+   - Else → Classify input text
+
+2. **Auto-detect rule input** (if no explicit flags)
+   
+   Score the input for rule indicators:
+   
+   | Indicateur | Score |
+   |------------|-------|
+   | "toujours", "jamais", "doit", "ne pas" | +0.2 each |
+   | "devrait", "préférer", "éviter", "convention" | +0.2 each |
+   | Structure [contexte] + [action] | +0.2 |
+   | "?" en fin (question) | -0.3 |
+   
+   **Routing**:
+   - Score >= 0.7 → **Mode ADD** (Step A1)
+   - Score 0.4-0.7 → Demander confirmation
+   - Score < 0.4 → **Mode GENERATE** (Step 1)
+
+3. **Pre-checks (Mode GENERATE only)**
+   - If `.claude/` exists and `--force` not provided:
      ```
      ⚠️  .claude/ existe déjà. Utilisez --force pour écraser.
      ```
    - If `--validate-only`: Skip to Step 4 (Validation)
 
-2. **Load project memory** (if `.project-memory/` exists)
+4. **Load project memory** (if `.project-memory/` exists)
    - Extract project name, conventions, patterns
+
+---
+
+### Mode ADD: Incremental Rule Addition
+
+> **Skip to Step 1 if Mode GENERATE**
+
+#### Step A1: Clarity Assessment
+
+**Reference**: `rules-generator/references/rule-classifier.md`
+
+Calculate clarity score:
+
+| Élément | Score |
+|---------|-------|
+| Scope explicite ("fichiers Python", "dans backend/") | +0.4 |
+| Scope déductible du contexte | +0.2 |
+| Sévérité détectable (mots-clés) | +0.3 |
+| Contenu actionnable (verbe d'action) | +0.2 |
+| Longueur > 5 mots | +0.1 |
+
+**Routing**:
+- Clarity >= 0.8 → Step A3 (Reformulation directe)
+- Clarity < 0.8 → Step A2 (Clarification)
+
+---
+
+#### Step A2: Clarification
+
+**Subagent**: `@rule-clarifier` (Haiku)
+
+Invoke @rule-clarifier for fast clarification:
+
+```
+Task: Clarifier la règle suivante
+Input: "[user input]"
+Context: Structure projet, fichiers .claude/rules/ existants
+```
+
+**Questions possibles** (max 3, one-at-a-time):
+
+1. **Scope** (si non détecté):
+   ```
+   Quel scope pour cette règle ?
+     A) Tous les fichiers Python (**/*.py)
+     B) Backend uniquement (backend/**/*.py)
+     C) Frontend (frontend/**/*.tsx)
+     D) Autre (précisez)
+   
+   Suggestion: [B] basé sur la structure projet
+   ```
+
+2. **Sévérité** (si non détectée):
+   ```
+   Quelle sévérité ?
+     A) 🔴 CRITICAL — Ne jamais violer
+     B) 🟡 CONVENTIONS — Standard du projet
+     C) 🟢 PREFERENCES — Recommandé mais flexible
+   
+   Suggestion: [B] basé sur "devrait"
+   ```
+
+3. **Formulation** (si trop vague):
+   ```
+   Pouvez-vous préciser la règle ?
+   Actuel: "Faire attention aux injections"
+   Suggestion: "Toujours utiliser des requêtes paramétrées pour éviter les injections SQL"
+   ```
+
+---
+
+#### Step A3: Reformulation & Validation
+
+Afficher la règle reformulée :
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📝 RÈGLE DÉTECTÉE                                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Contenu  : "Toujours utiliser des type hints pour les fonctions    │
+│             publiques"                                              │
+│ Sévérité : 🟡 CONVENTIONS                                           │
+│ Scope    : backend/**/*.py                                          │
+│ Placement: .claude/rules/python-conventions.md (existant)           │
+│                                                                     │
+│ [1] ✅ Valider et ajouter                                           │
+│ [2] ✏️  Modifier                                                     │
+│ [3] ❌ Annuler                                                       │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Si [2] Modifier** → Retour Step A2 avec input modifié
+**Si [3] Annuler** → Fin
+**Si [1] Valider** → Step A4
+
+---
+
+#### Step A4: Placement Decision
+
+**Logique de placement** (automatique):
+
+```
+IF scope est global (vide ou **/*):
+   → CLAUDE.md
+ELSE:
+   → Chercher fichier .claude/rules/*.md avec paths similaires
+   
+   IF overlap >= 70%:
+      → Append au fichier existant
+   ELSE:
+      → Créer nouveau fichier rules/*.md
+```
+
+**Naming nouveau fichier**:
+
+| Scope | Nom fichier |
+|-------|-------------|
+| `**/*.py` | `python-conventions.md` |
+| `backend/**/*.py` | `backend-python.md` |
+| `frontend/**/*.tsx` | `frontend-react.md` |
+| `**/test_*.py` | `testing-python.md` |
+| Autre | `rules-custom.md` |
+
+---
+
+#### Step A5: Integration
+
+1. **Si CLAUDE.md**:
+   - Lire le fichier existant
+   - Identifier section appropriée (créer si nécessaire)
+   - Ajouter la règle en format bullet point
+
+2. **Si rules/*.md existant**:
+   - Lire le fichier
+   - Identifier section sévérité (🔴/🟡/🟢)
+   - Append à la fin de la section
+   - Vérifier limite tokens (< 2000)
+
+3. **Si nouveau rules/*.md**:
+   ```markdown
+   ---
+   paths:
+     - [extracted_scope]
+   ---
+   
+   # [Category] Conventions
+   
+   > Règles pour [scope description]
+   
+   ## 🔴 CRITICAL
+   
+   ## 🟡 CONVENTIONS
+   
+   - [new_rule]
+   
+   ## 🟢 PREFERENCES
+   ```
+
+---
+
+#### Step A6: Validation & Completion
+
+**Subagent**: `@rules-validator`
+
+Valider le fichier modifié/créé.
+
+**Si échec**:
+```
+❌ Validation échouée: [erreur]
+💡 Suggestion: [fix]
+
+Voulez-vous corriger ? [O/n]
+```
+
+**Si succès**:
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ RÈGLE AJOUTÉE                                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ 📁 Fichier  : .claude/rules/python-conventions.md                   │
+│ 📍 Section  : 🟡 CONVENTIONS                                        │
+│ 📊 Tokens   : 1450/2000                                             │
+│                                                                     │
+│ 💡 La règle sera active pour : backend/**/*.py                      │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Warning si limite proche**:
+```
+⚠️  Fichier à 90% de la limite (1800/2000 tokens)
+💡 Envisagez de créer un nouveau fichier pour les prochaines règles
+```
 
 ---
 
@@ -258,7 +479,7 @@ When `/brief` is called on a project without `.claude/`:
 
 ## Examples
 
-### Basic Usage
+### Basic Usage (Mode GENERATE)
 
 ```bash
 # Detect stack and generate rules
@@ -272,6 +493,58 @@ When `/brief` is called on a project without `.claude/`:
 
 # Preview without writing
 /epci:rules --dry-run
+```
+
+### Incremental Addition (Mode ADD)
+
+```bash
+# Auto-detected as rule (high confidence)
+/epci:rules "Toujours utiliser des type hints dans le code Python"
+→ Reformulation directe, validation, ajout
+
+# Auto-detected as rule (needs clarification)
+/epci:rules "Faire attention aux injections SQL"
+→ @rule-clarifier asks: scope? severity?
+
+# Force add mode explicitly
+/epci:rules --add "Préférer les composants fonctionnels en React"
+
+# Clear rule with explicit scope
+/epci:rules "Les fichiers dans backend/ doivent avoir des docstrings"
+→ Scope: backend/**/*.py, Severity: CRITICAL (doit)
+```
+
+### Mode ADD - Flow Example
+
+```
+User: /epci:rules "éviter les any en TypeScript"
+
+Step 0: Auto-detection
+├── Score: 0.7 (éviter = rule indicator)
+└── → Mode ADD
+
+Step A1: Clarity
+├── Scope: non explicite (→ déductible: **/*.ts)
+├── Severity: CONVENTIONS (éviter)
+└── Clarity: 0.7 → Clarification rapide
+
+Step A2: @rule-clarifier
+└── Q1: Quel scope ?
+    A) Tous fichiers TS (**/*.ts, **/*.tsx)
+    B) Frontend uniquement
+    → User: A
+
+Step A3: Reformulation
+┌─────────────────────────────────────────┐
+│ Contenu  : "Éviter l'utilisation de any"│
+│ Sévérité : 🟡 CONVENTIONS               │
+│ Scope    : **/*.ts, **/*.tsx            │
+│ Placement: .claude/rules/typescript.md  │
+└─────────────────────────────────────────┘
+→ User: [1] Valider
+
+Step A4-A6: Integration + Validation
+→ ✅ Règle ajoutée à typescript.md
 ```
 
 ### Force Specific Stack

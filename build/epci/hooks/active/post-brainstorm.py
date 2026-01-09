@@ -3,6 +3,8 @@
 Post-brainstorm hook — Execute apres completion d'une session brainstorm.
 Sauvegarde les metadonnees de session et met a jour la memoire projet.
 
+v5.0: Support Party Mode, Expert Panel, technique categories/sources.
+
 Usage:
     python3 src/hooks/runner.py post-brainstorm --context '{
         "feature_slug": "auth-oauth",
@@ -13,6 +15,14 @@ Usage:
         "template": "feature",
         "personas_used": ["Architect", "Sparring"],
         "techniques_applied": ["Six Thinking Hats", "SCAMPER"],
+        "technique_categories": {"structured": 1, "creative": 1},
+        "technique_source": "auto",
+        "session_mode": "standard",
+        "party_rounds": 0,
+        "party_personas_used": [],
+        "panel_rounds": 0,
+        "panel_phase": "",
+        "panel_experts_used": [],
         "iterations": 5,
         "duration_minutes": 25
     }'
@@ -26,6 +36,14 @@ Context attendu:
     - template: feature|problem|decision (optionnel)
     - personas_used: Liste des personas utilises (optionnel)
     - techniques_applied: Liste des techniques appliquees (optionnel)
+    - technique_categories: Dict categories utilisees (v5.0)
+    - technique_source: Source technique (auto|manual|random|progressive) (v5.0)
+    - session_mode: Mode session (standard|party|panel) (v5.0)
+    - party_rounds: Nombre de rounds party mode (v5.0)
+    - party_personas_used: Personas party utilises (v5.0)
+    - panel_rounds: Nombre de rounds panel (v5.0)
+    - panel_phase: Phase panel finale (v5.0)
+    - panel_experts_used: Experts panel utilises (v5.0)
     - iterations: Nombre d'iterations (optionnel)
     - duration_minutes: Duree de session en minutes (optionnel)
 """
@@ -65,6 +83,16 @@ def main():
     duration_minutes = context.get("duration_minutes", 0)
     timestamp = datetime.now().isoformat()
 
+    # v5.0: Nouvelles metriques
+    technique_categories = context.get("technique_categories", {})
+    technique_source = context.get("technique_source", "manual")
+    session_mode = context.get("session_mode", "standard")
+    party_rounds = context.get("party_rounds", 0)
+    party_personas_used = context.get("party_personas_used", [])
+    panel_rounds = context.get("panel_rounds", 0)
+    panel_phase = context.get("panel_phase", "")
+    panel_experts_used = context.get("panel_experts_used", [])
+
     # Creer les repertoires de logs/metriques si necessaires
     log_dir = Path(".project-memory/logs")
     metrics_dir = Path(".project-memory/metrics")
@@ -85,7 +113,16 @@ def main():
         "duration_minutes": duration_minutes,
         "session_file": session_file,
         "brief_file": brief_file,
-        "journal_file": journal_file
+        "journal_file": journal_file,
+        # v5.0 fields
+        "technique_categories": technique_categories,
+        "technique_source": technique_source,
+        "session_mode": session_mode,
+        "party_rounds": party_rounds,
+        "party_personas_used": party_personas_used,
+        "panel_rounds": panel_rounds,
+        "panel_phase": panel_phase,
+        "panel_experts_used": panel_experts_used
     }
 
     try:
@@ -109,7 +146,16 @@ def main():
                 "avg_iterations": 0,
                 "avg_duration_minutes": 0,
                 "personas_usage": {},
-                "techniques_usage": {}
+                "techniques_usage": {},
+                # v5.0 fields
+                "technique_categories_usage": {},
+                "technique_sources": {"auto": 0, "manual": 0, "random": 0, "progressive": 0},
+                "by_mode": {"standard": 0, "party": 0, "panel": 0},
+                "party_sessions": 0,
+                "party_personas_usage": {},
+                "panel_sessions": 0,
+                "panel_experts_usage": {},
+                "panel_phases_usage": {}
             }
 
         # Incrementer les compteurs
@@ -148,6 +194,43 @@ def main():
         for technique in techniques_applied:
             stats["techniques_usage"][technique] = stats.get("techniques_usage", {}).get(technique, 0) + 1
 
+        # v5.0: Compteurs technique categories
+        if "technique_categories_usage" not in stats:
+            stats["technique_categories_usage"] = {}
+        for cat, count in technique_categories.items():
+            stats["technique_categories_usage"][cat] = stats["technique_categories_usage"].get(cat, 0) + count
+
+        # v5.0: Compteurs technique sources
+        if "technique_sources" not in stats:
+            stats["technique_sources"] = {"auto": 0, "manual": 0, "random": 0, "progressive": 0}
+        if technique_source:
+            stats["technique_sources"][technique_source] = stats["technique_sources"].get(technique_source, 0) + 1
+
+        # v5.0: Compteurs par mode
+        if "by_mode" not in stats:
+            stats["by_mode"] = {"standard": 0, "party": 0, "panel": 0}
+        stats["by_mode"][session_mode] = stats["by_mode"].get(session_mode, 0) + 1
+
+        # v5.0: Party mode stats
+        if party_rounds > 0:
+            stats["party_sessions"] = stats.get("party_sessions", 0) + 1
+            if "party_personas_usage" not in stats:
+                stats["party_personas_usage"] = {}
+            for persona in party_personas_used:
+                stats["party_personas_usage"][persona] = stats["party_personas_usage"].get(persona, 0) + 1
+
+        # v5.0: Panel mode stats
+        if panel_rounds > 0:
+            stats["panel_sessions"] = stats.get("panel_sessions", 0) + 1
+            if "panel_experts_usage" not in stats:
+                stats["panel_experts_usage"] = {}
+            for expert in panel_experts_used:
+                stats["panel_experts_usage"][expert] = stats["panel_experts_usage"].get(expert, 0) + 1
+            if panel_phase:
+                if "panel_phases_usage" not in stats:
+                    stats["panel_phases_usage"] = {}
+                stats["panel_phases_usage"][panel_phase] = stats["panel_phases_usage"].get(panel_phase, 0) + 1
+
         stats["last_session"] = timestamp
 
         with open(metrics_file, "w", encoding="utf-8") as f:
@@ -181,9 +264,13 @@ def main():
 
     ems_label = f"EMS {ems_score}/100" if ems_score > 0 else "EMS N/A"
     print(f"post-brainstorm: {feature_slug} ({ems_label})")
-    print(f"                 Template: {template}, Iterations: {iterations}")
+    print(f"                 Template: {template}, Mode: {session_mode}, Iterations: {iterations}")
     if personas_used:
         print(f"                 Personas: {', '.join(personas_used)}")
+    if party_rounds > 0:
+        print(f"                 Party: {party_rounds} rounds, {', '.join(party_personas_used)}")
+    if panel_rounds > 0:
+        print(f"                 Panel: {panel_rounds} rounds ({panel_phase}), {', '.join(panel_experts_used)}")
 
     return 0
 

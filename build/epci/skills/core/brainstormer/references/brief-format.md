@@ -3,18 +3,17 @@
 ## Overview
 
 Template de sortie pour le brief genere par Brainstormer.
-Compatible avec le workflow EPCI.
+Compatible avec le workflow EPCI. Format hybride PRD-FRD optimise pour le handoff developpeur.
+
+**Version**: 2.0 (Janvier 2025)
 
 ## Template Brief
 
 ```markdown
 # Brief Fonctionnel — [Titre de la Feature]
 
-> **Genere par**: Brainstormer v3.0
-> **Template**: [feature/problem/decision]
-> **EMS Final**: XX/100
-> **Date**: YYYY-MM-DD
-> **Slug**: [feature-slug]
+> **Brainstormer**: v4.8 | **EMS**: XX/100 | **Template**: [feature/problem/decision]
+> **Date**: YYYY-MM-DD | **Slug**: [feature-slug]
 
 ---
 
@@ -27,6 +26,25 @@ Compatible avec le workflow EPCI.
 
 [Description claire et concise de ce qu'on veut accomplir.
 Une phrase principale, eventuellement 2-3 points de precision.]
+
+## Personas
+
+### Persona Primaire — [Nom/Role]
+
+- **Role**: [ex: Developpeur frontend, PM startup, Admin systeme]
+- **Contexte**: [environnement de travail, outils utilises, frequence d'utilisation]
+- **Pain points**: [frustrations actuelles, problemes rencontres]
+- **Objectifs**: [ce qu'il cherche a accomplir avec cette feature]
+- **Quote**: "[Citation representative du besoin]"
+
+### Persona Secondaire — [Nom/Role] (si applicable)
+
+- **Role**: [role secondaire impacte]
+- **Contexte**: [son environnement]
+- **Pain points**: [ses frustrations]
+- **Objectifs**: [ses objectifs]
+
+> Note: Personas issus de l'exploration Brainstormer ou a valider avec stakeholders.
 
 ## Stack Detecte
 
@@ -41,11 +59,13 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 > Elle sert de reference pour `/brief` qui effectuera une exploration ciblee.
 
 ### Codebase Analysis
+
 - **Structure**: [monorepo / multi-module / single-app]
 - **Architecture**: [MVC / Hexagonal / Clean / etc.]
 - **Test patterns**: [PHPUnit / Jest / Pytest / etc.]
 
 ### Fichiers Potentiels
+
 | Fichier | Action probable | Notes |
 |---------|-----------------|-------|
 | `path/to/file1.ext` | Create | [Description] |
@@ -54,35 +74,55 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 > Note: Liste indicative. L'exploration de `/brief` affinera ces fichiers.
 
 ### Risques Identifies
+
 - [Risque 1 avec niveau: Low/Medium/High]
 - [Risque 2 avec niveau]
 
-## Specifications Fonctionnelles
+## User Stories
 
-### SF1 — [Nom du bloc fonctionnel]
+### US1 — [Titre action]
 
-[Description du bloc]
+**En tant que** [persona primaire],
+**Je veux** [action/fonctionnalite],
+**Afin de** [benefice/valeur].
 
-- [Spec detaillee 1]
-- [Spec detaillee 2]
-- [Spec detaillee 3]
+**Acceptance Criteria:**
+- [ ] Given [contexte initial], When [action utilisateur], Then [resultat attendu]
+- [ ] Given [autre contexte], When [action], Then [resultat]
+- [ ] Given [cas erreur], When [action invalide], Then [message erreur]
 
-**Contraintes**: [Si applicable]
+**Priorite**: Must-have
+**Complexite**: [S | M | L]
 
-### SF2 — [Nom du bloc fonctionnel]
+### US2 — [Titre action]
 
-[Description du bloc]
+**En tant que** [persona],
+**Je veux** [action],
+**Afin de** [benefice].
 
-- [Spec detaillee]
-- [Spec detaillee]
+**Acceptance Criteria:**
+- [ ] Given [contexte], When [action], Then [resultat]
 
-### SF3 — [Nom du bloc fonctionnel]
+**Priorite**: Should-have
+**Complexite**: [S | M | L]
 
-...
+### US3 — [Titre action]
+
+**En tant que** [persona],
+**Je veux** [action],
+**Afin de** [benefice].
+
+**Acceptance Criteria:**
+- [ ] Given [contexte], When [action], Then [resultat]
+
+**Priorite**: Could-have
+**Complexite**: [S | M | L]
+
+> Note: Priorite MoSCoW. Must-have = MVP obligatoire. Could-have = nice-to-have v2+.
 
 ## Regles Metier
 
-- **RM1**: [Regle metier 1]
+- **RM1**: [Regle metier 1 — condition et consequence]
 - **RM2**: [Regle metier 2]
 - **RM3**: [Regle metier 3]
 
@@ -96,28 +136,59 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 
 ## Hors Scope (v1)
 
-- [Exclusion explicite 1]
-- [Exclusion explicite 2]
-- [Exclusion explicite 3]
+- [Exclusion explicite 1 — raison]
+- [Exclusion explicite 2 — raison]
+- [Exclusion explicite 3 — raison]
+
+## Success Metrics
+
+| Metrique | Baseline | Cible | Methode de mesure |
+|----------|----------|-------|-------------------|
+| [KPI 1 - ex: Temps de completion] | [valeur actuelle ou N/A] | [objectif] | [Analytics / Logs / User testing] |
+| [KPI 2 - ex: Taux d'erreur] | [valeur actuelle] | [objectif] | [Monitoring] |
+| [KPI 3 - ex: Satisfaction] | [valeur actuelle] | [objectif] | [Survey / NPS] |
+
+> Note: Metriques a definir avec Product Owner. Si inconnues, marquer "TBD".
+
+## User Flow (optionnel)
+
+```
+[Point d'entree]
+       |
+       v
+  [Etape 1] --> [Decision?]
+                    |
+           [Oui]---+---[Non]
+             |           |
+             v           v
+        [Etape 2]   [Alternative]
+             |           |
+             v           v
+        [Succes]    [Erreur/Retry]
+```
+
+> Ou lien vers: Figma / Miro / Excalidraw
 
 ## Contraintes Techniques Identifiees
 
 | Contrainte | Impact | Mitigation |
 |------------|--------|------------|
-| [Contrainte 1] | [Impact] | [Solution] |
-| [Contrainte 2] | [Impact] | [Solution] |
+| [Contrainte 1] | [Impact] | [Solution proposee] |
+| [Contrainte 2] | [Impact] | [Solution proposee] |
 
 ## Dependances
 
 - **Internes**: [Modules/services du projet impactes]
 - **Externes**: [Libs, APIs, services tiers]
 
-## Criteres d'Acceptation
+## Criteres d'Acceptation Globaux
 
-- [ ] [Critere mesurable 1]
-- [ ] [Critere mesurable 2]
-- [ ] [Critere mesurable 3]
-- [ ] [Critere mesurable 4]
+> Criteres techniques de validation (au-dela des AC par User Story)
+
+- [ ] [Critere performance - ex: Page load < 2s]
+- [ ] [Critere securite - ex: Inputs sanitizes]
+- [ ] [Critere accessibilite - ex: WCAG 2.1 AA]
+- [ ] [Critere tests - ex: Coverage > 80%]
 
 ## Questions Ouvertes
 
@@ -131,9 +202,9 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 
 | Metrique | Valeur |
 |----------|--------|
-| Complexite estimee | [SMALL / STANDARD / LARGE] |
+| Complexite estimee | [TINY / SMALL / STANDARD / LARGE] |
 | Fichiers impactes | ~X |
-| Risque | [Low / Medium / High] |
+| Risque global | [Low / Medium / High] |
 
 ---
 
@@ -141,40 +212,15 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 
 [Section optionnelle — si pre-mortem effectue]
 
-| Risque | Score | Mitigation |
-|--------|-------|------------|
-| [Risque 1] | 9 | [Action preventive] |
-| [Risque 2] | 6 | [Action preventive] |
-
----
-
-## EMS Final
-
-Score: XX/100 [emoji]
-
-| Axe | Score |
-|-----|-------|
-| Clarte | XX/100 |
-| Profondeur | XX/100 |
-| Couverture | XX/100 |
-| Decisions | XX/100 |
-| Actionnabilite | XX/100 |
-
----
-
-## Metadonnees Brainstormer
-
-| Metrique | Valeur |
-|----------|--------|
-| Iterations | X |
-| EMS Final | XX/100 |
-| Template | [feature/problem/decision] |
-| Frameworks utilises | [MoSCoW, Pre-mortem, ...] |
-| Duree exploration | ~Xmin |
+| Risque | Probabilite | Impact | Mitigation |
+|--------|-------------|--------|------------|
+| [Risque 1] | [H/M/L] | [H/M/L] | [Action preventive] |
+| [Risque 2] | [H/M/L] | [H/M/L] | [Action preventive] |
 
 ---
 
 *Brief pret pour EPCI — Lancer `/brief` avec ce contenu.*
+*Details du processus de brainstorming dans le Journal d'Exploration.*
 ```
 
 ## Template Journal d'Exploration
@@ -202,15 +248,36 @@ Score: XX/100 [emoji]
 | 3 | 72 | +17 | [Focus] |
 | Final | 78 | +6 | Finalisation |
 
+## EMS Final Detaille
+
+| Axe | Score |
+|-----|-------|
+| Clarte | XX/100 |
+| Profondeur | XX/100 |
+| Couverture | XX/100 |
+| Decisions | XX/100 |
+| Actionnabilite | XX/100 |
+
+## Metadonnees Brainstormer
+
+| Metrique | Valeur |
+|----------|--------|
+| Version | v4.8 |
+| Template | [feature/problem/decision] |
+| Techniques appliquees | [MoSCoW, Pre-mortem, SCAMPER, ...] |
+| Duree exploration | ~Xmin |
+
 ## Decisions Cles
 
 ### Decision 1 — [Sujet]
+
 - **Contexte**: [Pourquoi cette decision]
 - **Options considerees**: [A, B, C]
 - **Choix**: [Option retenue]
 - **Justification**: [Raison]
 
 ### Decision 2 — [Sujet]
+
 ...
 
 ## Pivots
@@ -218,6 +285,7 @@ Score: XX/100 [emoji]
 [Si des pivots ont eu lieu]
 
 ### Pivot 1 — Iteration X
+
 - **Avant**: [Direction initiale]
 - **Apres**: [Nouvelle direction]
 - **Raison**: [Pourquoi le changement]
@@ -227,6 +295,7 @@ Score: XX/100 [emoji]
 [Si des deep dives ont ete faits]
 
 ### Deep Dive — [Topic]
+
 - **Iteration**: X
 - **Resume**: [Ce qui a ete explore]
 - **Conclusion**: [Ce qui en ressort]
@@ -234,6 +303,7 @@ Score: XX/100 [emoji]
 ## Frameworks Appliques
 
 ### [Framework] — Iteration X
+
 [Resultat de l'application du framework]
 
 ## Questions Resolues
@@ -259,5 +329,21 @@ Score: XX/100 [emoji]
 1. **Slug**: kebab-case, derive du titre (ex: `systeme-notifications-temps-reel`)
 2. **Date**: Format ISO (YYYY-MM-DD)
 3. **Sections vides**: Omettre si rien a mettre (pas de "N/A")
-4. **Longueur**: Brief = 1-3 pages, Journal = selon iterations
+4. **Longueur**: Brief = 2-4 pages, Journal = selon iterations
 5. **Emplacement**: `./docs/briefs/`
+6. **Personas**: Minimum 1 persona primaire obligatoire
+7. **User Stories**: Minimum 1 Must-have US obligatoire
+8. **Priorite MoSCoW**: Must-have > Should-have > Could-have > Won't-have
+9. **Acceptance Criteria**: Format Given/When/Then obligatoire
+10. **Success Metrics**: Au moins 1 KPI si connu, sinon "TBD"
+
+## Changements v2.0
+
+| Section | Changement | Raison |
+|---------|------------|--------|
+| Personas | AJOUT | Ancrer les decisions dans l'utilisateur |
+| User Stories | REMPLACE SF | Format standard industrie |
+| Success Metrics | AJOUT | Metriques business mesurables |
+| User Flow | AJOUT (opt) | Visualisation parcours |
+| Metadonnees | SIMPLIFIE | Deplace vers Journal |
+| EMS detaille | DEPLACE | Vers Journal |
