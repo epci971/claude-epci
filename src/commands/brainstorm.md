@@ -1,6 +1,6 @@
 ---
 description: >-
-  Brainstorming guide v4.8.1 pour decouvrir et specifier une feature.
+  Brainstorming guide v4.9 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
   Auto-selection techniques basee sur axes faibles, mix de techniques.
   Finalization Checkpoint obligatoire a EMS >= 85 (bloquant).
@@ -10,7 +10,7 @@ argument-hint: "[description] [--template feature|problem|decision] [--quick] [-
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
-# /brainstorm — Feature Discovery v4.8.1
+# /brainstorm — Feature Discovery v4.9
 
 ## Overview
 
@@ -18,7 +18,7 @@ Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
 
-**Nouveautes v4.8.1**:
+**Nouveautes v4.9**:
 - **Finalization Checkpoint** obligatoire a EMS >= 85 (bloquant)
 - Pas de finalisation automatique — toujours choix explicite
 

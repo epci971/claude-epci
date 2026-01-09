@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 4.8.1 | **Date** : Janvier 2025
+> **Version** : 4.9 | **Date** : Janvier 2025
 
 ---
 
@@ -13,15 +13,21 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
 | **Simplicité**      | 11 commandes spécialisées                                     |
-| **Modularité**      | 26 Skills, 12 Subagents, Hooks natifs                         |
+| **Modularité**      | 27 Skills, 15 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
 
-### Nouveautés v4.8.1 (Finalization Checkpoint)
+### Nouveautés v4.9 (Expert Panel & Rule Clarifier)
 
+- **3 nouveaux agents** : `@expert-panel`, `@party-orchestrator`, `@rule-clarifier` pour brainstorming v5.0
+- **Nouveau skill** : `input-clarifier` pour validation entrées utilisateur
 - **Finalization Checkpoint obligatoire** : À EMS >= 70, checkpoint bloquant avec choix [1] Continuer / [2] Preview / [3] Finaliser
 - **Pas de finalisation automatique** : Ne JAMAIS passer en Phase 3 sans choix explicite utilisateur
 - **Preview sans finalisation** : Option [2] permet de voir le plan @planner puis revenir au brainstorm
+
+### Nouveautés v4.8.1 (Finalization Checkpoint)
+
+- **Finalization Checkpoint** : EMS >= 85 pour déclencher checkpoint
 
 ### Nouveautés v4.8 (Auto-Techniques Brainstorm)
 
@@ -152,7 +158,7 @@ Brief brut → /brief → Évaluation
 
 ---
 
-## 5. Subagents (12)
+## 5. Subagents (15)
 
 ### Core Subagents (7)
 
@@ -174,23 +180,27 @@ Brief brut → /brief → Évaluation
 | `@planner`      | sonnet | Planification rapide        | `/epci --turbo` P1, `/quick` [P], `/brainstorm` (converge) |
 | `@implementer`  | sonnet | Implémentation TDD rapide   | `/epci --turbo` P2, `/quick` [C] |
 
-### Brainstorm Subagents (2) — v4.8+
+### Brainstorm Subagents (5) — v4.8+
 
 | Subagent             | Model | Rôle                          | Invoqué par     |
 | -------------------- | ----- | ----------------------------- | --------------- |
 | `@ems-evaluator`     | haiku | Calcul EMS 5 axes + weak_axes | `/brainstorm` (chaque itération) |
 | `@technique-advisor` | haiku | Auto-sélection techniques     | `/brainstorm` (si axe < 50) |
+| `@expert-panel`      | opus  | Panel d'experts multi-perspective | `/brainstorm` v5.0 |
+| `@party-orchestrator`| sonnet| Orchestration sessions brainstorm | `/brainstorm` v5.0 |
+| `@rule-clarifier`    | haiku | Clarification règles métier   | `/brainstorm` v5.0 |
 
 ---
 
-## 6. Skills (26)
+## 6. Skills (27)
 
-### Core (14)
+### Core (15)
 
 `epci-core`, `architecture-patterns`, `code-conventions`, `testing-strategy`,
 `git-workflow`, `flags-system`, `project-memory`, `brainstormer`,
 `debugging-strategy`, `learning-optimizer`, `breakpoint-metrics`,
-`clarification-intelligente`, `proactive-suggestions`, `rules-generator`
+`clarification-intelligente`, `proactive-suggestions`, `rules-generator`,
+`input-clarifier`
 
 ### Stack (5) — Auto-détectés
 

@@ -15,6 +15,12 @@ Manages the `.project-memory/` directory which stores:
 - **Project context**: stack, conventions, patterns, feature history
 - **Learning data**: calibration, preferences, recurring patterns
 
+## Configuration
+
+| Element | Value |
+|---------|-------|
+| **Skills** | project-memory, learning-optimizer |
+
 ## Subcommands
 
 | Command | Description |
