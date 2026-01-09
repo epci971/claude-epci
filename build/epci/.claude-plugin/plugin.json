@@ -1,7 +1,7 @@
 {
   "name": "epci",
-  "version": "4.9",
-  "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability and project memory",
+  "version": "5.0.0",
+  "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability, project memory, and batch orchestration",
   "author": {
     "name": "EPCI Team"
   },
@@ -11,6 +11,7 @@
     "./commands/epci.md",
     "./commands/quick.md",
     "./commands/decompose.md",
+    "./commands/orchestrate.md",
     "./commands/memory.md",
     "./commands/create.md",
     "./commands/brainstorm.md",
@@ -52,6 +53,7 @@
     "./skills/core/debugging-strategy/SKILL.md",
     "./skills/core/rules-generator/SKILL.md",
     "./skills/core/input-clarifier/SKILL.md",
+    "./skills/core/orchestrator-batch/SKILL.md",
     "./skills/stack/php-symfony/SKILL.md",
     "./skills/stack/javascript-react/SKILL.md",
     "./skills/stack/python-django/SKILL.md",

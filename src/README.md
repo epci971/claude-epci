@@ -1,8 +1,8 @@
-# EPCI Plugin v3.9.5
+# EPCI Plugin v5.0.0
 
 > **E**xplore → **P**lan → **C**ode → **I**nspect
 
-Workflow structuré pour le développement assisté par IA avec traçabilité complète, mémoire projet persistante et apprentissage continu.
+Workflow structuré pour le développement assisté par IA avec traçabilité complète, mémoire projet persistante, apprentissage continu et orchestration batch.
 
 ---
 
@@ -12,6 +12,7 @@ Workflow structuré pour le développement assisté par IA avec traçabilité co
 - [Workflow EPCI](#workflow-epci)
 - [Commandes](#commandes)
 - [Routing par Complexité](#routing-par-complexité)
+- [Orchestration Batch](#orchestration-batch)
 - [Subagents](#subagents)
 - [Skills](#skills)
 - [Project Memory](#project-memory)
@@ -117,18 +118,22 @@ docs/features/<feature-slug>.md
 
 ## Commandes
 
-### Vue d'ensemble
+### Vue d'ensemble (12 commandes)
 
 | Commande | Description | Quand l'utiliser |
 |----------|-------------|------------------|
 | `/brief` | Point d'entrée universel | Toujours commencer ici |
 | `/epci` | Workflow complet 3 phases | Features STANDARD et LARGE |
 | `/quick` | Workflow condensé | Features TINY et SMALL |
-| `/brainstorm` | Feature discovery + exploration technique | Incertitude, discovery |
-| `/decompose` | Décomposition de features | Planification tâches complexes |
-| `/memory` | Gestion mémoire projet | Initialiser, exporter, réinitialiser |
-| `/learn` | Apprentissage projet | Analyser patterns et calibrer |
-| `/epci:create` | Factory de composants | Créer skills/commands/agents |
+| `/brainstorm` | Feature discovery v4.9 | Idée vague, incertitude |
+| `/decompose` | Décomposition PRD/briefs | Gros projets > 5 jours |
+| `/orchestrate` | Exécution batch specs | Overnight automation |
+| `/debug` | Diagnostic structuré | Bug fixing |
+| `/commit` | Finalisation git EPCI | Après /epci ou /quick |
+| `/memory` | Gestion mémoire + learning | Init, export, calibrate |
+| `/rules` | Génération .claude/rules/ | Conventions projet |
+| `/promptor` | Voice-to-brief + Notion | Dictée vocale |
+| `/create` | Factory de composants | Créer skills/commands/agents |
 
 ### `/brief` — Point d'entrée
 
@@ -205,40 +210,51 @@ docs/features/<feature-slug>.md
 
 Crée des composants EPCI avec validation automatique.
 
-### `/decompose` — Décomposition de Features
+### `/decompose` — Décomposition PRD/Briefs
 
 ```bash
-/decompose feature.md --output tasks/ --think hard
-/decompose --min-days 2 --max-days 5
+/decompose mon-prd.md --output specs/
+/decompose brief.md --min-days 2 --max-days 5
 ```
 
-Décompose une feature complexe en tâches atomiques :
-- Analyse du Feature Document ou brief
-- Génération de tâches avec estimations
+Décompose un PRD ou brief brainstorm en sous-specs exécutables :
+- **Auto-détection format** : PRD (Phases/Steps) ou Brief (User Stories)
+- Génération INDEX.md compatible `/orchestrate`
 - Validation via `@decompose-validator`
 - Export au format markdown structuré
+
+**Chaîne complète** : `/brainstorm` → `/decompose` → `/orchestrate`
+
+### `/orchestrate` — Exécution Batch
+
+```bash
+/orchestrate ./docs/specs/my-project/           # Exécution standard
+/orchestrate ./specs/ --dry-run                 # Voir le plan sans exécuter
+/orchestrate ./specs/ --continue                # Reprendre après interruption
+/orchestrate ./specs/ --skip S03,S05            # Ignorer certaines specs
+```
+
+Orchestre l'exécution automatique de multiples specs :
+- **DAG-based** : Gestion des dépendances entre specs
+- **Priority sorting** : Effort croissant + priority override (1-99)
+- **Auto-retry** : Jusqu'à 3 tentatives par spec
+- **Dual journaling** : MD (humain) + JSON (outils)
+- **Timeout proportionnel** : TINY=15m, SMALL=30m, STD=1h, LARGE=2h
+
+**Use case** : Lancer avant la nuit, revenir le matin avec toutes les features implémentées.
 
 ### `/memory` — Gestion Mémoire Projet
 
 ```bash
-/memory init       # Initialiser la mémoire projet
-/memory status     # Voir l'état actuel
-/memory export     # Exporter la configuration
-/memory reset      # Réinitialiser
+/memory init           # Initialiser la mémoire projet
+/memory status         # Voir l'état actuel
+/memory export         # Exporter la configuration
+/memory reset          # Réinitialiser
+/memory learn status   # État de l'apprentissage
+/memory learn calibrate # Calibrer les estimations
 ```
 
-Gère la mémoire persistante du projet (conventions, préférences, historique).
-
-### `/learn` — Apprentissage Projet
-
-```bash
-/learn status      # État de l'apprentissage
-/learn calibrate   # Calibrer les estimations
-/learn export      # Exporter les patterns appris
-/learn reset       # Réinitialiser l'apprentissage
-```
-
-Analyse les patterns du projet et optimise les suggestions futures.
+Gère la mémoire persistante du projet (conventions, préférences, historique) et le système d'apprentissage.
 
 ---
 
@@ -278,6 +294,46 @@ Analyse les patterns du projet et optimise les suggestions futures.
 
 ---
 
+## Orchestration Batch
+
+Pour les gros projets avec multiples specs, la chaîne complète est :
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│            CHAÎNE COMPLÈTE POUR GROS PROJETS                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
+│   │ /brainstorm │ →  │ /decompose  │ →  │ /orchestrate│         │
+│   └─────────────┘    └─────────────┘    └─────────────┘         │
+│         │                  │                  │                  │
+│         ▼                  ▼                  ▼                  │
+│   Brief EMS 85+      INDEX.md +         Exécution auto          │
+│   (User Stories)     S01...SNN.md       (overnight)             │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Formats Compatibles
+
+| Source | Format | Cible |
+|--------|--------|-------|
+| `/brainstorm` | Brief avec User Stories | `/decompose` |
+| `/decompose` | INDEX.md + specs | `/orchestrate` |
+| PRD manuel | Phases/Steps | `/decompose` |
+
+### INDEX.md Format (decompose → orchestrate)
+
+```markdown
+| ID | Title | Effort | Priority | Dependencies | Status |
+|----|-------|--------|----------|--------------|--------|
+| S01 | Core logic | 2j | - | - | Pending |
+| S02 | UI components | 1j | 1 | - | Pending |
+| S03 | Integration | 3j | - | S01, S02 | Pending |
+```
+
+---
+
 ## Subagents
 
 ### Agents Natifs Claude Code
@@ -287,16 +343,37 @@ Analyse les patterns du projet et optimise les suggestions futures.
 | `@Explore` | Haiku | Read-only | Analyse codebase |
 | `@Plan` | Sonnet | Research | Recherche avant plan |
 
-### Agents Custom EPCI (6)
+### Agents Custom EPCI (15)
 
-| Agent | Mission | Invocation | Tools |
-|-------|---------|------------|-------|
-| `@plan-validator` | Valide le plan avant Phase 2 | Phase 1 | Read, Grep |
-| `@code-reviewer` | Revue qualité et maintenabilité | Phase 2 | Read, Grep, Glob |
-| `@security-auditor` | Audit OWASP Top 10 | Phase 2 (conditionnel) | Read, Grep |
-| `@qa-reviewer` | Revue tests et couverture | Phase 2 (conditionnel) | Read, Grep, Bash |
-| `@doc-generator` | Génération documentation | Phase 3 | Read, Write, Glob |
-| `@decompose-validator` | Valide la décomposition des tâches | `/decompose` | Read, Grep |
+#### Core Agents (7)
+
+| Agent | Model | Mission | Invoqué par |
+|-------|-------|---------|-------------|
+| `@plan-validator` | opus | Valide le plan avant Phase 2 | `/epci` Phase 1 |
+| `@code-reviewer` | opus | Revue qualité et maintenabilité | `/epci` Phase 2, `/debug` |
+| `@security-auditor` | opus | Audit OWASP Top 10 | `/epci` Phase 2 (conditionnel) |
+| `@qa-reviewer` | sonnet | Revue tests et couverture | `/epci` Phase 2 (conditionnel) |
+| `@doc-generator` | sonnet | Génération documentation | `/epci` Phase 3 |
+| `@decompose-validator` | opus | Valide la décomposition | `/decompose` |
+| `@rules-validator` | opus | Valide .claude/rules/ | `/rules` |
+
+#### Turbo/Quick Agents (3)
+
+| Agent | Model | Mission | Invoqué par |
+|-------|-------|---------|-------------|
+| `@clarifier` | haiku | Questions clarification rapides | `/brief --turbo`, `/brainstorm --turbo` |
+| `@planner` | sonnet | Planification rapide | `/epci --turbo`, `/quick`, `/brainstorm` |
+| `@implementer` | sonnet | Implémentation TDD rapide | `/epci --turbo`, `/quick` |
+
+#### Brainstorm Agents (5)
+
+| Agent | Model | Mission | Invoqué par |
+|-------|-------|---------|-------------|
+| `@ems-evaluator` | haiku | Calcul EMS 5 axes | `/brainstorm` (chaque itération) |
+| `@technique-advisor` | haiku | Auto-sélection techniques | `/brainstorm` (si axe < 50) |
+| `@party-orchestrator` | sonnet | Orchestration multi-persona | `/brainstorm` (commande `party`) |
+| `@expert-panel` | sonnet | Panel 5 experts dev | `/brainstorm` (commande `panel`) |
+| `@rule-clarifier` | haiku | Clarification règles métier | `/brainstorm` |
 
 ### Invocation Conditionnelle
 
@@ -372,7 +449,7 @@ Votre choix ? [C/R/P/A] :
 
 ## Skills
 
-### Core Skills (12)
+### Core Skills (16)
 
 Skills fondamentaux chargés selon le contexte du workflow.
 
@@ -389,8 +466,13 @@ Skills fondamentaux chargés selon le contexte du workflow.
 | `learning-optimizer` | Optimisation apprentissage | `/memory learn` |
 | `proactive-suggestions` | Suggestions proactives IA | Phase 2, breakpoints |
 | `clarification-intelligente` | Clarification intelligente | `/brief` |
+| `brainstormer` | Feature discovery v4.9 | `/brainstorm` |
+| `debugging-strategy` | Diagnostic structuré | `/debug` |
+| `rules-generator` | Génération .claude/rules/ | `/rules` |
+| `input-clarifier` | Clarification inputs utilisateur | `/brainstorm` |
+| `orchestrator-batch` | Orchestration batch specs | `/orchestrate` |
 
-### Stack Skills (4)
+### Stack Skills (5)
 
 Skills auto-détectés selon le projet.
 
@@ -400,6 +482,7 @@ Skills auto-détectés selon le projet.
 | `javascript-react` | `package.json` + react | Hooks, Components, State |
 | `python-django` | `requirements.txt` + django | Models, DRF, Services |
 | `java-springboot` | `pom.xml` + spring-boot | JPA, Controllers, Services |
+| `frontend-editor` | Fichiers frontend (CSS, UI) | Tailwind, SCSS, Responsive |
 
 ### Factory Skills (4)
 
@@ -407,10 +490,18 @@ Skills pour la création de nouveaux composants.
 
 | Skill | Rôle | Invoqué par |
 |-------|------|-------------|
-| `skills-creator` | Création de skills | `/epci:create skill` |
-| `commands-creator` | Création de commandes | `/epci:create command` |
-| `subagents-creator` | Création d'agents | `/epci:create agent` |
+| `skills-creator` | Création de skills | `/create skill` |
+| `commands-creator` | Création de commandes | `/create command` |
+| `subagents-creator` | Création d'agents | `/create agent` |
 | `component-advisor` | Détection d'opportunités | Passif (auto) |
+
+### Autres Skills (3)
+
+| Skill | Rôle | Invoqué par |
+|-------|------|-------------|
+| `mcp` | Intégration MCP servers | Auto (Context7, Magic, etc.) |
+| `personas` | Système personas adaptatifs | `/brainstorm`, auto |
+| `promptor` | Voice-to-brief + Notion | `/promptor` |
 
 ---
 
@@ -593,28 +684,41 @@ Les flags peuvent être activés automatiquement selon le contexte :
 ```
 src/
 ├── .claude-plugin/
-│   └── plugin.json              # Manifeste v3.8.3
+│   └── plugin.json              # Manifeste v5.0.0
 │
-├── commands/                    # 8 commandes
-│   ├── brief.md           # Point d'entrée + routing
-│   ├── epci.md                 # Workflow complet 3 phases
-│   ├── quick.md           # Workflow condensé TINY/SMALL
-│   ├── brainstorm.md      # Feature discovery + exploration
-│   ├── decompose.md       # Décomposition de features
-│   ├── memory.md          # Gestion mémoire projet
-│   ├── learn.md           # Apprentissage projet
-│   └── create.md               # Factory dispatcher
+├── commands/                    # 12 commandes
+│   ├── brief.md                 # Point d'entrée + routing
+│   ├── epci.md                  # Workflow complet 3 phases
+│   ├── quick.md                 # Workflow condensé TINY/SMALL
+│   ├── brainstorm.md            # Feature discovery v4.9
+│   ├── decompose.md             # Décomposition PRD/briefs
+│   ├── orchestrate.md           # Orchestration batch specs
+│   ├── debug.md                 # Diagnostic structuré
+│   ├── commit.md                # Finalisation git EPCI
+│   ├── memory.md                # Gestion mémoire + learning
+│   ├── rules.md                 # Génération .claude/rules/
+│   ├── promptor.md              # Voice-to-brief + Notion
+│   └── create.md                # Factory dispatcher
 │
-├── agents/                      # 6 subagents custom
-│   ├── plan-validator.md
+├── agents/                      # 15 subagents custom
+│   ├── plan-validator.md        # Core
 │   ├── code-reviewer.md
 │   ├── security-auditor.md
 │   ├── qa-reviewer.md
 │   ├── doc-generator.md
-│   └── decompose-validator.md  # Validation décomposition
+│   ├── decompose-validator.md
+│   ├── rules-validator.md
+│   ├── clarifier.md             # Turbo
+│   ├── planner.md
+│   ├── implementer.md
+│   ├── ems-evaluator.md         # Brainstorm
+│   ├── technique-advisor.md
+│   ├── party-orchestrator.md
+│   ├── expert-panel.md
+│   └── rule-clarifier.md
 │
-├── skills/                      # 20 skills
-│   ├── core/                   # 12 skills fondamentaux
+├── skills/                      # 28 skills
+│   ├── core/                    # 16 skills fondamentaux
 │   │   ├── epci-core/
 │   │   ├── architecture-patterns/
 │   │   ├── code-conventions/
@@ -625,19 +729,29 @@ src/
 │   │   ├── project-memory/
 │   │   ├── learning-optimizer/
 │   │   ├── proactive-suggestions/
-│   │   └── clarification-intelligente/
+│   │   ├── clarification-intelligente/
+│   │   ├── brainstormer/
+│   │   ├── debugging-strategy/
+│   │   ├── rules-generator/
+│   │   ├── input-clarifier/
+│   │   └── orchestrator-batch/
 │   │
-│   ├── stack/                  # 4 skills auto-détectés
+│   ├── stack/                   # 5 skills auto-détectés
 │   │   ├── php-symfony/
 │   │   ├── javascript-react/
 │   │   ├── python-django/
-│   │   └── java-springboot/
+│   │   ├── java-springboot/
+│   │   └── frontend-editor/
 │   │
-│   └── factory/                # 4 skills de création
-│       ├── skills-creator/
-│       ├── commands-creator/
-│       ├── subagents-creator/
-│       └── component-advisor/
+│   ├── factory/                 # 4 skills de création
+│   │   ├── skills-creator/
+│   │   ├── commands-creator/
+│   │   ├── subagents-creator/
+│   │   └── component-advisor/
+│   │
+│   ├── mcp/                     # MCP integration
+│   ├── personas/                # Système personas
+│   └── promptor/                # Voice-to-brief
 │
 ├── scripts/                     # 7 scripts de validation
 │   ├── validate_all.py         # Orchestrateur
@@ -748,12 +862,57 @@ Le skill `skills-creator` guide la création en 6 phases :
 
 ## Changelog
 
-### v3.8 (Décembre 2024) — Current
+### v5.0.0 (Janvier 2026) — Current
+
+**Nouvelle commande majeure :**
+- `/orchestrate` — Orchestration batch de specs avec DAG, priority sorting, auto-retry, dual journaling
+
+**Compatibilité chaîne complète :**
+- `/brainstorm` → `/decompose` → `/orchestrate`
+- `/decompose` accepte maintenant les briefs brainstorm (User Stories)
+- INDEX.md format unifié compatible `/orchestrate`
+
+**Nouveau skill :**
+- `orchestrator-batch` — Logique d'orchestration batch (6 références)
+
+**Améliorations `/decompose` :**
+- Auto-détection format PRD vs Brief brainstorm
+- Mapping User Stories → Specs (Complexité S/M/L → jours)
+- INDEX.md avec colonnes Priority et Status
+- Nouveau edge case EC6 pour briefs
+
+**Totaux v5.0.0 :**
+- 12 commandes
+- 15 subagents
+- 28 skills
+
+---
+
+### v4.9 (Janvier 2026)
+
+**Brainstorm v4.9 :**
+- Finalization Checkpoint obligatoire à EMS >= 85
+- 3 nouveaux agents : `@expert-panel`, `@party-orchestrator`, `@rule-clarifier`
+- Nouveau skill : `input-clarifier`
+
+### v4.8 (Janvier 2026)
+
+**Brainstorm v4.8 :**
+- Auto-sélection techniques basée sur axes EMS faibles
+- Mix de techniques si 2+ axes faibles
+- Preview @planner/@security en phase Convergent
+
+### v4.4
+
+- Fusion `/learn` → `/memory` (subcommand `learn`)
+- Ajout `/commit` pour finalisation git EPCI
+- 3 nouveaux agents turbo : `@clarifier`, `@planner`, `@implementer`
+
+### v3.8 (Décembre 2024)
 
 **Nouvelles commandes :**
 - `/decompose` — Décomposition de features en tâches
 - `/memory` — Gestion mémoire projet
-- `/learn` — Apprentissage et calibration
 
 **Nouvel agent :**
 - `@decompose-validator` — Validation des décompositions
