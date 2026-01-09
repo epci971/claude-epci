@@ -3,7 +3,7 @@ description: >-
     EPCI entry point. Validates and reformulates the brief, performs thorough
     exploration, evaluates complexity, generates output (inline brief or Feature
     Document), and routes to appropriate workflow (/quick, /epci).
-argument-hint: "[brief] [--turbo] [--rephrase] [--no-rephrase] [--c7] [--seq] [--magic] [--play]"
+argument-hint: "[brief] [--turbo] [--rephrase] [--no-rephrase] [--no-clarify] [--c7] [--seq] [--magic] [--play]"
 allowed-tools: [Read, Write, Glob, Grep, Bash, Task]
 ---
 
@@ -21,7 +21,7 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 | Element       | Value                                                                                                      |
 | ------------- | ---------------------------------------------------------------------------------------------------------- |
 | **Thinking**  | `think hard` (default) / `ultrathink` (LARGE or high uncertainty)                                          |
-| **Skills**    | project-memory, epci-core, architecture-patterns, flags-system, mcp, personas, [stack-skill auto-detected] |
+| **Skills**    | project-memory, epci-core, architecture-patterns, flags-system, mcp, personas, input-clarifier, [stack-skill auto-detected] |
 | **Subagents** | @Explore (thorough), @clarifier (turbo mode)                                                               |
 
 **Thinking mode selection:**
@@ -94,6 +94,24 @@ Load project context from `.project-memory/` directory. The skill handles:
 
 **BREAKPOINT OBLIGATOIRE** — Toujours affiche pour valider le besoin AVANT exploration.
 
+#### Pre-step: Input Clarification (Conditional)
+
+**Skill**: `input-clarifier`
+
+Before reformulation, check if input needs clarification (voice artifacts detected).
+
+```
+IF --no-clarify flag:
+   → Skip clarification, proceed to reformulation checks
+
+ELSE:
+   → Calculate clarity score using input-clarifier skill
+   → IF score < 0.6: Show reformulation prompt (from input-clarifier)
+   → Use cleaned input for subsequent reformulation
+```
+
+> **Note**: This uses the centralized `input-clarifier` skill for consistent artifact detection across all commands. See `src/skills/core/input-clarifier/` for patterns.
+
 #### SKIP CONDITIONS (rares)
 
 | Condition | How to detect | Action |
@@ -108,20 +126,17 @@ Load project context from `.project-memory/` directory. The skill handles:
 | Condition | How to detect |
 |-----------|---------------|
 | **Flag `--rephrase`** | User explicitly requested |
-| **Voice artifacts detected** | Contains: `euh`, `hum`, `genre`, `tu vois`, `quoi`, `en fait`, `du coup`, `truc`, `machin` |
+| **Clarity score < 0.6** | Detected by input-clarifier skill (voice artifacts, self-corrections) |
 | **Vague/incomplete brief** | < 30 words AND contains vague terms: `système`, `améliorer`, `ajouter`, `truc`, `chose`, `something` |
 | **No clear action verb** | Missing: `implémenter`, `créer`, `ajouter`, `corriger`, `fixer`, `add`, `create`, `fix`, `implement` |
-| **Self-corrections detected** | Contains: `non`, `pardon`, `enfin`, `plutôt`, `je veux dire` |
 
 #### ACTION: Reformulation Process
 
 **If triggered, you MUST:**
 
-1. **Clean the brief:**
-   - Remove hesitations: `euh`, `hum`, `uh`, `um`, `bah`, `ben`
-   - Remove fillers: `tu vois`, `genre`, `quoi`, `en fait`, `du coup`
-   - Apply self-corrections: "CSV non pardon JSON" → "JSON"
-   - Normalize voice: "je veux" → "Le système doit", "faudrait que" → "doit"
+1. **Use cleaned input** from input-clarifier (if clarification was triggered)
+   - Artifacts already removed by the skill
+   - Self-corrections already resolved
 
 2. **Detect template type:**
    - **FEATURE**: Keywords `ajouter`, `créer`, `implémenter`, `nouveau`, `add`, `create`

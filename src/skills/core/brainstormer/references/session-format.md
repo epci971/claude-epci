@@ -1,28 +1,69 @@
-# Session Format — Brainstorm Persistence
+# Session Format — Brainstorm Persistence v1.2
 
 ## Overview
 
 Format YAML pour la persistence des sessions de brainstorming.
 Permet de sauvegarder et reprendre une session interrompue.
+Supporte les modes Standard, Party et Panel (v5.0).
 
 **Storage**: `.project-memory/brainstorm-sessions/[slug].yaml`
 
-## Schema
+## Schema v1.2
 
 ```yaml
-format_version: "1.0"
+format_version: "1.2"
 
 session:
   id: string           # Unique identifier: "{slug}-{date}"
   slug: string         # Feature slug (kebab-case)
   status: enum         # in_progress | completed | abandoned
   phase: enum          # divergent | transition | convergent
+  mode: enum           # standard | party | panel (v5.0)
   ems: integer         # Current EMS score (0-100)
   persona: string      # Current persona: architecte | sparring | pragmatique
   iteration: integer   # Current iteration number
-  techniques_used: []  # List of technique slugs used
+  techniques_used: []  # List of technique slugs used (legacy, kept for compat)
   started_at: datetime # Session start timestamp (ISO 8601)
   duration_minutes: integer  # Total session duration in minutes
+
+  # v5.0: Enhanced technique tracking
+  techniques_history:
+    - iteration: integer
+      technique_slug: string
+      category: string
+      suggested_reason: string
+      applied: boolean
+      source: enum       # auto | manual | random | progressive
+      weak_axes: []      # Axes that triggered suggestion
+
+  # v5.0: Party mode tracking
+  party_active: boolean
+  party_history:
+    - round: integer
+      topic: string
+      personas_selected: []
+      contributions:
+        - persona: string
+          key_points: []
+          references: []   # Other personas referenced
+      synthesis: string
+      user_question: string
+
+  # v5.0: Expert panel tracking
+  panel_active: boolean
+  panel_history:
+    - round: integer
+      topic: string
+      phase: enum        # discussion | debate | socratic
+      experts_selected: []
+      contributions:
+        - expert: string
+          framework: string
+          position: string
+          references: []
+      synthesis:
+        convergent: []
+        tensions: []
 
   ideas:               # Collected ideas with scores
     - id: integer
@@ -60,9 +101,50 @@ session:
 | `session.iteration` | integer | Yes | Current iteration number |
 | `session.started_at` | datetime | Yes | Session start timestamp (ISO 8601) |
 | `session.duration_minutes` | integer | Yes | Total session duration in minutes |
-| `session.mode` | string | No | Mode flag: `random`, `progressive`, or null (v4.2) |
+| `session.mode` | enum | Yes | Active mode: `standard`, `party`, `panel` (v5.0) |
 
-### Mode-Specific State (v4.2)
+### v5.0: Enhanced Technique Tracking
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `techniques_history[].iteration` | integer | Iteration when technique was suggested |
+| `techniques_history[].technique_slug` | string | Technique slug from CSV |
+| `techniques_history[].category` | string | Category (creative, structured, etc.) |
+| `techniques_history[].suggested_reason` | string | Why suggested (e.g., "Couverture 35%") |
+| `techniques_history[].applied` | boolean | Whether user applied it |
+| `techniques_history[].source` | enum | `auto`, `manual`, `random`, `progressive` |
+| `techniques_history[].weak_axes` | array | EMS axes that triggered suggestion |
+
+### v5.0: Party Mode State
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `party_active` | boolean | Whether party mode is currently active |
+| `party_history[].round` | integer | Discussion round number |
+| `party_history[].topic` | string | Topic discussed this round |
+| `party_history[].personas_selected` | array | Personas participating |
+| `party_history[].contributions[].persona` | string | Persona name |
+| `party_history[].contributions[].key_points` | array | Main points made |
+| `party_history[].contributions[].references` | array | Other personas referenced |
+| `party_history[].synthesis` | string | Round synthesis |
+| `party_history[].user_question` | string | Question posed to user |
+
+### v5.0: Expert Panel State
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `panel_active` | boolean | Whether panel mode is currently active |
+| `panel_history[].round` | integer | Panel round number |
+| `panel_history[].topic` | string | Topic analyzed |
+| `panel_history[].phase` | enum | `discussion`, `debate`, `socratic` |
+| `panel_history[].experts_selected` | array | Experts participating |
+| `panel_history[].contributions[].expert` | string | Expert name |
+| `panel_history[].contributions[].framework` | string | Framework used (SOLID, etc.) |
+| `panel_history[].contributions[].position` | string | Expert's position |
+| `panel_history[].synthesis.convergent` | array | Points of agreement |
+| `panel_history[].synthesis.tensions` | array | Productive tensions |
+
+### Mode-Specific State (v4.2 - Legacy)
 
 | Field | Type | When | Description |
 |-------|------|------|-------------|
@@ -95,22 +177,48 @@ session:
 | `history[].timestamp` | string | ISO 8601 timestamp |
 | `history[].duration` | integer | Duration of iteration in minutes |
 
-## Example
+## Example (v1.2)
 
 ```yaml
-format_version: "1.0"
+format_version: "1.2"
 
 session:
-  id: "feature-auth-2026-01-06"
+  id: "feature-auth-2026-01-09"
   slug: "feature-auth"
   status: "in_progress"
   phase: "divergent"
+  mode: "standard"      # standard | party | panel
   ems: 52
   persona: "architecte"
   iteration: 3
-  techniques_used: ["moscow", "5whys"]
-  started_at: "2026-01-06T10:30:00Z"
+  techniques_used: ["moscow", "5whys"]  # Legacy, kept for compat
+  started_at: "2026-01-09T10:30:00Z"
   duration_minutes: 30
+
+  # v5.0: Enhanced technique tracking
+  techniques_history:
+    - iteration: 2
+      technique_slug: "5whys"
+      category: "deep"
+      suggested_reason: "Clarte 42%"
+      applied: true
+      source: "auto"
+      weak_axes: ["Clarte"]
+    - iteration: 3
+      technique_slug: "six-hats"
+      category: "structured"
+      suggested_reason: "Couverture 38%"
+      applied: false
+      source: "auto"
+      weak_axes: ["Couverture"]
+
+  # v5.0: Party mode (inactive in this example)
+  party_active: false
+  party_history: []
+
+  # v5.0: Panel mode (inactive in this example)
+  panel_active: false
+  panel_history: []
 
   ideas:
     - id: 1
@@ -134,7 +242,7 @@ session:
       responses:
         - "OAuth2 pour les integrations tierces"
         - "Developpeurs et admins internes"
-      timestamp: "2026-01-06T10:30:00Z"
+      timestamp: "2026-01-09T10:30:00Z"
 
     - iteration: 2
       phase: "divergent"
@@ -146,7 +254,7 @@ session:
       responses:
         - "Sliding window avec timeout configurable"
         - "Rotation a chaque refresh"
-      timestamp: "2026-01-06T10:45:00Z"
+      timestamp: "2026-01-09T10:45:00Z"
 
     - iteration: 3
       phase: "divergent"
@@ -157,11 +265,93 @@ session:
         - "Comment gerer le multi-device?"
         - "Faut-il un rate limiting?"
       responses: []  # Awaiting response
-      timestamp: "2026-01-06T11:00:00Z"
+      timestamp: "2026-01-09T11:00:00Z"
 
   last_question: "Quel mecanisme de revocation privilegier?"
-  created: "2026-01-06T10:30:00Z"
-  updated: "2026-01-06T11:00:00Z"
+  created: "2026-01-09T10:30:00Z"
+  updated: "2026-01-09T11:00:00Z"
+```
+
+## Example with Party Mode Active
+
+```yaml
+format_version: "1.2"
+
+session:
+  id: "feature-checkout-2026-01-09"
+  slug: "feature-checkout"
+  status: "in_progress"
+  phase: "divergent"
+  mode: "party"
+  ems: 45
+  persona: "architecte"
+  iteration: 2
+
+  party_active: true
+  party_history:
+    - round: 1
+      topic: "Payment gateway integration approach"
+      personas_selected: ["Architect", "Security", "Backend"]
+      contributions:
+        - persona: "Architect"
+          key_points:
+            - "Recommend facade pattern for gateway abstraction"
+            - "Consider async processing for reliability"
+          references: []
+        - persona: "Security"
+          key_points:
+            - "PCI-DSS compliance mandatory"
+            - "Token-based approach preferred"
+          references: ["Architect"]
+        - persona: "Backend"
+          key_points:
+            - "Idempotency keys essential"
+            - "Webhook handling needs careful design"
+          references: ["Architect", "Security"]
+      synthesis: "Consensus on facade + async, debate on token storage strategy"
+      user_question: "Preferred token storage: DB or Redis?"
+```
+
+## Example with Expert Panel Active
+
+```yaml
+format_version: "1.2"
+
+session:
+  id: "refactor-api-2026-01-09"
+  slug: "refactor-api"
+  status: "in_progress"
+  phase: "convergent"
+  mode: "panel"
+  ems: 68
+  iteration: 4
+
+  panel_active: true
+  panel_history:
+    - round: 1
+      topic: "Repository pattern vs Active Record for data access"
+      phase: "discussion"
+      experts_selected: ["Martin", "Fowler", "Beck"]
+      contributions:
+        - expert: "Martin"
+          framework: "SOLID"
+          position: "Repository pattern for testability and SRP"
+          references: []
+        - expert: "Fowler"
+          framework: "Enterprise Patterns"
+          position: "Context-dependent - Active Record for simple CRUD, Repository for complex domain"
+          references: ["Martin"]
+        - expert: "Beck"
+          framework: "TDD"
+          position: "Repository enables test doubles, critical for fast tests"
+          references: ["Martin"]
+      synthesis:
+        convergent:
+          - "Testability is primary concern"
+          - "Abstraction needed for complex domain logic"
+        tensions:
+          - "Simplicity vs flexibility trade-off"
+          - "Initial velocity vs long-term maintainability"
 ```
 
 ## Operations
@@ -241,3 +431,44 @@ When `format_version` changes:
 2. Apply migrations sequentially
 3. Update `format_version` field
 4. Save migrated session
+
+### Migration v1.0 → v1.2
+
+```python
+def migrate_v1_to_v12(session):
+    """Migrate session from v1.0 to v1.2"""
+
+    # Add mode field (default: standard)
+    session['mode'] = 'standard'
+
+    # Convert techniques_used to techniques_history
+    techniques_history = []
+    for i, slug in enumerate(session.get('techniques_used', [])):
+        techniques_history.append({
+            'iteration': i + 1,
+            'technique_slug': slug,
+            'category': 'unknown',  # Cannot infer from v1.0
+            'suggested_reason': 'migrated from v1.0',
+            'applied': True,
+            'source': 'manual',
+            'weak_axes': []
+        })
+    session['techniques_history'] = techniques_history
+
+    # Initialize party and panel as inactive
+    session['party_active'] = False
+    session['party_history'] = []
+    session['panel_active'] = False
+    session['panel_history'] = []
+
+    # Update version
+    session['format_version'] = '1.2'
+
+    return session
+```
+
+### Backward Compatibility
+
+- v1.0 sessions are auto-migrated on load
+- `techniques_used[]` kept for backward compat (updated in parallel with `techniques_history`)
+- Missing fields default to empty/false

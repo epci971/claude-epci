@@ -3,8 +3,10 @@ name: rules-generator
 description: >-
   Generates .claude/rules/ structure for projects. Performs 3-level detection
   (stack, architecture, conventions) and creates CLAUDE.md + rules files.
-  Use when: /epci:rules command invoked, project needs conventions setup.
-  Not for: Manual rule editing, linter configuration, IDE settings.
+  Also supports incremental rule addition via auto-detection or --add flag.
+  Use when: /epci:rules command invoked, project needs conventions setup,
+  or user wants to add a single rule incrementally.
+  Not for: Linter configuration, IDE settings.
 ---
 
 # Rules Generator
@@ -236,6 +238,30 @@ Generate complete structure from scratch.
 5. Validate
 6. Report
 
+### `add` (Incremental)
+
+Add a single rule incrementally. Auto-detected or forced with `--add`.
+
+```
+/epci:rules "rule text"           # Auto-detected
+/epci:rules --add "rule text"     # Explicit mode
+```
+
+**Process:**
+1. Classify input (is it a rule?)
+2. Assess clarity (scope, severity, wording)
+3. Clarify if needed (@rule-clarifier)
+4. Reformulate and confirm
+5. Determine placement (CLAUDE.md or rules/*.md)
+6. Integrate rule in correct section
+7. Validate
+
+**Auto-detection indicators:**
+- Keywords: "toujours", "jamais", "doit", "préférer", "éviter"
+- Structure: [contexte] + [action/contrainte]
+
+-> See `references/rule-classifier.md` for classification logic
+
 ### `validate`
 
 Check rules against codebase for drift.
@@ -330,7 +356,8 @@ Invoke @rules-validator with paths:
 - `references/detection-levels.md` — Detection algorithm details
 - `references/rules-format.md` — File format specification
 - `references/stack-templates.md` — Template index
+- `references/rule-classifier.md` — Incremental add classification logic
 
 ---
 
-*Rules Generator v1.0 — EPCI Plugin Integration*
+*Rules Generator v1.1 — EPCI Plugin Integration*

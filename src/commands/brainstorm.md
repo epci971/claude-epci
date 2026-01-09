@@ -6,7 +6,7 @@ description: >-
   Finalization Checkpoint obligatoire a EMS >= 85 (bloquant).
   Session persistence, energy checkpoints, 3-5 questions avec A/B/C.
   Use when: idee vague a transformer en specs, incertitude technique.
-argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--c7] [--seq]"
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
@@ -56,6 +56,39 @@ iteratives pour construire des specifications exhaustives.
 2. If found: Prompt resume or new session
 3. If new: Archive existing, start fresh
 
+### Step 0 — Input Clarification (Conditional)
+
+**Skill**: `input-clarifier`
+
+Clarify initial description if confusing (dictated input with hesitations, fillers, etc.).
+
+**Important**: Only applies to **initial input**, NOT to iteration responses during Phase 2.
+
+```
+IF --no-clarify flag:
+   → Skip to Phase 1
+
+ELSE:
+   → Calculate clarity score on initial description
+   → IF score < 0.6: Show reformulation prompt
+   → IF score >= 0.6: Continue to Phase 1
+```
+
+**Example trigger:**
+```
+Input: "euh une feature de notifications, genre tu vois pour les users"
+Score: 0.4 → Clarification triggered
+
+⚠️ Input confus détecté
+
+Original: "euh une feature de notifications, genre tu vois pour les users"
+Reformulation: "Une feature de notifications pour les utilisateurs"
+
+[1] ✅ Utiliser   [2] ✏️ Modifier   [3] ➡️ Garder
+```
+
+---
+
 ### Phase 1 — Initialisation
 
 1. **Charger contexte** — Skill: `project-memory`
@@ -68,6 +101,7 @@ iteratives pour construire des specifications exhaustives.
 8. **Afficher breakpoint**
 
 > **Note v4.8**: HMW generes APRES @Explore pour questions contextuelles basees sur le codebase.
+> **Note v4.9**: Input clarification en Step 0 ne s'applique qu'a l'input initial, pas aux iterations.
 
 ### Phase 2 — Iterations
 
@@ -135,6 +169,8 @@ Boucle jusqu'a `finish`:
 
 ## Commands
 
+### Standard Commands
+
 | Commande | Action |
 |----------|--------|
 | `continue` | Iteration suivante (3-5 questions) |
@@ -157,7 +193,31 @@ Boucle jusqu'a `finish`:
 | `energy` | Forcer energy check |
 | `finish` | Generer brief + journal |
 
+### Party Mode Commands (v5.0)
+
+| Commande | Action |
+|----------|--------|
+| `party` | Demarrer discussion multi-persona |
+| `party add [persona]` | Ajouter persona au round actuel |
+| `party focus [persona]` | Deep dive d'un persona specifique |
+| `party exit` | Quitter party mode, retour standard |
+
+**Personas disponibles**: Architect, Security, Frontend, Backend, QA
+
+### Expert Panel Commands (v5.0)
+
+| Commande | Action |
+|----------|--------|
+| `panel` | Demarrer panel d'experts (phase discussion) |
+| `panel debate` | Passer en phase debate (stress-test) |
+| `panel socratic` | Passer en phase socratic (questions) |
+| `panel exit` | Quitter panel mode, retour standard |
+
+**Experts disponibles**: Martin, Fowler, Newman, Gamma, Beck
+
 ## Flags
+
+### Core Flags
 
 | Flag | Effet |
 |------|-------|
@@ -165,11 +225,27 @@ Boucle jusqu'a `finish`:
 | `--no-hmw` | Desactiver HMW |
 | `--quick` | 3 iter max, skip validation |
 | `--turbo` | Mode turbo (voir reference) |
-| `--random` | Selection aleatoire techniques (voir reference) |
-| `--progressive` | Mode 3 phases (voir reference) |
 | `--no-security` | Desactiver @security-auditor auto |
 | `--no-plan` | Desactiver @planner auto |
-| `--no-technique` | Desactiver auto-suggestion techniques (v4.8+) |
+| `--no-technique` | Desactiver auto-suggestion techniques |
+| `--no-clarify` | Desactiver clarification input initial |
+| `--force-clarify` | Forcer clarification meme si input clair |
+
+### Technique Mode Flags (v5.0)
+
+| Flag | Effet |
+|------|-------|
+| `--random` | Selection aleatoire techniques avec equilibrage categories |
+| `--progressive` | Mode 4 phases progressives (Expansion → Exploration → Convergence → Action) |
+
+### Collaboration Mode Flags (v5.0)
+
+| Flag | Effet |
+|------|-------|
+| `--party` | Demarrer en party mode (multi-persona) |
+| `--panel` | Demarrer en expert panel mode |
+
+**Note**: `--party` et `--panel` sont mutuellement exclusifs. Un seul mode actif a la fois.
 
 ## References
 
@@ -184,6 +260,8 @@ Boucle jusqu'a `finish`:
 
 ## Agents
 
+### Core Agents
+
 | Agent | Model | Role |
 |-------|-------|------|
 | `@Explore` | - | Analyse codebase |
@@ -191,11 +269,22 @@ Boucle jusqu'a `finish`:
 | `@planner` | sonnet | Plan convergent |
 | `@security-auditor` | opus | Audit securite |
 | `@ems-evaluator` | haiku | Calcul EMS 5 axes |
-| `@technique-advisor` | haiku | Selection techniques |
+| `@technique-advisor` | haiku | Selection techniques (63 en CSV) |
+
+### v5.0 Agents
+
+| Agent | Model | Role |
+|-------|-------|------|
+| `@party-orchestrator` | sonnet | Orchestration multi-persona (5 personas) |
+| `@expert-panel` | sonnet | Panel 5 experts dev (3 phases) |
 
 **@planner auto-invocation**: En phase Convergent OU quand EMS >= 85
 
 **@security-auditor auto-detection**: Si patterns auth/security/payment/api detectes
+
+**@party-orchestrator**: Invoque via commande `party` ou flag `--party`
+
+**@expert-panel**: Invoque via commande `panel` ou flag `--panel`
 
 ## Hooks
 

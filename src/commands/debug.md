@@ -3,7 +3,7 @@ description: >-
   Structured debugging workflow with adaptive routing. Diagnoses bugs using
   thought tree analysis, solution scoring, and automatic research (web + MCP).
   Routes to Trivial/Quick/Complet mode based on complexity.
-argument-hint: "[error message | stack trace] [--full] [--turbo] [--no-report] [--c7] [--seq]"
+argument-hint: "[error message | stack trace] [--full] [--turbo] [--no-report] [--c7] [--seq] [--no-clarify]"
 allowed-tools: [Read, Glob, Grep, Bash, Task, WebFetch, WebSearch, Write, Edit]
 ---
 
@@ -32,6 +32,8 @@ Diagnose and fix bugs systematically with:
 | `--no-report` | Complet mode without Debug Report file |
 | `--context <path>` | Link to existing Feature Document |
 | `--commit` | Generate commit context after fix, suggest /commit |
+| `--no-clarify` | Skip input clarification (even if input is confusing) |
+| `--force-clarify` | Force input clarification (even if input is clear) |
 
 ### --turbo Mode
 
@@ -82,6 +84,42 @@ Load `debugging-strategy` skill for methodology.
 ## Process
 
 **⚠️ IMPORTANT: Follow ALL steps. Routing happens automatically after Phase 1.**
+
+### Step 0: Input Clarification (Conditional)
+
+**Skill**: `input-clarifier`
+
+Clarify error description if confusing (dictated input with hesitations, fillers, etc.).
+
+**Note**: Stack traces and technical error messages are excluded from scoring — only the descriptive part is evaluated.
+
+```
+IF --no-clarify flag:
+   → Skip to Phase 1
+
+IF input contains only technical content (stack trace, error code):
+   → Skip to Phase 1 (score = 1.0)
+
+ELSE:
+   → Calculate clarity score
+   → IF score < 0.6: Show reformulation prompt
+   → IF score >= 0.6: Continue to Phase 1
+```
+
+**Example trigger:**
+```
+Input: "euh le truc là il marche plus, enfin le bouton quoi"
+Score: 0.35 → Clarification triggered
+
+⚠️ Input confus détecté
+
+Original: "euh le truc là il marche plus, enfin le bouton quoi"
+Reformulation: "Le bouton ne fonctionne plus"
+
+[1] ✅ Utiliser   [2] ✏️ Modifier   [3] ➡️ Garder
+```
+
+---
 
 ### Phase 1: Diagnostic (MANDATORY)
 
