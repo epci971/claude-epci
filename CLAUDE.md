@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 4.9 | **Date** : Janvier 2025
+> **Version** : 4.9.1 | **Date** : Janvier 2025
 
 ---
 
@@ -16,6 +16,15 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | **Modularité**      | 28 Skills, 15 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v4.9.1 (Native Plan Integration)
+
+- **Flag `--from-native-plan <file>`** : Import du plan natif Claude Code comme base pour Phase 1
+- **Exploration conditionnelle** : @Explore automatique si §1 manquant lors de l'import
+- **Copie automatique pour traçabilité** : Plan natif archivé dans Feature Document §2
+- **Raffinement intelligent** : Phase 1 raffine le plan natif (2-15 min) au lieu de repartir de zéro
+- **Workflow hybride** : `/epci` peut maintenant fonctionner avec ou sans `/brief` préalable
+- **Traçabilité git** : Plan natif copié dans le projet pour collaboration d'équipe
 
 ### Nouveautés v4.9 (Expert Panel & Rule Clarifier)
 
@@ -125,6 +134,65 @@ Brief brut → /brief → Évaluation
 | **LARGE**    | 10+ fichiers, architecture complexe | `/epci --large`    |
 
 > **Note** : Pour les incertitudes techniques, utiliser `/brainstorm` avec la commande `spike [duration] [question]` intégrée.
+
+### Workflow avec Plan Natif (v4.9.1+)
+
+Nouveau workflow permettant d'utiliser le plan natif de Claude Code :
+
+```
+Plan Natif Claude Code → /epci --from-native-plan plan.md --slug feature-name
+                              ↓
+                         [Step 0.5]
+                              ↓
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+              §1 existe ?           §1 manquant
+                  ↓                     ↓
+            Utilise §1          Lance @Explore
+                  ↓                     ↓
+                  └──────────┬──────────┘
+                             ↓
+                    Copie plan natif en §2
+                             ↓
+                    Phase 1: Raffine plan
+                    (découpage 2-15 min)
+                             ↓
+                    Phase 2-3: Standard
+```
+
+**Commandes** :
+
+```bash
+# Workflow A : Standard (recommandé)
+/brief "description feature"
+# → Crée Feature Document avec §1
+/epci feature-slug
+# → Phase 1-3 complètes
+
+# Workflow B : Avec plan natif (nouveau)
+<mode plan natif Claude Code>
+# → Génère ~/.claude/plans/plan.md
+/epci --from-native-plan ~/.claude/plans/plan.md --slug feature-auth
+# → Crée §1 via @Explore (si manquant)
+# → Copie plan natif en §2
+# → Raffine en Phase 1
+# → Phase 2-3 standard
+
+# Workflow C : Hybride
+/brief "description feature"
+# → Crée Feature Document avec §1
+<mode plan natif Claude Code>
+# → Génère plan haut niveau
+/epci --from-native-plan ~/.claude/plans/plan.md --slug feature-slug
+# → Utilise §1 existant + plan natif comme base
+# → Phase 1 raffine le plan natif
+```
+
+**Avantages du workflow B/C** :
+- ✅ Plan natif comme base haut niveau
+- ✅ Phase 1 raffine (2-15 min, tests, validation)
+- ✅ Traçabilité : plan copié dans git
+- ✅ Collaboration : équipe voit le raisonnement initial
 
 ### Feature Document (STD/LARGE)
 
