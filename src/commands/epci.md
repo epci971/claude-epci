@@ -51,73 +51,18 @@ flowchart LR
 
 **⚠️ MANDATORY: When `--turbo` flag is active, you MUST follow these rules:**
 
-#### Phase 1 — Turbo Planning
+**Summary:**
+- **Phase 1:** Use @planner (Sonnet), skip detailed risk analysis, single breakpoint
+- **Phase 2:** Use @implementer (Sonnet), parallel reviews (single message), auto-fix minor issues
+- **Breakpoints:** 1 only (pre-commit), skip BP1/BP2
+- **Time savings:** 30-50%
 
-1. **Use @planner agent** (Sonnet model) for rapid task breakdown:
-   ```
-   Invoke @planner via Task tool with model: sonnet
-   Input: Feature Document §1 + identified files
-   Output: Atomic tasks (2-15 min each) with dependencies
-   ```
-
-2. **Skip detailed risk analysis** — Focus on execution, not documentation
-
-3. **Single breakpoint only** — Combine BP1 approval with implementation start
-
-#### Phase 2 — Turbo Implementation
-
-1. **Use @implementer agent** (Sonnet model) for code execution:
-   ```
-   Invoke @implementer via Task tool with model: sonnet
-   Input: Single task from plan
-   Output: Implemented code with tests
-   ```
-
-2. **Parallel reviews** — Run all review agents simultaneously:
-   ```
-   ⚠️ MANDATORY: Launch ALL applicable reviews in a SINGLE message with multiple Task calls:
-
-   Task 1: @code-reviewer (opus) — Review code quality
-   Task 2: @security-auditor (opus) — If security files detected
-   Task 3: @qa-reviewer (sonnet) — If complex tests
-
-   DO NOT run these sequentially. Use parallel Task tool calls.
-   ```
-
-3. **Single breakpoint** — Skip BP2, proceed directly to Phase 3 after reviews pass
-
-4. **Auto-fix minor issues** — Apply Minor/Style fixes automatically, report in summary
-
-#### Turbo DAG Structure
-
-```
-@planner (sonnet)
-      │
-      ▼
-@implementer (sonnet) ──────────────────────────┐
-      │                                          │
-      ▼                                          ▼
-┌─────────────────────────────────────────────────────┐
-│ PARALLEL REVIEWS (single Task message)              │
-│ @code-reviewer (opus)                               │
-│ @security-auditor (opus) — if applicable            │
-│ @qa-reviewer (sonnet) — if applicable               │
-└─────────────────────────────────────────────────────┘
-      │
-      ▼
-@doc-generator (sonnet)
-```
-
-**Turbo vs Standard Comparison:**
-
-| Aspect | Standard | Turbo |
-|--------|----------|-------|
-| Breakpoints | 3 (BP1, BP2, pre-commit) | 1 (pre-commit only) |
-| Planning | Manual | @planner (Sonnet) |
-| Implementation | Manual | @implementer (Sonnet) |
-| Reviews | Sequential | Parallel (single message) |
-| Minor fixes | User approval | Auto-applied |
-| Est. time savings | - | 30-50% |
+**Full specification:** See `references/turbo-mode.md` for:
+- Phase-specific behavior (Phase 1/2/3)
+- Agent invocation patterns (@planner, @implementer)
+- Parallel review execution
+- DAG structure
+- Turbo vs Standard comparison
 
 ### Key Flags for /epci
 
@@ -136,62 +81,23 @@ flowchart LR
 
 ## Feature Document
 
-The Feature Document is created by `/brief` at: `docs/features/<feature-slug>.md`
+**Location:** `docs/features/<feature-slug>.md` (created by `/brief`)
 
-```markdown
-# Feature Document — [Title]
+**Structure:** §1 (Brief), §2 (Plan), §3 (Implementation)
 
-## §1 — Functional Brief
-[Created by /brief with thorough exploration]
+**Templates:** See `references/feature-document-templates.md` for complete §1/§2/§3 templates and examples.
 
-## §2 — Implementation Plan
-[Generated in Phase 1]
-
-## §3 — Implementation & Finalization
-[Updated in Phases 2-3]
-```
-
-**Prerequisite:** Feature Document with §1 completed must exist before running `/epci`.
+**Prerequisite:** §1 must be complete before running `/epci`.
 
 ---
 
 ## Hooks Integration
 
-User-defined hooks can be executed at specific points in the workflow.
-See `hooks/README.md` for configuration and examples.
+Execute hooks at workflow points: `python3 src/hooks/runner.py <hook-type> --context '{...}'`
 
-**Hook Points:**
+**Available:** `pre-phase-1`, `post-phase-1`, `pre-phase-2`, `post-phase-2`, `post-phase-3`, `on-breakpoint`, `pre-agent`, `post-agent`
 
-| Hook Type | Trigger Point | Use Case |
-|-----------|--------------|----------|
-| `pre-brief` | Before /brief exploration | Load external config, validate environment |
-| `post-brief` | After complexity evaluation | Notify feature start, create tickets |
-| `pre-phase-1` | Before Phase 1 starts | Load context, check prerequisites |
-| `post-phase-1` | After plan validation | Notify team, update tickets |
-| `pre-phase-2` | Before coding starts | Run linters, setup environment |
-| `post-phase-2` | After code review | Additional tests, coverage checks |
-| `post-phase-3` | After completion | Deploy, notify, collect metrics |
-| `on-breakpoint` | At each breakpoint | Logging, metrics collection |
-| `pre-agent` | Before each agent runs | Custom agent setup, logging |
-| `post-agent` | After each agent completes | Process agent results, notifications |
-
-> **Note (v3.2):** `pre-phase-3` removed (redundant with `post-phase-2`).
-
-**Execution:** Hooks must be explicitly invoked using the hook runner.
-
-**⚠️ MANDATORY: Always invoke hooks at the designated points using:**
-
-```bash
-python3 src/hooks/runner.py <hook-type> --context '{
-  "phase": "<phase>",
-  "feature_slug": "<slug>",
-  "complexity": "<TINY|SMALL|STANDARD|LARGE>",
-  "files_modified": ["file1.py", "file2.py"],
-  ...
-}'
-```
-
-On error with `fail_on_error: false` (default), workflow continues with warning.
+**Full documentation:** See `references/hooks.md` and `hooks/README.md` for hook points, configuration, context schema, and examples.
 
 ---
 
@@ -246,174 +152,20 @@ overrides can be placed in `.project-memory/orchestration.yaml`.
 
 **Condition:** `--from-native-plan <file>` flag provided
 
-This step enables importing a native Claude Code plan as the base for Phase 1 planning. The native plan will be copied into the Feature Document for full traceability.
+Import a native Claude Code plan as base for Phase 1. Native plan is copied to Feature Document §2 for full traceability.
 
-### Process
+**Summary:**
+1. Read native plan from `<file>` (can be anywhere, e.g., ~/.claude/)
+2. Check §1 status → Run @Explore if §1 missing/incomplete
+3. Copy plan to §2 "Plan Original (Natif)" section
+4. Proceed to prerequisite check
 
-#### 1. Read Native Plan File
+**Full workflow (5 steps):** See `references/native-plan-import.md`
 
-**Action:** Use Read tool to read the native plan file
-
-```
-Read <file-path>
-  → File can be anywhere (e.g., ~/.claude/plans/plan.md)
-  → Extract full content
-  → Store in memory as native_plan_content
-```
-
-**Error handling:**
-
-```
-IF file not found OR unreadable:
-  ╔══════════════════════════════════════════════════════════════╗
-  ║ ❌ ERROR: Native Plan File Not Found                         ║
-  ╠══════════════════════════════════════════════════════════════╣
-  ║ File: <file-path>                                            ║
-  ║                                                              ║
-  ║ → Verify the file path is correct                            ║
-  ║ → Ensure you have read permissions                           ║
-  ╚══════════════════════════════════════════════════════════════╝
-  ABORT workflow
-```
-
-#### 2. Check Feature Document Status
-
-**Action:** Determine if Feature Document exists and if §1 is complete
-
-```
-status = {
-  "doc_exists": exists(docs/features/<slug>.md),
-  "section1_exists": contains_section("## §1 — Brief Fonctionnel"),
-  "section1_complete": has_required_fields(§1)
-}
-```
-
-**Decision tree:**
-
-| Status | Action |
-|--------|--------|
-| Doc missing | Create Feature Document + Generate §1 via @Explore |
-| Doc exists, §1 missing | Generate §1 via @Explore |
-| Doc exists, §1 incomplete | Generate complete §1 via @Explore |
-| Doc exists, §1 complete | Use existing §1 (skip exploration) |
-
-#### 3. Conditional Exploration (if §1 missing or incomplete)
-
-**When to run:** §1 does not exist or is incomplete
-
-**Action:** Invoke @Explore agent to generate §1
-
-```
-Invoke @Explore via Task tool with:
-  - Subagent: "Explore"
-  - Model: haiku (if --turbo) OR default
-  - Prompt: "Analyze project for: <brief-from-native-plan>
-    - Scan complete project structure
-    - Identify all technologies, frameworks, versions
-    - Map architectural patterns
-    - Identify files potentially impacted
-    - Estimate dependencies and coupling
-    - Detect existing test patterns"
-```
-
-**Generate §1 from @Explore results:**
-
-Use the exploration results to create a complete §1 Brief Fonctionnel with:
-- **Objectif**: Extracted from native plan summary
-- **Contexte Technique**: From @Explore (stack, dependencies)
-- **Fichiers Identifiés**: From @Explore
-- **Patterns Architecturaux**: From @Explore
-- **Critères d'Acceptation**: From native plan
-- **Risques**: From @Explore
-- **Memory Summary**: From project-memory skill
-
-#### 4. Create/Update Feature Document with Native Plan
-
-**Action:** Write or update Feature Document with §1 and §2 (native plan)
-
-**Use Write or Edit tool** to create/update `docs/features/<slug>.md`:
-
-```markdown
-# Feature Document — [Title from native plan]
-
-## §1 — Brief Fonctionnel
-
-### Objectif
-[Extracted from native plan or user input]
-
-### Contexte Technique
-**Stack détecté**: [From @Explore]
-**Frameworks**: [From @Explore]
-**Patterns**: [From @Explore]
-
-### Fichiers Identifiés
-[From @Explore - list of impacted files]
-
-### Critères d'Acceptation
-[From native plan]
-
-### Risques Identifiés
-[From @Explore]
-
-### Memory Summary
-[From project-memory skill]
-
----
-
-## §2 — Plan d'Implémentation
-
-### 📋 Source du Plan
-
-- **Type**: Plan natif Claude Code
-- **Fichier source**: `<file-path>`
-- **Importé le**: [Current date/time]
-- **Statut**: ⚠️ Base à raffiner par EPCI Phase 1
-
----
-
-### 📝 Plan Original (Natif)
-
-<details>
-<summary>Voir le plan natif complet</summary>
-
-[FULL NATIVE PLAN CONTENT COPIED HERE]
-
-</details>
-
----
-
-### ✅ Plan Raffiné & Validé
-
-_[À remplir par Phase 1 — Planification]_
-
-Phase 1 will:
-- Break down native plan into atomic tasks (2-15 min each)
-- Add test planning for each task
-- Order by dependencies
-- Validate with @plan-validator
-
----
-
-## §3 — Implementation & Finalization
-
-_[À remplir par Phases 2-3]_
-```
-
-**Confirmation message:**
-
-```
-✅ Native plan imported successfully
-
-📄 Feature Document: docs/features/<slug>.md
-  ├─ §1 Brief Fonctionnel: [CREATED from @Explore | EXISTING]
-  └─ §2 Plan Original (Natif): IMPORTED
-
-🔄 Next: Phase 1 will refine the native plan into atomic tasks
-```
-
-#### 5. Proceed to Feature Document Prerequisite Check
-
-After import is complete, continue to the normal "Feature Document Prerequisite Check" section. Since we just created/updated the document, the check should pass.
+**Key behaviors:**
+- §1 generated via @Explore if missing (exploration conditional)
+- Native plan archived in git for team collaboration
+- Phase 1 refines plan into atomic tasks (2-15 min each)
 
 ---
 
@@ -539,78 +291,15 @@ IF all_checks_pass:
 
 ### Output §2 (USE EDIT TOOL — MANDATORY)
 
-**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §2 content.
+**⚠️ MANDATORY:** Use Edit tool to update Feature Document with §2 content.
 
 **Two scenarios:**
+- **Scenario A** (Native plan): Update "✅ Plan Raffiné & Validé" section with atomic tasks
+- **Scenario B** (Standard): Create complete §2 from scratch
 
-#### Scenario A: Native Plan Imported (--from-native-plan used)
+**Templates:** See `references/feature-document-templates.md` (Scenario A/B templates)
 
-The §2 already contains the native plan structure. Update the "✅ Plan Raffiné & Validé" section:
-
-```markdown
-### ✅ Plan Raffiné & Validé
-
-#### Impacted Files
-| File | Action | Risk |
-|------|--------|------|
-| src/Service/X.php | Modify | Medium |
-| src/Entity/Y.php | Create | Low |
-| tests/Unit/XTest.php | Create | Low |
-
-#### Atomic Tasks (2-15 min each)
-1. [ ] **Create entity Y** (5 min)
-   - File: `src/Entity/Y.php`
-   - Test: `tests/Unit/Entity/YTest.php`
-   - Dependencies: None
-   - From native plan: [reference to original task]
-
-2. [ ] **Modify service X** (10 min)
-   - File: `src/Service/X.php`
-   - Test: `tests/Unit/Service/XTest.php`
-   - Dependencies: Task 1
-   - From native plan: [reference to original task]
-
-#### Risks
-| Risk | Probability | Mitigation |
-|------|-------------|------------|
-| Breaking change | Medium | Regression tests |
-
-#### Validation
-- **@plan-validator**: APPROVED
-- **Native plan refined**: ✅ High-level tasks broken down into atomic steps
-```
-
-#### Scenario B: Standard Workflow (no native plan)
-
-Create complete §2 from scratch:
-
-```markdown
-## §2 — Implementation Plan
-
-### Impacted Files
-| File | Action | Risk |
-|------|--------|------|
-| src/Service/X.php | Modify | Medium |
-| src/Entity/Y.php | Create | Low |
-| tests/Unit/XTest.php | Create | Low |
-
-### Tasks
-1. [ ] **Create entity Y** (5 min)
-   - File: `src/Entity/Y.php`
-   - Test: `tests/Unit/Entity/YTest.php`
-
-2. [ ] **Modify service X** (10 min)
-   - File: `src/Service/X.php`
-   - Test: `tests/Unit/Service/XTest.php`
-
-### Risks
-| Risk | Probability | Mitigation |
-|------|-------------|------------|
-| Breaking change | Medium | Regression tests |
-
-### Validation
-- **@plan-validator**: APPROVED
-```
+**Required elements:** Impacted files, atomic tasks (2-15 min), dependencies, tests, risks, @plan-validator verdict
 
 **🪝 Execute `post-phase-1` hooks:**
 ```bash
@@ -619,27 +308,13 @@ python3 src/hooks/runner.py post-phase-1 --context '{"phase": "phase-1", "featur
 
 ### ⏸️ BREAKPOINT BP1 (MANDATORY — WAIT FOR USER)
 
-**⚠️ MANDATORY:** Display this breakpoint and WAIT for user confirmation before proceeding.
+**⚠️ MANDATORY:** Display breakpoint and WAIT for user confirmation.
 
-**🪝 Execute `on-breakpoint` hooks** (if configured)
-
-**Template:** Use `breakpoint-metrics/templates/bp1-template.md`
-
-**Variables to populate:**
-| Variable | Source |
-|----------|--------|
-| `FLAGS` | Active flags with sources (auto/explicit/alias) |
-| `CATEGORY`, `SCORE` | Complexity score from breakpoint-metrics formula |
-| `FILE_COUNT` | From §2 Implementation Plan |
-| `TIME_ESTIMATE` | Heuristic: TINY=15min, SMALL=1h, STANDARD=3h, LARGE=8h+ |
-| `RISK_LEVEL` | From identified risks in plan |
-| `PLAN_VALIDATOR_VERDICT` | From @plan-validator output |
-| `TASK_PREVIEW` | First 3 tasks from §2 |
-| `SLUG` | Feature slug |
+**Template:** Use `breakpoint-metrics/templates/bp1-template.md` with variables from §2 (plan, tasks, risks, @plan-validator verdict).
 
 **User options:** "Continuer" / "Modifier le plan" / "Voir détails" / "Annuler"
 
-**Awaiting confirmation:** User must type "Continuer" to proceed
+**🪝 Execute `on-breakpoint` hooks** (if configured)
 
 ---
 
@@ -749,28 +424,13 @@ python3 src/hooks/runner.py post-phase-2 --context '{"phase": "phase-2", "featur
 
 ### ⏸️ BREAKPOINT BP2 (MANDATORY — WAIT FOR USER)
 
-**⚠️ MANDATORY:** Display this breakpoint and WAIT for user confirmation before proceeding.
+**⚠️ MANDATORY:** Display breakpoint and WAIT for user confirmation.
+
+**Template:** Use `breakpoint-metrics/templates/bp2-template.md` with variables from §3 (tasks, tests, review verdicts, proactive suggestions).
+
+**Conditional agents:** @security-auditor (if auth/security files), @qa-reviewer (if 5+ test files). In `--safe` mode: all mandatory.
 
 **🪝 Execute `on-breakpoint` hooks** (if configured)
-
-**Template:** Use `breakpoint-metrics/templates/bp2-template.md`
-
-**Variables to populate:**
-| Variable | Source |
-|----------|--------|
-| `FLAGS` | Active flags with sources |
-| `TASKS_COMPLETED`, `TASKS_TOTAL` | From §3 Progress checklist |
-| `TEST_COUNT`, `TEST_STATUS` | From test execution results |
-| `COVERAGE` | From coverage report (if available) |
-| `CODE_REVIEWER_VERDICT` | From @code-reviewer output |
-| `SECURITY_AUDITOR_VERDICT` | From @security-auditor (if invoked) |
-| `QA_REVIEWER_VERDICT` | From @qa-reviewer (if invoked) |
-| `SLUG` | Feature slug |
-
-**Conditional agents display:**
-- @security-auditor: Show only if auth/security files detected
-- @qa-reviewer: Show only if 5+ test files
-- In `--safe` mode: All agents mandatory
 
 **User options:** "Continuer" / "Corriger issues" / "Voir rapports" / "Annuler"
 
