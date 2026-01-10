@@ -3,7 +3,7 @@ description: >-
   Complete EPCI workflow in 3 phases for STANDARD and LARGE features.
   Phase 1: Analysis and planning. Phase 2: TDD implementation.
   Phase 3: Finalization and documentation. Includes breakpoints between phases.
-argument-hint: "[--large] [--turbo] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--sequential] [--parallel] [--uc] [--no-hooks] [--continue]"
+argument-hint: "[--large] [--turbo] [--from-native-plan <file>] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--sequential] [--parallel] [--uc] [--no-hooks] [--continue]"
 allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ---
 
@@ -43,6 +43,7 @@ flowchart LR
 |----------|-------------|
 | `--large` | Alias for `--think-hard --wave` (backward compatible) |
 | `--turbo` | Speed-optimized mode: @planner/@implementer (Sonnet), parallel reviews, 1 breakpoint |
+| `--from-native-plan <file>` | Import native Claude Code plan as base for §2. Automatically creates §1 if missing via @Explore. |
 | `--continue` | Continue from last phase (resume after interruption) |
 | `--no-hooks` | Disable all hook execution |
 
@@ -241,6 +242,181 @@ overrides can be placed in `.project-memory/orchestration.yaml`.
 
 ---
 
+## Step 0.5: Import Native Plan (CONDITIONAL)
+
+**Condition:** `--from-native-plan <file>` flag provided
+
+This step enables importing a native Claude Code plan as the base for Phase 1 planning. The native plan will be copied into the Feature Document for full traceability.
+
+### Process
+
+#### 1. Read Native Plan File
+
+**Action:** Use Read tool to read the native plan file
+
+```
+Read <file-path>
+  → File can be anywhere (e.g., ~/.claude/plans/plan.md)
+  → Extract full content
+  → Store in memory as native_plan_content
+```
+
+**Error handling:**
+
+```
+IF file not found OR unreadable:
+  ╔══════════════════════════════════════════════════════════════╗
+  ║ ❌ ERROR: Native Plan File Not Found                         ║
+  ╠══════════════════════════════════════════════════════════════╣
+  ║ File: <file-path>                                            ║
+  ║                                                              ║
+  ║ → Verify the file path is correct                            ║
+  ║ → Ensure you have read permissions                           ║
+  ╚══════════════════════════════════════════════════════════════╝
+  ABORT workflow
+```
+
+#### 2. Check Feature Document Status
+
+**Action:** Determine if Feature Document exists and if §1 is complete
+
+```
+status = {
+  "doc_exists": exists(docs/features/<slug>.md),
+  "section1_exists": contains_section("## §1 — Brief Fonctionnel"),
+  "section1_complete": has_required_fields(§1)
+}
+```
+
+**Decision tree:**
+
+| Status | Action |
+|--------|--------|
+| Doc missing | Create Feature Document + Generate §1 via @Explore |
+| Doc exists, §1 missing | Generate §1 via @Explore |
+| Doc exists, §1 incomplete | Generate complete §1 via @Explore |
+| Doc exists, §1 complete | Use existing §1 (skip exploration) |
+
+#### 3. Conditional Exploration (if §1 missing or incomplete)
+
+**When to run:** §1 does not exist or is incomplete
+
+**Action:** Invoke @Explore agent to generate §1
+
+```
+Invoke @Explore via Task tool with:
+  - Subagent: "Explore"
+  - Model: haiku (if --turbo) OR default
+  - Prompt: "Analyze project for: <brief-from-native-plan>
+    - Scan complete project structure
+    - Identify all technologies, frameworks, versions
+    - Map architectural patterns
+    - Identify files potentially impacted
+    - Estimate dependencies and coupling
+    - Detect existing test patterns"
+```
+
+**Generate §1 from @Explore results:**
+
+Use the exploration results to create a complete §1 Brief Fonctionnel with:
+- **Objectif**: Extracted from native plan summary
+- **Contexte Technique**: From @Explore (stack, dependencies)
+- **Fichiers Identifiés**: From @Explore
+- **Patterns Architecturaux**: From @Explore
+- **Critères d'Acceptation**: From native plan
+- **Risques**: From @Explore
+- **Memory Summary**: From project-memory skill
+
+#### 4. Create/Update Feature Document with Native Plan
+
+**Action:** Write or update Feature Document with §1 and §2 (native plan)
+
+**Use Write or Edit tool** to create/update `docs/features/<slug>.md`:
+
+```markdown
+# Feature Document — [Title from native plan]
+
+## §1 — Brief Fonctionnel
+
+### Objectif
+[Extracted from native plan or user input]
+
+### Contexte Technique
+**Stack détecté**: [From @Explore]
+**Frameworks**: [From @Explore]
+**Patterns**: [From @Explore]
+
+### Fichiers Identifiés
+[From @Explore - list of impacted files]
+
+### Critères d'Acceptation
+[From native plan]
+
+### Risques Identifiés
+[From @Explore]
+
+### Memory Summary
+[From project-memory skill]
+
+---
+
+## §2 — Plan d'Implémentation
+
+### 📋 Source du Plan
+
+- **Type**: Plan natif Claude Code
+- **Fichier source**: `<file-path>`
+- **Importé le**: [Current date/time]
+- **Statut**: ⚠️ Base à raffiner par EPCI Phase 1
+
+---
+
+### 📝 Plan Original (Natif)
+
+<details>
+<summary>Voir le plan natif complet</summary>
+
+[FULL NATIVE PLAN CONTENT COPIED HERE]
+
+</details>
+
+---
+
+### ✅ Plan Raffiné & Validé
+
+_[À remplir par Phase 1 — Planification]_
+
+Phase 1 will:
+- Break down native plan into atomic tasks (2-15 min each)
+- Add test planning for each task
+- Order by dependencies
+- Validate with @plan-validator
+
+---
+
+## §3 — Implementation & Finalization
+
+_[À remplir par Phases 2-3]_
+```
+
+**Confirmation message:**
+
+```
+✅ Native plan imported successfully
+
+📄 Feature Document: docs/features/<slug>.md
+  ├─ §1 Brief Fonctionnel: [CREATED from @Explore | EXISTING]
+  └─ §2 Plan Original (Natif): IMPORTED
+
+🔄 Next: Phase 1 will refine the native plan into atomic tasks
+```
+
+#### 5. Proceed to Feature Document Prerequisite Check
+
+After import is complete, continue to the normal "Feature Document Prerequisite Check" section. Since we just created/updated the document, the check should pass.
+
+---
+
 ## Feature Document Prerequisite Check (MANDATORY)
 
 **⚠️ CRITICAL: This check MUST pass before Phase 1 can begin.**
@@ -331,15 +507,30 @@ IF all_checks_pass:
 **🪝 Execute `pre-phase-1` hooks** (if configured)
 
 1. **Read Feature Document**
-   - Read `docs/features/<slug>.md` (created by `/brief`)
+   - Read `docs/features/<slug>.md` (created by `/brief` or Step 0.5)
    - Verify §1 is complete (if incomplete → error, suggest `/brief` first)
    - Extract from §1: identified files, stack, constraints, acceptance criteria
+   - **Check if native plan exists** in §2 under "📝 Plan Original (Natif)" section
 
-2. **Direct planning**
+2. **Planning (conditional approach)**
+
+   **IF native plan exists in §2:**
+   - Read the native plan from "📝 Plan Original (Natif)" section
+   - Use it as the high-level base structure
+   - **Refine** the native plan by:
+     - Breaking down high-level tasks into atomic tasks (2-15 min each)
+     - Adding specific file references from §1
+     - Adding test planning for each atomic task
+     - Ordering by dependencies
+     - Adding risk assessments
+   - Update "✅ Plan Raffiné & Validé" section with refined plan
+
+   **ELSE (standard workflow):**
    - Use the files already identified in §1
    - Break down into atomic tasks (2-15 min each)
    - Order by dependencies
    - Plan a test for each task
+   - Create new §2 from scratch
 
 3. **Validation** (via @plan-validator)
    - Submit plan to validator
@@ -349,6 +540,49 @@ IF all_checks_pass:
 ### Output §2 (USE EDIT TOOL — MANDATORY)
 
 **⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §2 content.
+
+**Two scenarios:**
+
+#### Scenario A: Native Plan Imported (--from-native-plan used)
+
+The §2 already contains the native plan structure. Update the "✅ Plan Raffiné & Validé" section:
+
+```markdown
+### ✅ Plan Raffiné & Validé
+
+#### Impacted Files
+| File | Action | Risk |
+|------|--------|------|
+| src/Service/X.php | Modify | Medium |
+| src/Entity/Y.php | Create | Low |
+| tests/Unit/XTest.php | Create | Low |
+
+#### Atomic Tasks (2-15 min each)
+1. [ ] **Create entity Y** (5 min)
+   - File: `src/Entity/Y.php`
+   - Test: `tests/Unit/Entity/YTest.php`
+   - Dependencies: None
+   - From native plan: [reference to original task]
+
+2. [ ] **Modify service X** (10 min)
+   - File: `src/Service/X.php`
+   - Test: `tests/Unit/Service/XTest.php`
+   - Dependencies: Task 1
+   - From native plan: [reference to original task]
+
+#### Risks
+| Risk | Probability | Mitigation |
+|------|-------------|------------|
+| Breaking change | Medium | Regression tests |
+
+#### Validation
+- **@plan-validator**: APPROVED
+- **Native plan refined**: ✅ High-level tasks broken down into atomic steps
+```
+
+#### Scenario B: Standard Workflow (no native plan)
+
+Create complete §2 from scratch:
 
 ```markdown
 ## §2 — Implementation Plan
