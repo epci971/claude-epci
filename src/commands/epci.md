@@ -273,7 +273,7 @@ IF all_checks_pass:
      - Breaking down high-level tasks into atomic tasks (2-15 min each)
      - Adding specific file references from §1
      - Adding test planning for each atomic task
-     - Ordering by dependencies
+     - Ordering by dependencies     
      - Adding risk assessments
    - Update "✅ Plan Raffiné & Validé" section with refined plan
 
