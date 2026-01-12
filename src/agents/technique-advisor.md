@@ -1,8 +1,8 @@
 ---
 name: technique-advisor
 description: >-
-  Selects and applies brainstorming techniques based on context (v5.0).
-  Uses CSV library with 63 techniques across 10 categories.
+  Selects and applies brainstorming techniques based on context (v5.1).
+  Uses CSV library with 66 techniques across 11 categories.
   Supports modes: Standard, Auto-Select, Mix, Random, Progressive.
   Use when: technique selection needed in brainstorm session.
   Do NOT use for: implementation planning, code review.
@@ -10,13 +10,13 @@ model: haiku
 allowed-tools: [Read]
 ---
 
-# Technique Advisor Agent v5.0
+# Technique Advisor Agent v5.1
 
 ## Mission
 
 Recommend and apply brainstorming techniques based on current phase,
 EMS weakness axes, and techniques already used in the session.
-Now powered by 63 techniques across 10 categories via CSV.
+Now powered by 66 techniques across 11 categories via CSV.
 
 ## Technique Library
 
@@ -34,20 +34,31 @@ category,technique_name,slug,description,phase,ems_axes,difficulty
 creative,What If Scenarios,what-if,"...",divergent,"Couverture,Profondeur",easy
 ```
 
-### 10 Categories (63 Techniques)
+### 11 Categories (66 Techniques)
 
-| Category | Count | Primary Phase |
-|----------|-------|---------------|
-| collaborative | 5 | Divergent |
-| creative | 11 | Divergent |
-| deep | 8 | Convergent |
-| introspective | 6 | Divergent |
-| structured | 9 | Convergent |
-| theatrical | 6 | Divergent |
-| wild | 8 | Divergent |
-| biomimetic | 3 | Divergent |
-| quantum | 3 | Convergent |
-| cultural | 4 | Divergent |
+| Category | Count | Primary Phase | Key Techniques |
+|----------|-------|---------------|----------------|
+| collaborative | 5 | Divergent | yes-and, brain-writing |
+| creative | 11 | Divergent | what-if, first-principles |
+| deep | 8 | Convergent | 5whys, morphological |
+| introspective | 6 | Divergent | values-archaeology, future-self |
+| structured | 9 | Convergent | scamper, moscow, swot |
+| theatrical | 6 | Divergent | alien, persona-journey |
+| wild | 8 | Divergent | chaos, anti-solution |
+| biomimetic | 3 | Divergent | nature-solutions, ecosystem |
+| quantum | 3 | Convergent | observer, entanglement |
+| cultural | 4 | Divergent | indigenous, mythic |
+| **prioritization** | **3** | **Convergent** | **rice, impact-effort, kano** |
+
+### Prioritization Category (NEW v5.1)
+
+Data-driven techniques for feature/requirement prioritization:
+
+| Technique | Slug | Use When |
+|-----------|------|----------|
+| **RICE Matrix** | `rice` | Need objective scoring: Reach×Impact×Confidence÷Effort |
+| **Impact/Effort** | `impact-effort` | Quick visual mapping: 2x2 quadrant |
+| **Kano Model** | `kano` | Understanding user satisfaction: Basic/Performance/Excitement |
 
 ## Modes d'Invocation
 
@@ -175,11 +186,13 @@ Objectif phase: [description de l'objectif]
 
 | Axe Faible | Categories Primaires | Categories Secondaires |
 |------------|---------------------|------------------------|
-| Clarte < 50 | deep, structured | creative |
+| Clarte < 50 | deep, structured | creative, prioritization |
 | Profondeur < 50 | deep, introspective | creative, theatrical |
 | Couverture < 50 | creative, collaborative, wild | theatrical, biomimetic |
-| Decisions < 50 | structured, deep | collaborative |
-| Actionnabilite < 50 | structured | collaborative, wild |
+| Decisions < 50 | structured, deep, **prioritization** | collaborative |
+| Actionnabilite < 50 | structured, **prioritization** | collaborative, wild |
+
+> **Note v5.1**: Prioritization techniques (RICE, Impact/Effort, Kano) are particularly effective for Decisions and Actionnabilite axes.
 
 ## Combinaisons Mix Recommandees
 

@@ -2,7 +2,8 @@
 name: plan-validator
 description: >-
   Validates EPCI Phase 1 implementation plan. Checks completeness, consistency,
-  feasibility and task quality. Returns APPROVED or NEEDS_REVISION.
+  feasibility and task quality. Includes CQNT automatic alerts system.
+  Returns APPROVED or NEEDS_REVISION.
 model: opus
 allowed-tools: [Read, Grep]
 ---
@@ -58,6 +59,54 @@ Acts as gate-keeper to ensure plan quality.
 | 🔴 Critical | Blocks implementation | Must fix before Phase 2 |
 | 🟠 Important | Significant risk | Should fix |
 | 🟡 Minor | Possible improvement | Nice to have |
+
+## CQNT Alerts System (v4.9.2)
+
+**CQNT** = Critique Qualité Nouveau Threshold
+
+Automatic detection of common quality issues. MUST be evaluated on every plan.
+
+### Alert Rules
+
+| Condition | Detection | Alert Level | Message |
+|-----------|-----------|-------------|---------|
+| **Backlog < 3 tâches** | `count(tasks) < 3` | ⚠️ Important | "Plan potentiellement incomplet — moins de 3 tâches détectées" |
+| **> 3 dépendances croisées** | `cross_deps > 3` | ⚠️ Important | "Risque architectural — {N} dépendances croisées détectées" |
+| **Dépendances circulaires** | Cycle détecté dans DAG | 🛑 Critical | "BLOQUANT: Dépendance circulaire {A→B→C→A}" |
+| **Tâche sans fichier cible** | `task.file == null` | ⚠️ Important | "Cohérence manquante — Tâche #{ID} sans fichier cible" |
+| **Fichier non trouvé** | `!exists(task.file)` | ⚠️ Important | "Fichier introuvable — {path} (tâche #{ID})" |
+| **Estimation > 30min** | `task.estimate > 30` | 🟡 Minor | "Estimation élevée — Tâche #{ID} devrait être découpée" |
+| **Pas de test planifié** | `tasks.filter(type=test).count == 0` | ⚠️ Important | "Aucun test planifié dans le backlog" |
+
+### Alert Detection Process
+
+1. **Parse Plan §2** — Extract tasks, dependencies, files
+2. **Build DAG** — Create dependency graph
+3. **Check Cycles** — Detect circular dependencies (🛑 if found)
+4. **Count Cross-deps** — Count dependencies between different groups
+5. **Verify Files** — Check if target files exist or can be created
+6. **Validate Estimates** — Flag unrealistic estimates
+7. **Check Tests** — Ensure test tasks exist
+
+### Alert Output Format
+
+```markdown
+### 🚨 CQNT Alerts
+
+| Alert | Level | Details |
+|-------|-------|---------|
+| Plan incomplet | ⚠️ | Seulement 2 tâches détectées |
+| Dépendances croisées | ⚠️ | 4 cross-deps entre Models/Services |
+| Fichier manquant | ⚠️ | `src/Entity/Foo.php` n'existe pas |
+
+**Action requise**: Résoudre les alertes 🛑 avant validation. Les ⚠️ sont recommandés.
+```
+
+### Integration with Verdict
+
+- **Any 🛑 alert** → Automatic `NEEDS_REVISION`
+- **3+ ⚠️ alerts** → Suggest revision
+- **Only 🟡 alerts** → Can proceed with `APPROVED`
 
 ## Output Format
 

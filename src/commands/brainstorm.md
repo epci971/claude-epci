@@ -104,7 +104,10 @@ Reformulation: "Une feature de notifications pour les utilisateurs"
 4. **Initialiser session** — Phase: Divergent, Persona: Architecte, EMS: ~25
 5. **SYNC @Explore** — Attendre completion si non termine
 6. **Generer HMW** (si pas `--no-hmw`) — 3 questions "How Might We" **avec contexte codebase**
-7. **Questions de cadrage** — 3-5 max avec suggestions
+7. **Questions de cadrage** — 3-5 max avec suggestions et **tags priorité**:
+   - 🛑 Critique (bloquant) — Question essentielle, réponse obligatoire
+   - ⚠️ Important (risque) — Recommandée, suggestion appliquée si ignorée
+   - ℹ️ Information (optionnel) — Purement informatif
 8. **Afficher breakpoint**
 
 > **Note v4.8**: HMW generes APRES @Explore pour questions contextuelles basees sur le codebase.
@@ -141,7 +144,9 @@ Boucle jusqu'a `finish`:
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ```
    **IMPORTANT**: Ne JAMAIS finaliser automatiquement. Toujours attendre le choix explicite.
-6. **Generer 3-5 questions** avec suggestions A/B/C (si choix [1])
+6. **Generer 3-5 questions** avec suggestions A/B/C et **tags priorité** (si choix [1]):
+   - Format: `Q1: 🛑 [question] → A) [opt1] B) [opt2] C) [opt3]`
+   - Ordre: 🛑 d'abord, puis ⚠️, puis ℹ️
 7. **Afficher breakpoint compact**
 8. **Preview check** (si Convergent et EMS >= 65 et choix [2]):
    - Proposer `@planner preview? [Y/n]`
