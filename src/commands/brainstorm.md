@@ -33,7 +33,7 @@ iteratives pour construire des specifications exhaustives.
 - Auto-selection de techniques basee sur axes EMS faibles (< 50)
 - Mix de techniques quand 2+ axes faibles
 - Transition check explicite Divergent → Convergent
-- Preview @planner/@security en phase Convergent
+- Preview @planner/@security en phase
 - Hook post-brainstorm documente
 
 ## Usage
