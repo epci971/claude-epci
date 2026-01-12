@@ -194,6 +194,105 @@ Plan Natif Claude Code → /epci --from-native-plan plan.md --slug feature-name
 - ✅ Traçabilité : plan copié dans git
 - ✅ Collaboration : équipe voit le raisonnement initial
 
+---
+
+### Workflow avec Brainstorm (idée vague → specs)
+
+Workflow complet pour transformer une idée vague en spécifications exécutables :
+
+```
+Idée vague → /brainstorm → Brief structuré avec User Stories
+                              │
+                              ↓ (Calcul effort automatique)
+                              │
+             ┌────────────────┼────────────────┐
+             ▼                ▼                ▼
+        Effort ≤2j       Effort 3-5j      Effort >5j
+        (TINY)           (STANDARD)       (LARGE)
+             │                │                │
+             ↓                ↓                ↓
+          /brief           /brief          /decompose
+             │                │                │
+             ↓                ↓                ↓
+    /quick --autonomous   /quick ou       Sous-specs
+                          /epci           (S01-SNN.md)
+                                               │
+                                    ┌──────────┴──────────┐
+                                    ▼                     ▼
+                              /orchestrate          /brief @S01
+                              (batch DAG)           (manuel)
+```
+
+**Decision automatique basée sur User Stories** :
+
+| Must-have Stories | Complexité | Effort total | Catégorie | Commande recommandée |
+|-------------------|------------|--------------|-----------|----------------------|
+| US1, US2 | S, S | 2 jours | TINY | `/brief` → `/quick --autonomous` |
+| US1, US2 | S, M | 4 jours | STANDARD | `/brief` (option: `/decompose`) |
+| US1, US2, US3 | M, M, M | 9 jours | LARGE | `/decompose` → `/orchestrate` |
+
+**Commandes** :
+
+```bash
+# Workflow D : Brainstorm → Brief direct (TINY/STANDARD)
+/brainstorm "système de notifications temps réel"
+# → EMS iterations, HMW, personas
+# → Génère brief avec User Stories
+# → Calcul: 2 stories Must-have (S+M) = 4j → STANDARD
+# → Recommandation: /brief @./docs/briefs/notif-temps-reel/brief-notif-2025-01-12.md
+
+/brief @./docs/briefs/notif-temps-reel/brief-notif-2025-01-12.md
+# → @Explore ciblé
+# → Route vers /quick ou /epci selon files impacted
+
+# Workflow E : Brainstorm → Decompose → Orchestrate (LARGE)
+/brainstorm "migration architecture vers microservices"
+# → EMS iterations, techniques (MoSCoW, Pre-mortem)
+# → Génère brief avec 6 User Stories Must-have
+# → Calcul: 6 stories (M+L+M+M+L+M) = 17j → LARGE
+# → Recommandation: /decompose
+
+/decompose ./docs/briefs/migration-microservices/brief-migration-2025-01-12.md
+# → Auto-détecte format brainstorm (### US1 —)
+# → Mappe complexité: S→1j, M→3j, L→5j
+# → Génère INDEX.md + S01-S06.md avec dépendances
+
+/orchestrate ./docs/specs/migration-microservices/
+# → Exécution DAG automatique
+# → Priorité, parallélisation, auto-retry
+
+# Workflow F : Brainstorm → Decompose → Manuel
+/brainstorm "refonte complète admin"
+# → Génère brief avec User Stories
+
+/decompose ./docs/briefs/admin-refonte/brief-admin-2025-01-12.md
+# → Sous-specs S01-S09.md
+
+# Exécution manuelle contrôlée
+/brief @./docs/specs/admin-refonte/S01-auth-base.md
+/brief @./docs/specs/admin-refonte/S02-roles-perms.md
+# ... etc.
+```
+
+**Avantages du workflow Brainstorm** :
+- ✅ Idée vague → specs structurées via EMS iterations
+- ✅ Personas et User Stories pour ancrage utilisateur
+- ✅ Calcul effort automatique basé sur complexité (S/M/L)
+- ✅ Recommendation next steps intelligente
+- ✅ Pour LARGE : décomposition automatique en sous-specs
+- ✅ Journal d'exploration pour traçabilité des décisions
+
+**Quand utiliser chaque workflow** :
+
+| Situation | Workflow | Raison |
+|-----------|----------|--------|
+| Brief clair, scope défini | A (Standard) | `/brief` → `/epci` direct |
+| Plan natif Claude Code existe | B (Plan natif) | Réutiliser raisonnement initial |
+| Idée vague, besoin exploration | D/E/F (Brainstorm) | Clarification via EMS iterations |
+| PRD existant, déjà structuré | Direct `/decompose` | Document déjà complet |
+
+---
+
 ### Feature Document (STD/LARGE)
 
 ```markdown
