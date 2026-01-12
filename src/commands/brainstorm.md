@@ -1,22 +1,29 @@
 ---
 description: >-
-  Brainstorming guide v4.9 pour decouvrir et specifier une feature.
+  Brainstorming guide v5.0 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
-  Auto-selection techniques basee sur axes faibles, mix de techniques.
-  Finalization Checkpoint obligatoire a EMS >= 85 (bloquant).
+  Brief output conforme PRD Industry Standards v3.0 (Executive Summary,
+  Problem Statement, Goals/Non-Goals, Timeline, FAQ, Assumptions).
+  Finalization Checkpoint obligatoire a EMS >= 70 (bloquant).
   Session persistence, energy checkpoints, 3-5 questions avec A/B/C.
   Use when: idee vague a transformer en specs, incertitude technique.
-argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--c7] [--seq]"
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--competitive] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
-# /brainstorm — Feature Discovery v4.9
+# /brainstorm — Feature Discovery v5.0
 
 ## Overview
 
 Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
+
+**Nouveautes v5.0**:
+- **Brief PRD Industry Standards v3.0** — Executive Summary, Problem Statement, Goals/Non-Goals, Timeline & Milestones, FAQ, Assumptions, Appendix
+- **Flag `--competitive`** — Active la section Competitive Analysis
+- **Finalization Checkpoint** abaisse a EMS >= 70 (bloquant)
+- Pas de finalisation automatique — toujours choix explicite
 
 **Nouveautes v4.9**:
 - **Finalization Checkpoint** obligatoire a EMS >= 85 (bloquant)
@@ -147,23 +154,37 @@ Boucle jusqu'a `finish`:
 **MANDATORY: Use Write tool to create BOTH files using official templates.**
 
 **Templates obligatoires** (dans `src/skills/core/brainstormer/references/`):
-- `brief-format.md` — Structure Brief v2.0 avec Personas, User Stories, Success Metrics
+- `brief-format.md` — Structure PRD v3.0 (Industry Standards Compliant)
 - Section Journal d'Exploration dans le meme fichier
 
-1. **@planner** (si pas preview fait OU EMS >= 85)
+1. **@planner** (si pas preview fait OU EMS >= 70)
 2. **@security-auditor** (si patterns auth ET pas preview)
 3. Create directory: `mkdir -p ./docs/briefs/[slug]`
 4. **Lire template**: `Read src/skills/core/brainstormer/references/brief-format.md`
 5. **Section-by-section validation** (si pas --quick/--turbo)
-6. Write `brief-[slug]-[date].md` — **DOIT suivre la structure du template**
+6. Write `brief-[slug]-[date].md` — **DOIT suivre la structure PRD v3.0**
 7. Write `journal-[slug]-[date].md` — **DOIT suivre le Template Journal d'Exploration**
 8. **HOOK: post-brainstorm** — Invocation automatique (voir section Hooks)
 9. Display completion summary avec techniques utilisees
 
-**Sections OBLIGATOIRES dans le brief** (v2.0):
-- Personas (minimum 1 primaire)
-- User Stories format "En tant que... je veux... afin de" avec AC Given/When/Then
-- Success Metrics (KPIs ou "TBD")
+**Sections OBLIGATOIRES dans le brief** (PRD v3.0):
+- **Document Header** — PRD-YYYY-XXX, Version, Status, Change History
+- **Executive Summary** — TL;DR, Problem, Solution, Impact
+- **Background & Strategic Fit** — Why Now?, Strategic Alignment
+- **Problem Statement** — Current Situation, Evidence & Data, Impact
+- **Goals** — Business/User/Technical goals avec metriques
+- **Non-Goals** — Exclusions explicites (remplace Hors Scope)
+- **Personas** (minimum 1 primaire)
+- **User Stories** format "En tant que... je veux... afin de" avec AC Given/When/Then
+- **User Flow** — As-Is vs To-Be avec Key Improvements
+- **Assumptions** — Hypotheses Technical/Business/User/Resources
+- **FAQ** — Internal + External (Amazon-style)
+- **Success Metrics** (KPIs ou "TBD")
+- **Timeline & Milestones** — Key milestones avec Phasing Strategy
+
+**Sections OPTIONNELLES**:
+- **Competitive Analysis** — Avec flag `--competitive`
+- **Appendix** — Research Findings, Technical Deep Dives, Glossary
 
 **Anti-pattern**: Generer un brief sans lire `brief-format.md` d'abord.
 
@@ -230,6 +251,7 @@ Boucle jusqu'a `finish`:
 | `--no-technique` | Desactiver auto-suggestion techniques |
 | `--no-clarify` | Desactiver clarification input initial |
 | `--force-clarify` | Forcer clarification meme si input clair |
+| `--competitive` | Activer section Competitive Analysis dans le brief (PRD v3.0) |
 
 ### Technique Mode Flags (v5.0)
 
