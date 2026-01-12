@@ -77,6 +77,56 @@ result = generate_clarification(brief, manager, persona='backend')
 | **INTEGRATION** | Composants existants      | "Intégration avec Messenger existant ?"           |
 | **PRIORITY**    | Persona-specific          | "Quelle garantie de fiabilité requise ?"          |
 
+## Question Priority Tags
+
+Chaque question DOIT être préfixée par un tag de priorité pour indiquer son niveau d'importance.
+
+| Tag | Nom | Signification | Comportement |
+|-----|-----|---------------|--------------|
+| 🛑 | **Critique** | Question bloquante | Réponse OBLIGATOIRE avant continuation |
+| ⚠️ | **Important** | Risque si non répondu | Réponse fortement recommandée |
+| ℹ️ | **Information** | Clarification optionnelle | Peut être ignorée, default appliqué |
+
+### Attribution des Tags
+
+| Type Question | Tag par défaut | Conditions d'élévation |
+|---------------|----------------|------------------------|
+| TECHNICAL | ⚠️ | → 🛑 si sécurité/auth impliquée |
+| SCOPE | ⚠️ | → 🛑 si périmètre totalement flou |
+| REUSE | ℹ️ | → ⚠️ si composant critique |
+| INTEGRATION | ⚠️ | → 🛑 si breaking change possible |
+| PRIORITY | ℹ️ | Toujours optionnel |
+
+### Format d'Affichage
+
+```markdown
+Q1: 🛑 Quelle méthode d'authentification utiliser ?
+    → Suggestion: JWT (utilisé dans user-auth feature)
+
+Q2: ⚠️ Le système doit-il supporter le temps réel ?
+    → Suggestion: WebSocket (pattern existant)
+
+Q3: ℹ️ Préférence pour le format des logs ?
+    → Suggestion: JSON structuré (convention projet)
+```
+
+### Comportement par Tag
+
+**🛑 Critique:**
+- Le workflow NE PEUT PAS continuer sans réponse
+- Afficher en premier dans la liste
+- Redemander si l'utilisateur tente d'ignorer
+
+**⚠️ Important:**
+- Suggestion appliquée par défaut si ignorée
+- Avertissement affiché si contourné
+- Continuer autorisé avec warning
+
+**ℹ️ Information:**
+- Suggestion appliquée silencieusement si ignorée
+- Pas d'avertissement
+- Purement informatif
+
 ## Rules
 
 1. **Maximum 3 questions** par itération

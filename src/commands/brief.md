@@ -273,6 +273,10 @@ Analyze the brief and exploration results to prepare:
 
 - Identify gaps, ambiguities, missing information
 - Prepare suggestions for each question
+- **Assign priority tags** (see `clarification-intelligente` skill):
+  - 🛑 Critique (bloquant) — MUST answer before proceeding
+  - ⚠️ Important (risque) — Recommended, suggestion applied if skipped
+  - ℹ️ Information (optionnel) — Optional, suggestion applied silently
 
 #### 3.3 AI Suggestions (3-5 max)
 
@@ -319,14 +323,16 @@ Present ALL analysis results in a consolidated breakpoint:
 │                                                                     │
 │ 📋 QUESTIONS DE CLARIFICATION                                       │
 │                                                                     │
-│ Q1: {question_1}                                                    │
+│ Q1: {TAG_1} {question_1}                                            │
 │     → Suggestion: {suggestion_1}                                    │
 │                                                                     │
-│ Q2: {question_2}                                                    │
+│ Q2: {TAG_2} {question_2}                                            │
 │     → Suggestion: {suggestion_2}                                    │
 │                                                                     │
-│ Q3: {question_3}                                                    │
+│ Q3: {TAG_3} {question_3}                                            │
 │     → Suggestion: {suggestion_3}                                    │
+│                                                                     │
+│ Légende: 🛑 Critique (obligatoire) | ⚠️ Important | ℹ️ Optionnel    │
 │                                                                     │
 │ 💡 SUGGESTIONS IA                                                   │
 │                                                                     │
