@@ -1,9 +1,9 @@
 ---
 description: >-
     Decompose a complex PRD/CDC into actionable sub-specifications (1-5 days each).
-    Generates dependency graph and Gantt planning with parallelization.
-    Use for large projects (>5 days) before running /brief on each sub-spec.
-argument-hint: "<file.md> [--output <dir>] [--think <level>] [--min-days <n>] [--max-days <n>] [--wiggum] [--granularity <size>]"
+    Generates dependency graph, Gantt planning, backlog table, and prd.json for Ralph execution.
+    Use for large projects (>5 days) before running /brief on each sub-spec or /ralph for autonomous execution.
+argument-hint: "<file.md> [--output <dir>] [--think <level>] [--min-days <n>] [--max-days <n>] [--granularity <size>]"
 allowed-tools: [Read, Write, Bash, Grep, Glob, Task, WebFetch]
 ---
 
@@ -13,10 +13,17 @@ allowed-tools: [Read, Write, Bash, Grep, Glob, Task, WebFetch]
 
 Automates the decomposition of complex PRD/CDC documents into actionable sub-specifications.
 Each sub-spec targets 1-5 days of effort, enabling iterative EPCI execution.
-Generates a dependency graph (Mermaid flowchart) and optimized Gantt planning.
+
+**Generates automatically:**
+- Sub-spec files (S01-SNN.md)
+- INDEX.md with dependency graph and Gantt planning
+- **backlog.md** — Structured backlog table (Architector/Orchestrator style)
+- **prd.json** — User stories for Ralph autonomous execution
+- **ralph.sh** — Executable loop script
+- **PROMPT.md** — Customized prompt for Claude
 
 **Use case:** A 25-day migration project becomes 9 manageable sub-specs that can be
-executed sequentially or in parallel where dependencies allow.
+executed via `/brief` (manual) or `/ralph` (autonomous overnight).
 
 ## Arguments
 
@@ -27,7 +34,6 @@ executed sequentially or in parallel where dependencies allow.
 | `--think <level>` | Thinking level: `quick`, `think`, `think-hard`, `ultrathink` | No       | `think`              |
 | `--min-days <n>`  | Minimum effort per sub-spec                                  | No       | `1`                  |
 | `--max-days <n>`  | Maximum effort per sub-spec                                  | No       | `5`                  |
-| `--wiggum`        | Generate Ralph Wiggum format (prd.json + ralph.sh)           | No       | `false`              |
 | `--granularity`   | Story size: `micro` (15-30min), `small` (30-60min), `standard` (1-2h) | No | `small`            |
 
 ## Pre-Workflow: Load Project Memory
@@ -174,27 +180,101 @@ Votre choix (ou texte libre):
 
 ### Phase 4: Generation (USE WRITE TOOL — MANDATORY)
 
-**MANDATORY:** Use the **Write tool** to create all output files.
+**MANDATORY:** Use the **Write tool** to create ALL output files.
 
-**Create output directory:**
+**Skills loaded:** `ralph-converter` (handles prd.json schema, stack detection, template generation)
+
+#### Step 4.1: Create output directory
 
 ```bash
 mkdir -p {output_dir}
 ```
 
-**Generate files:**
+#### Step 4.2: Generate sub-spec files
 
-1. **INDEX.md** — Overview with Mermaid diagrams
-2. **S01-{slug}.md** through **SNN-{slug}.md** — Individual sub-specs
+For each sub-spec identified:
+- **S01-{slug}.md** through **SNN-{slug}.md** — Individual sub-specs
 
-**Output structure:**
+#### Step 4.3: Generate INDEX.md
+
+Overview with:
+- Summary table (ID, Title, Effort, Priority, Dependencies, Status)
+- Mermaid dependency graph
+- Mermaid Gantt planning
+
+#### Step 4.4: Generate backlog.md (MANDATORY)
+
+**Always generate** the backlog table with:
+- Vue d'ensemble — All stories in one table
+- Par Spec — Stories grouped by spec
+- Statistiques — Totals, parallelizable count, critical path
+- Par Priorite — P1/P2/P3 breakdown
+- Legende — Status symbols, complexity, types
+
+**Story attributes inferred:**
+- **Type**: Script/Logic/API/UI/Test/Task (from title keywords)
+- **Complexite**: S (<45min), M (45-90min), L (>90min)
+- **Priorite**: P1 (Must), P2 (Should), P3 (Could)
+
+See `references/decompose-templates.md` for full template.
+
+#### Step 4.5: Generate prd.json (MANDATORY)
+
+Convert specs to Ralph Wiggum format:
+
+```json
+{
+  "$schema": "https://epci.dev/schemas/prd.json",
+  "branchName": "feature/{slug}",
+  "projectName": "{Project Title}",
+  "generatedAt": "{ISO date}",
+  "generatedBy": "EPCI /decompose",
+  "config": {
+    "max_iterations": 50,
+    "completion_promise": "COMPLETE",
+    "test_command": "{detected}",
+    "lint_command": "{detected}",
+    "granularity": "{granularity}"
+  },
+  "userStories": [...]
+}
+```
+
+**Granularity effects on story count:**
+
+| Granularity | Story Size | Stories/Day |
+|-------------|------------|-------------|
+| `micro`     | 15-30 min  | 8-12        |
+| `small`     | 30-60 min  | 4-8         |
+| `standard`  | 1-2 hours  | 2-4         |
+
+#### Step 4.6: Generate ralph.sh (MANDATORY)
+
+Executable loop script for autonomous execution.
+
+#### Step 4.7: Generate PROMPT.md (MANDATORY)
+
+Customized prompt based on detected stack (Node.js, Python, PHP, etc.).
+
+#### Step 4.8: Create symlinks
+
+```bash
+ln -s ../../scripts/lib {output_dir}/lib
+```
+
+**Final output structure:**
 
 ```
 {output_dir}/
-├── INDEX.md
+├── INDEX.md              # Overview with Mermaid diagrams
+├── backlog.md            # Backlog table view
+├── prd.json              # Ralph stories format
+├── ralph.sh              # Executable loop script
+├── PROMPT.md             # System prompt
+├── progress.txt          # Empty logging file
+├── lib/                  # Symlink to scripts/lib/
 ├── S01-{name}.md
 ├── S02-{name}.md
-├── ...
 └── SNN-{name}.md
 ```
 
@@ -205,6 +285,7 @@ mkdir -p {output_dir}
 | `project-memory`        | Pre-Workflow | Load context and conventions       |
 | `architecture-patterns` | Phase 2      | Identify decomposition patterns    |
 | `flags-system`          | All          | Handle --think levels              |
+| `ralph-converter`       | Phase 4      | Generate prd.json, ralph.sh, PROMPT.md |
 | `mcp`                   | Phase 2      | Context7 for architecture patterns |
 
 ## Invoked Subagents
@@ -233,47 +314,6 @@ mkdir -p {output_dir}
 | EC5 | Missing estimates | Default estimation |
 | EC6 | Brainstorm brief format | User Story mapping |
 
-### EC7: Ralph Wiggum Mode (`--wiggum`)
-
-**Detection:** `--wiggum` flag provided.
-
-**Behavior:**
-
-Instead of generating INDEX.md + individual spec files, generates Ralph Wiggum format:
-
-```
-{output_dir}/
-├── prd.json           # User stories in Ralph format
-├── ralph.sh           # Executable loop script
-├── PROMPT.md          # Customized prompt for Claude
-├── progress.txt       # Empty file for logging
-└── lib/               # Symlink to scripts/lib/
-```
-
-**Skills loaded:** `ralph-converter` (handles prd.json schema, stack detection, template generation)
-
-**Process:**
-
-1. Parse PRD as normal
-2. Convert specs → user stories with granularity setting
-3. Detect stack for PROMPT.md customization
-4. Generate prd.json with Ralph schema
-5. Generate ralph.sh from template
-6. Create symlinks to lib/ scripts
-
-**Granularity effects:**
-
-| Flag Value | Story Size | Stories/Day |
-|------------|------------|-------------|
-| `--granularity micro` | 15-30 min | 8-12 |
-| `--granularity small` | 30-60 min | 4-8 |
-| `--granularity standard` | 1-2 hours | 2-4 |
-
-**Next step after generation:**
-```
-→ /ralph {output_dir}
-```
-
 ## Examples
 
 **Usage examples:** See `references/decompose-examples.md`
@@ -281,14 +321,30 @@ Instead of generating INDEX.md + individual spec files, generates Ralph Wiggum f
 Quick reference:
 
 ```bash
-# Standard usage
+# Standard usage — generates all files including backlog.md and prd.json
 /decompose migration_architecture_gardel.md
 
 # With custom options
 /decompose mon-prd.md --output specs/alpha/ --min-days 2 --max-days 4
 
-# Ralph Wiggum mode
-/decompose mon-prd.md --wiggum --granularity small
+# With fine granularity for more stories
+/decompose mon-prd.md --granularity micro
+```
+
+**Output:**
+```
+docs/specs/migration-gardel/
+├── INDEX.md
+├── backlog.md            ← Backlog table
+├── prd.json              ← Ralph stories
+├── ralph.sh              ← Executable script
+├── PROMPT.md             ← System prompt
+├── progress.txt
+├── S01-settings-splitting.md
+├── S02-app-datawarehouse.md
+└── ...
+
+→ Next: /ralph docs/specs/migration-gardel/
 ```
 
 ## Error Handling
@@ -305,4 +361,4 @@ Quick reference:
 - `/brief` — Entry point for individual sub-specs after decomposition
 - `/epci` — Complete workflow for STANDARD/LARGE features
 - `/quick` — Fast workflow for TINY/SMALL sub-specs
-- `/ralph` — Autonomous overnight execution using Ralph Wiggum format
+- `/ralph` — Autonomous overnight execution using generated prd.json
