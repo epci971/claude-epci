@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.1.2 | **Date** : Janvier 2025
+> **Version** : 5.1.3 | **Date** : Janvier 2025
 
 ---
 
@@ -16,6 +16,14 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | **Modularité**      | 30 Skills, 16 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v5.1.3 (Templates & Scripts Integration)
+
+- **Templates relocalisés** : `templates/ralph/` → `src/templates/ralph/` pour cohérence structure
+- **EPCI Workflow dans PROMPT.md** : Section intégrée avec routing `/epci:brief` → `/epci:quick` ou `/epci:epci`
+- **Scripts Ralph intégrés** : `ralph_loop.sh` et libs (`circuit_breaker.sh`, `date_utils.sh`, `response_analyzer.sh`) ajoutés à `src/scripts/`
+- **Préfixes commandes standardisés** : Documentation cohérente avec `/epci:brief`, `/epci:quick`, `/epci:epci`
+- **Nettoyage références obsolètes** : Flag `--wiggum` supprimé de toute la documentation
 
 ### Nouveautés v5.1.2 (Auto Backlog Generation)
 

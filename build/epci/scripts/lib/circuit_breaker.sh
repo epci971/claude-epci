@@ -1,60 +1,42 @@
 #!/bin/bash
-# =============================================================================
-# Circuit Breaker Component for Ralph Wiggum
-# =============================================================================
-# Prevents runaway token consumption by detecting stagnation.
-# Based on Michael Nygard's "Release It!" pattern.
-# Adapted from frankbria/ralph-claude-code/lib/circuit_breaker.sh
-#
-# EPCI Integration: v1.0
-#
-# States:
-#   CLOSED    - Normal operation, progress detected
-#   HALF_OPEN - Monitoring mode, checking for recovery
-#   OPEN      - Failure detected, execution halted
-# =============================================================================
+# Circuit Breaker Component for Ralph
+# Prevents runaway token consumption by detecting stagnation
+# Based on Michael Nygard's "Release It!" pattern
 
-# Source date utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/date_utils.sh"
+# Source date utilities for cross-platform compatibility
+source "$(dirname "${BASH_SOURCE[0]}")/date_utils.sh"
 
 # Circuit Breaker States
-CB_STATE_CLOSED="CLOSED"
-CB_STATE_HALF_OPEN="HALF_OPEN"
-CB_STATE_OPEN="OPEN"
+CB_STATE_CLOSED="CLOSED"        # Normal operation, progress detected
+CB_STATE_HALF_OPEN="HALF_OPEN"  # Monitoring mode, checking for recovery
+CB_STATE_OPEN="OPEN"            # Failure detected, execution halted
 
-# Circuit Breaker Configuration (configurable via environment)
-CB_STATE_FILE="${CB_STATE_FILE:-.circuit_breaker_state}"
-CB_HISTORY_FILE="${CB_HISTORY_FILE:-.circuit_breaker_history}"
-CB_NO_PROGRESS_THRESHOLD="${CB_NO_PROGRESS_THRESHOLD:-3}"
-CB_SAME_ERROR_THRESHOLD="${CB_SAME_ERROR_THRESHOLD:-5}"
-CB_OUTPUT_DECLINE_THRESHOLD="${CB_OUTPUT_DECLINE_THRESHOLD:-70}"
+# Circuit Breaker Configuration
+CB_STATE_FILE=".circuit_breaker_state"
+CB_HISTORY_FILE=".circuit_breaker_history"
+CB_NO_PROGRESS_THRESHOLD=3      # Open circuit after N loops with no progress
+CB_SAME_ERROR_THRESHOLD=5       # Open circuit after N loops with same error
+CB_OUTPUT_DECLINE_THRESHOLD=70  # Open circuit if output declines by >70%
 
-# Colors for output
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# =============================================================================
-# STATE MANAGEMENT
-# =============================================================================
-
-# Initialize circuit breaker state file
+# Initialize circuit breaker
 init_circuit_breaker() {
+    # Check if state file exists and is valid JSON
     if [[ -f "$CB_STATE_FILE" ]]; then
-        # Validate JSON
         if ! jq '.' "$CB_STATE_FILE" > /dev/null 2>&1; then
+            # Corrupted, recreate
             rm -f "$CB_STATE_FILE"
         fi
     fi
 
     if [[ ! -f "$CB_STATE_FILE" ]]; then
-        # Use flock for atomic initialization
-        (
-            flock -x 200 || return 1
-            cat > "$CB_STATE_FILE" << EOF
+        cat > "$CB_STATE_FILE" << EOF
 {
     "state": "$CB_STATE_CLOSED",
     "last_change": "$(get_iso_timestamp)",
@@ -62,15 +44,20 @@ init_circuit_breaker() {
     "consecutive_same_error": 0,
     "last_progress_loop": 0,
     "total_opens": 0,
-    "reason": "",
-    "current_loop": 0
+    "reason": ""
 }
 EOF
-        ) 200>"${CB_STATE_FILE}.lock"
     fi
 
-    # Initialize history file
-    if [[ ! -f "$CB_HISTORY_FILE" ]] || ! jq '.' "$CB_HISTORY_FILE" > /dev/null 2>&1; then
+    # Check if history file exists and is valid JSON
+    if [[ -f "$CB_HISTORY_FILE" ]]; then
+        if ! jq '.' "$CB_HISTORY_FILE" > /dev/null 2>&1; then
+            # Corrupted, recreate
+            rm -f "$CB_HISTORY_FILE"
+        fi
+    fi
+
+    if [[ ! -f "$CB_HISTORY_FILE" ]]; then
         echo '[]' > "$CB_HISTORY_FILE"
     fi
 }
@@ -81,42 +68,40 @@ get_circuit_state() {
         echo "$CB_STATE_CLOSED"
         return
     fi
+
     jq -r '.state' "$CB_STATE_FILE" 2>/dev/null || echo "$CB_STATE_CLOSED"
 }
 
-# Check if execution is allowed
+# Check if circuit breaker allows execution
 can_execute() {
     local state=$(get_circuit_state)
-    [[ "$state" != "$CB_STATE_OPEN" ]]
+
+    if [[ "$state" == "$CB_STATE_OPEN" ]]; then
+        return 1  # Circuit is open, cannot execute
+    else
+        return 0  # Circuit is closed or half-open, can execute
+    fi
 }
 
-# =============================================================================
-# LOOP RESULT RECORDING
-# =============================================================================
-
-# Record loop execution result and update circuit breaker state
-# Usage: record_loop_result <loop_number> <files_changed> <has_errors> <output_length>
+# Record loop execution result
 record_loop_result() {
     local loop_number=$1
-    local files_changed=${2:-0}
-    local has_errors=${3:-false}
-    local output_length=${4:-0}
+    local files_changed=$2
+    local has_errors=$3
+    local output_length=$4
 
     init_circuit_breaker
 
-    # Read current state
     local state_data=$(cat "$CB_STATE_FILE")
     local current_state=$(echo "$state_data" | jq -r '.state')
-    local consecutive_no_progress=$(echo "$state_data" | jq -r '.consecutive_no_progress // 0' | tr -d '[:space:]')
-    local consecutive_same_error=$(echo "$state_data" | jq -r '.consecutive_same_error // 0' | tr -d '[:space:]')
-    local last_progress_loop=$(echo "$state_data" | jq -r '.last_progress_loop // 0' | tr -d '[:space:]')
-    local total_opens=$(echo "$state_data" | jq -r '.total_opens // 0' | tr -d '[:space:]')
+    local consecutive_no_progress=$(echo "$state_data" | jq -r '.consecutive_no_progress' | tr -d '[:space:]')
+    local consecutive_same_error=$(echo "$state_data" | jq -r '.consecutive_same_error' | tr -d '[:space:]')
+    local last_progress_loop=$(echo "$state_data" | jq -r '.last_progress_loop' | tr -d '[:space:]')
 
     # Ensure integers
     consecutive_no_progress=$((consecutive_no_progress + 0))
     consecutive_same_error=$((consecutive_same_error + 0))
     last_progress_loop=$((last_progress_loop + 0))
-    total_opens=$((total_opens + 0))
 
     # Detect progress
     local has_progress=false
@@ -135,50 +120,51 @@ record_loop_result() {
         consecutive_same_error=0
     fi
 
-    # Determine new state
+    # Determine new state and reason
     local new_state="$current_state"
     local reason=""
 
+    # State transitions
     case $current_state in
         "$CB_STATE_CLOSED")
+            # Normal operation - check for failure conditions
             if [[ $consecutive_no_progress -ge $CB_NO_PROGRESS_THRESHOLD ]]; then
                 new_state="$CB_STATE_OPEN"
-                reason="No progress in $consecutive_no_progress consecutive loops"
+                reason="No progress detected in $consecutive_no_progress consecutive loops"
             elif [[ $consecutive_same_error -ge $CB_SAME_ERROR_THRESHOLD ]]; then
                 new_state="$CB_STATE_OPEN"
-                reason="Same error repeated $consecutive_same_error times"
+                reason="Same error repeated in $consecutive_same_error consecutive loops"
             elif [[ $consecutive_no_progress -ge 2 ]]; then
                 new_state="$CB_STATE_HALF_OPEN"
                 reason="Monitoring: $consecutive_no_progress loops without progress"
             fi
             ;;
+
         "$CB_STATE_HALF_OPEN")
+            # Monitoring mode - either recover or fail
             if [[ "$has_progress" == "true" ]]; then
                 new_state="$CB_STATE_CLOSED"
                 reason="Progress detected, circuit recovered"
             elif [[ $consecutive_no_progress -ge $CB_NO_PROGRESS_THRESHOLD ]]; then
                 new_state="$CB_STATE_OPEN"
-                reason="No recovery after $consecutive_no_progress loops"
+                reason="No recovery, opening circuit after $consecutive_no_progress loops"
             fi
             ;;
+
         "$CB_STATE_OPEN")
+            # Circuit is open - stays open (manual intervention required)
             reason="Circuit breaker is open, execution halted"
             ;;
     esac
 
-    # Update total opens counter
+    # Update state file
+    local total_opens=$(echo "$state_data" | jq -r '.total_opens' | tr -d '[:space:]')
+    total_opens=$((total_opens + 0))
     if [[ "$new_state" == "$CB_STATE_OPEN" && "$current_state" != "$CB_STATE_OPEN" ]]; then
         total_opens=$((total_opens + 1))
     fi
 
-    # Write updated state with file locking to prevent race conditions
-    # Uses flock for atomic file operations (security: prevents state corruption)
-    (
-        flock -x 200 || {
-            echo -e "${RED}[CB] Failed to acquire lock on state file${NC}" >&2
-            return 1
-        }
-        cat > "$CB_STATE_FILE" << EOF
+    cat > "$CB_STATE_FILE" << EOF
 {
     "state": "$new_state",
     "last_change": "$(get_iso_timestamp)",
@@ -190,93 +176,99 @@ record_loop_result() {
     "current_loop": $loop_number
 }
 EOF
-    ) 200>"${CB_STATE_FILE}.lock"
 
     # Log state transition
     if [[ "$new_state" != "$current_state" ]]; then
         log_circuit_transition "$current_state" "$new_state" "$reason" "$loop_number"
     fi
 
-    # Return exit code based on state
-    [[ "$new_state" != "$CB_STATE_OPEN" ]]
+    # Return exit code based on new state
+    if [[ "$new_state" == "$CB_STATE_OPEN" ]]; then
+        return 1  # Circuit opened, signal to stop
+    else
+        return 0  # Can continue
+    fi
 }
 
-# =============================================================================
-# LOGGING
-# =============================================================================
-
+# Log circuit breaker state transitions
 log_circuit_transition() {
     local from_state=$1
     local to_state=$2
     local reason=$3
     local loop_number=$4
 
-    # Append to history
-    local transition=$(cat << EOF
-{
-    "timestamp": "$(get_iso_timestamp)",
-    "loop": $loop_number,
-    "from_state": "$from_state",
-    "to_state": "$to_state",
-    "reason": "$reason"
-}
-EOF
-)
     local history=$(cat "$CB_HISTORY_FILE")
-    echo "$history" | jq ". += [$transition]" > "$CB_HISTORY_FILE"
+    local transition="{
+        \"timestamp\": \"$(get_iso_timestamp)\",
+        \"loop\": $loop_number,
+        \"from_state\": \"$from_state\",
+        \"to_state\": \"$to_state\",
+        \"reason\": \"$reason\"
+    }"
 
-    # Console output
+    history=$(echo "$history" | jq ". += [$transition]")
+    echo "$history" > "$CB_HISTORY_FILE"
+
+    # Console log with colors
     case $to_state in
         "$CB_STATE_OPEN")
-            echo -e "${RED}[CB] CIRCUIT BREAKER OPENED${NC}"
-            echo -e "${RED}[CB] Reason: $reason${NC}"
+            echo -e "${RED}🚨 CIRCUIT BREAKER OPENED${NC}"
+            echo -e "${RED}Reason: $reason${NC}"
             ;;
         "$CB_STATE_HALF_OPEN")
-            echo -e "${YELLOW}[CB] CIRCUIT BREAKER: Monitoring Mode${NC}"
-            echo -e "${YELLOW}[CB] Reason: $reason${NC}"
+            echo -e "${YELLOW}⚠️  CIRCUIT BREAKER: Monitoring Mode${NC}"
+            echo -e "${YELLOW}Reason: $reason${NC}"
             ;;
         "$CB_STATE_CLOSED")
-            echo -e "${GREEN}[CB] CIRCUIT BREAKER: Normal Operation${NC}"
-            echo -e "${GREEN}[CB] Reason: $reason${NC}"
+            echo -e "${GREEN}✅ CIRCUIT BREAKER: Normal Operation${NC}"
+            echo -e "${GREEN}Reason: $reason${NC}"
             ;;
     esac
 }
 
-# =============================================================================
-# STATUS DISPLAY
-# =============================================================================
-
+# Display circuit breaker status
 show_circuit_status() {
     init_circuit_breaker
 
-    local state=$(jq -r '.state' "$CB_STATE_FILE")
-    local reason=$(jq -r '.reason' "$CB_STATE_FILE")
-    local no_progress=$(jq -r '.consecutive_no_progress' "$CB_STATE_FILE")
-    local current_loop=$(jq -r '.current_loop' "$CB_STATE_FILE")
-    local total_opens=$(jq -r '.total_opens' "$CB_STATE_FILE")
+    local state_data=$(cat "$CB_STATE_FILE")
+    local state=$(echo "$state_data" | jq -r '.state')
+    local reason=$(echo "$state_data" | jq -r '.reason')
+    local no_progress=$(echo "$state_data" | jq -r '.consecutive_no_progress')
+    local last_progress=$(echo "$state_data" | jq -r '.last_progress_loop')
+    local current_loop=$(echo "$state_data" | jq -r '.current_loop')
+    local total_opens=$(echo "$state_data" | jq -r '.total_opens')
 
     local color=""
-    local icon=""
+    local status_icon=""
+
     case $state in
-        "$CB_STATE_CLOSED") color=$GREEN; icon="✅" ;;
-        "$CB_STATE_HALF_OPEN") color=$YELLOW; icon="⚠️" ;;
-        "$CB_STATE_OPEN") color=$RED; icon="🚨" ;;
+        "$CB_STATE_CLOSED")
+            color=$GREEN
+            status_icon="✅"
+            ;;
+        "$CB_STATE_HALF_OPEN")
+            color=$YELLOW
+            status_icon="⚠️ "
+            ;;
+        "$CB_STATE_OPEN")
+            color=$RED
+            status_icon="🚨"
+            ;;
     esac
 
-    echo -e "${color}╔════════════════════════════════════════╗${NC}"
-    echo -e "${color}║     Circuit Breaker Status             ║${NC}"
-    echo -e "${color}╚════════════════════════════════════════╝${NC}"
-    echo -e "${color}State:${NC}              $icon $state"
-    echo -e "${color}Reason:${NC}             $reason"
-    echo -e "${color}Loops w/o progress:${NC} $no_progress"
-    echo -e "${color}Current loop:${NC}       #$current_loop"
-    echo -e "${color}Total opens:${NC}        $total_opens"
+    echo -e "${color}╔════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${color}║           Circuit Breaker Status                          ║${NC}"
+    echo -e "${color}╚════════════════════════════════════════════════════════════╝${NC}"
+    echo -e "${color}State:${NC}                 $status_icon $state"
+    echo -e "${color}Reason:${NC}                $reason"
+    echo -e "${color}Loops since progress:${NC} $no_progress"
+    echo -e "${color}Last progress:${NC}        Loop #$last_progress"
+    echo -e "${color}Current loop:${NC}         #$current_loop"
+    echo -e "${color}Total opens:${NC}          $total_opens"
+    echo ""
 }
 
-# =============================================================================
-# RESET
-# =============================================================================
-
+# Reset circuit breaker (for manual intervention)
 reset_circuit_breaker() {
     local reason=${1:-"Manual reset"}
 
@@ -292,25 +284,38 @@ reset_circuit_breaker() {
 }
 EOF
 
-    echo -e "${GREEN}[CB] Circuit breaker reset to CLOSED state${NC}"
+    echo -e "${GREEN}✅ Circuit breaker reset to CLOSED state${NC}"
 }
 
-# Check if execution should halt
+# Check if loop should halt (used in main loop)
 should_halt_execution() {
     local state=$(get_circuit_state)
 
     if [[ "$state" == "$CB_STATE_OPEN" ]]; then
         show_circuit_status
         echo ""
-        echo -e "${RED}EXECUTION HALTED: Circuit Breaker Opened${NC}"
+        echo -e "${RED}╔════════════════════════════════════════════════════════════╗${NC}"
+        echo -e "${RED}║  EXECUTION HALTED: Circuit Breaker Opened                 ║${NC}"
+        echo -e "${RED}╚════════════════════════════════════════════════════════════╝${NC}"
+        echo ""
+        echo -e "${YELLOW}Ralph has detected that no progress is being made.${NC}"
+        echo ""
+        echo -e "${YELLOW}Possible reasons:${NC}"
+        echo "  • Project may be complete (check @fix_plan.md)"
+        echo "  • Claude may be stuck on an error"
+        echo "  • PROMPT.md may need clarification"
+        echo "  • Manual intervention may be required"
         echo ""
         echo -e "${YELLOW}To continue:${NC}"
-        echo "  1. Review recent logs"
-        echo "  2. Fix the blocking issue"
-        echo "  3. Reset: /ralph --reset-circuit"
+        echo "  1. Review recent logs: tail -20 logs/ralph.log"
+        echo "  2. Check Claude output: ls -lt logs/claude_output_*.log | head -1"
+        echo "  3. Update @fix_plan.md if needed"
+        echo "  4. Reset circuit breaker: ralph --reset-circuit"
+        echo ""
         return 0  # Signal to halt
+    else
+        return 1  # Can continue
     fi
-    return 1  # Can continue
 }
 
 # Export functions
