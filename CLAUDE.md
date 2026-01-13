@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.1.0 | **Date** : Janvier 2025
+> **Version** : 5.1.2 | **Date** : Janvier 2025
 
 ---
 
@@ -17,6 +17,14 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
 
+### Nouveautés v5.1.2 (Auto Backlog Generation)
+
+- **Génération automatique backlog.md** : `/decompose` génère maintenant automatiquement le backlog table
+- **Génération automatique prd.json** : Plus besoin de flag, toujours généré
+- **Flag `--wiggum` supprimé** : Tous les fichiers Ralph générés automatiquement
+- **Deux niveaux de granularité** : Sub-specs (1-5 jours) + Stories (1-2h) dans backlog
+- **ralph.sh et PROMPT.md** : Générés automatiquement avec détection stack
+
 ### Nouveautés v5.1.0 (Ralph Wiggum Integration)
 
 - **Nouvelle commande `/ralph`** : Exécution autonome overnight avec boucle itérative
@@ -24,7 +32,6 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 - **Deux modes d'exécution** : Hook (même session, <2h) et Script (contexte frais, overnight)
 - **Circuit Breaker** : Détection automatique des boucles bloquées (3 états: CLOSED/HALF_OPEN/OPEN)
 - **RALPH_STATUS Block** : Format structuré de communication avec double condition de sortie
-- **Flag `--wiggum`** pour `/decompose` : Génère prd.json + ralph.sh au lieu d'INDEX.md
 - **Flag `--granularity`** : Contrôle la taille des stories (micro/small/standard)
 - **Nouveaux skills** : `ralph-analyzer`, `ralph-converter`
 - **Nouvel agent** : `@ralph-executor` pour exécution des stories individuelles
@@ -112,7 +119,7 @@ src/
 ├── scripts/          # Validation (validate_all.py, etc.)
 ├── settings/         # Configuration (flags.md)
 └── skills/           # 30 skills
-    ├── core/         # 17 skills fondamentaux (inclut ralph-analyzer, ralph-converter)
+    ├── core/         # 18 skills fondamentaux (inclut ralph-analyzer, ralph-converter)
     ├── stack/        # 5 skills technologie (react, django, symfony, spring, frontend)
     ├── personas/     # Système personas
     ├── mcp/          # MCP skill
@@ -312,7 +319,7 @@ Idée vague → /brainstorm → Brief structuré avec User Stories
 Workflow pour exécution autonome sur plusieurs heures sans supervision :
 
 ```
-PRD complet → /decompose --wiggum → prd.json + ralph.sh
+PRD complet → /decompose → backlog.md + prd.json + ralph.sh (auto)
                                           │
                                           ↓
                                      /ralph <dir>
@@ -354,10 +361,13 @@ PRD complet → /decompose --wiggum → prd.json + ralph.sh
 
 ```bash
 # Workflow G : Ralph Wiggum (overnight)
-/decompose migration-prd.md --wiggum --granularity small
-# → Génère prd.json avec user stories
-# → Génère ralph.sh executable
-# → Détecte stack pour PROMPT.md
+/decompose migration-prd.md --granularity small
+# → Génère automatiquement :
+#   - Sub-specs S01-SNN.md (1-5 jours chacune)
+#   - backlog.md (stories 1-2h, format Architector)
+#   - prd.json (format Ralph)
+#   - ralph.sh (script exécutable)
+#   - PROMPT.md (prompt personnalisé)
 
 /ralph docs/specs/migration/ --overnight --safety-level moderate
 # → Mode script auto-sélectionné
@@ -407,7 +417,7 @@ PRD complet → /decompose --wiggum → prd.json + ralph.sh
 | `/rules`      | Génère .claude/rules/ — conventions projet automatiques     |
 | `/brainstorm` | Feature discovery v4.8 — Auto-techniques, mix, transition checks |
 | `/debug`      | Diagnostic bugs structuré                                   |
-| `/decompose`  | Décomposition PRD en sous-specs (+ `--wiggum` pour Ralph)   |
+| `/decompose`  | Décomposition PRD en sous-specs + backlog.md + prd.json     |
 | `/memory`     | Gestion mémoire projet + learning (calibration, préférences)|
 | `/promptor`   | Voice-to-brief — dictée vocale → brief structuré + Notion   |
 | `/create`     | Component Factory (skill\|command\|agent)                   |
@@ -454,15 +464,15 @@ PRD complet → /decompose --wiggum → prd.json + ralph.sh
 
 ---
 
-## 6. Skills (28)
+## 6. Skills (30)
 
-### Core (16)
+### Core (18)
 
 `epci-core`, `architecture-patterns`, `code-conventions`, `testing-strategy`,
 `git-workflow`, `flags-system`, `project-memory`, `brainstormer`,
 `debugging-strategy`, `learning-optimizer`, `breakpoint-metrics`,
 `clarification-intelligente`, `proactive-suggestions`, `rules-generator`,
-`input-clarifier`, `orchestrator-batch`
+`input-clarifier`, `orchestrator-batch`, `ralph-analyzer`, `ralph-converter`
 
 ### Stack (5) — Auto-détectés
 
