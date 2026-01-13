@@ -1,81 +1,53 @@
-#!/bin/bash
-# =============================================================================
-# Date Utilities for Ralph Wiggum
-# =============================================================================
-# Cross-platform date utilities for consistent timestamp generation.
-# Adapted from frankbria/ralph-claude-code/lib/date_utils.sh
-#
-# EPCI Integration: v1.0
-# =============================================================================
+#!/usr/bin/env bash
 
-# Get ISO 8601 timestamp (UTC)
-# Works on both macOS (BSD date) and Linux (GNU date)
+# date_utils.sh - Cross-platform date utility functions
+# Provides consistent date formatting and arithmetic across GNU (Linux) and BSD (macOS) systems
+
+# Get current timestamp in ISO 8601 format with seconds precision
+# Returns: YYYY-MM-DDTHH:MM:SS+00:00 format
 get_iso_timestamp() {
-    if date --version >/dev/null 2>&1; then
-        # GNU date (Linux)
-        date -u +"%Y-%m-%dT%H:%M:%SZ"
+    local os_type
+    os_type=$(uname)
+
+    if [[ "$os_type" == "Darwin" ]]; then
+        # macOS (BSD date)
+        # Use manual formatting and add colon to timezone offset
+        date -u +"%Y-%m-%dT%H:%M:%S%z" | sed 's/\(..\)$/:\1/'
     else
-        # BSD date (macOS)
-        date -u +"%Y-%m-%dT%H:%M:%SZ"
+        # Linux (GNU date) - use -u flag for UTC
+        date -u -Iseconds
     fi
 }
 
-# Get Unix timestamp (seconds since epoch)
-get_unix_timestamp() {
+# Get time component (HH:MM:SS) for one hour from now
+# Returns: HH:MM:SS format
+get_next_hour_time() {
+    local os_type
+    os_type=$(uname)
+
+    if [[ "$os_type" == "Darwin" ]]; then
+        # macOS (BSD date) - use -v flag for date arithmetic
+        date -v+1H '+%H:%M:%S'
+    else
+        # Linux (GNU date) - use -d flag for date arithmetic
+        date -d '+1 hour' '+%H:%M:%S'
+    fi
+}
+
+# Get current timestamp in a basic format (fallback)
+# Returns: YYYY-MM-DD HH:MM:SS format
+get_basic_timestamp() {
+    date '+%Y-%m-%d %H:%M:%S'
+}
+
+# Get current Unix epoch time in seconds
+# Returns: Integer seconds since 1970-01-01 00:00:00 UTC
+get_epoch_seconds() {
     date +%s
 }
 
-# Get human-readable timestamp for logs
-get_log_timestamp() {
-    date +"%Y-%m-%d %H:%M:%S"
-}
-
-# Calculate elapsed time between two Unix timestamps
-# Usage: elapsed_time $start_timestamp $end_timestamp
-elapsed_time() {
-    local start=$1
-    local end=$2
-    local diff=$((end - start))
-
-    local hours=$((diff / 3600))
-    local minutes=$(((diff % 3600) / 60))
-    local seconds=$((diff % 60))
-
-    if [[ $hours -gt 0 ]]; then
-        printf "%dh %dm %ds" $hours $minutes $seconds
-    elif [[ $minutes -gt 0 ]]; then
-        printf "%dm %ds" $minutes $seconds
-    else
-        printf "%ds" $seconds
-    fi
-}
-
-# Check if timestamp is older than N hours
-# Usage: is_expired "$timestamp" $hours
-is_expired() {
-    local timestamp="$1"
-    local hours="${2:-24}"
-
-    local now=$(get_unix_timestamp)
-    local then
-
-    # Try to parse ISO timestamp
-    if date --version >/dev/null 2>&1; then
-        # GNU date
-        then=$(date -d "$timestamp" +%s 2>/dev/null || echo "0")
-    else
-        # BSD date (macOS)
-        then=$(date -j -f "%Y-%m-%dT%H:%M:%SZ" "$timestamp" +%s 2>/dev/null || echo "0")
-    fi
-
-    local age_hours=$(( (now - then) / 3600 ))
-
-    [[ $age_hours -ge $hours ]]
-}
-
-# Export functions
+# Export functions for use in other scripts
 export -f get_iso_timestamp
-export -f get_unix_timestamp
-export -f get_log_timestamp
-export -f elapsed_time
-export -f is_expired
+export -f get_next_hour_time
+export -f get_basic_timestamp
+export -f get_epoch_seconds

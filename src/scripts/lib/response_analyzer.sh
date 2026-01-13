@@ -1,325 +1,703 @@
 #!/bin/bash
-# =============================================================================
-# Response Analyzer for Ralph Wiggum
-# =============================================================================
-# Analyzes Claude's output to detect completion, stuck loops, and work type.
-# Supports dual-condition exit (completion indicators + explicit EXIT_SIGNAL).
-# Adapted from frankbria/ralph-claude-code/lib/response_analyzer.sh
-#
-# EPCI Integration: v1.0
-# =============================================================================
+# Response Analyzer Component for Ralph
+# Analyzes Claude Code output to detect completion signals, test-only loops, and progress
 
-# Source utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/date_utils.sh"
+# Source date utilities for cross-platform compatibility
+source "$(dirname "${BASH_SOURCE[0]}")/date_utils.sh"
 
-# Configuration
-RA_COMPLETION_THRESHOLD="${RA_COMPLETION_THRESHOLD:-2}"
-RA_RATE_LIMIT_PER_HOUR="${RA_RATE_LIMIT_PER_HOUR:-100}"
-RA_SESSION_EXPIRY_HOURS="${RA_SESSION_EXPIRY_HOURS:-24}"
+# Response Analysis Functions
+# Based on expert recommendations from Martin Fowler, Michael Nygard, Sam Newman
 
-# State files
-RA_ANALYSIS_FILE="${RA_ANALYSIS_FILE:-.response_analysis}"
-RA_RATE_LIMIT_FILE="${RA_RATE_LIMIT_FILE:-.rate_limit_state}"
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# Analysis configuration
+COMPLETION_KEYWORDS=("done" "complete" "finished" "all tasks complete" "project complete" "ready for review")
+TEST_ONLY_PATTERNS=("npm test" "bats" "pytest" "jest" "cargo test" "go test" "running tests")
+NO_WORK_PATTERNS=("nothing to do" "no changes" "already implemented" "up to date")
 
 # =============================================================================
-# RALPH_STATUS PARSING
+# JSON OUTPUT FORMAT DETECTION AND PARSING
 # =============================================================================
 
-# Parse RALPH_STATUS block from Claude output
-# Returns JSON with parsed fields
-parse_ralph_status() {
-    local output="$1"
+# Detect output format (json or text)
+# Returns: "json" if valid JSON, "text" otherwise
+detect_output_format() {
+    local output_file=$1
 
-    # Extract block between ---RALPH_STATUS--- and ---END_RALPH_STATUS---
-    local block=$(echo "$output" | sed -n '/---RALPH_STATUS---/,/---END_RALPH_STATUS---/p')
+    if [[ ! -f "$output_file" ]] || [[ ! -s "$output_file" ]]; then
+        echo "text"
+        return
+    fi
 
-    if [[ -z "$block" ]]; then
-        # No block found, return empty JSON
-        echo '{"found": false}'
+    # Check if file starts with { or [ (JSON indicators)
+    local first_char=$(head -c 1 "$output_file" 2>/dev/null | tr -d '[:space:]')
+
+    if [[ "$first_char" != "{" && "$first_char" != "[" ]]; then
+        echo "text"
+        return
+    fi
+
+    # Validate as JSON using jq
+    if jq empty "$output_file" 2>/dev/null; then
+        echo "json"
+    else
+        echo "text"
+    fi
+}
+
+# Parse JSON response and extract structured fields
+# Creates .json_parse_result with normalized analysis data
+# Supports TWO JSON formats:
+# 1. Flat format: { status, exit_signal, work_type, files_modified, ... }
+# 2. Claude CLI format: { result, sessionId, metadata: { files_changed, has_errors, completion_status, ... } }
+parse_json_response() {
+    local output_file=$1
+    local result_file="${2:-.json_parse_result}"
+
+    if [[ ! -f "$output_file" ]]; then
+        echo "ERROR: Output file not found: $output_file" >&2
         return 1
     fi
 
-    # Parse individual fields
-    local status=$(echo "$block" | grep -E '^STATUS:' | sed 's/STATUS: *//' | tr -d '[:space:]')
-    local tasks=$(echo "$block" | grep -E '^TASKS_COMPLETED_THIS_LOOP:' | sed 's/TASKS_COMPLETED_THIS_LOOP: *//' | tr -d '[:space:]')
-    local files=$(echo "$block" | grep -E '^FILES_MODIFIED:' | sed 's/FILES_MODIFIED: *//' | tr -d '[:space:]')
-    local tests=$(echo "$block" | grep -E '^TESTS_STATUS:' | sed 's/TESTS_STATUS: *//' | tr -d '[:space:]')
-    local work_type=$(echo "$block" | grep -E '^WORK_TYPE:' | sed 's/WORK_TYPE: *//' | tr -d '[:space:]')
-    local exit_signal=$(echo "$block" | grep -E '^EXIT_SIGNAL:' | sed 's/EXIT_SIGNAL: *//' | tr -d '[:space:]')
-    local recommendation=$(echo "$block" | grep -E '^RECOMMENDATION:' | sed 's/RECOMMENDATION: *//')
-
-    # Normalize exit_signal to boolean
-    case "$exit_signal" in
-        true|True|TRUE|1|yes|Yes|YES) exit_signal="true" ;;
-        *) exit_signal="false" ;;
-    esac
-
-    # Validate status against allowed values
-    case "$status" in
-        IN_PROGRESS|COMPLETE|BLOCKED|UNKNOWN) ;;
-        *) status="UNKNOWN" ;;
-    esac
-
-    # Validate tests_status against allowed values
-    case "$tests" in
-        PASSING|FAILING|NOT_RUN) ;;
-        *) tests="NOT_RUN" ;;
-    esac
-
-    # Validate work_type against allowed values
-    case "$work_type" in
-        IMPLEMENTATION|TESTING|DOCUMENTATION|REFACTORING|UNKNOWN) ;;
-        *) work_type="UNKNOWN" ;;
-    esac
-
-    # Sanitize numeric fields
-    if ! [[ "$tasks" =~ ^[0-9]+$ ]]; then tasks=0; fi
-    if ! [[ "$files" =~ ^[0-9]+$ ]]; then files=0; fi
-
-    # Properly escape recommendation for JSON (security: prevent injection)
-    # Escape backslashes, quotes, tabs, newlines, and control characters
-    recommendation=$(echo "$recommendation" | \
-        sed 's/\\/\\\\/g' | \
-        sed 's/"/\\"/g' | \
-        sed 's/\t/\\t/g' | \
-        tr '\n' ' ' | \
-        sed 's/[[:cntrl:]]//g')
-
-    # Output JSON
-    cat << EOF
-{
-    "found": true,
-    "status": "${status}",
-    "tasks_completed": ${tasks},
-    "files_modified": ${files},
-    "tests_status": "${tests}",
-    "work_type": "${work_type}",
-    "exit_signal": $exit_signal,
-    "recommendation": "${recommendation}"
-}
-EOF
-}
-
-# =============================================================================
-# COMPLETION DETECTION
-# =============================================================================
-
-# Completion indicator patterns
-COMPLETION_PATTERNS=(
-    "all tests pass"
-    "all.*stories.*complete"
-    "project.*complete"
-    "implementation complete"
-    "nothing.*left.*to.*do"
-    "all tasks completed"
-    "COMPLETE"
-    "100%.*complete"
-)
-
-# Count completion indicators in output
-count_completion_indicators() {
-    local output="$1"
-    local output_lower=$(echo "$output" | tr '[:upper:]' '[:lower:]')
-    local count=0
-
-    for pattern in "${COMPLETION_PATTERNS[@]}"; do
-        if echo "$output_lower" | grep -qiE "$pattern"; then
-            count=$((count + 1))
-        fi
-    done
-
-    echo $count
-}
-
-# Check for explicit completion promise (hook mode)
-check_completion_promise() {
-    local output="$1"
-    local promise="${2:-COMPLETE}"
-
-    # Check <promise>X</promise> pattern
-    if echo "$output" | grep -q "<promise>$promise</promise>"; then
-        return 0
-    fi
-
-    return 1
-}
-
-# =============================================================================
-# EXIT DECISION (DUAL-CONDITION)
-# =============================================================================
-
-# Determine if loop should exit
-# Returns: "continue", "project_complete", "blocked", "max_iterations"
-should_exit() {
-    local output="$1"
-    local iteration="$2"
-    local max_iterations="${3:-50}"
-
-    # Check iteration limit first
-    if [[ $iteration -ge $max_iterations ]]; then
-        echo "max_iterations"
-        return 0
-    fi
-
-    # Parse RALPH_STATUS block
-    local status_json=$(parse_ralph_status "$output")
-    local block_found=$(echo "$status_json" | jq -r '.found')
-    local exit_signal=$(echo "$status_json" | jq -r '.exit_signal')
-    local status=$(echo "$status_json" | jq -r '.status')
-
-    # Check for blocked status
-    if [[ "$status" == "BLOCKED" ]]; then
-        echo "blocked"
-        return 0
-    fi
-
-    # Count completion indicators
-    local indicators=$(count_completion_indicators "$output")
-
-    # DUAL-CONDITION: Need BOTH indicators AND explicit exit_signal
-    if [[ $indicators -ge $RA_COMPLETION_THRESHOLD ]]; then
-        if [[ "$exit_signal" == "true" ]]; then
-            echo "project_complete"
-            return 0
-        else
-            # Indicators present but EXIT_SIGNAL is false
-            # Claude explicitly says to continue - respect that
-            echo "continue"
-            return 0
-        fi
-    fi
-
-    # Check explicit exit_signal alone (if block found)
-    if [[ "$block_found" == "true" && "$exit_signal" == "true" ]]; then
-        echo "project_complete"
-        return 0
-    fi
-
-    # Check hook-mode completion promise
-    if check_completion_promise "$output"; then
-        echo "project_complete"
-        return 0
-    fi
-
-    echo "continue"
-}
-
-# =============================================================================
-# STUCK LOOP DETECTION
-# =============================================================================
-
-# Check if same error appears in multiple consecutive outputs
-# Usage: detect_stuck_loop <current_output> [history_file]
-detect_stuck_loop() {
-    local current="$1"
-    local history_file="${2:-.ralph_output_history}"
-
-    # Extract error patterns from current output
-    local current_errors=$(echo "$current" | grep -iE "error|failed|exception" | head -3 | md5sum | cut -d' ' -f1)
-
-    if [[ ! -f "$history_file" ]]; then
-        echo "$current_errors" > "$history_file"
-        return 1  # Not stuck yet
-    fi
-
-    # Check if same error hash in last 3 entries
-    local match_count=$(grep -c "$current_errors" "$history_file" 2>/dev/null || echo 0)
-
-    # Append current to history (keep last 5)
-    echo "$current_errors" >> "$history_file"
-    tail -5 "$history_file" > "$history_file.tmp"
-    mv "$history_file.tmp" "$history_file"
-
-    [[ $match_count -ge 2 ]]
-}
-
-# =============================================================================
-# RATE LIMITING
-# =============================================================================
-
-# Initialize or read rate limit state
-init_rate_limit() {
-    if [[ ! -f "$RA_RATE_LIMIT_FILE" ]]; then
-        cat > "$RA_RATE_LIMIT_FILE" << EOF
-{
-    "hour_start": $(date +%s),
-    "calls_this_hour": 0
-}
-EOF
-    fi
-}
-
-# Check and update rate limit
-# Returns: 0 if OK, 1 if rate limited
-check_rate_limit() {
-    init_rate_limit
-
-    local now=$(date +%s)
-    local hour_start=$(jq -r '.hour_start' "$RA_RATE_LIMIT_FILE")
-    local calls=$(jq -r '.calls_this_hour' "$RA_RATE_LIMIT_FILE")
-
-    # Check if new hour
-    local elapsed=$((now - hour_start))
-    if [[ $elapsed -ge 3600 ]]; then
-        # Reset for new hour
-        hour_start=$now
-        calls=0
-    fi
-
-    # Check limit
-    if [[ $calls -ge $RA_RATE_LIMIT_PER_HOUR ]]; then
-        local remaining=$((3600 - elapsed))
-        echo -e "\033[1;33m[Rate Limit] Limit reached ($RA_RATE_LIMIT_PER_HOUR/hour). Wait ${remaining}s\033[0m"
+    # Validate JSON first
+    if ! jq empty "$output_file" 2>/dev/null; then
+        echo "ERROR: Invalid JSON in output file" >&2
         return 1
     fi
 
-    # Increment counter
-    calls=$((calls + 1))
-    cat > "$RA_RATE_LIMIT_FILE" << EOF
-{
-    "hour_start": $hour_start,
-    "calls_this_hour": $calls
-}
-EOF
+    # Detect JSON format by checking for Claude CLI fields
+    local has_result_field=$(jq -r 'has("result")' "$output_file" 2>/dev/null)
+
+    # Extract fields - support both flat format and Claude CLI format
+    # Priority: Claude CLI fields first, then flat format fields
+
+    # Status: from flat format OR derived from metadata.completion_status
+    local status=$(jq -r '.status // "UNKNOWN"' "$output_file" 2>/dev/null)
+    local completion_status=$(jq -r '.metadata.completion_status // ""' "$output_file" 2>/dev/null)
+    if [[ "$completion_status" == "complete" || "$completion_status" == "COMPLETE" ]]; then
+        status="COMPLETE"
+    fi
+
+    # Exit signal: from flat format OR derived from completion_status
+    local exit_signal=$(jq -r '.exit_signal // false' "$output_file" 2>/dev/null)
+
+    # Work type: from flat format
+    local work_type=$(jq -r '.work_type // "UNKNOWN"' "$output_file" 2>/dev/null)
+
+    # Files modified: from flat format OR from metadata.files_changed
+    local files_modified=$(jq -r '.metadata.files_changed // .files_modified // 0' "$output_file" 2>/dev/null)
+
+    # Error count: from flat format OR derived from metadata.has_errors
+    # Note: When only has_errors=true is present (without explicit error_count),
+    # we set error_count=1 as a minimum. This is defensive programming since
+    # the stuck detection threshold is >5 errors, so 1 error won't trigger it.
+    # Actual error count may be higher, but precise count isn't critical for our logic.
+    local error_count=$(jq -r '.error_count // 0' "$output_file" 2>/dev/null)
+    local has_errors=$(jq -r '.metadata.has_errors // false' "$output_file" 2>/dev/null)
+    if [[ "$has_errors" == "true" && "$error_count" == "0" ]]; then
+        error_count=1  # At least one error if has_errors is true
+    fi
+
+    # Summary: from flat format OR from result field (Claude CLI format)
+    local summary=$(jq -r '.result // .summary // ""' "$output_file" 2>/dev/null)
+
+    # Session ID: from Claude CLI format (sessionId) OR from metadata.session_id
+    local session_id=$(jq -r '.sessionId // .metadata.session_id // ""' "$output_file" 2>/dev/null)
+
+    # Loop number: from metadata
+    local loop_number=$(jq -r '.metadata.loop_number // .loop_number // 0' "$output_file" 2>/dev/null)
+
+    # Confidence: from flat format
+    local confidence=$(jq -r '.confidence // 0' "$output_file" 2>/dev/null)
+
+    # Progress indicators: from Claude CLI metadata (optional)
+    local progress_count=$(jq -r '.metadata.progress_indicators | if . then length else 0 end' "$output_file" 2>/dev/null)
+
+    # Normalize values
+    # Convert exit_signal to boolean string
+    if [[ "$exit_signal" == "true" || "$status" == "COMPLETE" || "$completion_status" == "complete" || "$completion_status" == "COMPLETE" ]]; then
+        exit_signal="true"
+    else
+        exit_signal="false"
+    fi
+
+    # Determine is_test_only from work_type
+    local is_test_only="false"
+    if [[ "$work_type" == "TEST_ONLY" ]]; then
+        is_test_only="true"
+    fi
+
+    # Determine is_stuck from error_count (threshold >5)
+    local is_stuck="false"
+    error_count=$((error_count + 0))  # Ensure integer
+    if [[ $error_count -gt 5 ]]; then
+        is_stuck="true"
+    fi
+
+    # Ensure files_modified is integer
+    files_modified=$((files_modified + 0))
+
+    # Ensure progress_count is integer
+    progress_count=$((progress_count + 0))
+
+    # Calculate has_completion_signal
+    local has_completion_signal="false"
+    if [[ "$status" == "COMPLETE" || "$exit_signal" == "true" ]]; then
+        has_completion_signal="true"
+    fi
+
+    # Boost confidence based on structured data availability
+    if [[ "$has_result_field" == "true" ]]; then
+        confidence=$((confidence + 20))  # Structured response boost
+    fi
+    if [[ $progress_count -gt 0 ]]; then
+        confidence=$((confidence + progress_count * 5))  # Progress indicators boost
+    fi
+
+    # Write normalized result using jq for safe JSON construction
+    # String fields use --arg (auto-escapes), numeric/boolean use --argjson
+    jq -n \
+        --arg status "$status" \
+        --argjson exit_signal "$exit_signal" \
+        --argjson is_test_only "$is_test_only" \
+        --argjson is_stuck "$is_stuck" \
+        --argjson has_completion_signal "$has_completion_signal" \
+        --argjson files_modified "$files_modified" \
+        --argjson error_count "$error_count" \
+        --arg summary "$summary" \
+        --argjson loop_number "$loop_number" \
+        --arg session_id "$session_id" \
+        --argjson confidence "$confidence" \
+        '{
+            status: $status,
+            exit_signal: $exit_signal,
+            is_test_only: $is_test_only,
+            is_stuck: $is_stuck,
+            has_completion_signal: $has_completion_signal,
+            files_modified: $files_modified,
+            error_count: $error_count,
+            summary: $summary,
+            loop_number: $loop_number,
+            session_id: $session_id,
+            confidence: $confidence,
+            metadata: {
+                loop_number: $loop_number,
+                session_id: $session_id
+            }
+        }' > "$result_file"
 
     return 0
 }
 
-# =============================================================================
-# ANALYSIS OUTPUT
-# =============================================================================
-
-# Analyze response and write analysis file
+# Analyze Claude Code response and extract signals
 analyze_response() {
-    local output="$1"
-    local iteration="$2"
+    local output_file=$1
+    local loop_number=$2
+    local analysis_result_file=${3:-".response_analysis"}
 
-    local status_json=$(parse_ralph_status "$output")
-    local indicators=$(count_completion_indicators "$output")
-    local exit_decision=$(should_exit "$output" "$iteration")
-    local is_stuck=$(detect_stuck_loop "$output" && echo "true" || echo "false")
+    # Initialize analysis result
+    local has_completion_signal=false
+    local is_test_only=false
+    local is_stuck=false
+    local has_progress=false
+    local confidence_score=0
+    local exit_signal=false
+    local work_summary=""
+    local files_modified=0
 
-    # Write analysis
-    cat > "$RA_ANALYSIS_FILE" << EOF
-{
-    "timestamp": "$(get_iso_timestamp)",
-    "iteration": $iteration,
-    "ralph_status": $status_json,
-    "completion_indicators": $indicators,
-    "exit_decision": "$exit_decision",
-    "stuck_loop_detected": $is_stuck
+    # Read output file
+    if [[ ! -f "$output_file" ]]; then
+        echo "ERROR: Output file not found: $output_file"
+        return 1
+    fi
+
+    local output_content=$(cat "$output_file")
+    local output_length=${#output_content}
+
+    # Detect output format and try JSON parsing first
+    local output_format=$(detect_output_format "$output_file")
+
+    if [[ "$output_format" == "json" ]]; then
+        # Try JSON parsing
+        if parse_json_response "$output_file" ".json_parse_result" 2>/dev/null; then
+            # Extract values from JSON parse result
+            has_completion_signal=$(jq -r '.has_completion_signal' .json_parse_result 2>/dev/null || echo "false")
+            exit_signal=$(jq -r '.exit_signal' .json_parse_result 2>/dev/null || echo "false")
+            is_test_only=$(jq -r '.is_test_only' .json_parse_result 2>/dev/null || echo "false")
+            is_stuck=$(jq -r '.is_stuck' .json_parse_result 2>/dev/null || echo "false")
+            work_summary=$(jq -r '.summary' .json_parse_result 2>/dev/null || echo "")
+            files_modified=$(jq -r '.files_modified' .json_parse_result 2>/dev/null || echo "0")
+            local json_confidence=$(jq -r '.confidence' .json_parse_result 2>/dev/null || echo "0")
+            local session_id=$(jq -r '.session_id' .json_parse_result 2>/dev/null || echo "")
+
+            # Persist session ID if present (for session continuity across loop iterations)
+            if [[ -n "$session_id" && "$session_id" != "null" ]]; then
+                store_session_id "$session_id"
+                [[ "${VERBOSE_PROGRESS:-}" == "true" ]] && echo "DEBUG: Persisted session ID: $session_id" >&2
+            fi
+
+            # JSON parsing provides high confidence
+            if [[ "$exit_signal" == "true" ]]; then
+                confidence_score=100
+            else
+                confidence_score=$((json_confidence + 50))
+            fi
+
+            # Check for file changes via git (supplements JSON data)
+            if command -v git &>/dev/null && git rev-parse --git-dir >/dev/null 2>&1; then
+                local git_files=$(git diff --name-only 2>/dev/null | wc -l)
+                if [[ $git_files -gt 0 ]]; then
+                    has_progress=true
+                    files_modified=$git_files
+                fi
+            fi
+
+            # Write analysis results for JSON path using jq for safe construction
+            jq -n \
+                --argjson loop_number "$loop_number" \
+                --arg timestamp "$(get_iso_timestamp)" \
+                --arg output_file "$output_file" \
+                --arg output_format "json" \
+                --argjson has_completion_signal "$has_completion_signal" \
+                --argjson is_test_only "$is_test_only" \
+                --argjson is_stuck "$is_stuck" \
+                --argjson has_progress "$has_progress" \
+                --argjson files_modified "$files_modified" \
+                --argjson confidence_score "$confidence_score" \
+                --argjson exit_signal "$exit_signal" \
+                --arg work_summary "$work_summary" \
+                --argjson output_length "$output_length" \
+                '{
+                    loop_number: $loop_number,
+                    timestamp: $timestamp,
+                    output_file: $output_file,
+                    output_format: $output_format,
+                    analysis: {
+                        has_completion_signal: $has_completion_signal,
+                        is_test_only: $is_test_only,
+                        is_stuck: $is_stuck,
+                        has_progress: $has_progress,
+                        files_modified: $files_modified,
+                        confidence_score: $confidence_score,
+                        exit_signal: $exit_signal,
+                        work_summary: $work_summary,
+                        output_length: $output_length
+                    }
+                }' > "$analysis_result_file"
+            rm -f ".json_parse_result"
+            return 0
+        fi
+        # If JSON parsing failed, fall through to text parsing
+    fi
+
+    # Text parsing fallback (original logic)
+
+    # Track whether an explicit EXIT_SIGNAL was found in RALPH_STATUS block
+    # If explicit signal found, heuristics should NOT override Claude's intent
+    local explicit_exit_signal_found=false
+
+    # 1. Check for explicit structured output (if Claude follows schema)
+    if grep -q -- "---RALPH_STATUS---" "$output_file"; then
+        # Parse structured output
+        local status=$(grep "STATUS:" "$output_file" | cut -d: -f2 | xargs)
+        local exit_sig=$(grep "EXIT_SIGNAL:" "$output_file" | cut -d: -f2 | xargs)
+
+        # If EXIT_SIGNAL is explicitly provided, respect it
+        if [[ -n "$exit_sig" ]]; then
+            explicit_exit_signal_found=true
+            if [[ "$exit_sig" == "true" ]]; then
+                has_completion_signal=true
+                exit_signal=true
+                confidence_score=100
+            else
+                # Explicit EXIT_SIGNAL: false - Claude says to continue
+                exit_signal=false
+            fi
+        elif [[ "$status" == "COMPLETE" ]]; then
+            # No explicit EXIT_SIGNAL but STATUS is COMPLETE
+            has_completion_signal=true
+            exit_signal=true
+            confidence_score=100
+        fi
+    fi
+
+    # 2. Detect completion keywords in natural language output
+    for keyword in "${COMPLETION_KEYWORDS[@]}"; do
+        if grep -qi "$keyword" "$output_file"; then
+            has_completion_signal=true
+            ((confidence_score+=10))
+            break
+        fi
+    done
+
+    # 3. Detect test-only loops
+    local test_command_count=0
+    local implementation_count=0
+    local error_count=0
+
+    test_command_count=$(grep -c -i "running tests\|npm test\|bats\|pytest\|jest" "$output_file" 2>/dev/null | head -1 || echo "0")
+    implementation_count=$(grep -c -i "implementing\|creating\|writing\|adding\|function\|class" "$output_file" 2>/dev/null | head -1 || echo "0")
+
+    # Strip whitespace and ensure it's a number
+    test_command_count=$(echo "$test_command_count" | tr -d '[:space:]')
+    implementation_count=$(echo "$implementation_count" | tr -d '[:space:]')
+
+    # Convert to integers with default fallback
+    test_command_count=${test_command_count:-0}
+    implementation_count=${implementation_count:-0}
+    test_command_count=$((test_command_count + 0))
+    implementation_count=$((implementation_count + 0))
+
+    if [[ $test_command_count -gt 0 ]] && [[ $implementation_count -eq 0 ]]; then
+        is_test_only=true
+        work_summary="Test execution only, no implementation"
+    fi
+
+    # 4. Detect stuck/error loops
+    # Use two-stage filtering to avoid counting JSON field names as errors
+    # Stage 1: Filter out JSON field patterns like "is_error": false
+    # Stage 2: Count actual error messages in specific contexts
+    # Pattern aligned with ralph_loop.sh to ensure consistent behavior
+    error_count=$(grep -v '"[^"]*error[^"]*":' "$output_file" 2>/dev/null | \
+                  grep -cE '(^Error:|^ERROR:|^error:|\]: error|Link: error|Error occurred|failed with error|[Ee]xception|Fatal|FATAL)' \
+                  2>/dev/null || echo "0")
+    error_count=$(echo "$error_count" | tr -d '[:space:]')
+    error_count=${error_count:-0}
+    error_count=$((error_count + 0))
+
+    if [[ $error_count -gt 5 ]]; then
+        is_stuck=true
+    fi
+
+    # 5. Detect "nothing to do" patterns
+    for pattern in "${NO_WORK_PATTERNS[@]}"; do
+        if grep -qi "$pattern" "$output_file"; then
+            has_completion_signal=true
+            ((confidence_score+=15))
+            work_summary="No work remaining"
+            break
+        fi
+    done
+
+    # 6. Check for file changes (git integration)
+    if command -v git &>/dev/null && git rev-parse --git-dir >/dev/null 2>&1; then
+        files_modified=$(git diff --name-only 2>/dev/null | wc -l)
+        if [[ $files_modified -gt 0 ]]; then
+            has_progress=true
+            ((confidence_score+=20))
+        fi
+    fi
+
+    # 7. Analyze output length trends (detect declining engagement)
+    if [[ -f ".last_output_length" ]]; then
+        local last_length=$(cat ".last_output_length")
+        local length_ratio=$((output_length * 100 / last_length))
+
+        if [[ $length_ratio -lt 50 ]]; then
+            # Output is less than 50% of previous - possible completion
+            ((confidence_score+=10))
+        fi
+    fi
+    echo "$output_length" > ".last_output_length"
+
+    # 8. Extract work summary from output
+    if [[ -z "$work_summary" ]]; then
+        # Try to find summary in output
+        work_summary=$(grep -i "summary\|completed\|implemented" "$output_file" | head -1 | cut -c 1-100)
+        if [[ -z "$work_summary" ]]; then
+            work_summary="Output analyzed, no explicit summary found"
+        fi
+    fi
+
+    # 9. Determine exit signal based on confidence (heuristic)
+    # IMPORTANT: Only apply heuristics if no explicit EXIT_SIGNAL was found in RALPH_STATUS
+    # Claude's explicit intent takes precedence over natural language pattern matching
+    if [[ "$explicit_exit_signal_found" != "true" ]]; then
+        if [[ $confidence_score -ge 40 || "$has_completion_signal" == "true" ]]; then
+            exit_signal=true
+        fi
+    fi
+
+    # Write analysis results to file (text parsing path) using jq for safe construction
+    jq -n \
+        --argjson loop_number "$loop_number" \
+        --arg timestamp "$(get_iso_timestamp)" \
+        --arg output_file "$output_file" \
+        --arg output_format "text" \
+        --argjson has_completion_signal "$has_completion_signal" \
+        --argjson is_test_only "$is_test_only" \
+        --argjson is_stuck "$is_stuck" \
+        --argjson has_progress "$has_progress" \
+        --argjson files_modified "$files_modified" \
+        --argjson confidence_score "$confidence_score" \
+        --argjson exit_signal "$exit_signal" \
+        --arg work_summary "$work_summary" \
+        --argjson output_length "$output_length" \
+        '{
+            loop_number: $loop_number,
+            timestamp: $timestamp,
+            output_file: $output_file,
+            output_format: $output_format,
+            analysis: {
+                has_completion_signal: $has_completion_signal,
+                is_test_only: $is_test_only,
+                is_stuck: $is_stuck,
+                has_progress: $has_progress,
+                files_modified: $files_modified,
+                confidence_score: $confidence_score,
+                exit_signal: $exit_signal,
+                work_summary: $work_summary,
+                output_length: $output_length
+            }
+        }' > "$analysis_result_file"
+
+    # Always return 0 (success) - callers should check the JSON result file
+    # Returning non-zero would cause issues with set -e and test frameworks
+    return 0
 }
-EOF
 
-    echo "$exit_decision"
+# Update exit signals file based on analysis
+update_exit_signals() {
+    local analysis_file=${1:-".response_analysis"}
+    local exit_signals_file=${2:-".exit_signals"}
+
+    if [[ ! -f "$analysis_file" ]]; then
+        echo "ERROR: Analysis file not found: $analysis_file"
+        return 1
+    fi
+
+    # Read analysis results
+    local is_test_only=$(jq -r '.analysis.is_test_only' "$analysis_file")
+    local has_completion_signal=$(jq -r '.analysis.has_completion_signal' "$analysis_file")
+    local loop_number=$(jq -r '.loop_number' "$analysis_file")
+    local has_progress=$(jq -r '.analysis.has_progress' "$analysis_file")
+
+    # Read current exit signals
+    local signals=$(cat "$exit_signals_file" 2>/dev/null || echo '{"test_only_loops": [], "done_signals": [], "completion_indicators": []}')
+
+    # Update test_only_loops array
+    if [[ "$is_test_only" == "true" ]]; then
+        signals=$(echo "$signals" | jq ".test_only_loops += [$loop_number]")
+    else
+        # Clear test_only_loops if we had implementation
+        if [[ "$has_progress" == "true" ]]; then
+            signals=$(echo "$signals" | jq '.test_only_loops = []')
+        fi
+    fi
+
+    # Update done_signals array
+    if [[ "$has_completion_signal" == "true" ]]; then
+        signals=$(echo "$signals" | jq ".done_signals += [$loop_number]")
+    fi
+
+    # Update completion_indicators array (strong signals)
+    local confidence=$(jq -r '.analysis.confidence_score' "$analysis_file")
+    if [[ $confidence -ge 60 ]]; then
+        signals=$(echo "$signals" | jq ".completion_indicators += [$loop_number]")
+    fi
+
+    # Keep only last 5 signals (rolling window)
+    signals=$(echo "$signals" | jq '.test_only_loops = .test_only_loops[-5:]')
+    signals=$(echo "$signals" | jq '.done_signals = .done_signals[-5:]')
+    signals=$(echo "$signals" | jq '.completion_indicators = .completion_indicators[-5:]')
+
+    # Write updated signals
+    echo "$signals" > "$exit_signals_file"
+
+    return 0
 }
 
-# Export functions
-export -f parse_ralph_status
-export -f count_completion_indicators
-export -f check_completion_promise
-export -f should_exit
-export -f detect_stuck_loop
-export -f check_rate_limit
+# Log analysis results in human-readable format
+log_analysis_summary() {
+    local analysis_file=${1:-".response_analysis"}
+
+    if [[ ! -f "$analysis_file" ]]; then
+        return 1
+    fi
+
+    local loop=$(jq -r '.loop_number' "$analysis_file")
+    local exit_sig=$(jq -r '.analysis.exit_signal' "$analysis_file")
+    local confidence=$(jq -r '.analysis.confidence_score' "$analysis_file")
+    local test_only=$(jq -r '.analysis.is_test_only' "$analysis_file")
+    local files_changed=$(jq -r '.analysis.files_modified' "$analysis_file")
+    local summary=$(jq -r '.analysis.work_summary' "$analysis_file")
+
+    echo -e "${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║           Response Analysis - Loop #$loop                 ║${NC}"
+    echo -e "${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
+    echo -e "${YELLOW}Exit Signal:${NC}      $exit_sig"
+    echo -e "${YELLOW}Confidence:${NC}       $confidence%"
+    echo -e "${YELLOW}Test Only:${NC}        $test_only"
+    echo -e "${YELLOW}Files Changed:${NC}    $files_changed"
+    echo -e "${YELLOW}Summary:${NC}          $summary"
+    echo ""
+}
+
+# Detect if Claude is stuck (repeating same errors)
+detect_stuck_loop() {
+    local current_output=$1
+    local history_dir=${2:-"logs"}
+
+    # Get last 3 output files
+    local recent_outputs=$(ls -t "$history_dir"/claude_output_*.log 2>/dev/null | head -3)
+
+    if [[ -z "$recent_outputs" ]]; then
+        return 1  # Not enough history
+    fi
+
+    # Extract key errors from current output using two-stage filtering
+    # Stage 1: Filter out JSON field patterns to avoid false positives
+    # Stage 2: Extract actual error messages
+    local current_errors=$(grep -v '"[^"]*error[^"]*":' "$current_output" 2>/dev/null | \
+                          grep -E '(^Error:|^ERROR:|^error:|\]: error|Link: error|Error occurred|failed with error|[Ee]xception|Fatal|FATAL)' 2>/dev/null | \
+                          sort | uniq)
+
+    if [[ -z "$current_errors" ]]; then
+        return 1  # No errors
+    fi
+
+    # Check if same errors appear in all recent outputs
+    # For multi-line errors, verify ALL error lines appear in ALL history files
+    local all_files_match=true
+    while IFS= read -r output_file; do
+        local file_matches_all=true
+        while IFS= read -r error_line; do
+            # Use -F for literal fixed-string matching (not regex)
+            if ! grep -qF "$error_line" "$output_file" 2>/dev/null; then
+                file_matches_all=false
+                break
+            fi
+        done <<< "$current_errors"
+
+        if [[ "$file_matches_all" != "true" ]]; then
+            all_files_match=false
+            break
+        fi
+    done <<< "$recent_outputs"
+
+    if [[ "$all_files_match" == "true" ]]; then
+        return 0  # Stuck on same error(s)
+    else
+        return 1  # Making progress or different errors
+    fi
+}
+
+# =============================================================================
+# SESSION MANAGEMENT FUNCTIONS
+# =============================================================================
+
+# Session file location - standardized across ralph_loop.sh and response_analyzer.sh
+SESSION_FILE=".claude_session_id"
+# Session expiration time in seconds (24 hours)
+SESSION_EXPIRATION_SECONDS=86400
+
+# Store session ID to file with timestamp
+# Usage: store_session_id "session-uuid-123"
+store_session_id() {
+    local session_id=$1
+
+    if [[ -z "$session_id" ]]; then
+        return 1
+    fi
+
+    # Write session with timestamp using jq for safe JSON construction
+    jq -n \
+        --arg session_id "$session_id" \
+        --arg timestamp "$(get_iso_timestamp)" \
+        '{
+            session_id: $session_id,
+            timestamp: $timestamp
+        }' > "$SESSION_FILE"
+
+    return 0
+}
+
+# Get the last stored session ID
+# Returns: session ID string or empty if not found
+get_last_session_id() {
+    if [[ ! -f "$SESSION_FILE" ]]; then
+        echo ""
+        return 0
+    fi
+
+    # Extract session_id from JSON file
+    local session_id=$(jq -r '.session_id // ""' "$SESSION_FILE" 2>/dev/null)
+    echo "$session_id"
+    return 0
+}
+
+# Check if the stored session should be resumed
+# Returns: 0 (true) if session is valid and recent, 1 (false) otherwise
+should_resume_session() {
+    if [[ ! -f "$SESSION_FILE" ]]; then
+        echo "false"
+        return 1
+    fi
+
+    # Get session timestamp
+    local timestamp=$(jq -r '.timestamp // ""' "$SESSION_FILE" 2>/dev/null)
+
+    if [[ -z "$timestamp" ]]; then
+        echo "false"
+        return 1
+    fi
+
+    # Calculate session age using date utilities
+    local now=$(get_epoch_seconds)
+    local session_time
+
+    # Parse ISO timestamp to epoch - try multiple formats for cross-platform compatibility
+    # Strip milliseconds if present (e.g., 2026-01-09T10:30:00.123+00:00 → 2026-01-09T10:30:00+00:00)
+    local clean_timestamp="${timestamp}"
+    if [[ "$timestamp" =~ \.[0-9]+[+-Z] ]]; then
+        clean_timestamp=$(echo "$timestamp" | sed 's/\.[0-9]*\([+-Z]\)/\1/')
+    fi
+
+    if command -v gdate &>/dev/null; then
+        # macOS with coreutils
+        session_time=$(gdate -d "$clean_timestamp" +%s 2>/dev/null)
+    elif date --version 2>&1 | grep -q GNU; then
+        # GNU date (Linux)
+        session_time=$(date -d "$clean_timestamp" +%s 2>/dev/null)
+    else
+        # BSD date (macOS without coreutils) - try parsing ISO format
+        # Format: 2026-01-09T10:30:00+00:00 or 2026-01-09T10:30:00Z
+        # Strip timezone suffix for BSD date parsing
+        local date_only="${clean_timestamp%[+-Z]*}"
+        session_time=$(date -j -f "%Y-%m-%dT%H:%M:%S" "$date_only" +%s 2>/dev/null)
+    fi
+
+    # If we couldn't parse the timestamp, consider session expired
+    if [[ -z "$session_time" || ! "$session_time" =~ ^[0-9]+$ ]]; then
+        echo "false"
+        return 1
+    fi
+
+    # Calculate age in seconds
+    local age=$((now - session_time))
+
+    # Check if session is still valid (less than expiration time)
+    if [[ $age -lt $SESSION_EXPIRATION_SECONDS ]]; then
+        echo "true"
+        return 0
+    else
+        echo "false"
+        return 1
+    fi
+}
+
+# Export functions for use in ralph_loop.sh
+export -f detect_output_format
+export -f parse_json_response
 export -f analyze_response
+export -f update_exit_signals
+export -f log_analysis_summary
+export -f detect_stuck_loop
+export -f store_session_id
+export -f get_last_session_id
+export -f should_resume_session
