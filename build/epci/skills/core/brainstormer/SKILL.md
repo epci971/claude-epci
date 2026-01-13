@@ -221,6 +221,59 @@ Output: selected technique(s), adapted questions
    A) Option A  B) Option B  C) Option C
 ```
 
+### PRD Industry Standards Questions (v3.0)
+
+Questions a poser pour les nouvelles sections PRD:
+
+**Problem Statement (Evidence & Data):**
+```
+- "Quelles donnees quantitatives supportent ce besoin ?"
+  A) Metriques existantes  B) A collecter  C) Intuition equipe
+  -> Suggestion: A si analytics disponibles
+
+- "Quel est l'impact si ce probleme n'est pas resolu ?"
+  A) Business critique  B) UX degradee  C) Dette technique
+```
+
+**Goals (Business/User/Technical):**
+```
+- "Quel est l'objectif business principal ?"
+  A) Augmenter revenue  B) Reduire churn  C) Acquerir utilisateurs
+
+- "Quelle metrique utilisateur veut-on ameliorer ?"
+  A) Temps de completion  B) Satisfaction (NPS)  C) Adoption
+```
+
+**Non-Goals:**
+```
+- "Que devons-nous explicitement exclure de v1 ?"
+  A) [Feature complexe]  B) [Integration X]  C) Tout inclure
+  -> Suggestion: A ou B pour scope control
+```
+
+**Background & Strategic Fit:**
+```
+- "Pourquoi cette feature maintenant ?"
+  A) Demande utilisateur  B) Pression concurrentielle  C) Dette technique
+  -> Suggestion: A
+```
+
+**Assumptions:**
+```
+- "Quelles hypotheses techniques sont necessaires ?"
+  A) Performance API OK  B) Budget cloud approuve  C) Pas de contraintes
+
+- "Quelles hypotheses business sont critiques ?"
+  A) Stakeholder buy-in  B) Pas de changement priorites  C) Resources dispos
+```
+
+**Timeline (optionnel):**
+```
+- "Avez-vous une deadline cible ?"
+  A) Q1  B) Q2  C) TBD
+  -> Suggestion: C si incertain
+```
+
 ## Breakpoint Format
 
 ```
@@ -294,13 +347,27 @@ Read src/skills/core/brainstormer/references/brief-format.md
 1. Create directory: `mkdir -p ./docs/briefs/[slug]`
 2. **Read template** `references/brief-format.md` (MANDATORY)
 3. Section-by-section validation (si pas --quick/--turbo)
-4. Write `brief-[slug]-[date].md` — **Must include**:
-   - Personas section (min 1 primary persona)
-   - User Stories format (En tant que... je veux... afin de)
-   - Acceptance Criteria (Given/When/Then)
-   - Success Metrics (KPIs or "TBD")
+4. Write `brief-[slug]-[date].md` — **Must include (v3.0 PRD Standard)**:
+   - **Document Header** — PRD-YYYY-XXX, Version, Status, Change History
+   - **Executive Summary** — TL;DR, Problem, Solution, Impact
+   - **Background & Strategic Fit** — Why Now?, Alignment
+   - **Problem Statement** — Current Situation, Evidence & Data, Impact
+   - **Goals** — Business/User/Technical goals with metrics
+   - **Non-Goals** — Explicit exclusions with reasons (replaces Hors Scope)
+   - **Personas** section (min 1 primary persona)
+   - **User Stories** format (En tant que... je veux... afin de)
+   - **Acceptance Criteria** (Given/When/Then)
+   - **Success Metrics** (KPIs or "TBD")
+   - **User Flow** — As-Is vs To-Be with Key Improvements
+   - **Assumptions** — Technical/Business/User/Resources hypotheses
+   - **FAQ** — Internal + External questions
+   - **Timeline & Milestones** — Key milestones with Phasing Strategy
+   - **Appendix** (optional) — Research, Glossary
 5. Write `journal-[slug]-[date].md` — Using Journal template
 6. Display completion summary
+
+**Optional sections (if flag or context relevant):**
+- **Competitive Analysis** — With `--competitive` flag
 
 **Anti-pattern**: Generating brief without reading template first = INVALID
 

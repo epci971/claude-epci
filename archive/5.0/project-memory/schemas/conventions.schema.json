@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "epci-project-memory-conventions",
+  "title": "EPCI Project Conventions",
+  "description": "Schema for conventions stored in .project-memory/conventions.json",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "naming": {
+      "type": "object",
+      "description": "Naming conventions detected or defined",
+      "properties": {
+        "entities": {
+          "type": "string",
+          "enum": ["PascalCase", "camelCase", "snake_case"],
+          "description": "Entity/Model naming convention"
+        },
+        "services": {
+          "type": "string",
+          "description": "Service naming pattern (e.g., {Name}Service)"
+        },
+        "repositories": {
+          "type": "string",
+          "description": "Repository naming pattern"
+        },
+        "controllers": {
+          "type": "string",
+          "description": "Controller naming pattern"
+        },
+        "components": {
+          "type": "string",
+          "description": "Component naming pattern (React, Vue)"
+        },
+        "hooks": {
+          "type": "string",
+          "description": "Hook naming pattern (use{Name})"
+        }
+      }
+    },
+    "structure": {
+      "type": "object",
+      "description": "Project structure conventions",
+      "properties": {
+        "src_location": {
+          "type": "string",
+          "description": "Source code directory (src/, app/, lib/)"
+        },
+        "tests_location": {
+          "type": "string",
+          "description": "Tests directory (tests/, __tests__/, spec/)"
+        },
+        "test_suffix": {
+          "type": "string",
+          "description": "Test file suffix (Test.php, .test.ts, _test.py)"
+        },
+        "test_pattern": {
+          "type": "string",
+          "description": "Test file naming pattern"
+        },
+        "feature_tests_pattern": {
+          "type": "string",
+          "description": "Feature/integration test pattern"
+        }
+      }
+    },
+    "code_style": {
+      "type": "object",
+      "description": "Code formatting conventions",
+      "properties": {
+        "max_line_length": {
+          "type": "integer",
+          "minimum": 80,
+          "maximum": 200
+        },
+        "indent": {
+          "type": "string",
+          "enum": ["spaces", "tabs"]
+        },
+        "indent_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "quotes": {
+          "type": "string",
+          "enum": ["single", "double"]
+        },
+        "semicolons": {
+          "type": "boolean",
+          "description": "Use semicolons (JS/TS)"
+        },
+        "trailing_comma": {
+          "type": "string",
+          "enum": ["none", "es5", "all"]
+        }
+      }
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "manual_overrides": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of manually overridden convention keys"
+    }
+  },
+  "required": ["version", "naming", "structure"]
+}

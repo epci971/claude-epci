@@ -1,4 +1,4 @@
-# EPCI Plugin v5.0.0
+# EPCI Plugin v5.1.0
 
 > **E**xplore → **P**lan → **C**ode → **I**nspect
 
@@ -118,16 +118,18 @@ docs/features/<feature-slug>.md
 
 ## Commandes
 
-### Vue d'ensemble (12 commandes)
+### Vue d'ensemble (14 commandes)
 
 | Commande | Description | Quand l'utiliser |
 |----------|-------------|------------------|
 | `/brief` | Point d'entrée universel | Toujours commencer ici |
 | `/epci` | Workflow complet 3 phases | Features STANDARD et LARGE |
 | `/quick` | Workflow condensé | Features TINY et SMALL |
-| `/brainstorm` | Feature discovery v4.9 | Idée vague, incertitude |
+| `/ralph` | Exécution autonome overnight | Multi-features, nuit entière |
+| `/cancel-ralph` | Annuler session Ralph | Stopper exécution en cours |
+| `/brainstorm` | Feature discovery v5.0 | Idée vague, incertitude |
 | `/decompose` | Décomposition PRD/briefs | Gros projets > 5 jours |
-| `/orchestrate` | Exécution batch specs | Overnight automation |
+| `/orchestrate` | Exécution batch specs | Batch synchrone (deprecated) |
 | `/debug` | Diagnostic structuré | Bug fixing |
 | `/commit` | Finalisation git EPCI | Après /epci ou /quick |
 | `/memory` | Gestion mémoire + learning | Init, export, calibrate |
@@ -225,7 +227,34 @@ Décompose un PRD ou brief brainstorm en sous-specs exécutables :
 
 **Chaîne complète** : `/brainstorm` → `/decompose` → `/orchestrate`
 
-### `/orchestrate` — Exécution Batch
+### `/ralph` — Exécution Autonome Overnight (NEW v5.1.0)
+
+```bash
+/ralph ./specs/ --max-iterations 20             # Exécution avec limite
+/ralph ./prd.json --granularity small           # Depuis prd.json Ralph format
+/ralph --status                                 # Voir état session
+/ralph --reset-circuit                          # Reset circuit breaker
+```
+
+Exécution autonome de multiples specs overnight :
+- **Deux modes** : Hook (même session, <2h) et Script (contexte frais, overnight)
+- **Circuit Breaker** : Détection stagnation (CLOSED/HALF_OPEN/OPEN)
+- **RALPH_STATUS Block** : Communication structurée avec double condition de sortie
+- **Rate limiting** : 100 appels/heure par défaut
+- **Dual journaling** : Session state YAML + métriques JSON
+
+**Use case** : Lancer le soir, revenir le matin avec toutes les features implémentées de manière sécurisée.
+
+### `/cancel-ralph` — Annulation Session (NEW v5.1.0)
+
+```bash
+/cancel-ralph                                   # Annuler session en cours
+/cancel-ralph --force                           # Annulation forcée
+```
+
+### `/orchestrate` — Exécution Batch (deprecated)
+
+> **Note** : Pour l'exécution overnight, préférer `/ralph` qui offre de meilleures protections (circuit breaker, rate limiting).
 
 ```bash
 /orchestrate ./docs/specs/my-project/           # Exécution standard
@@ -240,8 +269,6 @@ Orchestre l'exécution automatique de multiples specs :
 - **Auto-retry** : Jusqu'à 3 tentatives par spec
 - **Dual journaling** : MD (humain) + JSON (outils)
 - **Timeout proportionnel** : TINY=15m, SMALL=30m, STD=1h, LARGE=2h
-
-**Use case** : Lancer avant la nuit, revenir le matin avec toutes les features implémentées.
 
 ### `/memory` — Gestion Mémoire Projet
 
@@ -343,7 +370,7 @@ Pour les gros projets avec multiples specs, la chaîne complète est :
 | `@Explore` | Haiku | Read-only | Analyse codebase |
 | `@Plan` | Sonnet | Research | Recherche avant plan |
 
-### Agents Custom EPCI (15)
+### Agents Custom EPCI (16)
 
 #### Core Agents (7)
 
@@ -374,6 +401,12 @@ Pour les gros projets avec multiples specs, la chaîne complète est :
 | `@party-orchestrator` | sonnet | Orchestration multi-persona | `/brainstorm` (commande `party`) |
 | `@expert-panel` | sonnet | Panel 5 experts dev | `/brainstorm` (commande `panel`) |
 | `@rule-clarifier` | haiku | Clarification règles métier | `/brainstorm` |
+
+#### Ralph Agents (1)
+
+| Agent | Model | Mission | Invoqué par |
+|-------|-------|---------|-------------|
+| `@ralph-executor` | sonnet | Exécution stories Ralph overnight | `/ralph` |
 
 ### Invocation Conditionnelle
 
@@ -449,7 +482,7 @@ Votre choix ? [C/R/P/A] :
 
 ## Skills
 
-### Core Skills (16)
+### Core Skills (18)
 
 Skills fondamentaux chargés selon le contexte du workflow.
 
@@ -471,6 +504,8 @@ Skills fondamentaux chargés selon le contexte du workflow.
 | `rules-generator` | Génération .claude/rules/ | `/rules` |
 | `input-clarifier` | Clarification inputs utilisateur | `/brainstorm` |
 | `orchestrator-batch` | Orchestration batch specs | `/orchestrate` |
+| `ralph-analyzer` | Analyse PRD pour Ralph format | `/ralph`, `/decompose --wiggum` |
+| `ralph-converter` | Conversion stories Ralph | `/ralph` |
 
 ### Stack Skills (5)
 
@@ -684,9 +719,9 @@ Les flags peuvent être activés automatiquement selon le contexte :
 ```
 src/
 ├── .claude-plugin/
-│   └── plugin.json              # Manifeste v5.0.0
+│   └── plugin.json              # Manifeste v5.1.0
 │
-├── commands/                    # 12 commandes
+├── commands/                    # 14 commandes
 │   ├── brief.md                 # Point d'entrée + routing
 │   ├── epci.md                  # Workflow complet 3 phases
 │   ├── quick.md                 # Workflow condensé TINY/SMALL
@@ -698,9 +733,11 @@ src/
 │   ├── memory.md                # Gestion mémoire + learning
 │   ├── rules.md                 # Génération .claude/rules/
 │   ├── promptor.md              # Voice-to-brief + Notion
-│   └── create.md                # Factory dispatcher
+│   ├── create.md                # Factory dispatcher
+│   ├── ralph.md                 # Exécution autonome overnight
+│   └── cancel-ralph.md          # Annulation session Ralph
 │
-├── agents/                      # 15 subagents custom
+├── agents/                      # 16 subagents custom
 │   ├── plan-validator.md        # Core
 │   ├── code-reviewer.md
 │   ├── security-auditor.md
@@ -715,10 +752,11 @@ src/
 │   ├── technique-advisor.md
 │   ├── party-orchestrator.md
 │   ├── expert-panel.md
-│   └── rule-clarifier.md
+│   ├── rule-clarifier.md
+│   └── ralph-executor.md        # Ralph
 │
-├── skills/                      # 28 skills
-│   ├── core/                    # 16 skills fondamentaux
+├── skills/                      # 30 skills
+│   ├── core/                    # 18 skills fondamentaux
 │   │   ├── epci-core/
 │   │   ├── architecture-patterns/
 │   │   ├── code-conventions/
@@ -734,7 +772,9 @@ src/
 │   │   ├── debugging-strategy/
 │   │   ├── rules-generator/
 │   │   ├── input-clarifier/
-│   │   └── orchestrator-batch/
+│   │   ├── orchestrator-batch/
+│   │   ├── ralph-analyzer/      # Ralph format analysis
+│   │   └── ralph-converter/     # Ralph story conversion
 │   │
 │   ├── stack/                   # 5 skills auto-détectés
 │   │   ├── php-symfony/
@@ -862,7 +902,37 @@ Le skill `skills-creator` guide la création en 6 phases :
 
 ## Changelog
 
-### v5.0.0 (Janvier 2026) — Current
+### v5.1.0 (Janvier 2026) — Current
+
+**Nouvelle feature majeure — Ralph Wiggum Integration :**
+- `/ralph` — Exécution autonome overnight avec boucle itérative et circuit breaker
+- `/cancel-ralph` — Annulation d'une session Ralph en cours
+- `@ralph-executor` — Agent dédié pour exécution stories overnight
+- `ralph-analyzer`, `ralph-converter` — Skills pour format Ralph
+
+**Deux modes d'exécution Ralph :**
+- **Hook mode** : Même session Claude (<2h), boucle prompt-based
+- **Script mode** : Contexte frais à chaque story, overnight robuste
+
+**Sécurité et robustesse :**
+- **Circuit Breaker** : Pattern 3 états (CLOSED/HALF_OPEN/OPEN) pour détection stagnation
+- **Rate limiting** : 100 appels/heure configurable
+- **RALPH_STATUS Block** : Format structuré avec double condition de sortie
+- **Input validation** : Protection contre injection dans response_analyzer.sh
+- **File locking** : flock pour opérations atomiques dans circuit_breaker.sh
+
+**Nouveau flag `/decompose` :**
+- `--wiggum` : Génère prd.json + ralph.sh au lieu d'INDEX.md
+- `--granularity` : micro (15-30min), small (30-60min), standard (1-2h)
+
+**Totaux v5.1.0 :**
+- 14 commandes (+2)
+- 16 subagents (+1)
+- 30 skills (+2)
+
+---
+
+### v5.0.0 (Janvier 2026)
 
 **Nouvelle commande majeure :**
 - `/orchestrate` — Orchestration batch de specs avec DAG, priority sorting, auto-retry, dual journaling
