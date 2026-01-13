@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "epci-project-memory-feature-history",
+  "title": "EPCI Feature History",
+  "description": "Schema for feature history stored in .project-memory/history/features/<slug>.json",
+  "type": "object",
+  "properties": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Feature slug (kebab-case)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable feature title"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When feature development started"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When feature was completed"
+    },
+    "complexity": {
+      "type": "string",
+      "enum": ["TINY", "SMALL", "STANDARD", "LARGE", "SPIKE"],
+      "description": "Feature complexity category"
+    },
+    "complexity_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Numeric complexity score (0-1)"
+    },
+    "files_modified": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of files created or modified"
+    },
+    "files_created": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "files_updated": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "loc_added": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Lines of code added"
+    },
+    "loc_removed": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Lines of code removed"
+    },
+    "tests_created": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of tests created"
+    },
+    "test_coverage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Test coverage percentage if available"
+    },
+    "estimated_time": {
+      "type": "string",
+      "description": "User's initial time estimate"
+    },
+    "actual_time": {
+      "type": "string",
+      "description": "Actual time taken"
+    },
+    "phases": {
+      "type": "object",
+      "properties": {
+        "phase1_duration": { "type": "string" },
+        "phase2_duration": { "type": "string" },
+        "phase3_duration": { "type": "string" }
+      }
+    },
+    "agents_used": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["plan-validator", "code-reviewer", "security-auditor", "qa-reviewer", "doc-generator"]
+      },
+      "description": "EPCI subagents invoked"
+    },
+    "issues_found": {
+      "type": "object",
+      "properties": {
+        "critical": { "type": "integer", "minimum": 0 },
+        "important": { "type": "integer", "minimum": 0 },
+        "minor": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "related_features": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Related feature slugs"
+    },
+    "feature_document": {
+      "type": "string",
+      "description": "Path to Feature Document"
+    },
+    "commit_hash": {
+      "type": "string",
+      "description": "Final commit hash"
+    },
+    "branch": {
+      "type": "string",
+      "description": "Git branch name"
+    }
+  },
+  "required": ["slug", "title", "created_at", "complexity"]
+}

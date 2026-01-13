@@ -86,11 +86,32 @@ See `breakpoint-metrics` skill for scoring algorithm and templates.
 
 | Subagent | Role | Phase |
 |----------|------|-------|
-| @plan-validator | Validates technical plan | Phase 1 → BP1 |
+| @plan-validator | Validates technical plan + CQNT alerts | Phase 1 → BP1 |
 | @code-reviewer | Code quality review | Phase 2 → BP2 |
 | @security-auditor | OWASP security audit | Phase 2 (conditional) |
 | @qa-reviewer | Test review | Phase 2 (conditional) |
 | @doc-generator | Generates documentation | Phase 3 |
+
+## CQNT Alerts (v4.9.2)
+
+Automatic quality alerts integrated in @plan-validator.
+
+| Alert | Level | Trigger |
+|-------|-------|---------|
+| Plan incomplet | ⚠️ | < 3 tâches dans le backlog |
+| Dépendances croisées | ⚠️ | > 3 cross-deps entre groupes |
+| Dépendance circulaire | 🛑 | Cycle détecté dans le DAG |
+| Tâche sans fichier | ⚠️ | Fichier cible non spécifié |
+| Fichier introuvable | ⚠️ | Chemin inexistant |
+| Estimation élevée | 🟡 | Tâche > 30 min |
+| Pas de test | ⚠️ | Aucune tâche de type test |
+
+**Impact on verdict:**
+- 🛑 alert → `NEEDS_REVISION` automatique
+- 3+ ⚠️ alerts → Suggestion de révision
+- Only 🟡 alerts → `APPROVED` possible
+
+See `@plan-validator` for detailed detection rules.
 
 ## Routing
 

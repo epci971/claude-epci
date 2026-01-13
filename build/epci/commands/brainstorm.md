@@ -1,22 +1,29 @@
 ---
 description: >-
-  Brainstorming guide v4.9 pour decouvrir et specifier une feature.
+  Brainstorming guide v5.0 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
-  Auto-selection techniques basee sur axes faibles, mix de techniques.
-  Finalization Checkpoint obligatoire a EMS >= 85 (bloquant).
+  Brief output conforme PRD Industry Standards v3.0 (Executive Summary,
+  Problem Statement, Goals/Non-Goals, Timeline, FAQ, Assumptions).
+  Finalization Checkpoint obligatoire a EMS >= 70 (bloquant).
   Session persistence, energy checkpoints, 3-5 questions avec A/B/C.
   Use when: idee vague a transformer en specs, incertitude technique.
-argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--c7] [--seq]"
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--competitive] [--c7] [--seq]"
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
 ---
 
-# /brainstorm — Feature Discovery v4.9
+# /brainstorm — Feature Discovery v5.0
 
 ## Overview
 
 Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
+
+**Nouveautes v5.0**:
+- **Brief PRD Industry Standards v3.0** — Executive Summary, Problem Statement, Goals/Non-Goals, Timeline & Milestones, FAQ, Assumptions, Appendix
+- **Flag `--competitive`** — Active la section Competitive Analysis
+- **Finalization Checkpoint** abaisse a EMS >= 70 (bloquant)
+- Pas de finalisation automatique — toujours choix explicite
 
 **Nouveautes v4.9**:
 - **Finalization Checkpoint** obligatoire a EMS >= 85 (bloquant)
@@ -26,7 +33,7 @@ iteratives pour construire des specifications exhaustives.
 - Auto-selection de techniques basee sur axes EMS faibles (< 50)
 - Mix de techniques quand 2+ axes faibles
 - Transition check explicite Divergent → Convergent
-- Preview @planner/@security en phase Convergent
+- Preview @planner/@security en phase
 - Hook post-brainstorm documente
 
 ## Usage
@@ -97,7 +104,10 @@ Reformulation: "Une feature de notifications pour les utilisateurs"
 4. **Initialiser session** — Phase: Divergent, Persona: Architecte, EMS: ~25
 5. **SYNC @Explore** — Attendre completion si non termine
 6. **Generer HMW** (si pas `--no-hmw`) — 3 questions "How Might We" **avec contexte codebase**
-7. **Questions de cadrage** — 3-5 max avec suggestions
+7. **Questions de cadrage** — 3-5 max avec suggestions et **tags priorité**:
+   - 🛑 Critique (bloquant) — Question essentielle, réponse obligatoire
+   - ⚠️ Important (risque) — Recommandée, suggestion appliquée si ignorée
+   - ℹ️ Information (optionnel) — Purement informatif
 8. **Afficher breakpoint**
 
 > **Note v4.8**: HMW generes APRES @Explore pour questions contextuelles basees sur le codebase.
@@ -134,7 +144,9 @@ Boucle jusqu'a `finish`:
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ```
    **IMPORTANT**: Ne JAMAIS finaliser automatiquement. Toujours attendre le choix explicite.
-6. **Generer 3-5 questions** avec suggestions A/B/C (si choix [1])
+6. **Generer 3-5 questions** avec suggestions A/B/C et **tags priorité** (si choix [1]):
+   - Format: `Q1: 🛑 [question] → A) [opt1] B) [opt2] C) [opt3]`
+   - Ordre: 🛑 d'abord, puis ⚠️, puis ℹ️
 7. **Afficher breakpoint compact**
 8. **Preview check** (si Convergent et EMS >= 65 et choix [2]):
    - Proposer `@planner preview? [Y/n]`
@@ -147,25 +159,150 @@ Boucle jusqu'a `finish`:
 **MANDATORY: Use Write tool to create BOTH files using official templates.**
 
 **Templates obligatoires** (dans `src/skills/core/brainstormer/references/`):
-- `brief-format.md` — Structure Brief v2.0 avec Personas, User Stories, Success Metrics
+- `brief-format.md` — Structure PRD v3.0 (Industry Standards Compliant)
 - Section Journal d'Exploration dans le meme fichier
 
-1. **@planner** (si pas preview fait OU EMS >= 85)
+1. **@planner** (si pas preview fait OU EMS >= 70)
 2. **@security-auditor** (si patterns auth ET pas preview)
 3. Create directory: `mkdir -p ./docs/briefs/[slug]`
 4. **Lire template**: `Read src/skills/core/brainstormer/references/brief-format.md`
 5. **Section-by-section validation** (si pas --quick/--turbo)
-6. Write `brief-[slug]-[date].md` — **DOIT suivre la structure du template**
+6. Write `brief-[slug]-[date].md` — **DOIT suivre la structure PRD v3.0**
 7. Write `journal-[slug]-[date].md` — **DOIT suivre le Template Journal d'Exploration**
-8. **HOOK: post-brainstorm** — Invocation automatique (voir section Hooks)
-9. Display completion summary avec techniques utilisees
+8. **Calculate project estimation** — Sum story complexity to determine category
+9. **HOOK: post-brainstorm** — Invocation automatique (voir section Hooks)
+10. **Display completion summary** — With next steps recommendation (see format below)
 
-**Sections OBLIGATOIRES dans le brief** (v2.0):
-- Personas (minimum 1 primaire)
-- User Stories format "En tant que... je veux... afin de" avec AC Given/When/Then
-- Success Metrics (KPIs ou "TBD")
+**Sections OBLIGATOIRES dans le brief** (PRD v3.0):
+- **Document Header** — PRD-YYYY-XXX, Version, Status, Change History
+- **Executive Summary** — TL;DR, Problem, Solution, Impact
+- **Background & Strategic Fit** — Why Now?, Strategic Alignment
+- **Problem Statement** — Current Situation, Evidence & Data, Impact
+- **Goals** — Business/User/Technical goals avec metriques
+- **Non-Goals** — Exclusions explicites (remplace Hors Scope)
+- **Personas** (minimum 1 primaire)
+- **User Stories** format "En tant que... je veux... afin de" avec AC Given/When/Then
+- **User Flow** — As-Is vs To-Be avec Key Improvements
+- **Assumptions** — Hypotheses Technical/Business/User/Resources
+- **FAQ** — Internal + External (Amazon-style)
+- **Success Metrics** (KPIs ou "TBD")
+- **Timeline & Milestones** — Key milestones avec Phasing Strategy
+
+**Sections OPTIONNELLES**:
+- **Competitive Analysis** — Avec flag `--competitive`
+- **Appendix** — Research Findings, Technical Deep Dives, Glossary
 
 **Anti-pattern**: Generer un brief sans lire `brief-format.md` d'abord.
+
+---
+
+### Project Estimation & Next Steps Logic
+
+**Step 8: Calculate Project Estimation**
+
+Calculate total estimated effort from User Stories to determine project category:
+
+```python
+# Sum complexity from Must-have stories
+total_effort = sum(
+    1 if story.complexite == "S" else
+    3 if story.complexite == "M" else
+    5 for story in must_have_stories
+)
+
+# Determine category
+if total_effort <= 2:
+    category = "TINY"
+elif total_effort <= 5:
+    category = "SMALL/STANDARD"
+else:
+    category = "LARGE"
+```
+
+**Step 10: Completion Summary Format**
+
+Display structured summary with next steps recommendation:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ BRAINSTORM COMPLETED | EMS: {score}/100
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 Files Generated:
+├── Brief: ./docs/briefs/{slug}/brief-{slug}-{date}.md
+└── Journal: ./docs/briefs/{slug}/journal-{slug}-{date}.md
+
+📊 Project Estimation:
+├── User Stories: {total_count} ({must_count} Must-have, {should_count} Should-have, {could_count} Could-have)
+├── Estimated Effort: {total_effort} days ({must_effort}j Must-have + {should_effort}j Should-have)
+└── Complexity Category: {TINY|SMALL|STANDARD|LARGE}
+
+🎯 RECOMMENDED NEXT STEPS:
+
+{if category == "TINY"}
+  TINY project detected (≤2 days)
+
+  → /brief @./docs/briefs/{slug}/brief-{slug}-{date}.md
+    Claude will route automatically to /quick --autonomous
+
+{else if category == "SMALL/STANDARD" and total_effort <= 5}
+  SMALL/STANDARD project ({total_effort} days)
+
+  Option 1 (Recommended): Direct EPCI workflow
+  → /brief @./docs/briefs/{slug}/brief-{slug}-{date}.md
+
+  Option 2: Decompose first (if you want granular tracking)
+  → /decompose ./docs/briefs/{slug}/brief-{slug}-{date}.md
+
+{else if category == "LARGE"}
+  ⚠️  LARGE project detected ({total_effort} days)
+
+  Recommended: Decompose into manageable sub-specs
+  → /decompose ./docs/briefs/{slug}/brief-{slug}-{date}.md
+     Breaks down into sub-specs of 1-5 days each
+     Generates INDEX.md with dependency graph
+
+  Then, choose execution strategy:
+
+  Option A: Batch execution (recommended for 5+ sub-specs)
+  → /orchestrate ./docs/specs/{slug}/
+     Automatic DAG-based execution with priority handling
+
+  Option B: Manual execution (for sequential control)
+  → /brief @./docs/specs/{slug}/S01-{name}.md
+     Execute each sub-spec individually as needed
+
+  Alternative: Direct workflow (not recommended for >10 days)
+  → /brief @./docs/briefs/{slug}/brief-{slug}-{date}.md --large
+{end if}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📈 Session Metrics:
+├── Techniques applied: {techniques_list}
+├── Duration: ~{duration} min
+├── Iterations: {count}
+└── Phase transitions: {phase_transitions}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Effort Calculation Examples:**
+
+| User Stories | Complexity | Calculated Effort | Category | Recommended Command |
+|--------------|------------|-------------------|----------|---------------------|
+| US1, US2 | S, S | 1 + 1 = 2j | TINY | `/brief` → `/quick --autonomous` |
+| US1, US2, US3 | S, M, M | 1 + 3 + 3 = 7j | LARGE | `/decompose` |
+| US1, US2 | M, M | 3 + 3 = 6j | LARGE | `/decompose` |
+| US1, US2, US3 | S, S, M | 1 + 1 + 3 = 5j | STANDARD | `/brief` (or `/decompose` for tracking) |
+
+**Important Notes:**
+
+- Only Must-have stories count toward MVP effort
+- Should-have and Could-have are mentioned but don't trigger LARGE category
+- If total effort > 5 days from Must-have alone → Always recommend `/decompose`
+- If 3-5 days → Present both options, let user decide
+- If ≤2 days → Direct to `/brief` (will auto-route to `/quick`)
+
+---
 
 ## Commands
 
@@ -230,6 +367,7 @@ Boucle jusqu'a `finish`:
 | `--no-technique` | Desactiver auto-suggestion techniques |
 | `--no-clarify` | Desactiver clarification input initial |
 | `--force-clarify` | Forcer clarification meme si input clair |
+| `--competitive` | Activer section Competitive Analysis dans le brief (PRD v3.0) |
 
 ### Technique Mode Flags (v5.0)
 

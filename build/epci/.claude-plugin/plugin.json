@@ -1,6 +1,6 @@
 {
   "name": "epci",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability, project memory, and batch orchestration",
   "author": {
     "name": "EPCI Team"
@@ -10,6 +10,8 @@
     "./commands/brief.md",
     "./commands/epci.md",
     "./commands/quick.md",
+    "./commands/ralph.md",
+    "./commands/cancel-ralph.md",
     "./commands/decompose.md",
     "./commands/orchestrate.md",
     "./commands/memory.md",
@@ -31,6 +33,7 @@
     "./agents/clarifier.md",
     "./agents/planner.md",
     "./agents/implementer.md",
+    "./agents/ralph-executor.md",
     "./agents/ems-evaluator.md",
     "./agents/technique-advisor.md",
     "./agents/party-orchestrator.md",
@@ -54,6 +57,8 @@
     "./skills/core/rules-generator/SKILL.md",
     "./skills/core/input-clarifier/SKILL.md",
     "./skills/core/orchestrator-batch/SKILL.md",
+    "./skills/core/ralph-analyzer/SKILL.md",
+    "./skills/core/ralph-converter/SKILL.md",
     "./skills/stack/php-symfony/SKILL.md",
     "./skills/stack/javascript-react/SKILL.md",
     "./skills/stack/python-django/SKILL.md",

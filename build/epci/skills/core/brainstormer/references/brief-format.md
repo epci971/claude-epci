@@ -5,27 +5,119 @@
 Template de sortie pour le brief genere par Brainstormer.
 Compatible avec le workflow EPCI. Format hybride PRD-FRD optimise pour le handoff developpeur.
 
-**Version**: 2.0 (Janvier 2025)
+**Version**: 3.0 (Janvier 2026) — PRD Industry Standards Compliant
 
 ## Template Brief
 
 ```markdown
-# Brief Fonctionnel — [Titre de la Feature]
+# PRD — [Titre de la Feature]
 
-> **Brainstormer**: v4.8 | **EMS**: XX/100 | **Template**: [feature/problem/decision]
-> **Date**: YYYY-MM-DD | **Slug**: [feature-slug]
+| Metadata | Value |
+|----------|-------|
+| **Document ID** | PRD-[YYYY]-[XXX] |
+| **Version** | 1.0 |
+| **Status** | Draft |
+| **Owner** | TBD |
+| **Created** | [YYYY-MM-DD] |
+| **Last Updated** | [YYYY-MM-DD] |
+| **Slug** | [feature-slug] |
+| **EMS Score** | [XX/100] |
+| **Template** | [feature/problem/decision] |
+
+### Change History
+
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 1.0 | [YYYY-MM-DD] | EPCI Brainstormer | Initial generation from /brainstorm |
 
 ---
 
-## Contexte
+## Executive Summary
 
-[Pourquoi cette feature ? Quel probleme resout-elle ?
-2-3 paragraphes maximum expliquant le besoin metier.]
+**TL;DR** : [1 phrase resumant la feature]
 
-## Objectif
+| Aspect | Description |
+|--------|-------------|
+| **Problem** | [1 phrase decrivant le probleme] |
+| **Solution** | [1 phrase decrivant la solution] |
+| **Impact** | [Metrique cle attendue] |
+| **Target Launch** | [TBD] |
 
-[Description claire et concise de ce qu'on veut accomplir.
-Une phrase principale, eventuellement 2-3 points de precision.]
+---
+
+## Background & Strategic Fit
+
+### Why Now?
+[Contexte business : opportunite marche, pression concurrentielle, demande utilisateur]
+
+### Strategic Alignment
+Cette feature s'aligne avec :
+- [ ] **OKR** : [Objectif specifique si connu, sinon TBD]
+- [ ] **Vision Produit** : [Comment ca s'integre]
+- [ ] **Position Marche** : [Avantage concurrentiel]
+
+---
+
+## Competitive Analysis (Optional)
+
+> Section generee si flag `--competitive` ou si pertinent pour le contexte.
+
+| Feature | Nous (Actuel) | Concurrent A | Concurrent B | Leader Marche |
+|---------|---------------|--------------|--------------|---------------|
+| [Feature 1] | ❌ Non | ✅ Oui | ✅ Oui | ✅ Oui |
+| [Feature 2] | ⚠️ Partiel | ✅ Oui | ❌ Non | ✅ Oui |
+| [Feature 3] | ✅ Oui | ✅ Oui | ✅ Oui | ✅ Oui |
+
+### Key Insights
+- **Gap** : [Ce qui nous manque par rapport aux concurrents]
+- **Opportunite** : [Ce qu'on peut faire mieux]
+- **Differentiation** : [Notre avantage unique]
+
+---
+
+## Problem Statement
+
+### Current Situation
+[Description de la situation actuelle — comment les choses fonctionnent aujourd'hui]
+
+### Problem Definition
+[Probleme specifique et mesurable que cette feature resout]
+
+### Evidence & Data
+- **Quantitative** : [Metriques existantes, sinon "A collecter"]
+- **Qualitative** : [Feedback utilisateur, support tickets, interviews]
+
+### Impact of Not Solving
+- **Business** : [Impact revenue/churn/acquisition]
+- **User** : [Impact satisfaction/productivite]
+- **Technical** : [Impact dette technique/maintenance]
+
+---
+
+## Goals
+
+### Business Goals
+- [ ] [Goal avec metrique — ex: Increase retention by 15%]
+
+### User Goals
+- [ ] [Enable users to... — ex: Complete task in <2 clicks]
+
+### Technical Goals
+- [ ] [Performance/scalability — ex: Page load <2s, 99.9% uptime]
+
+---
+
+## Non-Goals (Out of Scope v1)
+
+**Explicitement NON inclus dans cette version** :
+
+| Exclusion | Raison | Future Version |
+|-----------|--------|----------------|
+| [Feature X] | Complexite technique | v2 |
+| [Feature Y] | Hors perimetre metier | Non prevu |
+| [Feature Z] | Dependance externe | v2 si API disponible |
+
+> Ces elements pourront etre consideres dans les iterations futures.
 
 ## Personas
 
@@ -134,12 +226,6 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 | [Cas limite 2] | [Comportement] |
 | [Cas limite 3] | [Comportement] |
 
-## Hors Scope (v1)
-
-- [Exclusion explicite 1 — raison]
-- [Exclusion explicite 2 — raison]
-- [Exclusion explicite 3 — raison]
-
 ## Success Metrics
 
 | Metrique | Baseline | Cible | Methode de mesure |
@@ -150,22 +236,47 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 
 > Note: Metriques a definir avec Product Owner. Si inconnues, marquer "TBD".
 
-## User Flow (optionnel)
+## User Flow
+
+### Current Experience (As-Is)
 
 ```
-[Point d'entree]
+[Point d'entree actuel]
        |
        v
-  [Etape 1] --> [Decision?]
-                    |
-           [Oui]---+---[Non]
-             |           |
-             v           v
-        [Etape 2]   [Alternative]
-             |           |
-             v           v
-        [Succes]    [Erreur/Retry]
+  [Etape 1 - Pain point] --> [Friction?]
+                                  |
+                         [Oui]---+---[Non]
+                           |           |
+                           v           v
+                      [Abandon]   [Completion lente]
 ```
+
+> Pain points identifies : [lister les frustrations actuelles]
+
+### Proposed Experience (To-Be)
+
+```
+[Point d'entree optimise]
+       |
+       v
+  [Etape 1 simplifie] --> [Decision?]
+                               |
+                      [Oui]---+---[Non]
+                        |           |
+                        v           v
+                   [Etape 2]   [Alternative]
+                        |           |
+                        v           v
+                   [Succes]    [Erreur/Retry]
+```
+
+### Key Improvements
+
+| Pain Point Actuel | Solution Proposee | Impact |
+|-------------------|-------------------|--------|
+| [Pain point 1] | [Amelioration 1] | [Metrique] |
+| [Pain point 2] | [Amelioration 2] | [Metrique] |
 
 > Ou lien vers: Figma / Miro / Excalidraw
 
@@ -180,6 +291,17 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 
 - **Internes**: [Modules/services du projet impactes]
 - **Externes**: [Libs, APIs, services tiers]
+
+## Assumptions
+
+Hypotheses considerees vraies pour le succes de cette feature :
+
+- [ ] **Technical** : [Ex: API latency < 200ms, service X disponible]
+- [ ] **Business** : [Ex: Budget approuve, stakeholder buy-in]
+- [ ] **User** : [Ex: Utilisateurs tech-savvy, mobile-first]
+- [ ] **Resources** : [Ex: Equipe design disponible Q1, dev senior alloue]
+
+> **Plan de validation** : [Comment valider les assumptions critiques avant/pendant dev]
 
 ## Criteres d'Acceptation Globaux
 
@@ -198,6 +320,27 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 - [ ] [Question non resolue 1]
 - [ ] [Question non resolue 2]
 
+## FAQ
+
+### Internal FAQ (Equipe)
+
+**Q: Pourquoi ne pas utiliser [Alternative X] ?**
+A: [Raisonnement technique ou business]
+
+**Q: Et si [Edge Case Y] se produit ?**
+A: [Gestion prevue ou comportement attendu]
+
+**Q: Quel est l'impact sur [Systeme existant] ?**
+A: [Evaluation d'impact et strategie de migration]
+
+### External FAQ (Utilisateurs)
+
+**Q: Comment cela affecte les utilisateurs existants ?**
+A: [Explication d'impact et communication prevue]
+
+**Q: Quand cette feature sera-t-elle disponible ?**
+A: [Timeline ou "TBD - voir section Timeline"]
+
 ## Estimation Preliminaire
 
 | Metrique | Valeur |
@@ -205,6 +348,32 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 | Complexite estimee | [TINY / SMALL / STANDARD / LARGE] |
 | Fichiers impactes | ~X |
 | Risque global | [Low / Medium / High] |
+
+---
+
+## Timeline & Milestones
+
+### Target Launch
+**Objectif** : [TBD — A definir avec PM/PO]
+
+### Key Milestones
+
+| Milestone | Target Date | Owner | Status |
+|-----------|-------------|-------|--------|
+| PRD Review Complete | TBD | PM | ⚪ Not Started |
+| Technical Spec Complete | TBD | Tech Lead | ⚪ Not Started |
+| Development Start | TBD | Dev Team | ⚪ Not Started |
+| Alpha Release (Internal) | TBD | Dev Team | ⚪ Not Started |
+| Beta Release (Select Users) | TBD | PM + Dev | ⚪ Not Started |
+| General Availability | TBD | All | ⚪ Not Started |
+
+### Phasing Strategy (si applicable)
+
+**Phase 1 (MVP)** : [Core features — Must-have User Stories]
+**Phase 2** : [Should-have features]
+**Phase 3** : [Could-have features]
+
+> Note: Dates a definir avec Product Owner. Compatible avec planning sprint.
 
 ---
 
@@ -219,7 +388,33 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 
 ---
 
-*Brief pret pour EPCI — Lancer `/brief` avec ce contenu.*
+## Appendix (Optional)
+
+### Research Findings
+
+> Resultats d'interviews utilisateurs, surveys, analytics si disponibles
+
+- [Finding 1 — Source]
+- [Finding 2 — Source]
+
+### Technical Deep Dives
+
+> Liens vers analyses techniques detaillees si necessaire
+
+- [Deep Dive 1 — Link/Reference]
+- [Deep Dive 2 — Link/Reference]
+
+### Glossary
+
+| Terme | Definition |
+|-------|------------|
+| [Terme metier 1] | [Explication] |
+| [Acronyme 1] | [Signification complete] |
+| [Concept technique] | [Definition accessible] |
+
+---
+
+*PRD pret pour EPCI — Lancer `/brief` avec ce contenu.*
 *Details du processus de brainstorming dans le Journal d'Exploration.*
 ```
 
@@ -326,16 +521,37 @@ Une phrase principale, eventuellement 2-3 points de precision.]
 
 ## Regles de Generation
 
-1. **Slug**: kebab-case, derive du titre (ex: `systeme-notifications-temps-reel`)
-2. **Date**: Format ISO (YYYY-MM-DD)
-3. **Sections vides**: Omettre si rien a mettre (pas de "N/A")
-4. **Longueur**: Brief = 2-4 pages, Journal = selon iterations
-5. **Emplacement**: `./docs/briefs/`
-6. **Personas**: Minimum 1 persona primaire obligatoire
-7. **User Stories**: Minimum 1 Must-have US obligatoire
-8. **Priorite MoSCoW**: Must-have > Should-have > Could-have > Won't-have
-9. **Acceptance Criteria**: Format Given/When/Then obligatoire
-10. **Success Metrics**: Au moins 1 KPI si connu, sinon "TBD"
+1. **Document ID**: Format PRD-[YYYY]-[XXX] auto-genere
+2. **Slug**: kebab-case, derive du titre (ex: `systeme-notifications-temps-reel`)
+3. **Date**: Format ISO (YYYY-MM-DD)
+4. **Sections vides**: Omettre si rien a mettre (pas de "N/A")
+5. **Sections optionnelles**: Competitive Analysis, Appendix — omettre si non pertinent
+6. **Longueur**: Brief = 3-5 pages, Journal = selon iterations
+7. **Emplacement**: `./docs/briefs/`
+8. **Personas**: Minimum 1 persona primaire obligatoire
+9. **User Stories**: Minimum 1 Must-have US obligatoire
+10. **Priorite MoSCoW**: Must-have > Should-have > Could-have > Won't-have
+11. **Acceptance Criteria**: Format Given/When/Then obligatoire
+12. **Success Metrics**: Au moins 1 KPI si connu, sinon "TBD"
+13. **Timeline**: Dates TBD par defaut — a definir par PM/PO
+14. **FAQ**: Generer au moins 2 questions internal + 1 external
+
+## Changements v3.0 (PRD Industry Standards)
+
+| Section | Changement | Raison |
+|---------|------------|--------|
+| Document Header | ENRICHI | Document ID, Version, Status, Change History (traçabilite) |
+| Executive Summary | AJOUT | Vue d'ensemble rapide pour stakeholders (TL;DR) |
+| Background & Strategic Fit | AJOUT | Alignement strategique et "Why Now?" |
+| Competitive Analysis | AJOUT (opt) | Analyse concurrentielle (flag --competitive) |
+| Contexte | RENOMME | Problem Statement data-driven avec Evidence |
+| Objectif | SPLIT | Goals (Business/User/Tech) + Non-Goals |
+| Hors Scope | FUSIONNE | Absorbe dans Non-Goals avec tableau |
+| User Flow | ENRICHI | As-Is vs To-Be avec Key Improvements |
+| Assumptions | AJOUT | Hypotheses explicites avec plan de validation |
+| FAQ | AJOUT | Internal + External (Amazon-style) |
+| Timeline & Milestones | AJOUT | Planification avec Phasing Strategy |
+| Appendix | AJOUT (opt) | Research, Deep Dives, Glossary |
 
 ## Changements v2.0
 

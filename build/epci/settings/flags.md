@@ -551,6 +551,75 @@ Options:
 
 ---
 
+## Ralph Wiggum Flags (F14)
+
+Control `/ralph` and `/decompose --wiggum` behavior for overnight autonomous execution.
+
+| Flag | Effect | Auto-Trigger |
+|------|--------|--------------|
+| `--wiggum` | Generate Ralph format (prd.json + ralph.sh) | Never (explicit only) |
+| `--granularity` | Story size for Ralph: `micro`, `small`, `standard` | Never |
+| `--mode` | Ralph execution mode: `hook` or `script` | Auto-select based on duration |
+| `--max-iterations` | Maximum loop iterations | 50 |
+| `--overnight` | Force script mode + strict safety | Never |
+| `--safety-level` | Safety level: `minimal`, `moderate`, `strict` | `moderate` |
+| `--reset-circuit` | Reset circuit breaker state | Never |
+
+### Mode Selection
+
+| Mode | Context | Best For | Robustness |
+|------|---------|----------|------------|
+| `hook` | Same session | Short runs (<2h) | Medium |
+| `script` | Fresh each iteration | Overnight (>2h) | High |
+
+**Auto-Selection Logic:**
+```
+IF --mode specified:
+   → Use specified mode
+ELIF --overnight:
+   → Use script mode
+ELIF stories.count < 10 AND estimated_duration < 2h:
+   → Use hook mode
+ELSE:
+   → Use script mode
+```
+
+### Granularity Settings
+
+| Value | Story Size | Stories/Day | Use Case |
+|-------|------------|-------------|----------|
+| `micro` | 15-30 min | 8-12 | Fine-grained tracking |
+| `small` | 30-60 min | 4-8 | Default balance |
+| `standard` | 1-2 hours | 2-4 | Fewer stories |
+
+### Safety Levels
+
+| Level | Features |
+|-------|----------|
+| `minimal` | Max iterations only |
+| `moderate` | + Rate limiting, circuit breaker |
+| `strict` | + Sandbox mode, restricted commands |
+
+### Examples
+
+```bash
+# Generate Ralph format from PRD
+/decompose my-prd.md --wiggum --granularity small
+
+# Execute with hook mode (short run)
+/ralph docs/specs/my-feature/ --mode hook
+
+# Overnight execution (safest)
+/ralph docs/specs/my-feature/ --overnight --safety-level strict
+
+# Reset stuck circuit breaker
+/ralph docs/specs/my-feature/ --reset-circuit
+```
+
+→ See `src/commands/ralph.md` for complete documentation.
+
+---
+
 ## Quick Reference
 
 ### All Flags
@@ -563,6 +632,7 @@ Options:
 | Workflow | `--safe`, `--no-hooks` |
 | **Speed** | **`--turbo`** |
 | **Quick (F13)** | **`--autonomous`**, **`--quick-turbo`**, `--no-bp` |
+| **Ralph (F14)** | **`--wiggum`**, **`--granularity`**, **`--mode`**, **`--overnight`**, **`--safety-level`**, **`--reset-circuit`** |
 | Persona | `--persona-architect`, `--persona-frontend`, `--persona-backend`, `--persona-security`, `--persona-qa`, `--persona-doc` |
 | MCP | `--c7`, `--seq`, `--magic`, `--play`, `--no-mcp` |
 | Wave | `--wave`, `--wave-strategy` |
@@ -578,6 +648,8 @@ Options:
 | Security feature | `--think-hard --safe --persona-security` |
 | Major architecture | `--ultrathink --wave --persona-architect` |
 | API development | `--think-hard --persona-backend` |
+| **Overnight autonomous** | **`--overnight --safety-level moderate`** |
+| **Ralph with fine stories** | **`--wiggum --granularity micro`** |
 | Testing without hooks | `--no-hooks` |
 | CI/CD pipeline | `--no-hooks --uc` |
 
