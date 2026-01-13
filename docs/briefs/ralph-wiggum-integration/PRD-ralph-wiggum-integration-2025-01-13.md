@@ -167,7 +167,7 @@ Les développeurs ne peuvent pas lancer une exécution autonome de features comp
 | Fichier | Action | Notes |
 |---------|--------|-------|
 | `src/hooks/ralph-stop-hook.sh` | Create | Stop hook qui intercepte les sorties |
-| `templates/ralph/ralph-loop.local.md` | Create | Template fichier d'état YAML |
+| `src/templates/ralph/ralph-loop.local.md` | Create | Template fichier d'état YAML |
 
 #### Mode Script (frankbria)
 | Fichier | Action | Notes |
@@ -176,7 +176,7 @@ Les développeurs ne peuvent pas lancer une exécution autonome de features comp
 | `src/scripts/lib/circuit_breaker.sh` | Create | Circuit Breaker pattern |
 | `src/scripts/lib/response_analyzer.sh` | Create | Analyse réponses Claude |
 | `src/scripts/lib/date_utils.sh` | Create | Utilitaires date cross-platform |
-| `templates/ralph/PROMPT.md` | Create | Template prompt avec RALPH_STATUS |
+| `src/templates/ralph/PROMPT.md` | Create | Template prompt avec RALPH_STATUS |
 
 #### Skills et Agents
 | Fichier | Action | Notes |

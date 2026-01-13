@@ -60,11 +60,32 @@ gantt
 
 ## Usage
 
-Launch a sub-spec:
+### Manual Execution (spec by spec)
 
 ```bash
-/brief @{output_dir}/S01-{name}.md
+# Analyze and execute a single spec
+/epci:brief @{output_dir}/S01-{name}.md
+# → Routes to /epci:quick (TINY/SMALL) or /epci:epci (STANDARD/LARGE)
 ```
+
+### Autonomous Execution (overnight)
+
+```bash
+# Execute all specs autonomously
+/epci:ralph {output_dir}/
+# → Uses prd.json, executes via @ralph-executor
+# → Each story routes through /epci:brief → /epci:quick or /epci:epci
+```
+
+### EPCI Command Reference
+
+| Command | Usage |
+|---------|-------|
+| `/epci:brief` | Analyze spec/story, assess complexity |
+| `/epci:quick` | Fast workflow for TINY/SMALL (<200 LOC) |
+| `/epci:epci` | Full workflow for STANDARD/LARGE (>200 LOC) |
+| `/epci:ralph` | Autonomous overnight execution |
+| `/epci:commit` | Git commit with EPCI context |
 
 ---
 

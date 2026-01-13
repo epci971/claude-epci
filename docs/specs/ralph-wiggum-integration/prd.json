@@ -1,0 +1,266 @@
+{
+  "project": "ralph-wiggum-integration",
+  "source": "PRD-ralph-wiggum-integration-2025-01-13.md",
+  "generated": "2025-01-13",
+  "granularity": "standard",
+  "total_stories": 32,
+  "estimated_hours": 48,
+  "stories": [
+    {
+      "id": "US-001",
+      "title": "Create ralph-stop-hook.sh with hook registration",
+      "parent_spec": "S01-mode-hook.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "Implement YAML frontmatter parsing in stop hook",
+      "parent_spec": "S01-mode-hook.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-003",
+      "title": "Implement completion detection (<promise>COMPLETE</promise>)",
+      "parent_spec": "S01-mode-hook.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-004",
+      "title": "Create ralph-loop.local.md template",
+      "parent_spec": "S01-mode-hook.md",
+      "estimated_minutes": 45,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-005",
+      "title": "Create /cancel-ralph command",
+      "parent_spec": "S01-mode-hook.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-006",
+      "title": "Create circuit_breaker.sh with cb_init and cb_get_state",
+      "parent_spec": "S02-circuit-breaker.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-007",
+      "title": "Implement cb_record_success and cb_record_failure",
+      "parent_spec": "S02-circuit-breaker.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-008",
+      "title": "Implement state transitions (CLOSED/HALF_OPEN/OPEN)",
+      "parent_spec": "S02-circuit-breaker.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-009",
+      "title": "Implement same error detection and cb_reset",
+      "parent_spec": "S02-circuit-breaker.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-010",
+      "title": "Create response_analyzer.sh with ra_init and ra_detect_format",
+      "parent_spec": "S03-response-analyzer.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-011",
+      "title": "Implement ra_parse_json and ra_parse_text",
+      "parent_spec": "S03-response-analyzer.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-012",
+      "title": "Implement RALPH_STATUS block parsing",
+      "parent_spec": "S03-response-analyzer.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-013",
+      "title": "Implement dual-condition exit logic (ra_should_exit)",
+      "parent_spec": "S03-response-analyzer.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-014",
+      "title": "Create PROMPT.md template with RALPH_STATUS section",
+      "parent_spec": "S03-response-analyzer.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-015",
+      "title": "Create date_utils.sh with cross-platform functions",
+      "parent_spec": "S04-mode-script.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-016",
+      "title": "Create ralph_loop.sh main structure and argument parsing",
+      "parent_spec": "S04-mode-script.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-017",
+      "title": "Implement main loop with story execution",
+      "parent_spec": "S04-mode-script.md",
+      "estimated_minutes": 120,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-018",
+      "title": "Implement session management and --continue flag",
+      "parent_spec": "S04-mode-script.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-019",
+      "title": "Implement Ctrl+C handling and checkpoint saving",
+      "parent_spec": "S04-mode-script.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-020",
+      "title": "Create ralph-converter skill structure",
+      "parent_spec": "S05-generation.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-021",
+      "title": "Implement spec parsing and granularity-based splitting",
+      "parent_spec": "S05-generation.md",
+      "estimated_minutes": 120,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-022",
+      "title": "Implement prd.json generation with parent_spec mapping",
+      "parent_spec": "S05-generation.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-023",
+      "title": "Implement ralph.sh launcher script generation",
+      "parent_spec": "S05-generation.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-024",
+      "title": "Implement PROMPT.md stack detection and generation",
+      "parent_spec": "S05-generation.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-025",
+      "title": "Create @ralph-executor agent definition",
+      "parent_spec": "S06-ralph-executor.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-026",
+      "title": "Implement /brief integration and routing logic",
+      "parent_spec": "S06-ralph-executor.md",
+      "estimated_minutes": 120,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-027",
+      "title": "Create ralph-analyzer skill for result analysis",
+      "parent_spec": "S06-ralph-executor.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-028",
+      "title": "Implement minimal Feature Document generation",
+      "parent_spec": "S06-ralph-executor.md",
+      "estimated_minutes": 60,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-029",
+      "title": "Create /ralph command with argument parsing",
+      "parent_spec": "S07-ralph-command.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-030",
+      "title": "Implement hybrid mode and progress display",
+      "parent_spec": "S07-ralph-command.md",
+      "estimated_minutes": 90,
+      "priority": 1,
+      "passes": false
+    },
+    {
+      "id": "US-031",
+      "title": "Implement security levels and rate limiting",
+      "parent_spec": "S08-polish-migration.md",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "passes": false
+    },
+    {
+      "id": "US-032",
+      "title": "Implement /orchestrate deprecation and documentation updates",
+      "parent_spec": "S08-polish-migration.md",
+      "estimated_minutes": 90,
+      "priority": 2,
+      "passes": false
+    }
+  ]
+}

@@ -19,24 +19,56 @@ You are an autonomous coding agent working on **{PROJECT_NAME}**.
 Complete user stories from `prd.json` one at a time, following TDD principles.
 Work autonomously until all stories pass or you encounter a blocking issue.
 
+## EPCI Workflow Integration
+
+**IMPORTANT:** You MUST use EPCI plugin commands (prefixed with `epci:`) for story execution.
+
+### Story Execution Flow
+
+For each story from `prd.json`:
+
+1. **Load parent spec context** — Read the `parent_spec` file referenced in the story
+2. **Analyze with `/epci:brief`** — Run `/epci:brief` with the story description to assess complexity
+3. **Route based on complexity:**
+   - **TINY/SMALL** → Execute with `/epci:quick --autonomous --no-breakpoints`
+   - **STANDARD/LARGE** → Execute with `/epci:epci --autonomous --no-breakpoints`
+4. **Commit** — Use `/epci:commit` or standard git workflow after completion
+
+### Available EPCI Commands
+
+| Command | Usage | When to Use |
+|---------|-------|-------------|
+| `/epci:brief` | Analyze story, assess complexity | Always first |
+| `/epci:quick` | Fast workflow (TINY/SMALL) | <200 LOC, 1-3 files |
+| `/epci:epci` | Full workflow (STANDARD/LARGE) | >200 LOC, 4+ files |
+| `/epci:commit` | Git commit with EPCI context | After story completion |
+
+### Autonomous Flags
+
+Always use these flags for unattended execution:
+- `--autonomous` — Skip user confirmations
+- `--no-breakpoints` — No pause between phases
+
+---
+
 ## Workflow
 
 1. **Read** `progress.txt` to understand recent work and context
 2. **Read** `prd.json` and find stories with `"passes": false`
 3. **Select** the highest priority uncompleted story
-4. **Implement** ONLY that story following TDD:
-   - Write failing test first
-   - Implement minimal code to pass
-   - Refactor if needed
-5. **Validate** using project commands:
+4. **Analyze** the story with `/epci:brief` to assess complexity
+5. **Execute** using the appropriate EPCI command:
+   - TINY/SMALL → `/epci:quick --autonomous --no-breakpoints`
+   - STANDARD/LARGE → `/epci:epci --autonomous --no-breakpoints`
+6. **Validate** using project commands:
    - Tests: `{TEST_COMMAND}`
    - Lint: `{LINT_COMMAND}`
    - Build: `{BUILD_COMMAND}`
-6. **If tests pass**:
+7. **If tests pass**:
    - Update `prd.json`: set `"passes": true`
    - Append to `progress.txt` with learnings
    - Make a git commit with clear message
-7. **If tests fail**:
+8. **If tests fail**:
    - Debug and fix
    - Re-run tests
    - Repeat until passing

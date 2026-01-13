@@ -125,9 +125,9 @@ Intégrer la méthodologie Ralph Wiggum dans le plugin EPCI pour permettre l'ex�
 | `src/skills/core/ralph-analyzer/SKILL.md` | Skill | Response Analyzer |
 | `src/agents/ralph-executor.md` | Agent | Exécution stories |
 | `src/hooks/active/ralph-stop-hook.sh` | Hook | Stop hook Anthropic |
-| `templates/ralph/PROMPT.md` | Template | Template prompt RALPH_STATUS |
-| `templates/ralph/fix_plan.md` | Template | Task list template |
-| `templates/ralph/ralph-loop-state.yml` | Template | État YAML pour hook mode |
+| `src/templates/ralph/PROMPT.md` | Template | Template prompt RALPH_STATUS |
+| `src/templates/ralph/fix_plan.md` | Template | Task list template |
+| `src/templates/ralph/ralph-loop-state.yml` | Template | État YAML pour hook mode |
 
 ### Files to Modify (Key)
 
@@ -174,9 +174,9 @@ Intégrer la méthodologie Ralph Wiggum dans le plugin EPCI pour permettre l'ex�
 | `src/scripts/lib/response_analyzer.sh` | Create | Medium | P2 |
 | `src/scripts/lib/date_utils.sh` | Create | Low | P3 |
 | `src/settings/flags.md` | Modify | Low | P6 |
-| `templates/ralph/PROMPT.md` | Create | Low | P2 |
-| `templates/ralph/ralph-loop-state.yml` | Create | Low | P1 |
-| `templates/ralph/fix_plan.md` | Create | Low | P3 |
+| `src/templates/ralph/PROMPT.md` | Create | Low | P2 |
+| `src/templates/ralph/ralph-loop-state.yml` | Create | Low | P1 |
+| `src/templates/ralph/fix_plan.md` | Create | Low | P3 |
 | `CLAUDE.md` | Modify | Low | P6 |
 
 ---
@@ -185,12 +185,12 @@ Intégrer la méthodologie Ralph Wiggum dans le plugin EPCI pour permettre l'ex�
 
 #### Phase 1: Mode Hook (US13, US14) — 1.5h estimated
 
-1. [x] **T01: Create templates/ralph/ directory** (5 min)
-   - File: `templates/ralph/`
+1. [x] **T01: Create src/templates/ralph/ directory** (5 min)
+   - File: `src/templates/ralph/`
    - Test: Directory exists
 
 2. [ ] **T02: Create ralph-loop-state.yml template** (10 min)
-   - File: `templates/ralph/ralph-loop-state.yml`
+   - File: `src/templates/ralph/ralph-loop-state.yml`
    - Test: YAML valid, contains iteration, max_iterations, completion_promise
 
 3. [ ] **T03: Create ralph-stop-hook.sh skeleton** (15 min)
@@ -258,7 +258,7 @@ Intégrer la méthodologie Ralph Wiggum dans le plugin EPCI pour permettre l'ex�
     - Test: Exit only when indicators >= 2 AND EXIT_SIGNAL=true
 
 18. [ ] **T18: Create PROMPT.md template with RALPH_STATUS** (10 min)
-    - File: `templates/ralph/PROMPT.md`
+    - File: `src/templates/ralph/PROMPT.md`
     - Test: Contains RALPH_STATUS block format
 
 ---
@@ -294,7 +294,7 @@ Intégrer la méthodologie Ralph Wiggum dans le plugin EPCI pour permettre l'ex�
     - Test: Detects package.json → npm commands
 
 26. [ ] **T26: Create fix_plan.md template** (10 min)
-    - File: `templates/ralph/fix_plan.md`
+    - File: `src/templates/ralph/fix_plan.md`
     - Test: Template has task list structure
 
 27. [ ] **T27: Implement ralph_loop.sh main script** (15 min)
@@ -488,7 +488,7 @@ flowchart TD
 
 ### Progress
 
-- [x] T01 — Create templates/ralph/ directory
+- [x] T01 — Create src/templates/ralph/ directory
 - [x] T02 — Create ralph-loop-state.yml template
 - [x] T03 — Create ralph-stop-hook.sh skeleton
 - [x] T04 — Add ralph-* hook types to runner.py
@@ -568,8 +568,8 @@ $ python src/scripts/validate_all.py
 | `src/scripts/lib/circuit_breaker.sh` | ✅ Created |
 | `src/scripts/lib/response_analyzer.sh` | ✅ Created |
 | `src/scripts/lib/date_utils.sh` | ✅ Created |
-| `templates/ralph/ralph-loop-state.yml` | ✅ Created |
-| `templates/ralph/PROMPT.md` | ✅ Created |
+| `src/templates/ralph/ralph-loop-state.yml` | ✅ Created |
+| `src/templates/ralph/PROMPT.md` | ✅ Created |
 
 ### Files Modified (5)
 
