@@ -1,9 +1,9 @@
 ---
 description: >-
     Decompose a complex PRD/CDC into actionable sub-specifications (1-5 days each).
-    Generates dependency graph and Gantt planning with parallelization.
-    Use for large projects (>5 days) before running /brief on each sub-spec.
-argument-hint: "<file.md> [--output <dir>] [--think <level>] [--min-days <n>] [--max-days <n>] [--wiggum] [--granularity <size>]"
+    Generates dependency graph, Gantt planning, backlog table, and prd.json for Ralph execution.
+    Use for large projects (>5 days) before running /brief on each sub-spec or /ralph for autonomous execution.
+argument-hint: "<file.md> [--output <dir>] [--think <level>] [--min-days <n>] [--max-days <n>] [--granularity <size>]"
 allowed-tools: [Read, Write, Bash, Grep, Glob, Task, WebFetch]
 ---
 
@@ -13,10 +13,17 @@ allowed-tools: [Read, Write, Bash, Grep, Glob, Task, WebFetch]
 
 Automates the decomposition of complex PRD/CDC documents into actionable sub-specifications.
 Each sub-spec targets 1-5 days of effort, enabling iterative EPCI execution.
-Generates a dependency graph (Mermaid flowchart) and optimized Gantt planning.
+
+**Generates automatically:**
+- Sub-spec files (S01-SNN.md)
+- INDEX.md with dependency graph and Gantt planning
+- **backlog.md** — Structured backlog table (Architector/Orchestrator style)
+- **prd.json** — User stories for Ralph autonomous execution
+- **ralph.sh** — Executable loop script
+- **PROMPT.md** — Customized prompt for Claude
 
 **Use case:** A 25-day migration project becomes 9 manageable sub-specs that can be
-executed sequentially or in parallel where dependencies allow.
+executed via `/brief` (manual) or `/ralph` (autonomous overnight).
 
 ## Arguments
 
@@ -27,7 +34,6 @@ executed sequentially or in parallel where dependencies allow.
 | `--think <level>` | Thinking level: `quick`, `think`, `think-hard`, `ultrathink` | No       | `think`              |
 | `--min-days <n>`  | Minimum effort per sub-spec                                  | No       | `1`                  |
 | `--max-days <n>`  | Maximum effort per sub-spec                                  | No       | `5`                  |
-| `--wiggum`        | Generate Ralph Wiggum format (prd.json + ralph.sh)           | No       | `false`              |
 | `--granularity`   | Story size: `micro` (15-30min), `small` (30-60min), `standard` (1-2h) | No | `small`            |
 
 ## Pre-Workflow: Load Project Memory
@@ -46,7 +52,7 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 
 ## Process
 
-**⚠️ IMPORTANT: Follow ALL phases in sequence. Do NOT skip the file generation step.**
+**IMPORTANT: Follow ALL phases in sequence. Do NOT skip the file generation step.**
 
 ### Phase 1: Validation (MANDATORY)
 
@@ -65,7 +71,7 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 **Output:**
 
 ```
-📄 Document: {filename}
+Document: {filename}
 ├── Lines: {count}
 ├── Slug: {extracted_slug}
 └── Status: Valid
@@ -73,7 +79,7 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 
 ### Phase 2: Structural Analysis (MANDATORY)
 
-**⚠️ DO NOT SKIP:** Analyze the document structure and detect dependencies.
+**DO NOT SKIP:** Analyze the document structure and detect dependencies.
 
 **Skills loaded:** `architecture-patterns`, `flags-system`
 
@@ -84,8 +90,8 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 | Headers `## Phase X`            | Level 1 decomposition candidates |
 | Headers `### Step X.Y`          | Sub-decomposition candidates     |
 | Headers `### US[N] —`           | User Story → sub-spec candidate  |
-| `**Complexité**: S/M/L`         | Effort estimate (S=1d, M=3d, L=5d) |
-| `**Priorité**: Must-have`       | Execution priority (MoSCoW)      |
+| `**Complexite**: S/M/L`         | Effort estimate (S=1d, M=3d, L=5d) |
+| `**Priorite**: Must-have`       | Execution priority (MoSCoW)      |
 | Tables with "Effort"            | Reuse existing estimates         |
 | "Checklist" sections            | Validation boundaries            |
 | "Gate", "Prerequisite" mentions | Explicit dependencies            |
@@ -109,20 +115,10 @@ Load project context from `.project-memory/` before analysis. The skill handles:
 
 **Input format detection:**
 
-The decompose command auto-detects the input format:
-
 | Format | Detection | Behavior |
 |--------|-----------|----------|
 | PRD/CDC | `## Phase`, `### Step` headers | Standard decomposition |
 | Brainstorm Brief | `### US[N] —` headers | User Story mapping |
-
-**User Story mapping (Brainstorm Brief):**
-
-When brainstorm brief format is detected:
-- Each `### USX — Title` becomes a sub-spec
-- `**Complexité**: S` → 1 day, `M` → 3 days, `L` → 5 days
-- `**Priorité**: Must-have` → Priority 1, Should-have → 2, Could-have → 3
-- Dependencies inferred from AC references ("see US1", "after US2")
 
 **Invoke @decompose-validator:**
 
@@ -132,41 +128,40 @@ When brainstorm brief format is detected:
 
 ### Phase 3: Proposal (MANDATORY — WAIT FOR USER)
 
-**⚠️ MANDATORY:** Display the breakpoint and WAIT for user validation before proceeding.
+**MANDATORY:** Display the breakpoint and WAIT for user validation before proceeding.
 
 Present decomposition proposal for user validation:
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ⏸️  BREAKPOINT — VALIDATION DÉCOUPAGE                               │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 📊 ANALYSE DE: {filename}                                          │
-│ ├── Lignes: {line_count}                                           │
-│ ├── Effort total détecté: {total_days} jours                       │
-│ └── Structure: {phases} phases, {steps} étapes                     │
-│                                                                     │
-│ 📋 DÉCOUPAGE PROPOSÉ: {count} sous-specs                           │
-│                                                                     │
-│ | ID  | Title        | Effort | Priority | Dependencies | Status  |│
-│ |-----|--------------|--------|----------|--------------|---------|│
-│ | S01 | {name_1}     | {d1}j  | -        | -            | Pending |│
-│ | S02 | {name_2}     | {d2}j  | -        | S01          | Pending |│
-│ | ... | ...          | ...    | ...      | ...          | ...     |│
-│                                                                     │
-│ 🔀 PARALLÉLISATION: {parallel_count} specs parallélisables         │
-│ ⏱️  DURÉE OPTIMISÉE: {optimized_days}j (vs {sequential_days}j seq) │
-│                                                                     │
-│ ⚠️  ALERTES: {alerts_or_none}                                       │
-│                                                                     │
-│ ✅ @decompose-validator: {verdict}                                  │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ Options:                                                            │
-│   • "Valider" → Générer les fichiers                               │
-│   • "Modifier" → Ajuster le découpage                              │
-│   • "Annuler" → Abandonner                                         │
-└─────────────────────────────────────────────────────────────────────┘
++---------------------------------------------------------------------+
+| BREAKPOINT — VALIDATION DECOUPAGE                                    |
++---------------------------------------------------------------------+
+|                                                                     |
+| ANALYSE DE: {filename}                                              |
+| ├── Lignes: {line_count}                                            |
+| ├── Effort total detecte: {total_days} jours                        |
+| └── Structure: {phases} phases, {steps} etapes                      |
+|                                                                     |
+| DECOUPAGE PROPOSE: {count} sous-specs                               |
+|                                                                     |
+| | ID  | Title        | Effort | Priority | Dependencies | Status  | |
+| |-----|--------------|--------|----------|--------------|---------|  |
+| | S01 | {name_1}     | {d1}j  | -        | -            | Pending | |
+| | S02 | {name_2}     | {d2}j  | -        | S01          | Pending | |
+| | ... | ...          | ...    | ...      | ...          | ...     | |
+|                                                                     |
+| PARALLELISATION: {parallel_count} specs parallelisables             |
+| DUREE OPTIMISEE: {optimized_days}j (vs {sequential_days}j seq)      |
+|                                                                     |
+| ALERTES: {alerts_or_none}                                           |
+|                                                                     |
+| @decompose-validator: {verdict}                                     |
+|                                                                     |
+| Options:                                                            |
+|   * "Valider" -> Generer les fichiers                               |
+|   * "Modifier" -> Ajuster le decoupage                              |
+|   * "Annuler" -> Abandonner                                         |
++---------------------------------------------------------------------+
 ```
 
 **Modify option sub-menu:**
@@ -175,9 +170,9 @@ Present decomposition proposal for user validation:
 Que souhaitez-vous modifier ?
 
 [1] Fusionner des specs — Ex: "Fusionner S04 et S05"
-[2] Découper une spec — Ex: "Découper S07 en 2"
-[3] Renommer — Ex: "S03 → Modèles Fondamentaux"
-[4] Changer dépendances — Ex: "S06 ne dépend plus de S03"
+[2] Decouper une spec — Ex: "Decouper S07 en 2"
+[3] Renommer — Ex: "S03 → Modeles Fondamentaux"
+[4] Changer dependances — Ex: "S06 ne depend plus de S03"
 [5] Ajuster estimation — Ex: "S08 = 3 jours"
 
 Votre choix (ou texte libre):
@@ -185,27 +180,101 @@ Votre choix (ou texte libre):
 
 ### Phase 4: Generation (USE WRITE TOOL — MANDATORY)
 
-**⚠️ MANDATORY:** Use the **Write tool** to create all output files.
+**MANDATORY:** Use the **Write tool** to create ALL output files.
 
-**Create output directory:**
+**Skills loaded:** `ralph-converter` (handles prd.json schema, stack detection, template generation)
+
+#### Step 4.1: Create output directory
 
 ```bash
 mkdir -p {output_dir}
 ```
 
-**Generate files:**
+#### Step 4.2: Generate sub-spec files
 
-1. **INDEX.md** — Overview with Mermaid diagrams
-2. **S01-{slug}.md** through **SNN-{slug}.md** — Individual sub-specs
+For each sub-spec identified:
+- **S01-{slug}.md** through **SNN-{slug}.md** — Individual sub-specs
 
-**Output structure:**
+#### Step 4.3: Generate INDEX.md
+
+Overview with:
+- Summary table (ID, Title, Effort, Priority, Dependencies, Status)
+- Mermaid dependency graph
+- Mermaid Gantt planning
+
+#### Step 4.4: Generate backlog.md (MANDATORY)
+
+**Always generate** the backlog table with:
+- Vue d'ensemble — All stories in one table
+- Par Spec — Stories grouped by spec
+- Statistiques — Totals, parallelizable count, critical path
+- Par Priorite — P1/P2/P3 breakdown
+- Legende — Status symbols, complexity, types
+
+**Story attributes inferred:**
+- **Type**: Script/Logic/API/UI/Test/Task (from title keywords)
+- **Complexite**: S (<45min), M (45-90min), L (>90min)
+- **Priorite**: P1 (Must), P2 (Should), P3 (Could)
+
+See `references/decompose-templates.md` for full template.
+
+#### Step 4.5: Generate prd.json (MANDATORY)
+
+Convert specs to Ralph Wiggum format:
+
+```json
+{
+  "$schema": "https://epci.dev/schemas/prd.json",
+  "branchName": "feature/{slug}",
+  "projectName": "{Project Title}",
+  "generatedAt": "{ISO date}",
+  "generatedBy": "EPCI /decompose",
+  "config": {
+    "max_iterations": 50,
+    "completion_promise": "COMPLETE",
+    "test_command": "{detected}",
+    "lint_command": "{detected}",
+    "granularity": "{granularity}"
+  },
+  "userStories": [...]
+}
+```
+
+**Granularity effects on story count:**
+
+| Granularity | Story Size | Stories/Day |
+|-------------|------------|-------------|
+| `micro`     | 15-30 min  | 8-12        |
+| `small`     | 30-60 min  | 4-8         |
+| `standard`  | 1-2 hours  | 2-4         |
+
+#### Step 4.6: Generate ralph.sh (MANDATORY)
+
+Executable loop script for autonomous execution.
+
+#### Step 4.7: Generate PROMPT.md (MANDATORY)
+
+Customized prompt based on detected stack (Node.js, Python, PHP, etc.).
+
+#### Step 4.8: Create symlinks
+
+```bash
+ln -s ../../scripts/lib {output_dir}/lib
+```
+
+**Final output structure:**
 
 ```
 {output_dir}/
-├── INDEX.md
+├── INDEX.md              # Overview with Mermaid diagrams
+├── backlog.md            # Backlog table view
+├── prd.json              # Ralph stories format
+├── ralph.sh              # Executable loop script
+├── PROMPT.md             # System prompt
+├── progress.txt          # Empty logging file
+├── lib/                  # Symlink to scripts/lib/
 ├── S01-{name}.md
 ├── S02-{name}.md
-├── ...
 └── SNN-{name}.md
 ```
 
@@ -216,6 +285,7 @@ mkdir -p {output_dir}
 | `project-memory`        | Pre-Workflow | Load context and conventions       |
 | `architecture-patterns` | Phase 2      | Identify decomposition patterns    |
 | `flags-system`          | All          | Handle --think levels              |
+| `ralph-converter`       | Phase 4      | Generate prd.json, ralph.sh, PROMPT.md |
 | `mcp`                   | Phase 2      | Context7 for architecture patterns |
 
 ## Invoked Subagents
@@ -226,381 +296,55 @@ mkdir -p {output_dir}
 
 ## Output Formats
 
-### INDEX.md
-
-````markdown
-# {Project Title} — Index
-
-> **Generated**: {date}
-> **Source**: {source_file}
-> **Sub-specs**: {count}
-> **Total effort**: {total_days} days
-
----
-
-## Overview
-
-| ID | Title | Effort | Priority | Dependencies | Status |
-|----|-------|--------|----------|--------------|--------|
-| S01 | {name} | {d}j | - | - | Pending |
-| S02 | {name} | {d}j | - | S01 | Pending |
-| ... | ... | ... | ... | ... | ... |
-
----
-
-## Dependency Graph
-
-```mermaid
-flowchart TD
-    S01[S01: {name}] --> S02[S02: {name}]
-    S02 --> S03[S03: {name}]
-    S03 --> S04[S04: {name}]
-    S03 --> S05[S05: {name}]
-    ...
-```
-````
-
----
-
-## Gantt Planning
-
-```mermaid
-gantt
-    title {Project Title}
-    dateFormat  YYYY-MM-DD
-
-    section Foundations
-    S01 {name}    :s01, {start_date}, {d1}d
-    S02 {name}    :s02, after s01, {d2}d
-
-    section Core
-    S03 {name}    :s03, after s02, {d3}d
-    ...
-```
-
----
-
-## Usage
-
-Launch a sub-spec:
-
-```bash
-/brief @{output_dir}/S01-{name}.md
-```
-
----
-
-_Generated by decompose_
-
-````
-
-### SXX-{name}.md (Sub-Spec Template)
-
-```markdown
-# Specification — {ID}: {Title}
-
-> **Parent project**: {slug}
-> **Spec ID**: {ID}
-> **Estimated effort**: {effort} day(s)
-> **Dependencies**: {deps_list}
-> **Blocks**: {blocking_list}
-
----
-
-## 1. Context
-
-This sub-spec is part of the **{project_title}** project.
-
-**Source**: `{source_file}` — {section_reference}
-
----
-
-## 2. Scope
-
-### Included
-
-{included_list}
-
-### Excluded
-
-{excluded_list}
-
----
-
-## 3. Tasks
-
-{task_checklist}
-
----
-
-## 4. Acceptance Criteria
-
-| ID | Criterion | Verification |
-|----|-----------|--------------|
-| {ID}-AC1 | {criterion_1} | {verification_1} |
-| {ID}-AC2 | {criterion_2} | {verification_2} |
-| ... | ... | ... |
-
----
-
-## 5. Source Reference
-
-> Extract from `{source_file}`
-
-{condensed_relevant_content}
-
----
-
-*Generated by decompose — Project: {slug}*
-````
+**Complete templates:** See `references/decompose-templates.md` for:
+- INDEX.md — Overview with Mermaid diagrams
+- backlog.md — Structured backlog table
+- SXX-{name}.md — Sub-spec template
 
 ## Edge Cases
 
-### EC1: PRD Without Clear Structure
+**Detailed edge case handling:** See `references/decompose-edge-cases.md`
 
-**Detection:** Less than 3 `##` headers or no "Phase/Step" patterns.
-
-**Behavior:**
-
-```
-Document structure insufficient.
-
-Proposed structuring:
-
-## Proposed Structure
-
-1. Phase Preparation (estimated: Xd)
-   - ...
-
-2. Phase Implementation (estimated: Xd)
-   - ...
-
-3. Phase Validation (estimated: Xd)
-   - ...
-
-Options: [Validate structure] [Modify] [Cancel]
-```
-
-### EC2: PRD Too Small
-
-**Detection:** Total estimated effort < 3 days.
-
-**Behavior:**
-
-```
-This document seems simple enough for a single EPCI session.
-
-Estimated effort: {X} days
-Recommendation: Use /brief directly
-
-/brief @{file}
-```
-
-**No decomposition** — command ends.
-
-### EC3: Sub-Spec Too Large
-
-**Detection:** A sub-spec exceeds `--max-days`.
-
-**Behavior:**
-
-```
-ALERT: Sub-spec {ID} too large ({X} days estimated)
-
-Suggestion: Split {ID} into sub-parts:
-  {ID}a: {title_a} ({Xa}d)
-  {ID}b: {title_b} ({Xb}d)
-
-Options:
-[1] Apply sub-decomposition
-[2] Keep {ID} as is
-[3] Define manually
-```
-
-### EC4: Circular Dependency
-
-**Detection:** Cycle in dependency graph.
-
-**Behavior:**
-
-```
-ERROR: Circular dependency detected
-
-{SA} {SB} {SA}
-
-This indicates an error in the source document.
-
-Document references:
-  Line {X}: "{quote_1}"
-  Line {Y}: "{quote_2}"
-
-Options:
-[1] Ignore {SA}{SB}
-[2] Ignore {SB}{SA}
-[3] Cancel — Fix source document
-```
-
-### EC5: Missing Estimates
-
-**Detection:** No estimation patterns found.
-
-**Behavior:**
-
-```
-No estimates found in document
-
-Using default estimates based on:
-  Lines per section
-  Detected complexity (models, services, tests)
-
-Estimates are indicative. Adjust if needed.
-```
-
-### EC6: Brainstorm Brief Input
-
-**Detection:** `### US1 —` pattern found, no `## Phase` patterns.
-
-**Behavior:**
-
-```
-📋 Format détecté: Brief Brainstorm (User Stories)
-
-Mapping User Stories → Sous-specs:
-
-| US  | Titre           | Complexité | Effort | Priorité    |
-|-----|-----------------|------------|--------|-------------|
-| US1 | {title}         | M          | 3j     | Must-have   |
-| US2 | {title}         | S          | 1j     | Should-have |
-| US3 | {title}         | L          | 5j     | Could-have  |
-
-Dépendances détectées: US3 → US1 (via AC reference)
-
-Options: [Valider] [Modifier mapping] [Annuler]
-```
-
-**Mapping rules:**
-
-| Complexité | Effort |
-|------------|--------|
-| S (Small)  | 1 jour |
-| M (Medium) | 3 jours |
-| L (Large)  | 5 jours |
-
-| Priorité MoSCoW | Priority |
-|-----------------|----------|
-| Must-have       | 1        |
-| Should-have     | 2        |
-| Could-have      | 3        |
-| Won't-have      | Excluded |
-
-### EC7: Ralph Wiggum Mode (`--wiggum`)
-
-**Detection:** `--wiggum` flag provided.
-
-**Behavior:**
-
-Instead of generating INDEX.md + individual spec files, generates Ralph Wiggum format:
-
-```
-{output_dir}/
-├── prd.json           # User stories in Ralph format
-├── ralph.sh           # Executable loop script
-├── PROMPT.md          # Customized prompt for Claude
-├── progress.txt       # Empty file for logging
-└── lib/               # Symlink to scripts/lib/
-```
-
-**Skills loaded:** `ralph-converter` (handles prd.json schema, stack detection, template generation)
-
-**Process:**
-
-1. Parse PRD as normal
-2. Convert specs → user stories with granularity setting
-3. Detect stack for PROMPT.md customization
-4. Generate prd.json with Ralph schema
-5. Generate ralph.sh from template
-6. Create symlinks to lib/ scripts
-
-**Granularity effects:**
-
-| Flag Value | Story Size | Stories/Day |
-|------------|------------|-------------|
-| `--granularity micro` | 15-30 min | 8-12 |
-| `--granularity small` | 30-60 min | 4-8 |
-| `--granularity standard` | 1-2 hours | 2-4 |
-
-**Next step after generation:**
-```
-→ /ralph {output_dir}
-```
+| Code | Situation | Action |
+|------|-----------|--------|
+| EC1 | PRD without clear structure | Propose structuring |
+| EC2 | PRD too small (<3 days) | Redirect to /brief |
+| EC3 | Sub-spec too large | Suggest split |
+| EC4 | Circular dependency | Blocking alert |
+| EC5 | Missing estimates | Default estimation |
+| EC6 | Brainstorm brief format | User Story mapping |
 
 ## Examples
 
-### Example 1: Standard Usage
+**Usage examples:** See `references/decompose-examples.md`
 
+Quick reference:
+
+```bash
+# Standard usage — generates all files including backlog.md and prd.json
+/decompose migration_architecture_gardel.md
+
+# With custom options
+/decompose mon-prd.md --output specs/alpha/ --min-days 2 --max-days 4
+
+# With fine granularity for more stories
+/decompose mon-prd.md --granularity micro
 ```
-> /decompose migration_architecture_gardel.md
 
-📄 Document: migration_architecture_gardel.md
-├── Lines: 1738
-├── Slug: migration-gardel
-└── Status: Valid
-
-[Analysis in progress...]
-
-⏸️  BREAKPOINT — VALIDATION DÉCOUPAGE
-
-📋 DÉCOUPAGE PROPOSÉ: 9 sous-specs
-
-| ID  | Nom                    | Effort | Dépendances |
-|-----|------------------------|--------|-------------|
-| S01 | Settings Splitting     | 1j     | —           |
-| S02 | App Datawarehouse      | 1j     | S01         |
-| S03 | Modèles Base           | 2j     | S02         |
-| S04 | Modèles Analyses       | 2j     | S03         |
-| S05 | Modèles Sources        | 2j     | S03         |
-| S06 | Modèles Users          | 2j     | S03         |
-| S07 | Admin + Services       | 3j     | S04,S05,S06 |
-| S08 | Migration ETL          | 2j     | S07         |
-| S09 | Tests + Docs           | 2j     | S08         |
-
-Duration: 17 days (parallel) vs 25 days (sequential)
-
-> Valider
-
+**Output:**
+```
 docs/specs/migration-gardel/
 ├── INDEX.md
+├── backlog.md            ← Backlog table
+├── prd.json              ← Ralph stories
+├── ralph.sh              ← Executable script
+├── PROMPT.md             ← System prompt
+├── progress.txt
 ├── S01-settings-splitting.md
 ├── S02-app-datawarehouse.md
-├── S03-modeles-base.md
-├── S04-modeles-analyses.md
-├── S05-modeles-sources.md
-├── S06-modeles-users.md
-├── S07-admin-services.md
-├── S08-migration-etl.md
-└── S09-tests-documentation.md
-```
+└── ...
 
-### Example 2: With Custom Options
-
-```
-> /decompose mon-prd.md --output specs/alpha/ --min-days 2 --max-days 4 --think think-hard
-
-[Deep analysis with think-hard...]
-[Granularity adjusted to 2-4 days per spec...]
-```
-
-### Example 3: Small Document (Auto-Redirect)
-
-```
-> /decompose simple-feature.md
-
-This document seems simple enough for a single EPCI session.
-
-Estimated effort: 2 days
-Recommendation: Use /brief directly
-
-/brief @simple-feature.md
+→ Next: /ralph docs/specs/migration-gardel/
 ```
 
 ## Error Handling
@@ -617,4 +361,4 @@ Recommendation: Use /brief directly
 - `/brief` — Entry point for individual sub-specs after decomposition
 - `/epci` — Complete workflow for STANDARD/LARGE features
 - `/quick` — Fast workflow for TINY/SMALL sub-specs
-- `/ralph` — Autonomous overnight execution using Ralph Wiggum format
+- `/ralph` — Autonomous overnight execution using generated prd.json
