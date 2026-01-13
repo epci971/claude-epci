@@ -1,8 +1,8 @@
 # EPCI Plugin — Claude Code
 
-> **Version** : 4.4.0
+> **Version** : 5.1.0
 > **License** : MIT
-> **Last Audit** : 2024-12-31 (Score: 70/100)
+> **Last Audit** : 2025-01-13 (Score: 85/100)
 
 EPCI (Explore → Plan → Code → Inspect) est un plugin Claude Code qui structure le développement logiciel en phases distinctes avec validation à chaque étape.
 
@@ -71,17 +71,22 @@ Cela active l'apprentissage continu, détecte votre stack et vos conventions.
 | `/epci:brief`  | Point d'entrée — Exploration, clarification, évaluation complexité |
 | `/epci:epci`   | Workflow complet 3 phases pour features STANDARD/LARGE             |
 | `/epci:quick`  | Workflow EPCT condensé pour features TINY/SMALL                    |
+| `/epci:ralph`  | **NEW** Exécution autonome overnight avec circuit breaker          |
 | `/epci:commit` | Finalisation git avec contexte EPCI                                |
 | `/epci:create` | Component Factory — Créer skills, commands, subagents              |
 
 ### Commandes Additionnelles
 
-| Commande           | Description                                    |
-| ------------------ | ---------------------------------------------- |
-| `/epci:brainstorm` | Découverte de feature avec personas adaptatifs + spike intégré |
-| `/epci:debug`      | Diagnostic structuré de bugs avec thought tree |
-| `/epci:decompose`  | Décomposition de PRD/CDC en sous-specs         |
-| `/epci:memory`     | Gestion de la mémoire projet + learning        |
+| Commande              | Description                                    |
+| --------------------- | ---------------------------------------------- |
+| `/epci:cancel-ralph`  | **NEW** Annuler une session Ralph en cours     |
+| `/epci:brainstorm`    | Découverte de feature avec personas adaptatifs + spike intégré |
+| `/epci:debug`         | Diagnostic structuré de bugs avec thought tree |
+| `/epci:decompose`     | Décomposition de PRD/CDC en sous-specs         |
+| `/epci:orchestrate`   | Exécution batch specs (deprecated, voir /ralph)|
+| `/epci:memory`        | Gestion de la mémoire projet + learning        |
+| `/epci:rules`         | Génération .claude/rules/ conventions projet   |
+| `/epci:promptor`      | Voice-to-brief + export Notion                 |
 
 ## Workflow
 
@@ -122,14 +127,24 @@ Brief utilisateur
 /commit → Git commit + PR ready
 ```
 
-## Features v4.4
+## Features v5.1.0
 
-### Nouveautés v4.4
+### Nouveautés v5.1.0 — Ralph Wiggum Integration
 
-- **9 subagents** : 6 core + 3 turbo (`@clarifier`, `@planner`, `@implementer`)
-- **9 commandes** : Ajout de `/commit` pour finalisation git
-- **Hooks obligatoires** : Garantie de mise à jour mémoire projet
-- **Audit de cohérence** : Prompt réutilisable dans `docs/audits/`
+- **`/ralph` command** : Exécution autonome overnight avec boucle itérative
+- **`/cancel-ralph` command** : Annulation d'une session Ralph en cours
+- **Circuit Breaker** : Pattern 3 états pour détection automatique des boucles bloquées
+- **RALPH_STATUS Block** : Format structuré de communication avec double condition de sortie
+- **Deux modes** : Hook (même session, <2h) et Script (contexte frais, overnight)
+- **16 subagents** : +1 `@ralph-executor` pour exécution stories
+- **30 skills** : +2 `ralph-analyzer`, `ralph-converter`
+- **14 commandes** : +2 `/ralph`, `/cancel-ralph`
+
+### Sécurité v5.1.0
+
+- **Input validation** : Protection injection dans response_analyzer.sh
+- **File locking** : flock pour opérations atomiques dans circuit_breaker.sh
+- **Rate limiting** : 100 appels/heure configurable
 
 ### Commandes simplifiées (v4.2+)
 
@@ -203,14 +218,16 @@ Mémoire persistante par projet :
 
 ```
 src/
-├── commands/          # 9 commandes
-├── agents/            # 9 subagents (6 core + 3 turbo)
-├── skills/            # 23 skills
-│   ├── core/         # 13 skills fondamentaux
-│   ├── stack/        # 4 skills par technologie
+├── commands/          # 14 commandes
+├── agents/            # 16 subagents (7 core + 3 turbo + 5 brainstorm + 1 ralph)
+├── skills/            # 30 skills
+│   ├── core/         # 18 skills fondamentaux
+│   ├── stack/        # 5 skills par technologie
 │   ├── factory/      # 4 skills Component Factory
 │   ├── mcp/          # 1 skill MCP Integration
-│   └── personas/     # 1 skill Système de personas
+│   ├── personas/     # 1 skill Système de personas
+│   └── promptor/     # 1 skill Voice-to-brief
+├── scripts/          # Scripts bash Ralph (circuit_breaker, response_analyzer)
 ├── hooks/            # Système de hooks
 ├── mcp/              # Module MCP Python
 ├── orchestration/    # Wave orchestration
@@ -265,39 +282,46 @@ python3 src/scripts/validate_all.py
 
 ## Changelog
 
+### v5.1.0 (2025-01) — Current
+
+- **Ralph Wiggum Integration** : Exécution autonome overnight
+- **Nouvelles commandes** : `/ralph`, `/cancel-ralph`
+- **Nouvel agent** : `@ralph-executor`
+- **Nouveaux skills** : `ralph-analyzer`, `ralph-converter`
+- **Circuit Breaker** : Pattern robustesse pour détection stagnation
+- **Sécurité** : Input validation, file locking avec flock
+- **Totaux** : 14 commandes, 16 agents, 30 skills
+
+### v5.0.0 (2025-01)
+
+- **`/orchestrate`** : Orchestration batch avec DAG, priority sorting
+- **Chaîne complète** : `/brainstorm` → `/decompose` → `/orchestrate`
+- **Nouveau skill** : `orchestrator-batch`
+
+### v4.9.x (2024-12)
+
+- **Brainstorm v5.0** : Expert panel, party orchestrator, rule clarifier
+- **Native Plan Integration** : Import plan Claude Code natif
+- **Auto-techniques** : Sélection automatique basée sur axes EMS faibles
+
 ### v4.4.0 (2024-12)
 
 - **Fusion learn → memory** : `/learn` supprimé, learning intégré dans `/memory`
 - **Ajout `/commit`** : Commande dédiée pour finalisation git
 - **3 nouveaux agents turbo** : `@clarifier`, `@planner`, `@implementer`
-- **Hooks obligatoires documentés** : Section 11 dans CLAUDE.md
-- **Fusion spike → brainstorm** : Exploration technique intégrée
-- **Audit de cohérence** : Prompt d'audit dans `docs/audits/AUDIT_PROMPT.md`
 
-### v4.2.0 (2024-12)
+### v4.x
 
-- Renommage des commandes : suppression du préfixe `epci-`
-    - `/epci:epci-brief` → `/epci:brief`
-    - `/epci:epci-quick` → `/epci:quick`
-    - etc.
-
-### v4.1.0 (2024-12)
-
-- F13: Flag `--turbo` pour workflows 30-50% plus rapides
-
-### v4.0.0 (2024-12)
-
-- F12: MCP Integration (Context7, Sequential, Magic, Playwright)
-- F11: Wave Orchestration pour features LARGE
-- F09: Système de Personas avec auto-activation
-- Nouvelles commandes: `/brainstorm`, `/debug`, `/decompose`
+- MCP Integration (Context7, Sequential, Magic, Playwright)
+- Wave Orchestration pour features LARGE
+- Système de Personas avec auto-activation
+- Commandes: `/brainstorm`, `/debug`, `/decompose`
 
 ### v3.x
 
-- F09: Personas système initial
-- F08: Apprentissage continu
-- F07: Orchestration multi-agents
-- Refonte complète avec Component Factory et Project Memory
+- Component Factory et Project Memory
+- Orchestration multi-agents
+- Apprentissage continu
 
 ## License
 

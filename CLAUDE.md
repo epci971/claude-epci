@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 4.9.2 | **Date** : Janvier 2025
+> **Version** : 5.1.0 | **Date** : Janvier 2025
 
 ---
 
@@ -17,7 +17,7 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
 
-### Nouveautés v4.9.2 (Ralph Wiggum Integration)
+### Nouveautés v5.1.0 (Ralph Wiggum Integration)
 
 - **Nouvelle commande `/ralph`** : Exécution autonome overnight avec boucle itérative
 - **Nouvelle commande `/cancel-ralph`** : Annulation d'une session Ralph en cours
