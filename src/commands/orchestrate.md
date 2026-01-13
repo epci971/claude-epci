@@ -9,6 +9,11 @@ allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 
 # EPCI Orchestrate
 
+> **⚠️ DEPRECATION NOTICE**: For overnight autonomous execution, consider using `/ralph` instead.
+> Ralph Wiggum provides better safety features (circuit breaker, rate limiting) and is optimized
+> for unattended multi-hour execution. `/orchestrate` remains available for DAG-based batch
+> execution with user supervision.
+
 ## Overview
 
 Automates the execution of multiple EPCI specs from a directory. Parses INDEX.md
@@ -226,5 +231,6 @@ Generate final report (`orchestration-report.md`):
 
 ## See Also
 
+- `/ralph` — **Recommended** for overnight autonomous execution (safer, optimized)
 - Skill: `orchestrator-batch` for detailed logic
 - References: `dag-building.md`, `priority-sorting.md`, `auto-retry-strategy.md`, `dual-journaling.md`

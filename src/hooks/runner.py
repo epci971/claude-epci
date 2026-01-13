@@ -155,6 +155,11 @@ VALID_HOOK_TYPES = [
     'on-breakpoint',
     # F07: Multi-Agent Orchestration hooks
     'pre-agent', 'post-agent',
+    # Ralph Wiggum hooks (v4.9.2+)
+    'ralph-stop',           # Stop hook for mode hook (intercepts exit)
+    'ralph-session-init',   # Called when Ralph session starts
+    'ralph-session-reset',  # Called when circuit breaker triggers reset
+    'ralph-iteration',      # Called after each iteration completes
 ]
 
 # Deprecated hook types (v3.2) - will show warning but still execute
