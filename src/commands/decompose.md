@@ -3,7 +3,7 @@ description: >-
     Decompose a complex PRD/CDC into actionable sub-specifications (1-5 days each).
     Generates dependency graph and Gantt planning with parallelization.
     Use for large projects (>5 days) before running /brief on each sub-spec.
-argument-hint: "<file.md> [--output <dir>] [--think <level>] [--min-days <n>] [--max-days <n>] [--c7]"
+argument-hint: "<file.md> [--output <dir>] [--think <level>] [--min-days <n>] [--max-days <n>] [--wiggum] [--granularity <size>]"
 allowed-tools: [Read, Write, Bash, Grep, Glob, Task, WebFetch]
 ---
 
