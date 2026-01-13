@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 4.9.1 | **Date** : Janvier 2025
+> **Version** : 4.9.2 | **Date** : Janvier 2025
 
 ---
 
@@ -12,10 +12,23 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
-| **Simplicité**      | 12 commandes spécialisées                                     |
-| **Modularité**      | 28 Skills, 15 Subagents, Hooks natifs                         |
+| **Simplicité**      | 14 commandes spécialisées                                     |
+| **Modularité**      | 30 Skills, 16 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v4.9.2 (Ralph Wiggum Integration)
+
+- **Nouvelle commande `/ralph`** : Exécution autonome overnight avec boucle itérative
+- **Nouvelle commande `/cancel-ralph`** : Annulation d'une session Ralph en cours
+- **Deux modes d'exécution** : Hook (même session, <2h) et Script (contexte frais, overnight)
+- **Circuit Breaker** : Détection automatique des boucles bloquées (3 états: CLOSED/HALF_OPEN/OPEN)
+- **RALPH_STATUS Block** : Format structuré de communication avec double condition de sortie
+- **Flag `--wiggum`** pour `/decompose` : Génère prd.json + ralph.sh au lieu d'INDEX.md
+- **Flag `--granularity`** : Contrôle la taille des stories (micro/small/standard)
+- **Nouveaux skills** : `ralph-analyzer`, `ralph-converter`
+- **Nouvel agent** : `@ralph-executor` pour exécution des stories individuelles
+- **Hooks Ralph** : `ralph-stop`, `ralph-session-init`, `ralph-iteration`, `ralph-session-reset`
 
 ### Nouveautés v4.9.1 (Native Plan Integration)
 
@@ -91,15 +104,15 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 ```
 src/
-├── agents/           # 12 subagents (7 core + 3 turbo + 2 brainstorm)
-├── commands/         # 12 commandes (brief, epci, quick, orchestrate, etc.)
+├── agents/           # 13 subagents (7 core + 3 turbo + 2 brainstorm + 1 ralph)
+├── commands/         # 14 commandes (brief, epci, quick, ralph, etc.)
 ├── hooks/            # Système hooks (runner.py, examples/, active/)
 ├── mcp/              # MCP Integration (config, activation, registry)
 ├── orchestration/    # Wave orchestration
 ├── scripts/          # Validation (validate_all.py, etc.)
 ├── settings/         # Configuration (flags.md)
-└── skills/           # 27 skills
-    ├── core/         # 15 skills fondamentaux
+└── skills/           # 30 skills
+    ├── core/         # 17 skills fondamentaux (inclut ralph-analyzer, ralph-converter)
     ├── stack/        # 5 skills technologie (react, django, symfony, spring, frontend)
     ├── personas/     # Système personas
     ├── mcp/          # MCP skill
@@ -290,6 +303,79 @@ Idée vague → /brainstorm → Brief structuré avec User Stories
 | Plan natif Claude Code existe | B (Plan natif) | Réutiliser raisonnement initial |
 | Idée vague, besoin exploration | D/E/F (Brainstorm) | Clarification via EMS iterations |
 | PRD existant, déjà structuré | Direct `/decompose` | Document déjà complet |
+| Exécution overnight autonome | G (Ralph) | Sans supervision humaine |
+
+---
+
+### Workflow avec Ralph Wiggum (exécution overnight)
+
+Workflow pour exécution autonome sur plusieurs heures sans supervision :
+
+```
+PRD complet → /decompose --wiggum → prd.json + ralph.sh
+                                          │
+                                          ↓
+                                     /ralph <dir>
+                                          │
+                              ┌───────────┴───────────┐
+                              ▼                       ▼
+                         Mode Hook              Mode Script
+                       (même session)        (contexte frais)
+                           <2h                   overnight
+                              │                       │
+                              └───────────┬───────────┘
+                                          ↓
+                                   Boucle itérative
+                                          │
+                              ┌───────────┼───────────┐
+                              ▼           ▼           ▼
+                          Story N    Circuit     RALPH_STATUS
+                        @executor    Breaker      Analysis
+                              │           │           │
+                              └───────────┼───────────┘
+                                          ↓
+                               ┌──────────┴──────────┐
+                               ▼                     ▼
+                          EXIT_SIGNAL          Continue
+                           = true                loop
+                               │                     │
+                               ↓                     ↓
+                          Completion            Next story
+```
+
+**Modes d'exécution** :
+
+| Mode | Contexte | Durée | Robustesse | Auto-sélection |
+|------|----------|-------|------------|----------------|
+| `hook` | Même session | <2h | Medium | stories < 10 AND duration < 2h |
+| `script` | Frais/itération | >2h | High | stories >= 10 OR duration >= 2h |
+
+**Commandes** :
+
+```bash
+# Workflow G : Ralph Wiggum (overnight)
+/decompose migration-prd.md --wiggum --granularity small
+# → Génère prd.json avec user stories
+# → Génère ralph.sh executable
+# → Détecte stack pour PROMPT.md
+
+/ralph docs/specs/migration/ --overnight --safety-level moderate
+# → Mode script auto-sélectionné
+# → Circuit breaker activé
+# → Boucle jusqu'à completion ou max_iterations
+# → Commits automatiques par story
+
+# Pour annuler une session en cours
+/cancel-ralph
+```
+
+**Avantages du workflow Ralph** :
+- ✅ Exécution overnight sans supervision
+- ✅ Circuit breaker pour détecter boucles bloquées
+- ✅ Rate limiting pour éviter surcharge API
+- ✅ Commits atomiques par story complétée
+- ✅ Progression persistée (.ralph-session.json)
+- ✅ Dual-condition exit (indicateurs + EXIT_SIGNAL explicite)
 
 ---
 
@@ -307,26 +393,28 @@ Idée vague → /brainstorm → Brief structuré avec User Stories
 
 ---
 
-## 4. Commands (12)
+## 4. Commands (14)
 
 | Commande      | Rôle                                                        |
 | ------------- | ----------------------------------------------------------- |
 | `/brief`      | Point d'entrée unique — exploration, clarification, routing |
 | `/epci`       | Workflow complet 3 phases (STD/LARGE)                       |
 | `/quick`      | Workflow condensé EPCT (TINY/SMALL)                         |
-| `/orchestrate`| Exécution batch de specs — DAG, priorité, auto-retry        |
+| `/ralph`      | **Exécution autonome overnight — boucle itérative, circuit breaker** |
+| `/cancel-ralph` | **Annulation session Ralph en cours**                     |
+| `/orchestrate`| Exécution batch de specs — DAG, priorité (préférer `/ralph`) |
 | `/commit`     | Finalisation git avec contexte EPCI                         |
 | `/rules`      | Génère .claude/rules/ — conventions projet automatiques     |
 | `/brainstorm` | Feature discovery v4.8 — Auto-techniques, mix, transition checks |
 | `/debug`      | Diagnostic bugs structuré                                   |
-| `/decompose`  | Décomposition PRD en sous-specs                             |
+| `/decompose`  | Décomposition PRD en sous-specs (+ `--wiggum` pour Ralph)   |
 | `/memory`     | Gestion mémoire projet + learning (calibration, préférences)|
 | `/promptor`   | Voice-to-brief — dictée vocale → brief structuré + Notion   |
 | `/create`     | Component Factory (skill\|command\|agent)                   |
 
 ---
 
-## 5. Subagents (15)
+## 5. Subagents (16)
 
 ### Core Subagents (7)
 
@@ -347,6 +435,12 @@ Idée vague → /brainstorm → Brief structuré avec User Stories
 | `@clarifier`    | haiku  | Questions clarification rapides | `/brief --turbo`, `/brainstorm --turbo` |
 | `@planner`      | sonnet | Planification rapide        | `/epci --turbo` P1, `/quick` [P], `/brainstorm` (converge) |
 | `@implementer`  | sonnet | Implémentation TDD rapide   | `/epci --turbo` P2, `/quick` [C] |
+
+### Ralph Subagent (1) — v4.9.2+
+
+| Subagent          | Model  | Rôle                           | Invoqué par     |
+| ----------------- | ------ | ------------------------------ | --------------- |
+| `@ralph-executor` | sonnet | Exécution story individuelle   | `/ralph` loop   |
 
 ### Brainstorm Subagents (5) — v4.8+
 

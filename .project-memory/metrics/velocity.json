@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "summary": {
-    "total_features": 16,
+    "total_features": 17,
     "avg_time_tiny": null,
     "avg_time_small": null,
     "avg_time_standard": null,
@@ -28,7 +28,7 @@
       "avg_loc": null
     },
     "LARGE": {
-      "count": 6,
+      "count": 7,
       "avg_time": null,
       "avg_files": null,
       "avg_loc": null
@@ -36,12 +36,6 @@
   },
   "trend": {
     "last_5_features": [
-      {
-        "slug": "brainstorm-v42-s01-core",
-        "complexity": "STANDARD",
-        "estimated": "2h",
-        "actual": "1h30"
-      },
       {
         "slug": "brainstorm-techniques-s02",
         "complexity": "STANDARD",
@@ -65,9 +59,15 @@
         "complexity": "LARGE",
         "estimated": "90min",
         "actual": "85min"
+      },
+      {
+        "slug": "ralph-wiggum-integration",
+        "complexity": "LARGE",
+        "estimated": "10h",
+        "actual": "8h"
       }
     ],
     "velocity_trend": "stable"
   },
-  "updated_at": "2026-01-09T20:35:44.869624Z"
+  "updated_at": "2026-01-13T16:14:20.191023Z"
 }

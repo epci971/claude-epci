@@ -27,6 +27,8 @@ executed sequentially or in parallel where dependencies allow.
 | `--think <level>` | Thinking level: `quick`, `think`, `think-hard`, `ultrathink` | No       | `think`              |
 | `--min-days <n>`  | Minimum effort per sub-spec                                  | No       | `1`                  |
 | `--max-days <n>`  | Maximum effort per sub-spec                                  | No       | `5`                  |
+| `--wiggum`        | Generate Ralph Wiggum format (prd.json + ralph.sh)           | No       | `false`              |
+| `--granularity`   | Story size: `micro` (15-30min), `small` (30-60min), `standard` (1-2h) | No | `small`            |
 
 ## Pre-Workflow: Load Project Memory
 
@@ -491,6 +493,47 @@ Options: [Valider] [Modifier mapping] [Annuler]
 | Could-have      | 3        |
 | Won't-have      | Excluded |
 
+### EC7: Ralph Wiggum Mode (`--wiggum`)
+
+**Detection:** `--wiggum` flag provided.
+
+**Behavior:**
+
+Instead of generating INDEX.md + individual spec files, generates Ralph Wiggum format:
+
+```
+{output_dir}/
+├── prd.json           # User stories in Ralph format
+├── ralph.sh           # Executable loop script
+├── PROMPT.md          # Customized prompt for Claude
+├── progress.txt       # Empty file for logging
+└── lib/               # Symlink to scripts/lib/
+```
+
+**Skills loaded:** `ralph-converter` (handles prd.json schema, stack detection, template generation)
+
+**Process:**
+
+1. Parse PRD as normal
+2. Convert specs → user stories with granularity setting
+3. Detect stack for PROMPT.md customization
+4. Generate prd.json with Ralph schema
+5. Generate ralph.sh from template
+6. Create symlinks to lib/ scripts
+
+**Granularity effects:**
+
+| Flag Value | Story Size | Stories/Day |
+|------------|------------|-------------|
+| `--granularity micro` | 15-30 min | 8-12 |
+| `--granularity small` | 30-60 min | 4-8 |
+| `--granularity standard` | 1-2 hours | 2-4 |
+
+**Next step after generation:**
+```
+→ /ralph {output_dir}
+```
+
 ## Examples
 
 ### Example 1: Standard Usage
@@ -574,3 +617,4 @@ Recommendation: Use /brief directly
 - `/brief` — Entry point for individual sub-specs after decomposition
 - `/epci` — Complete workflow for STANDARD/LARGE features
 - `/quick` — Fast workflow for TINY/SMALL sub-specs
+- `/ralph` — Autonomous overnight execution using Ralph Wiggum format

@@ -8,10 +8,10 @@
       "last_updated": "2025-12-19T13:45:43.147357Z"
     },
     "LARGE": {
-      "factor": 0.7679487179487179,
-      "samples": 2,
-      "confidence": 0.6131471927654585,
-      "last_updated": "2026-01-09T20:35:44.873497Z"
+      "factor": 0.7775641025641025,
+      "samples": 3,
+      "confidence": 0.7737056144690831,
+      "last_updated": "2026-01-13T16:14:20.196431Z"
     },
     "STANDARD": {
       "factor": 0.4565,
@@ -21,8 +21,8 @@
     }
   },
   "global": {
-    "total_samples": 8,
-    "overall_accuracy": 0.7253805064102563,
+    "total_samples": 9,
+    "overall_accuracy": 0.7477663544871794,
     "trend": "improving"
   },
   "history": [
@@ -89,7 +89,15 @@
       "actual": 85.0,
       "ratio": 0.9444444444444444,
       "timestamp": "2026-01-09T20:35:44.873497Z"
+    },
+    {
+      "feature_slug": "ralph-wiggum-integration",
+      "complexity": "LARGE",
+      "estimated": 600.0,
+      "actual": 480.0,
+      "ratio": 0.8,
+      "timestamp": "2026-01-13T16:14:20.196431Z"
     }
   ],
-  "updated_at": "2026-01-09T20:35:44.873531Z"
+  "updated_at": "2026-01-13T16:14:20.196478Z"
 }

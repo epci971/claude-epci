@@ -1,23 +1,38 @@
 {
   "source": "epci",
   "type": "feat",
-  "scope": "commands",
-  "description": "add /orchestrate command for batch spec execution",
+  "scope": "ralph",
+  "description": "Add Ralph Wiggum autonomous overnight execution",
   "files": [
-    "CLAUDE.md",
-    "docs/briefs/orchestrate-auto-priority/brief-orchestrate-auto-2026-01-09.md",
-    "docs/briefs/orchestrate-auto-priority/journal-orchestrate-auto-2026-01-09.md",
-    "docs/features/orchestrate-auto-priority.md",
+    "src/commands/ralph.md",
+    "src/commands/cancel-ralph.md",
+    "src/skills/core/ralph-analyzer/SKILL.md",
+    "src/skills/core/ralph-converter/SKILL.md",
+    "src/agents/ralph-executor.md",
+    "src/hooks/active/ralph-stop-hook.sh",
+    "src/hooks/runner.py",
+    "src/scripts/lib/circuit_breaker.sh",
+    "src/scripts/lib/response_analyzer.sh",
+    "src/scripts/lib/date_utils.sh",
+    "src/commands/decompose.md",
     "src/commands/orchestrate.md",
-    "src/skills/core/orchestrator-batch/SKILL.md",
-    "src/skills/core/orchestrator-batch/references/dag-building.md",
-    "src/skills/core/orchestrator-batch/references/priority-sorting.md",
-    "src/skills/core/orchestrator-batch/references/auto-retry-strategy.md",
-    "src/skills/core/orchestrator-batch/references/dual-journaling.md",
-    "src/skills/core/orchestrator-batch/references/project-memory-integration.md",
-    "src/skills/core/orchestrator-batch/references/hooks-integration.md"
+    "src/settings/flags.md",
+    "templates/ralph/ralph-loop-state.yml",
+    "templates/ralph/PROMPT.md",
+    "CLAUDE.md",
+    "docs/features/ralph-wiggum-integration.md"
   ],
-  "featureDoc": "docs/features/orchestrate-auto-priority.md",
+  "featureDoc": "docs/features/ralph-wiggum-integration.md",
   "breaking": false,
-  "ticket": null
+  "ticket": null,
+  "summary": [
+    "New /ralph command for overnight autonomous execution",
+    "Two execution modes: hook (same session) and script (fresh context)",
+    "Circuit breaker pattern for stagnation detection",
+    "RALPH_STATUS block with dual-condition exit logic",
+    "/decompose --wiggum generates prd.json + ralph.sh",
+    "New skills: ralph-analyzer, ralph-converter",
+    "New agent: @ralph-executor",
+    "Updated CLAUDE.md to v4.9.2"
+  ]
 }
