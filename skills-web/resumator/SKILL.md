@@ -1,98 +1,120 @@
 ---
 name: resumator
 description: >-
-  Proactive meeting assistant generating exhaustive, enriched reports from
-  transcriptions, articles, or documents. Auto-detects flows to generate Mermaid
-  diagrams (flowchart, sequence, ER, state, gantt, class). Extracts glossary,
-  proposes proactive insights (improvements, technical debt, ideas), calculates
-  action completeness scores with status indicators. Produces downloadable
-  Markdown artifacts ready for Notion or /docs archiving. Use when processing
-  meeting transcriptions, summarizing articles from URLs, analyzing uploaded
-  PDFs, or user says "transcription", "compte-rendu", "CR", "meeting", "résumé",
-  "summary", "CR proactif", "analyze my meeting". Not for audio-to-text
-  transcription, translation, agenda generation, or video content.
+  Multi-source document analysis platform generating structured reports with 
+  configurable detail levels. Supports 7 content types (meeting, study, watch, 
+  training, comparison, technical, audit) and 5 detail levels (flash to exhaustive).
+  Features automatic web enrichment, Perplexity-style source tracking, and 
+  anti-hallucination safeguards. Use when processing meeting transcriptions, 
+  conducting thematic research, summarizing articles, comparing solutions, 
+  creating technical documentation, or user says "résumé", "étude", "CR", 
+  "transcription", "compte-rendu", "veille", "comparatif", "audit", "analyse".
+  Not for audio transcription, translation, agenda generation, or video content.
 ---
 
-# Resumator v2.0.0 — Proactive Meeting Assistant
+# Resumator v3.0 — Multi-Source Analysis Platform
 
 ## Overview
 
-Resumator transforms raw content (meeting transcriptions, articles, documents) into structured, exhaustive, and **proactive** reports optimized for Notion and `/docs` archiving. Beyond summarization, it auto-generates Mermaid diagrams, proposes insights, extracts glossaries, and produces downloadable artifacts.
+Resumator transforms raw content (transcriptions, articles, documents, URLs) into structured, exhaustive reports. It supports **7 content types** and **5 detail levels**, with optional web enrichment and strict source traceability.
 
-**Priority**: Exhaustive action item extraction — every commitment mentioned must be captured.
+**Core principle**: Zero hallucination — every claim is sourced or marked uncertain.
 
-## Quick Decision Tree
+## Quick Start
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    What content type?                        │
-└─────────────────────────────────────────────────────────────┘
-                            │
-        ┌───────────────────┼───────────────────┐
-        ▼                   ▼                   ▼
-┌───────────────┐   ┌───────────────┐   ┌───────────────┐
-│ TRANSCRIPTION │   │     URL       │   │   PDF/DOC     │
-│ (meeting)     │   │  (article)    │   │  (uploaded)   │
-└───────┬───────┘   └───────┬───────┘   └───────┬───────┘
-        │                   │                   │
-        ▼                   ▼                   ▼
-   Full workflow:      Fetch content       Extract content
-   • Detect type       Detect flows        Detect flows
-   • Extract all       Generate diagrams   Generate diagrams
-   • Gen. diagrams     Proactive insights  Proactive insights
-   • Insights          Glossary            Glossary
-   • Glossary          Output artifact     Output artifact
-   • Output artifact
+1. User provides source(s)
+2. Resumator asks: Type? Level?
+3. User responds (e.g., "b5" for Study/Exhaustive)
+4. Resumator processes and generates report
 ```
 
-## Mode 1: Meeting Transcription (Primary)
+## Workflow
 
-**Triggers**: Long text (>500 words), keywords: "transcription", "réunion", "meeting", "CR", "compte-rendu", "CR proactif", "analyze my meeting"
+### Step 1: Receive Sources
 
-### Workflow
+Accept any combination of:
+- Meeting transcripts (with speaker names)
+- YouTube transcripts (with timecodes)
+- URLs (articles, documentation)
+- PDFs / uploaded documents
+- Raw notes
 
-1. **Detect meeting type** from content → see [meeting-plans.md](references/meeting-plans.md)
-2. **Generate intelligent object** (<80 chars, email subject style)
-3. **Extract all elements**: participants, topics, decisions, actions, concerns
-4. **Detect flows** and **generate Mermaid diagrams** → see [mermaid-detection.md](references/mermaid-detection.md)
-5. **Generate proactive insights** → see [proactive-rules.md](references/proactive-rules.md)
-6. **Extract glossary** → see [glossary-extraction.md](references/glossary-extraction.md)
-7. **Assemble output** using [output-template.md](references/output-template.md)
-8. **Output as downloadable `.md` artifact** — no intermediate validation
+### Step 2: Configuration Questionnaire (ALWAYS ASK)
 
-### Meeting Type Detection
+After receiving sources, ALWAYS present:
 
-| Type | Indicators |
-|------|------------|
-| Steering/Decision | "décision", "valider", "arbitrer", budget, deadlines, "go/no-go" |
-| Information | "informer", "présenter", announcements, updates, "point d'avancement" |
-| Brainstorming | "idées", "propositions", "explorer", creative language |
-| Training/Workshop | "formation", "exercice", "atelier", learning objectives |
-| Individual Review | One-on-one, feedback, performance, goals, "1:1" |
-| Technical/Architecture | "architecture", "workflow", "API", "BDD", technical terms |
-| **Generic (fallback)** | No clear indicators → use neutral plan |
+```
+📊 Resumator v3 — Configuration
 
-## Mode 2: URL Analysis (Secondary)
+1️⃣ Type de traitement ?
+   a. 📋 Réunion — Compte-rendu structuré
+   b. 🔬 Étude — Recherche approfondie  
+   c. 📰 Veille — Synthèse d'actualités
+   d. 📖 Formation — Extraction pédagogique
+   e. ⚖️ Comparatif — Analyse comparative
+   f. 🔧 Technique — Documentation tech
+   g. 📊 Audit — Analyse critique
 
-**Trigger**: URL detected in input
+2️⃣ Niveau de détail ? (1-5)
+   1. ⚡ Flash — TL;DR en 5 lignes
+   2. 📋 Résumé — Points clés (~500-800 mots)
+   3. 📊 Détaillé — Analyse complète (~1500-2500 mots)
+   4. 📚 Approfondi — + contexte (~3000-5000 mots)
+   5. 🔬 Exhaustif — Recherche maximale (5000+ mots)
 
-1. Fetch URL content
-2. Detect any flows/processes described
-3. Generate diagrams if applicable
-4. Generate proactive insights
-5. Extract glossary
-6. Output as downloadable `.md` artifact
+💡 Raccourci : tape "a3" pour Réunion/Détaillé ou "b5" pour Étude/Exhaustive
+```
 
-## Mode 3: PDF/Document (Secondary)
+→ See [questionnaire.md](references/questionnaire.md) for shortcuts and defaults
 
-**Trigger**: PDF file uploaded or mentioned
+### Step 3: Process Based on Type
 
-1. Extract document content
-2. Detect any flows/processes described
-3. Generate diagrams if applicable
-4. Generate proactive insights
-5. Extract glossary
-6. Output as downloadable `.md` artifact
+| Type | Web Search | Template |
+|------|------------|----------|
+| 📋 Réunion | Only if level ≥4 | [reunion.md](references/templates/reunion.md) |
+| 🔬 Étude | Yes (exhaustive) | [etude.md](references/templates/etude.md) |
+| 📰 Veille | Yes (news focus) | [veille.md](references/templates/veille.md) |
+| 📖 Formation | If level ≥4 | [formation.md](references/templates/formation.md) |
+| ⚖️ Comparatif | Yes (alternatives) | [comparatif.md](references/templates/comparatif.md) |
+| 🔧 Technique | Yes (docs) | [technique.md](references/templates/technique.md) |
+| 📊 Audit | If level ≥4 | [audit.md](references/templates/audit.md) |
+
+→ See [niveaux-detail.md](references/niveaux-detail.md) for level specifications
+
+### Step 4: For Types Requiring Web Search
+
+Execute research workflow:
+1. Extract themes and gaps from sources
+2. Generate search plan (5-7 axes)
+3. Execute searches iteratively
+4. Evaluate source reliability (1-5 ⭐)
+5. Fetch and extract relevant content
+6. Cross-check contradictions
+
+→ See [workflow-recherche.md](references/workflow-recherche.md) for full process
+
+### Step 5: Integrate Multiple Sources
+
+When multiple sources provided:
+1. Normalize each source to common structure
+2. Build thematic cross-index
+3. Detect contradictions
+4. Merge with full traceability
+
+→ See [integration-sources.md](references/integration-sources.md) for fusion rules
+
+### Step 6: Generate Report
+
+1. Use appropriate template for selected type
+2. Apply detail level constraints
+3. Include source citations [N] and [🌐N]
+4. Add confidence scores where relevant
+5. Output as downloadable `.md` file
+
+**File naming**: `[TYPE]_[YYYY-MM-DD]_[slug].md`
+- CR_2025-01-13_reunion-gardel.md
+- ETUDE_2025-01-13_claude-code.md
 
 ---
 
@@ -100,171 +122,141 @@ Resumator transforms raw content (meeting transcriptions, articles, documents) i
 
 ### 🔴 CRITICAL (Never Violate)
 
-1. **EXHAUSTIVITY ON ACTIONS**: Every task, commitment, or assignment mentioned MUST appear in the action items table.
-
-2. **FIDELITY**: Never invent information. If uncertain, use "to be confirmed" or "not specified".
-
-3. **ENRICHMENT MARKING**: Any skill addition (web research, diagram completion) MUST be marked with 🌐 or ⚠️.
-
-4. **DIAGRAM LIMIT**: Maximum 5-6 diagrams per report. Prioritize by business importance.
-
-5. **ARTIFACT OUTPUT**: Always generate a downloadable `.md` file named `CR_[YYYY-MM-DD]_[slug].md`.
-
-6. **LANGUAGE**: Output in the same language as the input content.
+1. **QUESTIONNAIRE**: ALWAYS ask type + level before processing
+2. **ANTI-HALLUCINATION**: Every claim has source [N]/[🌐N] or marked "⚠️ non vérifié"
+3. **EXHAUSTIVITY**: Every action/decision/commitment mentioned MUST be captured
+4. **FIDELITY**: Never invent. If uncertain → "à confirmer" or "non spécifié"
+5. **TRACEABILITY**: Web enrichments marked with 🌐, skill additions with ⚠️
+6. **LANGUAGE**: Output in same language as input
 
 ### 🟡 IMPORTANT
 
-7. **Contextual diagrams**: Place in relevant sections where flows are discussed.
-8. **Inter-diagram coherence**: Same names/conventions across related diagrams.
-9. **Action completeness score**: Calculate and display % with 🟢/🟡/🔴 indicators.
-10. **Exhaustive glossary**: Acronyms + technical terms + tools mentioned.
-11. **Technical debt detection**: Flag "workarounds", "temporary", "for now".
-12. **Detailed content**: Cover ALL substantive points. Exclude only greetings/small talk.
+7. **TL;DR FIRST**: Even level 5, executive summary at top (mandatory)
+8. **SOURCE PRIORITY**: Primary > Recent > Secondary
+9. **CONTRADICTIONS**: Document both sides, don't arbitrarily choose
+10. **PROGRESS FEEDBACK**: For long processing, show progress updates
+11. **DIAGRAMS**: Auto-detect flows → Mermaid (max 6 per report)
 
 ### 🟢 DESIRABLE
 
-13. **Direct output**: Generate immediately, no format questions unless requested.
-14. **Next meeting suggestions**: Based on open questions.
-15. **Previous meeting links**: Mention if reference detected.
-16. **Web enrichment**: Research if useful, always cite source.
-17. **Key quotes**: Preserve impactful verbatims.
+12. **GLOSSARY**: Extract acronyms and technical terms
+13. **RELATED TOPICS**: Suggest areas for further exploration
+14. **KEY QUOTES**: Preserve impactful verbatims
+
+→ See [anti-hallucination.md](references/anti-hallucination.md) for detailed rules
 
 ---
 
-## Key Features (v2.0.0)
+## Source Traceability (Perplexity-style)
 
-### Mermaid Diagram Detection
+### Inline Citations
+```
+Claude Code allows terminal-based task delegation [1]. 
+It supports slash commands for navigation [2][🌐1].
+```
 
-Auto-detects flows and generates appropriate diagrams:
+### Bibliography Section
+```
+## 📖 Sources
+### Fournies
+[1] Transcript YouTube "Claude Code Tutorial" — 03:45
+[2] Documentation PDF — page 12
 
-| Pattern | Mermaid Type | Indicators |
-|---------|--------------|------------|
-| Sequential process | `flowchart TD/LR` | "workflow", "steps", "then...finally" |
-| System exchanges | `sequenceDiagram` | "API", "sends to", "request" |
-| Data structure | `erDiagram` | "MCD", "table", "relation" |
-| States/transitions | `stateDiagram-v2` | "status", "goes from X to Y" |
-| Planning | `gantt` | "planning", "milestones", "phases" |
-| Object architecture | `classDiagram` | "class", "service", "inherits" |
+### Recherches web
+[🌐1] docs.anthropic.com — "Slash commands reference"
+[🌐2] blog.anthropic.com — "Claude Code announcement"
 
-→ Full rules in [mermaid-detection.md](references/mermaid-detection.md)
+### Non retenues
+- oldsite.com — Obsolète (2022)
+```
+
+### Reliability Scores
+| Score | Meaning |
+|-------|---------|
+| ⭐⭐⭐⭐⭐ | Official docs, primary sources |
+| ⭐⭐⭐⭐ | Recognized tech media, verified experts |
+| ⭐⭐⭐ | Community (SO, Reddit with arguments) |
+| ⭐⭐ | Unsourced blogs, undated |
+| ⭐ | Obsolete, unreliable → excluded |
+
+---
+
+## Meeting Mode (📋 Réunion) — Preserved from v2
+
+For backward compatibility, meeting reports retain v2 structure:
+
+### Meeting Type Detection
+| Type | Indicators |
+|------|------------|
+| Steering/Decision | "décision", "valider", budget, deadlines |
+| Information | "informer", "présenter", updates |
+| Brainstorming | "idées", "explorer", creative |
+| Technical | "architecture", "API", technical terms |
+| Generic | No clear indicators → neutral plan |
 
 ### Action Status Indicators
-
 | Indicator | Meaning |
 |-----------|---------|
 | 🟢 | Owner AND deadline defined |
 | 🟡 | Owner OR deadline (one missing) |
 | 🔴 | Neither owner nor deadline |
 
-Score displayed: `📊 Completeness: X% of actions have owner AND deadline`
-
-### Proactive Insights
-
-- 🔧 **Improvement suggestions**: Automation opportunities, integration potential
-- 🔶 **Technical debt**: Flagged workarounds and temporary solutions
-- 💭 **Ideas to explore**: Mentioned but not actioned
-- 🌐 **Enrichments**: Web research and skill completions
-
-→ Full rules in [proactive-rules.md](references/proactive-rules.md)
-
-### Automatic Glossary
-
-Extracts and defines: acronyms, technical terms, tools/libraries, domain-specific terms.
-
-→ Full rules in [glossary-extraction.md](references/glossary-extraction.md)
+→ See [templates/reunion.md](references/templates/reunion.md) for full template
+→ See [legacy/mermaid-detection.md](references/legacy/mermaid-detection.md) for diagrams
+→ See [legacy/proactive-rules.md](references/legacy/proactive-rules.md) for insights
+→ See [legacy/glossary-extraction.md](references/legacy/glossary-extraction.md) for glossary
 
 ---
 
-## Output Structure
+## User Options
 
-See [output-template.md](references/output-template.md) for complete template.
+| Option | Effect |
+|--------|--------|
+| `--no-web` | Disable web search |
+| `--no-diagrams` | Disable Mermaid generation |
+| `--no-glossary` | Disable glossary extraction |
+| `--max-diagrams N` | Limit diagram count (default: 6) |
 
-**Sections** (all required):
-1. Header (Object, Type, Participants, Duration)
-2. 🎯 Executive Summary
-3. 📌 Context
-4. 💬 Topics Discussed (with contextual diagrams)
-5. ✅ Decisions Made
-6. 📝 Action Items (with status indicators)
-7. 💡 Insights & Leads
-8. ⚠️ Watch Points
-9. ❓ Open Questions
-10. 🔜 Next Meeting Suggestions
-11. 📚 Glossary
-12. 💬 Key Quotes
-13. Footer
-
-**File naming**: `CR_[YYYY-MM-DD]_[slug-from-object].md`
-
----
-
-## Examples
-
-### Input (Transcription excerpt)
-
-```
-Jean: Bon, on doit valider le budget avant vendredi.
-Marie: Je m'occupe de finaliser les chiffres avec Thomas.
-Jean: Et pour le workflow d'import, on fait comment?
-Pierre: D'abord on extrait les données, ensuite on transforme, puis on charge en base.
-Marie: Je te les envoie demain matin.
-```
-
-### Output (Partial)
-
-**Action Items:**
-
-| Owner | Action | Deadline | Status |
-|-------|--------|----------|--------|
-| Marie | Finalize figures with Thomas | - | 🟡 |
-| Marie | Send specs to Pierre | Tomorrow AM | 🟢 |
-| Pierre | Prepare planning | - | 🟡 |
-| Team | Validate budget | Friday | 🟢 |
-
-> 📊 **Completeness**: 50% of actions have owner AND deadline
-
-**Detected Diagram:**
-
-```mermaid
-flowchart LR
-    A[Extract] --> B[Transform] --> C[Load]
-```
-> 💡 *Detected from: "D'abord on extrait, ensuite on transforme, puis on charge"*
-
----
-
-## User Options (On Request Only)
-
-| Option | Values | Default |
-|--------|--------|---------|
-| Length | Concise / Standard / Detailed | Standard |
-| Focus | Actions / Decisions / Complete | Complete |
-| `--no-diagrams` | Disable diagrams | Enabled |
-| `--no-glossary` | Disable glossary | Enabled |
-| `--concise` | Summary + actions only | Full |
-| `--max-diagrams N` | Limit diagram count | 6 |
+Note: Options can be stated naturally ("sans recherche web", "pas de diagrammes")
 
 ---
 
 ## Knowledge Base
 
-- [Meeting Plans](references/meeting-plans.md) — 7 structured plans by meeting type
-- [Output Template](references/output-template.md) — Complete Markdown template v2.0.0
-- [Mermaid Detection](references/mermaid-detection.md) — Detection matrix and examples
-- [Proactive Rules](references/proactive-rules.md) — Insight generation rules
-- [Glossary Extraction](references/glossary-extraction.md) — Term extraction logic
+### Configuration
+- [Questionnaire](references/questionnaire.md) — Questions and shortcuts
+- [Detail Levels](references/niveaux-detail.md) — 5 levels specification
+
+### Workflows
+- [Web Research](references/workflow-recherche.md) — Exhaustive search process
+- [Source Integration](references/integration-sources.md) — Multi-source fusion
+- [Anti-Hallucination](references/anti-hallucination.md) — Traceability rules
+
+### Templates (7 types)
+- [Réunion](references/templates/reunion.md) — Meeting reports
+- [Étude](references/templates/etude.md) — Thematic research
+- [Veille](references/templates/veille.md) — News watch
+- [Formation](references/templates/formation.md) — Training extraction
+- [Comparatif](references/templates/comparatif.md) — Comparative analysis
+- [Technique](references/templates/technique.md) — Technical documentation
+- [Audit](references/templates/audit.md) — Critical analysis
+
+### Legacy (from v2)
+- [Mermaid Detection](references/legacy/mermaid-detection.md)
+- [Proactive Rules](references/legacy/proactive-rules.md)
+- [Glossary Extraction](references/legacy/glossary-extraction.md)
 
 ---
 
 ## Limitations
 
 This skill does NOT:
-- Perform real-time transcription (audio → text)
-- Translate content (summarizes in source language)
-- Generate meeting agendas (processes past content only)
-- Create presentations from minutes
-- Handle video content directly
+- Perform audio transcription (speech-to-text)
+- Translate content
+- Generate meeting agendas
+- Process video content directly
 - Generate more than 6 diagrams per report
+- Access paywalled content
 
 ---
 
@@ -273,9 +265,10 @@ This skill does NOT:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2025-12-10 | Initial release |
-| 2.0.0 | 2025-12-16 | Added: Auto Mermaid diagrams, proactive insights, glossary extraction, action status indicators (🟢/🟡/🔴), completeness score, next meeting suggestions, technical debt detection, web enrichment, artifact output |
+| 2.0.0 | 2025-12-16 | Added: Mermaid diagrams, proactive insights, glossary, action indicators |
+| 3.0.0 | 2025-01-13 | Added: 7 content types, 5 detail levels, questionnaire, web research, multi-source integration, anti-hallucination, Perplexity-style citations |
 
-## Current: v2.0.0
+## Current: v3.0.0
 
 ## Owner
 
