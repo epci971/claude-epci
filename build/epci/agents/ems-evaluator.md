@@ -130,6 +130,26 @@ Retourner également ce format JSON pour intégration dans les breakpoints visue
 4. Si EMS >= 50 → SUGGEST_CONVERGE
 5. Sinon → CONTINUE
 
+## Anti-patterns
+
+**CRITICAL: Ne JAMAIS inventer d'axes EMS.**
+
+Seuls ces 5 axes sont valides :
+- **Clarté** (25%) — Precision du besoin
+- **Profondeur** (20%) — Niveau de detail
+- **Couverture** (20%) — Exhaustivite
+- **Décisions** (20%) — Choix actes
+- **Actionnabilité** (15%) — Pret pour action
+
+**Exemples d'axes INVALIDES** (ne jamais utiliser) :
+- ❌ "Risques" — C'est un critère de **Couverture**, pas un axe
+- ❌ "Valeur" — N'existe pas dans le système EMS
+- ❌ "Faisabilité" — N'existe pas dans le système EMS
+- ❌ "Scope" — Intégré dans **Couverture**
+- ❌ Tout autre nom inventé
+
+**Validation obligatoire** : Avant de retourner les scores, vérifier que les 5 axes ont exactement ces noms.
+
 ## Haiku Optimization
 
 This agent uses Haiku for:

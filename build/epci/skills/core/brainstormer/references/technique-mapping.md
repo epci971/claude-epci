@@ -7,11 +7,11 @@
 
 | Axe EMS < 50 | Categories Primaires | Categories Secondaires | Rationale |
 |--------------|---------------------|------------------------|-----------|
-| **Clarte** | deep, structured | creative | Clarifier le besoin via analyse profonde |
+| **Clarte** | deep, structured | creative, prioritization | Clarifier le besoin via analyse profonde |
 | **Profondeur** | deep, introspective | creative, theatrical | Explorer en profondeur via introspection |
 | **Couverture** | creative, collaborative, wild | theatrical, biomimetic | Elargir via creativite et collaboration |
-| **Decisions** | structured, deep | collaborative | Structurer les choix via frameworks |
-| **Actionnabilite** | structured | collaborative, wild | Concretiser via contraintes et action |
+| **Decisions** | structured, deep, prioritization | collaborative | Structurer les choix via frameworks |
+| **Actionnabilite** | structured, prioritization | collaborative, wild | Concretiser via contraintes et action |
 
 ## Selection par Phase
 
@@ -99,13 +99,14 @@ Quand 2+ axes ont score < 50:
 | creative | 3 | 6 | 2 | 11 |
 | deep | 2 | 3 | 3 | 8 |
 | introspective | 2 | 3 | 1 | 6 |
-| structured | 4 | 5 | 0 | 9 |
+| structured | 4 | 7 | 0 | 11 |
 | theatrical | 2 | 3 | 1 | 6 |
 | wild | 2 | 3 | 3 | 8 |
 | biomimetic | 0 | 1 | 2 | 3 |
 | quantum | 0 | 0 | 3 | 3 |
 | cultural | 0 | 2 | 2 | 4 |
-| **Total** | **18** | **27** | **18** | **63** |
+| prioritization | 2 | 1 | 0 | 3 |
+| **Total** | **20** | **30** | **18** | **68** |
 
 ## Integration Session YAML
 
