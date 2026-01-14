@@ -218,27 +218,78 @@ Overview with:
 
 See `references/decompose-templates.md` for full template.
 
-#### Step 4.5: Generate prd.json (MANDATORY)
+#### Step 4.5: Generate prd.json v2 (MANDATORY)
 
-Convert specs to Ralph Wiggum format:
+Convert specs to Ralph Wiggum format using **schema v2** for granular tracking.
+
+**Schema v2 structure:**
 
 ```json
 {
-  "$schema": "https://epci.dev/schemas/prd.json",
+  "$schema": "https://epci.dev/schemas/prd-v2.json",
+  "version": "2.0",
   "branchName": "feature/{slug}",
   "projectName": "{Project Title}",
   "generatedAt": "{ISO date}",
-  "generatedBy": "EPCI /decompose",
+  "generatedBy": "EPCI /decompose v5.2",
   "config": {
     "max_iterations": 50,
-    "completion_promise": "COMPLETE",
     "test_command": "{detected}",
     "lint_command": "{detected}",
     "granularity": "{granularity}"
   },
-  "userStories": [...]
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "{title}",
+      "category": "{inferred: backend|frontend|fullstack|infra|test|docs}",
+      "type": "{inferred: Script|Logic|API|UI|Test|Task}",
+      "complexity": "{inferred: S|M|L}",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "{from spec}", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "{from spec}", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": [],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "{SXX-name.md}",
+        "parent_brief": "{brief path}",
+        "estimated_minutes": 60
+      }
+    }
+  ]
 }
 ```
+
+**Inference rules** (see `ralph-converter` skill for details):
+
+| Field | Inference source |
+|-------|------------------|
+| `category` | File patterns, title keywords |
+| `type` | Title keywords (script/entity/api/component/test) |
+| `complexity` | Estimated minutes or AC/task count |
+| `acceptanceCriteria[]` | `## Acceptance Criteria` section in spec |
+| `tasks[]` | `## Tasks` checklist in spec, or inferred from AC |
+| `dependencies` | INDEX.md Dependencies column + "depends on" patterns |
 
 **Granularity effects on story count:**
 
