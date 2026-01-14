@@ -1,0 +1,509 @@
+{
+  "$schema": "https://epci.dev/schemas/prd-v2.json",
+  "version": "2.0",
+  "branchName": "feature/worktree-integration",
+  "projectName": "Worktree Integration EPCI",
+  "generatedAt": "2026-01-14T00:00:00.000Z",
+  "generatedBy": "EPCI /decompose v5.2",
+  "config": {
+    "max_iterations": 50,
+    "test_command": "python src/scripts/validate_all.py",
+    "lint_command": "python -m flake8 src/",
+    "granularity": "small"
+  },
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Setup script worktree-create.sh",
+      "category": "infra",
+      "type": "Script",
+      "complexity": "S",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "Fichier src/scripts/worktree-create.sh existe avec shebang bash", "done": false},
+        {"id": "AC2", "description": "Script est executable (chmod +x)", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Creer le fichier src/scripts/worktree-create.sh", "done": false},
+        {"id": "T2", "description": "Ajouter shebang #!/bin/bash et set -e", "done": false},
+        {"id": "T3", "description": "Rendre executable avec chmod +x", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": [],
+        "blocks": ["US-002"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-worktree-create.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 30
+      }
+    },
+    {
+      "id": "US-002",
+      "title": "Validation arguments et prerequis",
+      "category": "infra",
+      "type": "Logic",
+      "complexity": "S",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "Script valide que le slug est fourni en argument", "done": false},
+        {"id": "AC2", "description": "Script verifie que branche develop existe", "done": false},
+        {"id": "AC3", "description": "Script verifie qu'aucun worktree n'existe deja pour ce slug", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Implementer validation argument slug", "done": false},
+        {"id": "T2", "description": "Implementer verification branche develop", "done": false},
+        {"id": "T3", "description": "Implementer verification worktree existant", "done": false},
+        {"id": "T4", "description": "Ajouter messages d'erreur en francais", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-001"],
+        "blocks": ["US-003"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-worktree-create.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 30
+      }
+    },
+    {
+      "id": "US-003",
+      "title": "Creation worktree avec branche",
+      "category": "infra",
+      "type": "Logic",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "Worktree cree dans ~/worktrees/{projet}/{slug}/", "done": false},
+        {"id": "AC2", "description": "Branche feature/{slug} creee depuis develop", "done": false},
+        {"id": "AC3", "description": "Dossier ~/worktrees/ cree automatiquement si inexistant", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Detecter nom du projet (basename repo)", "done": false},
+        {"id": "T2", "description": "Creer dossier ~/worktrees/{projet}/ si necessaire", "done": false},
+        {"id": "T3", "description": "Executer git worktree add avec branche feature/{slug}", "done": false},
+        {"id": "T4", "description": "Afficher message de succes avec chemin", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-002"],
+        "blocks": ["US-004"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-worktree-create.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 60
+      }
+    },
+    {
+      "id": "US-004",
+      "title": "Copie fichiers .env",
+      "category": "infra",
+      "type": "Logic",
+      "complexity": "S",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "Fichiers .env copies dans le worktree si presents", "done": false},
+        {"id": "AC2", "description": "Fichiers .envrc copies dans le worktree si presents", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Detecter fichiers .env* dans le repo source", "done": false},
+        {"id": "T2", "description": "Copier les fichiers trouves dans le worktree", "done": false},
+        {"id": "T3", "description": "Afficher liste des fichiers copies", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-003"],
+        "blocks": ["US-005", "US-012"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-worktree-create.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 30
+      }
+    },
+    {
+      "id": "US-005",
+      "title": "Setup script worktree-finalize.sh",
+      "category": "infra",
+      "type": "Script",
+      "complexity": "S",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "Fichier src/scripts/worktree-finalize.sh existe avec shebang bash", "done": false},
+        {"id": "AC2", "description": "Script est executable (chmod +x)", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Creer le fichier src/scripts/worktree-finalize.sh", "done": false},
+        {"id": "T2", "description": "Ajouter shebang #!/bin/bash et set -e", "done": false},
+        {"id": "T3", "description": "Rendre executable avec chmod +x", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-004"],
+        "blocks": ["US-006", "US-009"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-worktree-finalize-abort.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 30
+      }
+    },
+    {
+      "id": "US-006",
+      "title": "Detection contexte et validation",
+      "category": "infra",
+      "type": "Logic",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "Script detecte automatiquement le slug depuis le worktree courant", "done": false},
+        {"id": "AC2", "description": "Script verifie qu'on est dans un worktree (pas le repo principal)", "done": false},
+        {"id": "AC3", "description": "Script verifie qu'il n'y a pas de fichiers non commites", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Implementer detection worktree courant", "done": false},
+        {"id": "T2", "description": "Extraire slug depuis branche feature/{slug}", "done": false},
+        {"id": "T3", "description": "Verifier fichiers non commites avec git status", "done": false},
+        {"id": "T4", "description": "Ajouter messages d'erreur en francais", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-005"],
+        "blocks": ["US-007"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-worktree-finalize-abort.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 60
+      }
+    },
+    {
+      "id": "US-007",
+      "title": "Merge et cleanup worktree",
+      "category": "infra",
+      "type": "Logic",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "Branche feature/{slug} mergee dans develop", "done": false},
+        {"id": "AC2", "description": "Worktree supprime apres merge reussi", "done": false},
+        {"id": "AC3", "description": "Branche feature/{slug} supprimee apres merge", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Checkout develop dans le repo principal", "done": false},
+        {"id": "T2", "description": "Merge branche feature/{slug} avec --no-ff", "done": false},
+        {"id": "T3", "description": "Supprimer worktree avec git worktree remove", "done": false},
+        {"id": "T4", "description": "Supprimer branche feature/{slug}", "done": false},
+        {"id": "T5", "description": "Afficher message de succes", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-006"],
+        "blocks": ["US-008", "US-011"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-worktree-finalize-abort.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 60
+      }
+    },
+    {
+      "id": "US-008",
+      "title": "Gestion conflits merge",
+      "category": "infra",
+      "type": "Logic",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "En cas de conflit, message clair expliquant comment resoudre", "done": false},
+        {"id": "AC2", "description": "Script n'effectue pas de cleanup si merge echoue", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Capturer erreur de merge", "done": false},
+        {"id": "T2", "description": "Afficher instructions de resolution", "done": false},
+        {"id": "T3", "description": "Exit avec code erreur sans cleanup", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-007"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-worktree-finalize-abort.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 45
+      }
+    },
+    {
+      "id": "US-009",
+      "title": "Setup script worktree-abort.sh",
+      "category": "infra",
+      "type": "Script",
+      "complexity": "S",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "Fichier src/scripts/worktree-abort.sh existe avec shebang bash", "done": false},
+        {"id": "AC2", "description": "Script est executable (chmod +x)", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Creer le fichier src/scripts/worktree-abort.sh", "done": false},
+        {"id": "T2", "description": "Ajouter shebang #!/bin/bash et set -e", "done": false},
+        {"id": "T3", "description": "Rendre executable avec chmod +x", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-005"],
+        "blocks": ["US-010"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-worktree-finalize-abort.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 30
+      }
+    },
+    {
+      "id": "US-010",
+      "title": "Cleanup force sans merge",
+      "category": "infra",
+      "type": "Logic",
+      "complexity": "S",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "Worktree supprime avec --force", "done": false},
+        {"id": "AC2", "description": "Branche feature/{slug} supprimee", "done": false},
+        {"id": "AC3", "description": "Fonctionne avec slug en argument ou depuis worktree courant", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Accepter slug en argument ou le detecter", "done": false},
+        {"id": "T2", "description": "Supprimer worktree avec git worktree remove --force", "done": false},
+        {"id": "T3", "description": "Supprimer branche avec git branch -D", "done": false},
+        {"id": "T4", "description": "Afficher message de confirmation", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-009"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-worktree-finalize-abort.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 30
+      }
+    },
+    {
+      "id": "US-011",
+      "title": "Integration /epci et /quick",
+      "category": "fullstack",
+      "type": "Task",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "/epci Phase 3 propose finalize si dans worktree", "done": false},
+        {"id": "AC2", "description": "/quick fin propose finalize si dans worktree", "done": false},
+        {"id": "AC3", "description": "Pas de proposition si hors worktree", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Modifier src/commands/epci.md - ajouter section finalize", "done": false},
+        {"id": "T2", "description": "Modifier src/commands/quick.md - ajouter section finalize", "done": false},
+        {"id": "T3", "description": "Implementer detection worktree conditionelle", "done": false},
+        {"id": "T4", "description": "Tester les deux workflows", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-007"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-integration-workflows.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 60
+      }
+    },
+    {
+      "id": "US-012",
+      "title": "Suggestion worktree dans /brief",
+      "category": "fullstack",
+      "type": "Task",
+      "complexity": "S",
+      "priority": 2,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "/brief affiche suggestion worktree pour STANDARD/LARGE", "done": false},
+        {"id": "AC2", "description": "/brief n'affiche pas de suggestion pour TINY/SMALL", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "Modifier src/commands/brief.md - localiser breakpoint routing", "done": false},
+        {"id": "T2", "description": "Ajouter bloc suggestion conditionnel", "done": false},
+        {"id": "T3", "description": "Tester avec differents routings", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": ["US-004"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-integration-workflows.md",
+        "parent_brief": "docs/briefs/worktree-integration/brief-worktree-integration-2026-01-14.md",
+        "estimated_minutes": 30
+      }
+    }
+  ]
+}

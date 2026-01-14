@@ -596,7 +596,7 @@ BLOCKED
 ### Example 1: Simple Story
 
 ```bash
-claude --dangerously-skip-permissions "/ralph-exec --prd ./prd.json"
+claude --dangerously-skip-permissions "/epci:ralph-exec --prd ./prd.json"
 
 # Output:
 [LOAD] Found 5 stories, 3 pending
@@ -615,7 +615,7 @@ claude --dangerously-skip-permissions "/ralph-exec --prd ./prd.json"
 ### Example 2: Story with Retries
 
 ```bash
-claude --dangerously-skip-permissions "/ralph-exec --prd ./prd.json --max-attempts 3"
+claude --dangerously-skip-permissions "/epci:ralph-exec --prd ./prd.json --max-attempts 3"
 
 # Output:
 [LOAD] Found 5 stories, 2 pending
@@ -636,7 +636,7 @@ Attempts: 2/3
 ### Example 3: All Stories Done
 
 ```bash
-claude --dangerously-skip-permissions "/ralph-exec --prd ./prd.json"
+claude --dangerously-skip-permissions "/epci:ralph-exec --prd ./prd.json"
 
 # Output:
 [LOAD] Found 5 stories, 0 pending
@@ -670,7 +670,7 @@ for ((i=1; i<=MAX_ITERATIONS; i++)); do
     fi
 
     # Execute next story (fresh context each time)
-    OUTPUT=$(claude --dangerously-skip-permissions "/ralph-exec --prd $PRD_FILE" 2>&1) || true
+    OUTPUT=$(claude --dangerously-skip-permissions "/epci:ralph-exec --prd $PRD_FILE" 2>&1) || true
     echo "$OUTPUT"
 
     # Check completion
