@@ -1,38 +1,15 @@
 {
-  "source": "epci",
+  "source": "quick",
   "type": "feat",
-  "scope": "ralph",
-  "description": "Add Ralph Wiggum autonomous overnight execution",
+  "scope": "decompose",
+  "description": "add prd.json v2 schema with enhanced tracking fields",
   "files": [
-    "src/commands/ralph.md",
-    "src/commands/cancel-ralph.md",
-    "src/skills/core/ralph-analyzer/SKILL.md",
     "src/skills/core/ralph-converter/SKILL.md",
-    "src/agents/ralph-executor.md",
-    "src/hooks/active/ralph-stop-hook.sh",
-    "src/hooks/runner.py",
-    "src/scripts/lib/circuit_breaker.sh",
-    "src/scripts/lib/response_analyzer.sh",
-    "src/scripts/lib/date_utils.sh",
     "src/commands/decompose.md",
-    "src/commands/orchestrate.md",
-    "src/settings/flags.md",
-    "templates/ralph/ralph-loop-state.yml",
-    "templates/ralph/PROMPT.md",
-    "CLAUDE.md",
-    "docs/features/ralph-wiggum-integration.md"
+    "src/commands/references/decompose-templates.md",
+    "src/agents/ralph-executor.md"
   ],
-  "featureDoc": "docs/features/ralph-wiggum-integration.md",
+  "featureDoc": null,
   "breaking": false,
-  "ticket": null,
-  "summary": [
-    "New /ralph command for overnight autonomous execution",
-    "Two execution modes: hook (same session) and script (fresh context)",
-    "Circuit breaker pattern for stagnation detection",
-    "RALPH_STATUS block with dual-condition exit logic",
-    "/decompose --wiggum generates prd.json + ralph.sh",
-    "New skills: ralph-analyzer, ralph-converter",
-    "New agent: @ralph-executor",
-    "Updated CLAUDE.md to v4.9.2"
-  ]
+  "ticket": null
 }
