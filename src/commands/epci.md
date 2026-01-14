@@ -589,6 +589,40 @@ python3 src/hooks/runner.py post-phase-3 --context '{
 
 **Note:** Skip only if `--no-hooks` flag is active.
 
+### Worktree Finalization (CONDITIONAL)
+
+**Condition:** Execute only if current directory is a worktree.
+
+**Detection:**
+```bash
+# Check if in worktree (git-dir contains "worktrees")
+git rev-parse --git-dir 2>/dev/null | grep -q "worktrees"
+```
+
+**IF in worktree:**
+
+Display worktree finalization prompt:
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🌳 WORKTREE DETECTED                                                 │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Feature complete dans worktree: {slug}                              │
+│                                                                     │
+│ Pour merger dans develop et nettoyer:                               │
+│   ./src/scripts/worktree-finalize.sh                                │
+│                                                                     │
+│ Pour abandonner le worktree:                                        │
+│   ./src/scripts/worktree-abort.sh                                   │
+│                                                                     │
+│ Pour garder le worktree ouvert:                                     │
+│   (aucune action requise)                                           │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**IF NOT in worktree:** Skip this section silently.
+
 ### ✅ COMPLETION
 
 ```
