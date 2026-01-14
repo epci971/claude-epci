@@ -31,3 +31,18 @@ if git worktree list | grep -q "$WORKTREE_PATH"; then
     echo "Chemin: $WORKTREE_PATH"
     exit 1
 fi
+
+# === Creation dossier worktrees si necessaire ===
+mkdir -p "$WORKTREE_BASE"
+
+# === Creation du worktree avec nouvelle branche ===
+echo "Creation du worktree pour '$SLUG'..."
+git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH" develop
+
+# === Message de succes ===
+echo ""
+echo "Worktree cree avec succes!"
+echo "  Chemin:  $WORKTREE_PATH"
+echo "  Branche: $BRANCH_NAME"
+echo ""
+echo "Pour y acceder: cd $WORKTREE_PATH"
