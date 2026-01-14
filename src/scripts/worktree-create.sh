@@ -39,10 +39,31 @@ mkdir -p "$WORKTREE_BASE"
 echo "Creation du worktree pour '$SLUG'..."
 git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH" develop
 
+# === Copie des fichiers .env si presents ===
+SOURCE_DIR=$(git rev-parse --show-toplevel)
+ENV_FILES_COPIED=()
+
+for env_file in "$SOURCE_DIR"/.env "$SOURCE_DIR"/.env.* "$SOURCE_DIR"/.envrc; do
+    if [ -f "$env_file" ]; then
+        filename=$(basename "$env_file")
+        cp "$env_file" "$WORKTREE_PATH/$filename"
+        ENV_FILES_COPIED+=("$filename")
+    fi
+done
+
 # === Message de succes ===
 echo ""
 echo "Worktree cree avec succes!"
 echo "  Chemin:  $WORKTREE_PATH"
 echo "  Branche: $BRANCH_NAME"
+
+if [ ${#ENV_FILES_COPIED[@]} -gt 0 ]; then
+    echo ""
+    echo "Fichiers copies:"
+    for f in "${ENV_FILES_COPIED[@]}"; do
+        echo "  - $f"
+    done
+fi
+
 echo ""
 echo "Pour y acceder: cd $WORKTREE_PATH"
