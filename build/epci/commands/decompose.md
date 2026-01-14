@@ -19,7 +19,7 @@ Each sub-spec targets 1-5 days of effort, enabling iterative EPCI execution.
 - INDEX.md with dependency graph and Gantt planning
 - **backlog.md** — Structured backlog table (Architector/Orchestrator style)
 - **prd.json** — User stories for Ralph autonomous execution
-- **ralph.sh** — Executable loop script calling `/ralph-exec`
+- **ralph.sh** — Executable loop script calling `/epci:ralph-exec`
 - **progress.txt** — Empty file for iteration logging
 
 **Use case:** A 25-day migration project becomes 9 manageable sub-specs that can be
@@ -301,7 +301,7 @@ Convert specs to Ralph Wiggum format using **schema v2** for granular tracking.
 
 #### Step 4.6: Generate ralph.sh (MANDATORY)
 
-Executable loop script calling `/ralph-exec` for each story.
+Executable loop script calling `/epci:ralph-exec` for each story.
 
 **Template:**
 
@@ -334,7 +334,8 @@ for ((i=1; i<=MAX_ITERATIONS; i++)); do
     # Execute next story (fresh context each time)
     # WARNING: --dangerously-skip-permissions enables autonomous execution
     # For security, run in isolated container without network access
-    OUTPUT=$(claude --dangerously-skip-permissions "/ralph-exec --prd $PRD_FILE" 2>&1) || true
+    # NOTE: Plugin commands require the "epci:" prefix
+    OUTPUT=$(claude --dangerously-skip-permissions "/epci:ralph-exec --prd $PRD_FILE" 2>&1) || true
     echo "$OUTPUT"
 
     # Check completion
@@ -355,8 +356,8 @@ exit 1
 ```
 
 **Key design:**
-- Each `claude "/ralph-exec"` call = fresh context (memory liberation)
-- No PROMPT.md needed — workflow is inline in /ralph-exec
+- Each `claude "/epci:ralph-exec"` call = fresh context (memory liberation)
+- No PROMPT.md needed — workflow is inline in /epci:ralph-exec
 - Simple promise tag detection for completion
 - **Autonomous mode**: `--dangerously-skip-permissions` enables overnight execution
 
@@ -376,7 +377,7 @@ Create empty progress.txt file for iteration logging:
 touch {output_dir}/progress.txt
 ```
 
-The `/ralph-exec` command will append iteration logs to this file.
+The `/epci:ralph-exec` command will append iteration logs to this file.
 
 #### Step 4.8: Create symlinks
 
@@ -391,7 +392,7 @@ ln -s ../../scripts/lib {output_dir}/lib
 ├── INDEX.md              # Overview with Mermaid diagrams
 ├── backlog.md            # Backlog table view
 ├── prd.json              # Ralph stories format
-├── ralph.sh              # Executable loop script (calls /ralph-exec)
+├── ralph.sh              # Executable loop script (calls /epci:ralph-exec)
 ├── progress.txt          # Empty logging file
 ├── S01-{name}.md
 ├── S02-{name}.md
@@ -481,7 +482,7 @@ docs/specs/migration-gardel/
 - `/brief` — Entry point for individual sub-specs after decomposition
 - `/epci` — Complete workflow for STANDARD/LARGE features
 - `/quick` — Fast workflow for TINY/SMALL sub-specs
-- `/ralph-exec` — Single story executor (called by ralph.sh)
+- `/epci:ralph-exec` — Single story executor (called by ralph.sh)
 
 ## Autonomous Execution
 
@@ -492,5 +493,5 @@ cd {output_dir}
 ./ralph.sh
 ```
 
-**Key benefit:** Each `claude "/ralph-exec"` call creates fresh context, enabling
+**Key benefit:** Each `claude "/epci:ralph-exec"` call creates fresh context, enabling
 long-running sessions without memory issues.
