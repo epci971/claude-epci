@@ -435,23 +435,33 @@ A: [Timeline ou "TBD - voir section Timeline"]
 
 ## Progression EMS
 
+**⚠️ OBLIGATOIRE** : Cette section doit TOUJOURS être présente dans le journal.
+Tracker l'évolution EMS à chaque itération.
+
 | Iteration | Score | Delta | Focus |
 |-----------|-------|-------|-------|
 | Init | 22 | - | Cadrage initial |
-| 1 | 38 | +16 | [Focus] |
-| 2 | 55 | +17 | [Focus] |
-| 3 | 72 | +17 | [Focus] |
+| 1 | 38 | +16 | [Axe amélioré] |
+| 2 | 55 | +17 | [Axe amélioré] |
+| 3 | 72 | +17 | [Axe amélioré] |
 | Final | 78 | +6 | Finalisation |
 
-## EMS Final Detaille
+## EMS Final Détaillé
 
-| Axe | Score |
-|-----|-------|
-| Clarte | XX/100 |
-| Profondeur | XX/100 |
-| Couverture | XX/100 |
-| Decisions | XX/100 |
-| Actionnabilite | XX/100 |
+**⚠️ OBLIGATOIRE** : Utiliser EXACTEMENT ces 5 axes standards (pas d'invention).
+
+| Axe | Score | Poids |
+|-----|-------|-------|
+| Clarté | XX/100 | 25% |
+| Profondeur | XX/100 | 20% |
+| Couverture | XX/100 | 20% |
+| Décisions | XX/100 | 20% |
+| Actionnabilité | XX/100 | 15% |
+
+**❌ NE PAS** utiliser d'autres noms d'axes comme :
+- "Faisabilité technique" → utiliser "Actionnabilité"
+- "Solution proposée" → utiliser "Décisions"
+- "Documentation" → utiliser "Clarté"
 
 ## Metadonnees Brainstormer
 

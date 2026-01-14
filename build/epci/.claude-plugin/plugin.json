@@ -1,6 +1,6 @@
 {
   "name": "epci",
-  "version": "5.1.4",
+  "version": "5.2.0",
   "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability, project memory, and batch orchestration",
   "author": {
     "name": "EPCI Team"
@@ -10,8 +10,7 @@
     "./commands/brief.md",
     "./commands/epci.md",
     "./commands/quick.md",
-    "./commands/ralph.md",
-    "./commands/cancel-ralph.md",
+    "./commands/ralph-exec.md",
     "./commands/decompose.md",
     "./commands/orchestrate.md",
     "./commands/memory.md",
@@ -33,7 +32,6 @@
     "./agents/clarifier.md",
     "./agents/planner.md",
     "./agents/implementer.md",
-    "./agents/ralph-executor.md",
     "./agents/ems-evaluator.md",
     "./agents/technique-advisor.md",
     "./agents/party-orchestrator.md",

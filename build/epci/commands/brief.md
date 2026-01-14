@@ -16,6 +16,10 @@ It transforms a raw brief into a structured brief and routes to the appropriate 
 
 **Key principle**: Validate the need BEFORE exploring the codebase.
 
+**Output Paths (CRITICAL):**
+- TINY/SMALL → Inline brief (no file created)
+- STANDARD/LARGE → `docs/features/<slug>.md` (Write tool, **NOT** native plan mode)
+
 ## Configuration
 
 | Element       | Value                                                                                                      |
@@ -87,6 +91,37 @@ Load project context from `.project-memory/` directory. The skill handles:
 - Applying defaults and displaying memory status
 
 **If `.project-memory/` does not exist:** Continue without context. Suggest `/memory init` at workflow end.
+
+---
+
+### Step 0.5: Input Type Detection (CONDITIONAL)
+
+**Detect input type and extract brief content:**
+
+```
+IF input starts with "/" or "./" or "docs/" or "@":
+   → INPUT_TYPE = "file"
+   → Read file content using Read tool
+   → Extract brief content from file
+   → Detect slug from filename or path
+ELSE:
+   → INPUT_TYPE = "text"
+   → Use input directly as brief content
+```
+
+**File Input Handling (from /brainstorm or external):**
+
+| Source | Path Pattern | Action |
+|--------|--------------|--------|
+| `/brainstorm` | `docs/briefs/<slug>/brief-*.md` | Read file, extract structured brief |
+| External file | `*.md` or `@filepath` | Read file, use as raw brief |
+
+**⚠️ IMPORTANT:** Even when input is a file from `/brainstorm`, Step 5 MUST still create a Feature Document in `docs/features/<slug>.md`. The brainstorm output in `docs/briefs/` is a **source**, not the final Feature Document.
+
+```
+docs/briefs/<slug>/brief-*.md  →  INPUT (source from brainstorm)
+docs/features/<slug>.md        →  OUTPUT (Feature Document for /epci)
+```
 
 ---
 
@@ -436,9 +471,41 @@ Generate a structured brief directly in your response (no file created):
 → Launch `/quick`
 ```
 
+#### ⚠️ CRITICAL: Feature Document vs Native Plan Mode
+
+**NE PAS** utiliser le mode plan natif de Claude Code pour les Feature Documents EPCI.
+
+| ❌ INCORRECT | ✅ CORRECT |
+|--------------|-----------|
+| EnterPlanMode tool | Write tool |
+| `~/.claude/plans/` | `docs/features/<slug>.md` |
+| Plan natif Claude Code | Feature Document EPCI |
+
+**Raison** : Les Feature Documents EPCI sont des fichiers persistants dans le repo git pour traçabilité, pas des plans temporaires Claude Code.
+
+---
+
 #### If STANDARD or LARGE → Feature Document (USE WRITE TOOL)
 
-**MANDATORY:** Use the **Write tool** to create the file `docs/features/<slug>.md`
+**MANDATORY:** Use the **Write tool** (NOT EnterPlanMode, NOT native plan mode) to create the file `docs/features/<slug>.md`
+
+**Path Requirements:**
+- Path MUST be `docs/features/<slug>.md` (in project directory)
+- Path MUST NOT be `~/.claude/plans/` or `.claude/plans/`
+- Tool MUST be Write, NOT EnterPlanMode
+
+```
+IF output_path contains ".claude/plans":
+   ╔══════════════════════════════════════════════════════════════╗
+   ║ ❌ ERROR: Wrong Output Path                                   ║
+   ╠══════════════════════════════════════════════════════════════╣
+   ║ Feature Documents must be saved in docs/features/             ║
+   ║ NOT in ~/.claude/plans/                                       ║
+   ║                                                               ║
+   ║ → Use Write tool with path: docs/features/<slug>.md           ║
+   ╚══════════════════════════════════════════════════════════════╝
+   RETRY with correct path
+```
 
 Create the directory if needed, then write the Feature Document:
 

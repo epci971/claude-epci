@@ -89,6 +89,23 @@ flowchart LR
 
 **Prerequisite:** §1 must be complete before running `/epci`.
 
+### ⚠️ CRITICAL: Feature Document Updates
+
+**TOUJOURS utiliser Edit tool** pour mettre à jour le Feature Document.
+
+| Phase | Action | Tool |
+|-------|--------|------|
+| Phase 1 | Écrire §2 (Plan) | Edit tool |
+| Phase 2 | Écrire §3 Part 1 (Implementation) | Edit tool |
+| Phase 3 | Compléter §3 Part 2 (Finalization) | Edit tool |
+
+**NE PAS:**
+- Utiliser EnterPlanMode ou le mode plan natif Claude Code
+- Écrire dans `~/.claude/plans/`
+- Afficher le contenu sans l'écrire dans le fichier
+
+**Path obligatoire:** `docs/features/<slug>.md` (dans le projet, pas dans ~/.claude/)
+
 ---
 
 ## Hooks Integration
@@ -291,7 +308,9 @@ IF all_checks_pass:
 
 ### Output §2 (USE EDIT TOOL — MANDATORY)
 
-**⚠️ MANDATORY:** Use Edit tool to update Feature Document with §2 content.
+**⚠️ MANDATORY:** Use **Edit tool** (NOT EnterPlanMode) to update Feature Document with §2 content.
+
+**Path:** `docs/features/<slug>.md` — **NOT** `~/.claude/plans/`
 
 **Two scenarios:**
 - **Scenario A** (Native plan): Update "✅ Plan Raffiné & Validé" section with atomic tasks
@@ -388,7 +407,9 @@ User feedback is recorded for learning (F08) to improve future suggestions.
 
 ### Output §3 Part 1 (USE EDIT TOOL — MANDATORY)
 
-**⚠️ MANDATORY:** Use the **Edit tool** to update the Feature Document with §3 implementation content.
+**⚠️ MANDATORY:** Use the **Edit tool** (NOT EnterPlanMode) to update the Feature Document with §3 implementation content.
+
+**Path:** `docs/features/<slug>.md` — **NOT** `~/.claude/plans/`
 
 > **Note (v3.2):** §3 now contains both Implementation and Finalization. Phase 2 writes the implementation part, Phase 3 appends the finalization part.
 
@@ -480,7 +501,9 @@ python3 src/hooks/runner.py post-phase-2 --context '{"phase": "phase-2", "featur
 
 ### Output §3 Part 2 (USE EDIT TOOL — MANDATORY)
 
-**⚠️ MANDATORY:** Use the **Edit tool** to **append** finalization content to §3.
+**⚠️ MANDATORY:** Use the **Edit tool** (NOT EnterPlanMode) to **append** finalization content to §3.
+
+**Path:** `docs/features/<slug>.md` — **NOT** `~/.claude/plans/`
 
 > **Note (v3.2):** Append this content after the Reviews/Deviations section in §3.
 

@@ -82,6 +82,38 @@ Si weak_axes non vide, afficher:
 **SUGGEST_TECHNIQUE**: Quand au moins un axe < 50 et aucune technique appliquee recemment.
 ```
 
+### Compact Format (for breakpoint integration)
+
+Retourner également ce format JSON pour intégration dans les breakpoints visuels :
+
+```json
+{
+  "ems": 75,
+  "delta": "+12",
+  "axes": {
+    "clarte": 80,
+    "profondeur": 60,
+    "couverture": 50,
+    "decisions": 75,
+    "actionnabilite": 70
+  },
+  "weak_axes": ["couverture"],
+  "bars": {
+    "clarte": "████████░░",
+    "profondeur": "██████░░░░",
+    "couverture": "█████░░░░░",
+    "decisions": "████████░░",
+    "actionnabilite": "███████░░░"
+  }
+}
+```
+
+**Génération des barres** :
+- 10 caractères par barre
+- `█` pour les dizaines complètes (score/10)
+- `░` pour le reste
+- Exemple : score 75 → `████████░░` (7.5 arrondis à 8 blocs pleins)
+
 ## Thresholds
 
 | EMS Range | Recommendation | Technique Trigger |
