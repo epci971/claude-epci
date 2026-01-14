@@ -28,7 +28,7 @@ un processus iteratif guide avec personas adaptatifs.
 - **Technique-advisor adapté** — Retourne JSON, main thread pose la question
 
 **Nouveautes v5.0:**
-- **63 techniques** en CSV (10 categories) remplacent les fichiers .md
+- **68 techniques** en CSV (11 categories) remplacent les fichiers .md
 - **Party Mode** — Discussion multi-persona collaborative (5 personas EPCI)
 - **Expert Panel** — Panel 5 dev leaders (Martin, Fowler, Newman, Gamma, Beck)
 - **Modes mutuellement exclusifs** — standard | party | panel
@@ -38,7 +38,7 @@ un processus iteratif guide avec personas adaptatifs.
 - [Personas](references/personas.md) — 3 modes de facilitation
 - [EMS System](references/ems-system.md) — Scoring v2 avec 5 axes
 - [Frameworks](references/frameworks.md) — 5 frameworks d'analyse
-- [Techniques CSV](references/techniques.csv) — 63 techniques (10 categories)
+- [Techniques CSV](references/techniques.csv) — 68 techniques (11 categories)
 - [Technique Mapping](references/technique-mapping.md) — EMS → categories
 - [Party Personas](references/party-personas.md) — 5 personas collaboratifs (v5.0)
 - [Expert Panel](references/experts/) — 5 experts dev (v5.0)
@@ -131,7 +131,7 @@ Read src/skills/core/brainstormer/references/techniques.csv
 Read src/skills/core/brainstormer/references/technique-mapping.md
 ```
 
-**10 Categories (63 Techniques):**
+**11 Categories (68 Techniques):**
 
 | Category | Count | Primary Phase |
 |----------|-------|---------------|
@@ -139,12 +139,13 @@ Read src/skills/core/brainstormer/references/technique-mapping.md
 | creative | 11 | Divergent |
 | deep | 8 | Convergent |
 | introspective | 6 | Divergent |
-| structured | 9 | Convergent |
+| structured | 11 | Convergent |
 | theatrical | 6 | Divergent |
 | wild | 8 | Divergent |
 | biomimetic | 3 | Divergent |
 | quantum | 3 | Convergent |
 | cultural | 4 | Divergent |
+| prioritization | 3 | Convergent |
 
 ### Auto-Invocation
 
@@ -258,74 +259,16 @@ AskUserQuestion({
 **IMPORTANT:** L'option "Other..." est automatiquement disponible dans AskUserQuestion.
 Ne pas l'ajouter manuellement aux options.
 
-### PRD Industry Standards Questions (v3.0 — AskUserQuestion)
+### PRD Industry Standards Questions (v3.0)
 
-Questions types pour les sections PRD, format AskUserQuestion:
+Sections PRD avec exemples de questions :
+- **Problem Statement** — `🛑 Critical` — données quantitatives, evidence
+- **Goals** — `⚠️ Important` — objectifs business/user/tech
+- **Non-Goals** — `⚠️ Important` — exclusions explicites v1
+- **Background** — `ℹ️ Info` — timing, stratégie
+- **Assumptions** — `ℹ️ Info` — hypothèses techniques
 
-**Problem Statement (Evidence & Data):**
-```typescript
-{
-  question: "Quelles données quantitatives supportent ce besoin ?",
-  header: "🛑 Critical",
-  options: [
-    { label: "Métriques existantes (Recommended)", description: "Analytics disponibles" },
-    { label: "À collecter", description: "Mettre en place tracking" },
-    { label: "Intuition équipe", description: "Valider par user research" }
-  ]
-}
-```
-
-**Goals (Business/User/Technical):**
-```typescript
-{
-  question: "Quel est l'objectif business principal ?",
-  header: "⚠️ Important",
-  options: [
-    { label: "Augmenter revenue", description: "Impact direct sur CA" },
-    { label: "Réduire churn", description: "Rétention utilisateurs" },
-    { label: "Acquérir utilisateurs", description: "Croissance base" }
-  ]
-}
-```
-
-**Non-Goals:**
-```typescript
-{
-  question: "Que devons-nous explicitement exclure de v1 ?",
-  header: "⚠️ Important",
-  options: [
-    { label: "[Feature complexe] (Recommended)", description: "Scope control" },
-    { label: "[Integration X]", description: "Différer à v2" },
-    { label: "Tout inclure", description: "Risque scope creep" }
-  ]
-}
-```
-
-**Background & Strategic Fit:**
-```typescript
-{
-  question: "Pourquoi cette feature maintenant ?",
-  header: "ℹ️ Info",
-  options: [
-    { label: "Demande utilisateur (Recommended)", description: "Feedback direct" },
-    { label: "Pression concurrentielle", description: "Market positioning" },
-    { label: "Dette technique", description: "Refactoring nécessaire" }
-  ]
-}
-```
-
-**Assumptions:**
-```typescript
-{
-  question: "Quelles hypothèses techniques sont nécessaires ?",
-  header: "ℹ️ Info",
-  options: [
-    { label: "Performance API OK", description: "Latence acceptable" },
-    { label: "Budget cloud approuvé", description: "Resources disponibles" },
-    { label: "Pas de contraintes", description: "Libre choix technique" }
-  ]
-}
-```
+> Voir `brainstorm.md` pour exemples TypeScript détaillés.
 
 ## Breakpoint Format (v5.2 — Boîte ASCII + EMS détaillé)
 

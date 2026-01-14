@@ -33,7 +33,7 @@ Execute ONE user story from prd.json autonomously using EPCT workflow (Explore, 
 |---------|-------|
 | **Thinking** | `think` (default) / `think hard` (on retry) |
 | **Skills** | project-memory, testing-strategy, git-workflow, code-conventions |
-| **Subagents** | @planner (M/L), @implementer (M/L), @Explore (quick) |
+| **Subagents** | @planner (M/L), @implementer (M/L), @Explore (quick), @plan-validator (L/XL), @code-reviewer (L/XL), @qa-reviewer (L/XL, conditional) |
 
 ---
 
@@ -54,11 +54,17 @@ Execute ONE user story from prd.json autonomously using EPCT workflow (Explore, 
     ▼
 [P] PLAN ──────────────────────────────────────────────────────────────
     │ Generate task list (inline or @planner for M/L)
+    │ @plan-validator validates plan (L/XL only)
     ▼
 [C] CODE-TEST LOOP ────────────────────────────────────────────────────
     │ FOR attempt = 1 to max_attempts:
     │   Implement → Test → Fix if needed
     │   IF tests pass: BREAK
+    ▼
+[R] REVIEW (L/XL only) ────────────────────────────────────────────────
+    │ @code-reviewer checks quality
+    │ @qa-reviewer if >5 test files
+    │ IF NEEDS_REVISION → retry [C] (max 2 cycles)
     ▼
 [T] COMMIT & UPDATE ───────────────────────────────────────────────────
     │ Git commit
@@ -175,8 +181,10 @@ progress_txt = ./progress.txt (if exists)
 |------------|----------|----------------|
 | S (TINY) | 1 file, <50 LOC | None |
 | M (SMALL) | 2-3 files, <200 LOC | @implementer |
-| L (STANDARD) | 4-10 files, <1000 LOC | @planner, @implementer |
-| XL (LARGE) | 10+ files | @planner, @implementer |
+| L (STANDARD) | 4-10 files, <1000 LOC | @planner, @plan-validator, @implementer, @code-reviewer, @qa-reviewer* |
+| XL (LARGE) | 10+ files | @planner, @plan-validator, @implementer, @code-reviewer, @qa-reviewer* |
+
+*@qa-reviewer is invoked only if >5 test files are created/modified.
 
 ---
 
@@ -214,6 +222,28 @@ Each task should be:
   ]
 }
 ```
+
+### Step P.3: Plan Validation (L/XL only)
+
+**For L/XL complexity, validate the plan with @plan-validator:**
+
+```
+Task tool with subagent_type="epci:plan-validator", model="opus"
+Input: Generated task list + story context
+Output: APPROVED or NEEDS_REVISION with CQNT alerts
+```
+
+**On NEEDS_REVISION:**
+- If 🛑 Critical alert: Mark story as blocked, exit
+- If ⚠️ Important alerts: Regenerate plan with fixes
+- Max 2 plan revision cycles
+
+**CQNT Alerts checked:**
+- Backlog < 3 tasks
+- Circular dependencies
+- Task without target file
+- Estimation > 30min per task
+- No test planned
 
 ---
 
@@ -305,6 +335,66 @@ IF test_error:
 
 ---
 
+## [R] Review Phase (L/XL only)
+
+**This phase is ONLY executed for L/XL complexity stories.**
+
+### Step R.1: Code Review
+
+**Invoke @code-reviewer for quality validation:**
+
+```
+Task tool with subagent_type="epci:code-reviewer", model="opus"
+Input: Modified files list + story context
+Output: APPROVED | APPROVED_WITH_FIXES | NEEDS_REVISION
+```
+
+**Review checks:**
+- Code quality (SRP, error handling, type safety)
+- Architecture (project patterns, coupling)
+- Tests (coverage, assertions, no anti-patterns)
+- Plan alignment (all tasks implemented, no scope creep)
+
+### Step R.2: QA Review (Conditional)
+
+**Invoke @qa-reviewer if >5 test files created/modified:**
+
+```
+Task tool with subagent_type="epci:qa-reviewer", model="sonnet"
+Input: Test files list + coverage info
+Output: APPROVED | NEEDS_IMPROVEMENT
+```
+
+**QA checks:**
+- Test pyramid balance
+- Coverage gaps (edge cases, error cases)
+- Anti-patterns (mock testing, coupled tests)
+
+### Step R.3: Handle Review Results
+
+```
+IF code_review == APPROVED:
+   → Continue to [T] Commit
+
+ELIF code_review == APPROVED_WITH_FIXES:
+   → Log fixes needed but non-blocking
+   → Continue to [T] Commit
+
+ELIF code_review == NEEDS_REVISION:
+   IF review_cycles < 2:
+      review_cycles += 1
+      → Apply fixes based on review feedback
+      → Return to [C] Code-Test Loop
+   ELSE:
+      → Mark story as "review_failed"
+      → Log review issues
+      → Continue to [T] Commit with warning
+```
+
+**Max 2 review cycles to prevent infinite loops.**
+
+---
+
 ## [T] Commit & Update Phase
 
 ### Step T.1: Git Commit
@@ -318,8 +408,6 @@ feat({story.category}): {story.title}
 
 Story: {story.id}
 Acceptance Criteria: {count} passed
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
@@ -508,7 +596,7 @@ BLOCKED
 ### Example 1: Simple Story
 
 ```bash
-claude "/ralph-exec --prd ./prd.json"
+claude --dangerously-skip-permissions "/ralph-exec --prd ./prd.json"
 
 # Output:
 [LOAD] Found 5 stories, 3 pending
@@ -527,7 +615,7 @@ claude "/ralph-exec --prd ./prd.json"
 ### Example 2: Story with Retries
 
 ```bash
-claude "/ralph-exec --prd ./prd.json --max-attempts 3"
+claude --dangerously-skip-permissions "/ralph-exec --prd ./prd.json --max-attempts 3"
 
 # Output:
 [LOAD] Found 5 stories, 2 pending
@@ -548,7 +636,7 @@ Attempts: 2/3
 ### Example 3: All Stories Done
 
 ```bash
-claude "/ralph-exec --prd ./prd.json"
+claude --dangerously-skip-permissions "/ralph-exec --prd ./prd.json"
 
 # Output:
 [LOAD] Found 5 stories, 0 pending
@@ -582,7 +670,7 @@ for ((i=1; i<=MAX_ITERATIONS; i++)); do
     fi
 
     # Execute next story (fresh context each time)
-    OUTPUT=$(claude "/ralph-exec --prd $PRD_FILE" 2>&1) || true
+    OUTPUT=$(claude --dangerously-skip-permissions "/ralph-exec --prd $PRD_FILE" 2>&1) || true
     echo "$OUTPUT"
 
     # Check completion

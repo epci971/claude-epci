@@ -332,7 +332,9 @@ for ((i=1; i<=MAX_ITERATIONS; i++)); do
     echo "Pending stories: $PENDING"
 
     # Execute next story (fresh context each time)
-    OUTPUT=$(claude "/ralph-exec --prd $PRD_FILE" 2>&1) || true
+    # WARNING: --dangerously-skip-permissions enables autonomous execution
+    # For security, run in isolated container without network access
+    OUTPUT=$(claude --dangerously-skip-permissions "/ralph-exec --prd $PRD_FILE" 2>&1) || true
     echo "$OUTPUT"
 
     # Check completion
@@ -356,6 +358,15 @@ exit 1
 - Each `claude "/ralph-exec"` call = fresh context (memory liberation)
 - No PROMPT.md needed — workflow is inline in /ralph-exec
 - Simple promise tag detection for completion
+- **Autonomous mode**: `--dangerously-skip-permissions` enables overnight execution
+
+**Security considerations:**
+- The script uses `--dangerously-skip-permissions` for autonomous execution
+- **Recommended safeguards:**
+  - Run in Docker container without network access
+  - Use Git worktree to isolate changes
+  - Review changes before merging to main branch
+  - Never run on production branches directly
 
 #### Step 4.7: Create progress.txt (MANDATORY)
 

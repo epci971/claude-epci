@@ -163,6 +163,9 @@ Boucle jusqu'a `finish`:
 1. **Integrer reponses** utilisateur
 2. **Recalculer EMS** via `@ems-evaluator`
    - Output: scores, delta, `weak_axes[]` (axes < 50)
+   - **CRITICAL: Utiliser UNIQUEMENT les 5 axes officiels** :
+     - Clarté, Profondeur, Couverture, Décisions, Actionnabilité
+     - Ne JAMAIS inventer d'axes (ex: "Risques" n'est PAS un axe)
    - **Tracking obligatoire (v5.2)**: Stocker dans `session_state.ems_history`:
      ```yaml
      ems_history:
@@ -175,43 +178,35 @@ Boucle jusqu'a `finish`:
          delta: "+16"
          focus: "Clarté"
      ```
-3. **Afficher breakpoint** (v5.2 — boîte ASCII avec EMS détaillé):
+3. **MANDATORY — Auto-technique check** (si pas `--no-technique`):
+   ```
+   IF weak_axes[] non vide
+      AND technique pas appliquée dans les 2 dernières iterations:
+   THEN:
+      a) Invoquer @technique-advisor (haiku) avec:
+         - weak_axes, phase, techniques_used[-2:]
+      b) Recevoir JSON: {mode, suggested_technique(s), reason}
+      c) Afficher suggestion via AskUserQuestion:
+         - Header: "💡 Technique" ou "💡 Mix"
+         - Options: Appliquer (Recommended), Autre, Ignorer
+   ```
+
+   **Trace attendue:**
+   ```
+   [EMS: 45] weak_axes: ["Couverture", "Actionnabilité"]
+   → @technique-advisor invoqué (mode: mix)
+   → Suggestion: "Six Hats" + "Pre-mortem"
+   → AskUserQuestion affiché avec options
+   ```
+
+   **SKIP uniquement si:**
+   - `--no-technique` flag actif
+   - Technique appliquée dans les 2 dernières iterations
+   - EMS >= 70 (proche finish)
+
+4. **Afficher breakpoint** (v5.2 — boîte ASCII avec EMS détaillé):
    - Voir format détaillé dans `src/skills/core/brainstormer/SKILL.md` section "Breakpoint Format"
    - Utiliser output compact JSON de `@ems-evaluator` pour les barres de progression
-4. **Auto-selection technique** (v4.8+ — AskUserQuestion):
-   - Si `weak_axes` non vide ET technique pas dans les 2 dernieres iterations:
-     - Invoquer `@technique-advisor` (subagent) → retourne JSON structuré
-     - **Main thread** pose la question via AskUserQuestion:
-     ```typescript
-     // Technique unique (1 axe faible)
-     AskUserQuestion({
-       questions: [{
-         question: "Technique suggérée: [NOM] pour améliorer [AXE] (XX%). Appliquer ?",
-         header: "💡 Technique",
-         multiSelect: false,
-         options: [
-           { label: "Appliquer (Recommended)", description: "[description technique]" },
-           { label: "Autre technique", description: "Choisir parmi alternatives" },
-           { label: "Ignorer", description: "Continuer sans technique" }
-         ]
-       }]
-     })
-
-     // Mix (2+ axes faibles)
-     AskUserQuestion({
-       questions: [{
-         question: "2 axes faibles détectés. Quelle(s) technique(s) appliquer ?",
-         header: "💡 Mix",
-         multiSelect: true,
-         options: [
-           { label: "[Technique1]", description: "Pour [Axe1] (XX%)" },
-           { label: "[Technique2]", description: "Pour [Axe2] (YY%)" },
-           { label: "Les deux (Recommended)", description: "Application séquentielle" }
-         ]
-       }]
-     })
-     ```
-   - Desactiver avec `--no-technique`
 5. **Transition check** (si EMS = 50 et Divergent):
    - **Étape A — Status (texte)**:
    ```

@@ -149,6 +149,13 @@ Recommandation: Option C (score 4.20)
 ## Pre-mortem — Anticipation des Risques
 
 ### Declencheur
+
+**Auto-suggestion** (via `@technique-advisor`) :
+- Quand axe **Actionnabilité** < 50
+- Quand axe **Décisions** < 50
+- Catégorie: `structured`, cible les risques d'implémentation
+
+**Manuel** :
 - Commande `premortem`
 - Projet a risque identifie
 - Avant decision finale importante
