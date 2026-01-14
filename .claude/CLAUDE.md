@@ -25,16 +25,16 @@ Systeme de gestion du developpement avec commandes, skills, subagents et hooks.
 
 ```
 src/
-├── agents/           # 10 subagents (validateurs, reviewers)
-├── commands/         # 11 commandes EPCI
+├── agents/           # 15 subagents (validateurs, reviewers, turbo, brainstorm)
+├── commands/         # 13 commandes EPCI
 ├── hooks/            # Systeme hooks (runner.py)
 ├── mcp/              # MCP Integration (config, activation)
 ├── orchestration/    # Wave orchestration
 ├── project-memory/   # Gestion memoire projet (Python)
 ├── scripts/          # Validation scripts (Python)
 ├── settings/         # Configuration
-└── skills/           # 25 skills
-    ├── core/         # 14 skills fondamentaux
+└── skills/           # 30 skills
+    ├── core/         # 18 skills fondamentaux
     ├── stack/        # 5 skills technologie
     ├── factory/      # 4 skills creation composants
     ├── personas/     # Systeme personas

@@ -1,8 +1,9 @@
 ---
 description: >-
-  Brainstorming guide v5.1 pour decouvrir et specifier une feature.
+  Brainstorming guide v5.2 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
   Brief output conforme PRD Industry Standards v3.0.
+  Breakpoints style /brief (boite ASCII + EMS 5 axes visuels).
   Questions via AskUserQuestion natif (3 max, headers priorite, suggestions).
   Finalization Checkpoint obligatoire a EMS >= 70 (bloquant).
   Session persistence, energy checkpoints.
@@ -11,13 +12,21 @@ argument-hint: "[description] [--template feature|problem|decision] [--quick] [-
 allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch, AskUserQuestion]
 ---
 
-# /brainstorm — Feature Discovery v5.1
+# /brainstorm — Feature Discovery v5.2
 
 ## Overview
 
 Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
+
+**Nouveautes v5.2**:
+- **Breakpoints style /brief** — Boîtes ASCII (`┌─ │ ├─ └─`) au lieu de tirets simples
+- **EMS 5 axes visuels** — Barres de progression (`████████░░`) à chaque itération
+- **Axes faibles marqués** — `[WEAK]` sur les axes < 50
+- **Progression EMS** — Historique visible au checkpoint (Init→Iter1→Iter2→Final)
+- **Tracking obligatoire** — `ems_history` stocké dans session_state
+- **Journal corrigé** — Axes standards obligatoires (pas d'invention)
 
 **Nouveautes v5.1**:
 - **AskUserQuestion natif** — Questions via outil Claude Code (UI QCM interactive)
@@ -154,7 +163,22 @@ Boucle jusqu'a `finish`:
 1. **Integrer reponses** utilisateur
 2. **Recalculer EMS** via `@ems-evaluator`
    - Output: scores, delta, `weak_axes[]` (axes < 50)
-3. **Auto-selection technique** (v4.8+ — AskUserQuestion):
+   - **Tracking obligatoire (v5.2)**: Stocker dans `session_state.ems_history`:
+     ```yaml
+     ems_history:
+       - iter: 0
+         ems: 22
+         delta: null
+         focus: "Cadrage initial"
+       - iter: 1
+         ems: 38
+         delta: "+16"
+         focus: "Clarté"
+     ```
+3. **Afficher breakpoint** (v5.2 — boîte ASCII avec EMS détaillé):
+   - Voir format détaillé dans `src/skills/core/brainstormer/SKILL.md` section "Breakpoint Format"
+   - Utiliser output compact JSON de `@ems-evaluator` pour les barres de progression
+4. **Auto-selection technique** (v4.8+ — AskUserQuestion):
    - Si `weak_axes` non vide ET technique pas dans les 2 dernieres iterations:
      - Invoquer `@technique-advisor` (subagent) → retourne JSON structuré
      - **Main thread** pose la question via AskUserQuestion:
@@ -188,7 +212,7 @@ Boucle jusqu'a `finish`:
      })
      ```
    - Desactiver avec `--no-technique`
-4. **Transition check** (si EMS = 50 et Divergent):
+5. **Transition check** (si EMS = 50 et Divergent):
    - **Étape A — Status (texte)**:
    ```
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -211,15 +235,9 @@ Boucle jusqu'a `finish`:
      }]
    })
    ```
-5. **Finalization checkpoint** (si EMS >= 70):
-   - **Étape A — Status (texte)**:
-   ```
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   🎯 FINALIZATION CHECKPOINT | EMS: XX/100
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   📊 Clarté: XX | Profondeur: XX | Couverture: XX | Décisions: XX | Action: XX
-   Le brief est suffisamment mature pour être finalisé.
-   ```
+6. **Finalization checkpoint** (si EMS >= 70):
+   - **Utiliser format boîte ASCII v5.2** (voir SKILL.md section "Finalization Checkpoint")
+   - Inclut: EMS final avec 5 axes visuels + ligne de progression
    - **Étape B — Question (AskUserQuestion)**:
    ```typescript
    AskUserQuestion({
@@ -237,16 +255,6 @@ Boucle jusqu'a `finish`:
    ```
    - **Comportement**: Continuer → questions, Preview → @planner puis redemande, Finaliser → Phase 3
    - **CRITICAL**: Checkpoint BLOQUANT. Attendre réponse explicite.
-6. **Afficher status breakpoint** (texte markdown AVANT questions):
-   ```
-   -------------------------------------------------------
-   [PHASE] | [PERSONA] | Iter X | EMS: XX/100 (+Y)
-   -------------------------------------------------------
-   ✅ Done: [éléments validés]
-   📋 Open: [points à clarifier]
-   -> continue | dive | back | save | energy | finish
-   -------------------------------------------------------
-   ```
 7. **Générer questions** — AskUserQuestion (3 max, si choix Continuer):
    ```typescript
    AskUserQuestion({

@@ -71,10 +71,12 @@ gantt
 ### Autonomous Execution (overnight)
 
 ```bash
-# Execute all specs autonomously
-/epci:ralph {output_dir}/
-# → Uses prd.json, executes via @ralph-executor
-# → Each story routes through /epci:brief → /epci:quick or /epci:epci
+# Run ralph.sh directly from terminal for context liberation
+cd {output_dir}
+./ralph.sh
+# → Calls claude "/ralph-exec --prd prd.json" for each story
+# → Fresh context per story (memory liberation)
+# → No routing through /brief or /epci — EPCT inline
 ```
 
 ### EPCI Command Reference
@@ -84,7 +86,7 @@ gantt
 | `/epci:brief` | Analyze spec/story, assess complexity |
 | `/epci:quick` | Fast workflow for TINY/SMALL (<200 LOC) |
 | `/epci:epci` | Full workflow for STANDARD/LARGE (>200 LOC) |
-| `/epci:ralph` | Autonomous overnight execution |
+| `/epci:ralph-exec` | Single story executor (called by ralph.sh) |
 | `/epci:commit` | Git commit with EPCI context |
 
 ---
