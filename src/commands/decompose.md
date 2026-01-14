@@ -424,18 +424,18 @@ for ((i=1; i<=MAX_ITERATIONS; i++)); do
     fi
 
     start_story_timer
-    OUTPUT=$(claude --dangerously-skip-permissions "/epci:ralph-exec --prd $PRD_FILE" 2>&1) || true
+    # Use tee to show output in real-time AND capture for analysis
+    OUTPUT_FILE=$(mktemp)
+    claude --dangerously-skip-permissions --verbose "/epci:ralph-exec --prd $PRD_FILE" 2>&1 | tee "$OUTPUT_FILE" || true
+    OUTPUT=$(cat "$OUTPUT_FILE")
 
     # Verbose: analyze response
     if [[ "$VERBOSE" == "true" && "$HAS_ANALYZER" == "true" ]]; then
-        TMP=$(mktemp); echo "$OUTPUT" > "$TMP"
-        analyze_response "$TMP" "$i" ".analysis_$i" 2>/dev/null && log_analysis_summary ".analysis_$i" 2>/dev/null
-        rm -f "$TMP" ".analysis_$i"
+        analyze_response "$OUTPUT_FILE" "$i" ".analysis_$i" 2>/dev/null && log_analysis_summary ".analysis_$i" 2>/dev/null
+        rm -f ".analysis_$i"
         echo -e "${YELLOW}Duration:${NC} $(get_story_time)"
     fi
-
-    # Show output (truncated in quiet mode)
-    [[ "$VERBOSE" == "false" && ${#OUTPUT} -gt 2000 ]] && echo "${OUTPUT:0:1000}..." || echo "${OUTPUT: -500}"
+    rm -f "$OUTPUT_FILE"
 
     # Check signals
     if echo "$OUTPUT" | grep -q '<promise>STORY_DONE</promise>'; then

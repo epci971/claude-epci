@@ -285,14 +285,13 @@ for ((i=1; i<=MAX_ITERATIONS; i++)); do
     start_story_timer
 
     # ========================================================================
-    # Execute Claude
+    # Execute Claude (with streaming output)
     # ========================================================================
 
-    OUTPUT=$(claude --dangerously-skip-permissions "/epci:ralph-exec --prd $PRD_FILE" 2>&1) || true
-
-    # Save output to temp file for analysis
+    # Use tee to show output in real-time AND capture for analysis
     OUTPUT_FILE=$(mktemp)
-    echo "$OUTPUT" > "$OUTPUT_FILE"
+    claude --dangerously-skip-permissions --verbose "/epci:ralph-exec --prd $PRD_FILE" 2>&1 | tee "$OUTPUT_FILE" || true
+    OUTPUT=$(cat "$OUTPUT_FILE")
 
     # ========================================================================
     # Verbose: Post-execution analysis

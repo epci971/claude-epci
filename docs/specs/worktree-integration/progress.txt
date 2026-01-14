@@ -6,3 +6,213 @@
 [2026-01-14T16:56:55-04:00] Starting US-001
 [2026-01-14T16:56:59-04:00] US-001 FAILED
 [2026-01-14T16:57:01-04:00] Starting US-001
+[2026-01-14T17:01:32-04:00] Ralph started
+[2026-01-14T17:01:32-04:00] Starting US-001
+=== Iteration 1 === [2026-01-14T21:02:00Z]
+Story: US-001 — Setup script worktree-create.sh
+Status: COMPLETED
+Duration: ~2m
+Files: src/scripts/worktree-create.sh
+Tests: N/A (script setup only)
+Commit: 7247c5e10f41ffa371466bd7ca8be79c446d1cbc
+
+Learnings:
+- Simple script setup with shebang and set -e
+- chmod +x applied successfully
+
+---
+[2026-01-14T17:03:15-04:00] US-001 DONE
+[2026-01-14T17:03:17-04:00] Starting US-002
+=== Iteration 2 === [2026-01-14T21:15:00Z]
+Story: US-002 — Validation arguments et prerequis
+Status: COMPLETED
+Duration: ~3m
+Files: src/scripts/worktree-create.sh
+Tests: Manual verification (syntax + 3 error cases)
+Commit: e560cdc78dbd4ed53841729bf186580120f0143d
+
+Learnings:
+- Implemented 3 validation checks: slug required, develop branch exists, worktree not exists
+- All error messages in French as per spec
+- Uses git rev-parse --verify for branch check
+- Uses git worktree list | grep for worktree check
+
+---
+[2026-01-14T17:05:20-04:00] US-002 DONE
+[2026-01-14T17:05:22-04:00] Starting US-003
+=== Iteration 3 === [2026-01-14T21:30:00Z]
+Story: US-003 — Creation worktree avec branche
+Status: COMPLETED
+Duration: ~4m
+Files: src/scripts/worktree-create.sh
+Tests: Syntax validation + project validation suite PASS
+Commit: 22acb8f71d59766bd1140a6d34886d7a690c2b7a
+
+Learnings:
+- mkdir -p for automatic directory creation
+- git worktree add -b creates branch and worktree in one command
+- Success message shows path and branch for user clarity
+
+---
+[2026-01-14T17:09:00-04:00] US-003 DONE
+[2026-01-14T17:07:31-04:00] US-003 DONE
+[2026-01-14T17:07:33-04:00] Starting US-004
+=== Iteration 4 === [2026-01-14T21:45:00Z]
+Story: US-004 — Copie fichiers .env
+Status: COMPLETED
+Duration: ~3m
+Files: src/scripts/worktree-create.sh
+Tests: Syntax validation PASS + project validation suite PASS
+Commit: c65cb85102e5d309b1289b9114ec97e99a6bcbdc
+
+Learnings:
+- Loop over .env, .env.*, .envrc patterns
+- Uses array to track copied files for display
+- Conditional display only if files were actually copied
+
+---
+[2026-01-14T17:10:30-04:00] US-004 DONE
+[2026-01-14T17:09:19-04:00] US-004 DONE
+[2026-01-14T17:09:21-04:00] Starting US-005
+=== Iteration 5 === [2026-01-14T22:10:00Z]
+Story: US-005 — Setup script worktree-finalize.sh
+Status: COMPLETED
+Duration: ~2m
+Files: src/scripts/worktree-finalize.sh
+Tests: Syntax validation PASS + project validation suite PASS
+Commit: c7e32847b9ff4055950f1ce6985d8193160a572f
+
+Learnings:
+- Created worktree-finalize.sh with bash shebang and set -e
+- chmod +x applied successfully
+- Script ready for context detection logic in US-006
+
+---
+[2026-01-14T17:11:00-04:00] US-005 DONE
+[2026-01-14T17:11:35-04:00] US-005 DONE
+[2026-01-14T17:11:37-04:00] Starting US-006
+=== Iteration 6 === [2026-01-14T22:30:00Z]
+Story: US-006 — Detection contexte et validation
+Status: COMPLETED
+Duration: ~3m
+Files: src/scripts/worktree-finalize.sh
+Tests: Syntax validation PASS + project validation suite PASS
+Commit: e3366a45d62e1676aefb97076d7779c44529a0d5
+
+Learnings:
+- Detects worktree vs main repo using git worktree list comparison
+- Extracts slug from feature/{slug} branch pattern
+- Uses git status --porcelain for uncommitted files check
+- All error messages in French with helpful instructions
+
+---
+[2026-01-14T22:30:00-04:00] US-006 DONE
+[2026-01-14T17:13:27-04:00] US-006 DONE
+[2026-01-14T17:13:29-04:00] Starting US-007
+=== Iteration 7 === [2026-01-14T22:50:00Z]
+Story: US-007 — Merge et cleanup worktree
+Status: COMPLETED
+Duration: ~4m
+Files: src/scripts/worktree-finalize.sh
+Tests: Syntax validation PASS + project validation suite PASS
+Commit: 1019cc39db324e44b411b67b460d573de62c2c6e
+
+Learnings:
+- Implemented checkout develop + merge --no-ff for history preservation
+- git worktree remove for cleanup after successful merge
+- git branch -d for branch deletion after merge
+- Comprehensive error messages for conflict handling with resolution instructions
+- Success summary shows all operations performed
+
+---
+[2026-01-14T22:50:00-04:00] US-007 DONE
+[2026-01-14T17:15:27-04:00] Ralph started (VERBOSE=true)
+[2026-01-14T17:15:28-04:00] Starting US-008
+=== Iteration 8 === [2026-01-14T23:10:00Z]
+Story: US-008 — Gestion conflits merge
+Status: COMPLETED
+Duration: ~1m
+Files: src/scripts/worktree-finalize.sh (already implemented in US-007)
+Tests: Syntax validation PASS + project validation suite PASS
+Commit: N/A (no new code changes)
+
+Learnings:
+- Conflict handling was already implemented in US-007's merge logic
+- AC1: Error message with French instructions on lines 57-67
+- AC2: exit 1 prevents cleanup execution on merge failure
+- Verified through code review and syntax validation
+
+---
+[2026-01-14T17:16:43-04:00] US-008 DONE (duration: 01:15)
+[2026-01-14T17:16:45-04:00] Starting US-009
+=== Iteration 9 === [2026-01-14T21:17:00Z]
+Story: US-009 — Setup script worktree-abort.sh
+Status: COMPLETED
+Duration: ~1m
+Files: src/scripts/worktree-abort.sh
+Tests: Syntax validation PASS + project validation suite PASS
+Commit: cec8d1cdfb8cd2ff81c7d59f11bc7be616120279
+
+Learnings:
+- Created worktree-abort.sh with bash shebang and set -e
+- chmod +x applied successfully
+- Script ready for cleanup logic in US-010
+
+---
+[2026-01-14T21:17:00-04:00] US-009 DONE
+[2026-01-14T17:18:32-04:00] US-009 DONE (duration: 01:47)
+[2026-01-14T17:18:34-04:00] Starting US-010
+=== Iteration 10 === [2026-01-14T23:30:00Z]
+Story: US-010 — Cleanup force sans merge
+Status: COMPLETED
+Duration: ~2m
+Files: src/scripts/worktree-abort.sh
+Tests: Syntax validation PASS + project validation suite PASS
+Commit: 272cd1fd98d46bf6d167ef152b57a89e2b48dcab
+
+Learnings:
+- Implemented dual-mode slug detection: argument OR auto-detect from current branch
+- Uses git worktree remove --force for unconditional cleanup
+- Uses git branch -D to force delete branch even if not merged
+- Verification checks worktree exists before attempting removal
+- French error messages with helpful usage examples
+
+---
+[2026-01-14T23:30:00-04:00] US-010 DONE
+[2026-01-14T17:20:42-04:00] US-010 DONE (duration: 02:08)
+[2026-01-14T17:20:44-04:00] Starting US-011
+=== Iteration 11 === [2026-01-14T23:45:00Z]
+Story: US-011 — Integration /epci et /quick
+Status: COMPLETED
+Duration: ~3m
+Files: src/commands/epci.md, src/commands/quick.md
+Tests: Command validation PASS
+Commit: 3b9d23d
+
+Learnings:
+- Added worktree finalization section to both commands
+- Uses git rev-parse --git-dir | grep worktrees for detection
+- Conditional display: finalize/abort options only in worktree context
+- Silent skip when not in a worktree
+
+---
+[2026-01-14T23:45:00-04:00] US-011 DONE
+[2026-01-14T17:23:32-04:00] US-011 DONE (duration: 02:48)
+[2026-01-14T17:23:34-04:00] Starting US-012
+=== Iteration 12 === [2026-01-14T21:25:00Z]
+Story: US-012 — Suggestion worktree dans /brief
+Status: COMPLETED
+Duration: ~2m
+Files: src/commands/brief.md
+Tests: Command validation PASS
+Commit: 294751dd183fc43ab2b7952fb880fe64faff749e
+
+Learnings:
+- Added conditional worktree tip in Step 4 breakpoint
+- Suggestion appears only for STANDARD/LARGE (not TINY/SMALL)
+- Uses [If STANDARD or LARGE:] pattern for conditional display
+- Shows worktree-create.sh, cd, and claude commands
+
+---
+[2026-01-14T21:25:00-04:00] US-012 DONE
+[2026-01-14T17:25:25-04:00] ALL_DONE

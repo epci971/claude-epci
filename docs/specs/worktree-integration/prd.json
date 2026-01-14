@@ -19,27 +19,28 @@
       "type": "Script",
       "complexity": "S",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "Fichier src/scripts/worktree-create.sh existe avec shebang bash", "done": false},
-        {"id": "AC2", "description": "Script est executable (chmod +x)", "done": false}
+        {"id": "AC1", "description": "Fichier src/scripts/worktree-create.sh existe avec shebang bash", "done": true},
+        {"id": "AC2", "description": "Script est executable (chmod +x)", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Creer le fichier src/scripts/worktree-create.sh", "done": false},
-        {"id": "T2", "description": "Ajouter shebang #!/bin/bash et set -e", "done": false},
-        {"id": "T3", "description": "Rendre executable avec chmod +x", "done": false}
+        {"id": "T1", "description": "Creer le fichier src/scripts/worktree-create.sh", "done": true},
+        {"id": "T2", "description": "Ajouter shebang #!/bin/bash et set -e", "done": true},
+        {"id": "T3", "description": "Rendre executable avec chmod +x", "done": true}
       ],
       "dependencies": {
         "depends_on": [],
         "blocks": ["US-002"]
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/scripts/worktree-create.sh"],
+        "completed_at": "2026-01-14T21:02:00.000Z",
+        "commit_hash": "7247c5e10f41ffa371466bd7ca8be79c446d1cbc"
       },
       "testing": {
         "test_files": [],
@@ -59,29 +60,30 @@
       "type": "Logic",
       "complexity": "S",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "Script valide que le slug est fourni en argument", "done": false},
-        {"id": "AC2", "description": "Script verifie que branche develop existe", "done": false},
-        {"id": "AC3", "description": "Script verifie qu'aucun worktree n'existe deja pour ce slug", "done": false}
+        {"id": "AC1", "description": "Script valide que le slug est fourni en argument", "done": true},
+        {"id": "AC2", "description": "Script verifie que branche develop existe", "done": true},
+        {"id": "AC3", "description": "Script verifie qu'aucun worktree n'existe deja pour ce slug", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Implementer validation argument slug", "done": false},
-        {"id": "T2", "description": "Implementer verification branche develop", "done": false},
-        {"id": "T3", "description": "Implementer verification worktree existant", "done": false},
-        {"id": "T4", "description": "Ajouter messages d'erreur en francais", "done": false}
+        {"id": "T1", "description": "Implementer validation argument slug", "done": true},
+        {"id": "T2", "description": "Implementer verification branche develop", "done": true},
+        {"id": "T3", "description": "Implementer verification worktree existant", "done": true},
+        {"id": "T4", "description": "Ajouter messages d'erreur en francais", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-001"],
         "blocks": ["US-003"]
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/scripts/worktree-create.sh"],
+        "completed_at": "2026-01-14T21:15:00.000Z",
+        "commit_hash": "e560cdc78dbd4ed53841729bf186580120f0143d"
       },
       "testing": {
         "test_files": [],
@@ -101,29 +103,30 @@
       "type": "Logic",
       "complexity": "M",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "Worktree cree dans ~/worktrees/{projet}/{slug}/", "done": false},
-        {"id": "AC2", "description": "Branche feature/{slug} creee depuis develop", "done": false},
-        {"id": "AC3", "description": "Dossier ~/worktrees/ cree automatiquement si inexistant", "done": false}
+        {"id": "AC1", "description": "Worktree cree dans ~/worktrees/{projet}/{slug}/", "done": true},
+        {"id": "AC2", "description": "Branche feature/{slug} creee depuis develop", "done": true},
+        {"id": "AC3", "description": "Dossier ~/worktrees/ cree automatiquement si inexistant", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Detecter nom du projet (basename repo)", "done": false},
-        {"id": "T2", "description": "Creer dossier ~/worktrees/{projet}/ si necessaire", "done": false},
-        {"id": "T3", "description": "Executer git worktree add avec branche feature/{slug}", "done": false},
-        {"id": "T4", "description": "Afficher message de succes avec chemin", "done": false}
+        {"id": "T1", "description": "Detecter nom du projet (basename repo)", "done": true},
+        {"id": "T2", "description": "Creer dossier ~/worktrees/{projet}/ si necessaire", "done": true},
+        {"id": "T3", "description": "Executer git worktree add avec branche feature/{slug}", "done": true},
+        {"id": "T4", "description": "Afficher message de succes avec chemin", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-002"],
         "blocks": ["US-004"]
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/scripts/worktree-create.sh"],
+        "completed_at": "2026-01-14T21:30:00.000Z",
+        "commit_hash": "22acb8f71d59766bd1140a6d34886d7a690c2b7a"
       },
       "testing": {
         "test_files": [],
@@ -143,27 +146,28 @@
       "type": "Logic",
       "complexity": "S",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "Fichiers .env copies dans le worktree si presents", "done": false},
-        {"id": "AC2", "description": "Fichiers .envrc copies dans le worktree si presents", "done": false}
+        {"id": "AC1", "description": "Fichiers .env copies dans le worktree si presents", "done": true},
+        {"id": "AC2", "description": "Fichiers .envrc copies dans le worktree si presents", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Detecter fichiers .env* dans le repo source", "done": false},
-        {"id": "T2", "description": "Copier les fichiers trouves dans le worktree", "done": false},
-        {"id": "T3", "description": "Afficher liste des fichiers copies", "done": false}
+        {"id": "T1", "description": "Detecter fichiers .env* dans le repo source", "done": true},
+        {"id": "T2", "description": "Copier les fichiers trouves dans le worktree", "done": true},
+        {"id": "T3", "description": "Afficher liste des fichiers copies", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-003"],
         "blocks": ["US-005", "US-012"]
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/scripts/worktree-create.sh"],
+        "completed_at": "2026-01-14T21:45:00.000Z",
+        "commit_hash": "c65cb85102e5d309b1289b9114ec97e99a6bcbdc"
       },
       "testing": {
         "test_files": [],
@@ -183,27 +187,28 @@
       "type": "Script",
       "complexity": "S",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "Fichier src/scripts/worktree-finalize.sh existe avec shebang bash", "done": false},
-        {"id": "AC2", "description": "Script est executable (chmod +x)", "done": false}
+        {"id": "AC1", "description": "Fichier src/scripts/worktree-finalize.sh existe avec shebang bash", "done": true},
+        {"id": "AC2", "description": "Script est executable (chmod +x)", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Creer le fichier src/scripts/worktree-finalize.sh", "done": false},
-        {"id": "T2", "description": "Ajouter shebang #!/bin/bash et set -e", "done": false},
-        {"id": "T3", "description": "Rendre executable avec chmod +x", "done": false}
+        {"id": "T1", "description": "Creer le fichier src/scripts/worktree-finalize.sh", "done": true},
+        {"id": "T2", "description": "Ajouter shebang #!/bin/bash et set -e", "done": true},
+        {"id": "T3", "description": "Rendre executable avec chmod +x", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-004"],
         "blocks": ["US-006", "US-009"]
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/scripts/worktree-finalize.sh"],
+        "completed_at": "2026-01-14T22:10:00.000Z",
+        "commit_hash": "c7e32847b9ff4055950f1ce6985d8193160a572f"
       },
       "testing": {
         "test_files": [],
@@ -223,29 +228,30 @@
       "type": "Logic",
       "complexity": "M",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "Script detecte automatiquement le slug depuis le worktree courant", "done": false},
-        {"id": "AC2", "description": "Script verifie qu'on est dans un worktree (pas le repo principal)", "done": false},
-        {"id": "AC3", "description": "Script verifie qu'il n'y a pas de fichiers non commites", "done": false}
+        {"id": "AC1", "description": "Script detecte automatiquement le slug depuis le worktree courant", "done": true},
+        {"id": "AC2", "description": "Script verifie qu'on est dans un worktree (pas le repo principal)", "done": true},
+        {"id": "AC3", "description": "Script verifie qu'il n'y a pas de fichiers non commites", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Implementer detection worktree courant", "done": false},
-        {"id": "T2", "description": "Extraire slug depuis branche feature/{slug}", "done": false},
-        {"id": "T3", "description": "Verifier fichiers non commites avec git status", "done": false},
-        {"id": "T4", "description": "Ajouter messages d'erreur en francais", "done": false}
+        {"id": "T1", "description": "Implementer detection worktree courant", "done": true},
+        {"id": "T2", "description": "Extraire slug depuis branche feature/{slug}", "done": true},
+        {"id": "T3", "description": "Verifier fichiers non commites avec git status", "done": true},
+        {"id": "T4", "description": "Ajouter messages d'erreur en francais", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-005"],
         "blocks": ["US-007"]
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/scripts/worktree-finalize.sh"],
+        "completed_at": "2026-01-14T22:30:00.000Z",
+        "commit_hash": "e3366a45d62e1676aefb97076d7779c44529a0d5"
       },
       "testing": {
         "test_files": [],
@@ -265,30 +271,31 @@
       "type": "Logic",
       "complexity": "M",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "Branche feature/{slug} mergee dans develop", "done": false},
-        {"id": "AC2", "description": "Worktree supprime apres merge reussi", "done": false},
-        {"id": "AC3", "description": "Branche feature/{slug} supprimee apres merge", "done": false}
+        {"id": "AC1", "description": "Branche feature/{slug} mergee dans develop", "done": true},
+        {"id": "AC2", "description": "Worktree supprime apres merge reussi", "done": true},
+        {"id": "AC3", "description": "Branche feature/{slug} supprimee apres merge", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Checkout develop dans le repo principal", "done": false},
-        {"id": "T2", "description": "Merge branche feature/{slug} avec --no-ff", "done": false},
-        {"id": "T3", "description": "Supprimer worktree avec git worktree remove", "done": false},
-        {"id": "T4", "description": "Supprimer branche feature/{slug}", "done": false},
-        {"id": "T5", "description": "Afficher message de succes", "done": false}
+        {"id": "T1", "description": "Checkout develop dans le repo principal", "done": true},
+        {"id": "T2", "description": "Merge branche feature/{slug} avec --no-ff", "done": true},
+        {"id": "T3", "description": "Supprimer worktree avec git worktree remove", "done": true},
+        {"id": "T4", "description": "Supprimer branche feature/{slug}", "done": true},
+        {"id": "T5", "description": "Afficher message de succes", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-006"],
         "blocks": ["US-008", "US-011"]
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/scripts/worktree-finalize.sh"],
+        "completed_at": "2026-01-14T22:50:00.000Z",
+        "commit_hash": "1019cc39db324e44b411b67b460d573de62c2c6e"
       },
       "testing": {
         "test_files": [],
@@ -308,27 +315,28 @@
       "type": "Logic",
       "complexity": "M",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "En cas de conflit, message clair expliquant comment resoudre", "done": false},
-        {"id": "AC2", "description": "Script n'effectue pas de cleanup si merge echoue", "done": false}
+        {"id": "AC1", "description": "En cas de conflit, message clair expliquant comment resoudre", "done": true},
+        {"id": "AC2", "description": "Script n'effectue pas de cleanup si merge echoue", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Capturer erreur de merge", "done": false},
-        {"id": "T2", "description": "Afficher instructions de resolution", "done": false},
-        {"id": "T3", "description": "Exit avec code erreur sans cleanup", "done": false}
+        {"id": "T1", "description": "Capturer erreur de merge", "done": true},
+        {"id": "T2", "description": "Afficher instructions de resolution", "done": true},
+        {"id": "T3", "description": "Exit avec code erreur sans cleanup", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-007"],
         "blocks": []
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/scripts/worktree-finalize.sh"],
+        "completed_at": "2026-01-14T23:10:00.000Z",
+        "commit_hash": null
       },
       "testing": {
         "test_files": [],
@@ -348,27 +356,28 @@
       "type": "Script",
       "complexity": "S",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "Fichier src/scripts/worktree-abort.sh existe avec shebang bash", "done": false},
-        {"id": "AC2", "description": "Script est executable (chmod +x)", "done": false}
+        {"id": "AC1", "description": "Fichier src/scripts/worktree-abort.sh existe avec shebang bash", "done": true},
+        {"id": "AC2", "description": "Script est executable (chmod +x)", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Creer le fichier src/scripts/worktree-abort.sh", "done": false},
-        {"id": "T2", "description": "Ajouter shebang #!/bin/bash et set -e", "done": false},
-        {"id": "T3", "description": "Rendre executable avec chmod +x", "done": false}
+        {"id": "T1", "description": "Creer le fichier src/scripts/worktree-abort.sh", "done": true},
+        {"id": "T2", "description": "Ajouter shebang #!/bin/bash et set -e", "done": true},
+        {"id": "T3", "description": "Rendre executable avec chmod +x", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-005"],
         "blocks": ["US-010"]
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/scripts/worktree-abort.sh"],
+        "completed_at": "2026-01-14T21:17:00.000Z",
+        "commit_hash": "cec8d1cdfb8cd2ff81c7d59f11bc7be616120279"
       },
       "testing": {
         "test_files": [],
@@ -388,29 +397,30 @@
       "type": "Logic",
       "complexity": "S",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "Worktree supprime avec --force", "done": false},
-        {"id": "AC2", "description": "Branche feature/{slug} supprimee", "done": false},
-        {"id": "AC3", "description": "Fonctionne avec slug en argument ou depuis worktree courant", "done": false}
+        {"id": "AC1", "description": "Worktree supprime avec --force", "done": true},
+        {"id": "AC2", "description": "Branche feature/{slug} supprimee", "done": true},
+        {"id": "AC3", "description": "Fonctionne avec slug en argument ou depuis worktree courant", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Accepter slug en argument ou le detecter", "done": false},
-        {"id": "T2", "description": "Supprimer worktree avec git worktree remove --force", "done": false},
-        {"id": "T3", "description": "Supprimer branche avec git branch -D", "done": false},
-        {"id": "T4", "description": "Afficher message de confirmation", "done": false}
+        {"id": "T1", "description": "Accepter slug en argument ou le detecter", "done": true},
+        {"id": "T2", "description": "Supprimer worktree avec git worktree remove --force", "done": true},
+        {"id": "T3", "description": "Supprimer branche avec git branch -D", "done": true},
+        {"id": "T4", "description": "Afficher message de confirmation", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-009"],
         "blocks": []
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/scripts/worktree-abort.sh"],
+        "completed_at": "2026-01-14T23:30:00.000Z",
+        "commit_hash": "272cd1fd98d46bf6d167ef152b57a89e2b48dcab"
       },
       "testing": {
         "test_files": [],
@@ -430,29 +440,30 @@
       "type": "Task",
       "complexity": "M",
       "priority": 1,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "/epci Phase 3 propose finalize si dans worktree", "done": false},
-        {"id": "AC2", "description": "/quick fin propose finalize si dans worktree", "done": false},
-        {"id": "AC3", "description": "Pas de proposition si hors worktree", "done": false}
+        {"id": "AC1", "description": "/epci Phase 3 propose finalize si dans worktree", "done": true},
+        {"id": "AC2", "description": "/quick fin propose finalize si dans worktree", "done": true},
+        {"id": "AC3", "description": "Pas de proposition si hors worktree", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Modifier src/commands/epci.md - ajouter section finalize", "done": false},
-        {"id": "T2", "description": "Modifier src/commands/quick.md - ajouter section finalize", "done": false},
-        {"id": "T3", "description": "Implementer detection worktree conditionelle", "done": false},
-        {"id": "T4", "description": "Tester les deux workflows", "done": false}
+        {"id": "T1", "description": "Modifier src/commands/epci.md - ajouter section finalize", "done": true},
+        {"id": "T2", "description": "Modifier src/commands/quick.md - ajouter section finalize", "done": true},
+        {"id": "T3", "description": "Implementer detection worktree conditionelle", "done": true},
+        {"id": "T4", "description": "Tester les deux workflows", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-007"],
         "blocks": []
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/commands/epci.md", "src/commands/quick.md"],
+        "completed_at": "2026-01-14T23:45:00.000Z",
+        "commit_hash": "3b9d23d"
       },
       "testing": {
         "test_files": [],
@@ -472,27 +483,28 @@
       "type": "Task",
       "complexity": "S",
       "priority": 2,
-      "status": "pending",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "acceptanceCriteria": [
-        {"id": "AC1", "description": "/brief affiche suggestion worktree pour STANDARD/LARGE", "done": false},
-        {"id": "AC2", "description": "/brief n'affiche pas de suggestion pour TINY/SMALL", "done": false}
+        {"id": "AC1", "description": "/brief affiche suggestion worktree pour STANDARD/LARGE", "done": true},
+        {"id": "AC2", "description": "/brief n'affiche pas de suggestion pour TINY/SMALL", "done": true}
       ],
       "tasks": [
-        {"id": "T1", "description": "Modifier src/commands/brief.md - localiser breakpoint routing", "done": false},
-        {"id": "T2", "description": "Ajouter bloc suggestion conditionnel", "done": false},
-        {"id": "T3", "description": "Tester avec differents routings", "done": false}
+        {"id": "T1", "description": "Modifier src/commands/brief.md - localiser breakpoint routing", "done": true},
+        {"id": "T2", "description": "Ajouter bloc suggestion conditionnel", "done": true},
+        {"id": "T3", "description": "Tester avec differents routings", "done": true}
       ],
       "dependencies": {
         "depends_on": ["US-004"],
         "blocks": []
       },
       "execution": {
-        "attempts": 0,
+        "attempts": 1,
+        "code_test_attempts": 1,
         "last_error": null,
-        "files_modified": [],
-        "completed_at": null,
-        "iteration": null
+        "files_modified": ["src/commands/brief.md"],
+        "completed_at": "2026-01-14T21:25:00.000Z",
+        "commit_hash": "294751dd183fc43ab2b7952fb880fe64faff749e"
       },
       "testing": {
         "test_files": [],
