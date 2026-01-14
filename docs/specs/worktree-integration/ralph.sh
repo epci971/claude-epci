@@ -8,7 +8,10 @@
 #
 # Usage:
 #   cd docs/specs/worktree-integration
-#   ./ralph.sh
+#   ./ralph.sh              # Verbose output (default)
+#   ./ralph.sh --quiet      # Minimal output
+#   ./ralph.sh --dry-run    # Show stories without executing
+#   ./ralph.sh --help       # Show help
 #
 # To stop: Ctrl+C
 #
@@ -26,20 +29,171 @@ MAX_ITERATIONS=${MAX_ITERATIONS:-50}
 PRD_FILE="./prd.json"
 PROGRESS_FILE="./progress.txt"
 
+# Verbose mode is ON by default
+VERBOSE=${VERBOSE:-true}
+DRY_RUN=false
+
+# Lib directory (for response_analyzer, etc.)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="/home/epci/apps/claude-epci/src/scripts/lib"
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
+
+# ============================================================================
+# Help Function
+# ============================================================================
+
+show_help() {
+    cat << EOF
+Ralph Wiggum — Autonomous Executor
+
+Usage: ./ralph.sh [OPTIONS]
+
+Options:
+    -q, --quiet      Disable verbose output (minimal logging)
+    --dry-run        Show pending stories without executing
+    -h, --help       Show this help message
+
+Environment Variables:
+    MAX_ITERATIONS   Maximum loop iterations (default: 50)
+    VERBOSE          Enable verbose mode (default: true)
+
+Examples:
+    ./ralph.sh                    # Verbose mode (default)
+    ./ralph.sh --quiet            # Minimal output for logs
+    ./ralph.sh --dry-run          # Preview stories
+    VERBOSE=false ./ralph.sh      # Via environment variable
+
+EOF
+}
+
+# ============================================================================
+# Argument Parsing
+# ============================================================================
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -q|--quiet)
+            VERBOSE=false
+            shift
+            ;;
+        --dry-run)
+            DRY_RUN=true
+            shift
+            ;;
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Unknown option: $1${NC}"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
+# ============================================================================
+# Source Library Functions (if available)
+# ============================================================================
+
+if [[ -f "$LIB_DIR/date_utils.sh" ]]; then
+    source "$LIB_DIR/date_utils.sh"
+fi
+
+if [[ -f "$LIB_DIR/response_analyzer.sh" ]]; then
+    source "$LIB_DIR/response_analyzer.sh"
+    HAS_ANALYZER=true
+else
+    HAS_ANALYZER=false
+fi
+
+# ============================================================================
+# Utility Functions
+# ============================================================================
+
+# Progress bar display
+show_progress_bar() {
+    local completed=$1
+    local total=$2
+    local width=40
+
+    if [[ $total -eq 0 ]]; then
+        return
+    fi
+
+    local percent=$((completed * 100 / total))
+    local filled=$((completed * width / total))
+    local empty=$((width - filled))
+
+    printf "["
+    printf "%${filled}s" | tr ' ' '#'
+    printf "%${empty}s" | tr ' ' '-'
+    printf "] %d%% (%d/%d)\n" "$percent" "$completed" "$total"
+}
+
+# Time tracking
+START_TIME=$(date +%s)
+
+get_elapsed_time() {
+    local current=$(date +%s)
+    local elapsed=$((current - START_TIME))
+    printf "%02d:%02d:%02d" $((elapsed/3600)) $((elapsed%3600/60)) $((elapsed%60))
+}
+
+# Per-story time tracking
+STORY_START_TIME=0
+
+start_story_timer() {
+    STORY_START_TIME=$(date +%s)
+}
+
+get_story_elapsed() {
+    local current=$(date +%s)
+    local elapsed=$((current - STORY_START_TIME))
+    printf "%02d:%02d" $((elapsed/60)) $((elapsed%60))
+}
+
+# Show files modified in last commit
+show_files_modified() {
+    local files
+    files=$(git diff --name-only HEAD~1 2>/dev/null | head -10)
+    if [[ -n "$files" ]]; then
+        echo -e "${YELLOW}Files modified:${NC}"
+        echo "$files" | while read -r f; do
+            echo "  $f"
+        done
+    fi
+}
+
+# ============================================================================
+# Header
+# ============================================================================
 
 echo "========================================"
 echo "  Ralph Wiggum — Autonomous Executor"
+if [[ "$VERBOSE" == "true" ]]; then
+    echo -e "         ${CYAN}[VERBOSE MODE]${NC}"
+fi
 echo "========================================"
 echo ""
 echo "PRD: $PRD_FILE"
 echo "Max iterations: $MAX_ITERATIONS"
 echo "Progress log: $PROGRESS_FILE"
+if [[ "$VERBOSE" == "true" ]]; then
+    echo "Libs: $LIB_DIR"
+fi
 echo ""
+
+# ============================================================================
+# Validation
+# ============================================================================
 
 # Check PRD exists
 if [ ! -f "$PRD_FILE" ]; then
@@ -47,51 +201,152 @@ if [ ! -f "$PRD_FILE" ]; then
     exit 1
 fi
 
-# Log start
-echo "[$(date -Iseconds)] Ralph started" >> "$PROGRESS_FILE"
+# Check jq is available
+if ! command -v jq &> /dev/null; then
+    echo -e "${RED}Error: jq is required but not installed${NC}"
+    echo "Install with: apt install jq (Linux) or brew install jq (macOS)"
+    exit 1
+fi
+
+# ============================================================================
+# Dry Run Mode
+# ============================================================================
+
+if [[ "$DRY_RUN" == "true" ]]; then
+    echo -e "${CYAN}=== DRY RUN MODE ===${NC}"
+    echo "Would execute the following stories:"
+    echo ""
+
+    jq -r '.userStories[] | select(.passes==false and .status!="blocked") | "\(.id) — \(.title) [\(.complexity)]"' "$PRD_FILE" | while read -r line; do
+        echo "  - $line"
+    done
+
+    echo ""
+    PENDING=$(jq '[.userStories[] | select(.passes==false and .status!="blocked")] | length' "$PRD_FILE")
+    COMPLETED=$(jq '[.userStories[] | select(.passes==true)] | length' "$PRD_FILE")
+    TOTAL=$(jq '.userStories | length' "$PRD_FILE")
+    echo "Total: $TOTAL stories"
+    echo "Completed: $COMPLETED"
+    echo "Pending: $PENDING"
+    exit 0
+fi
+
+# ============================================================================
+# Log Start
+# ============================================================================
+
+echo "[$(date -Iseconds)] Ralph started (VERBOSE=$VERBOSE)" >> "$PROGRESS_FILE"
+
+# ============================================================================
+# Main Loop
+# ============================================================================
 
 for ((i=1; i<=MAX_ITERATIONS; i++)); do
     echo ""
-    echo -e "${YELLOW}=== Iteration $i ===${NC}"
 
-    # Check if any stories remain
+    # Get progress stats
     PENDING=$(jq '[.userStories[] | select(.passes==false and .status!="blocked")] | length' "$PRD_FILE")
     COMPLETED=$(jq '[.userStories[] | select(.passes==true)] | length' "$PRD_FILE")
     TOTAL=$(jq '.userStories | length' "$PRD_FILE")
 
-    echo "Progress: $COMPLETED/$TOTAL completed, $PENDING pending"
-
+    # Check if done
     if [ "$PENDING" -eq 0 ]; then
         echo -e "${GREEN}All stories complete!${NC}"
         echo "[$(date -Iseconds)] All stories complete" >> "$PROGRESS_FILE"
         exit 0
     fi
 
-    # Get next story info for logging
+    # Get next story info
     NEXT_STORY=$(jq -r '[.userStories[] | select(.passes==false and .status!="blocked")][0].id // "none"' "$PRD_FILE")
     NEXT_TITLE=$(jq -r '[.userStories[] | select(.passes==false and .status!="blocked")][0].title // "none"' "$PRD_FILE")
+    NEXT_COMPLEXITY=$(jq -r '[.userStories[] | select(.passes==false and .status!="blocked")][0].complexity // "?"' "$PRD_FILE")
 
-    echo "Next story: $NEXT_STORY — $NEXT_TITLE"
-    echo "[$(date -Iseconds)] Starting $NEXT_STORY" >> "$PROGRESS_FILE"
+    # ========================================================================
+    # Verbose: Pre-execution display
+    # ========================================================================
 
-    # Execute next story (fresh context each time)
-    # WARNING: --dangerously-skip-permissions enables autonomous execution
-    # NOTE: Use /epci:ralph-exec (plugin prefix required)
-    OUTPUT=$(claude --dangerously-skip-permissions "/epci:ralph-exec --prd $PRD_FILE" 2>&1) || true
-
-    # Show output (truncated if too long)
-    if [ ${#OUTPUT} -gt 2000 ]; then
-        echo "${OUTPUT:0:1000}"
-        echo "... [truncated] ..."
-        echo "${OUTPUT: -500}"
+    if [[ "$VERBOSE" == "true" ]]; then
+        echo -e "${BLUE}+--------------------------------------------------------------------+${NC}"
+        echo -e "${BLUE}|        Story Execution — Iteration $i                              |${NC}"
+        echo -e "${BLUE}+--------------------------------------------------------------------+${NC}"
+        echo -e "${YELLOW}Story:${NC}      $NEXT_STORY"
+        echo -e "${YELLOW}Title:${NC}      $NEXT_TITLE"
+        echo -e "${YELLOW}Complexity:${NC} $NEXT_COMPLEXITY"
+        echo -e "${YELLOW}Elapsed:${NC}    $(get_elapsed_time)"
+        show_progress_bar "$COMPLETED" "$TOTAL"
+        echo ""
     else
-        echo "$OUTPUT"
+        echo -e "${YELLOW}=== Iteration $i ===${NC}"
+        echo "Progress: $COMPLETED/$TOTAL completed, $PENDING pending"
+        echo "Next story: $NEXT_STORY — $NEXT_TITLE"
     fi
 
-    # Check completion signals
+    echo "[$(date -Iseconds)] Starting $NEXT_STORY" >> "$PROGRESS_FILE"
+    start_story_timer
+
+    # ========================================================================
+    # Execute Claude
+    # ========================================================================
+
+    OUTPUT=$(claude --dangerously-skip-permissions "/epci:ralph-exec --prd $PRD_FILE" 2>&1) || true
+
+    # Save output to temp file for analysis
+    OUTPUT_FILE=$(mktemp)
+    echo "$OUTPUT" > "$OUTPUT_FILE"
+
+    # ========================================================================
+    # Verbose: Post-execution analysis
+    # ========================================================================
+
+    if [[ "$VERBOSE" == "true" ]]; then
+        # Show response analysis if available
+        if [[ "$HAS_ANALYZER" == "true" ]] && type analyze_response &>/dev/null; then
+            ANALYSIS_FILE=".response_analysis_$i"
+            analyze_response "$OUTPUT_FILE" "$i" "$ANALYSIS_FILE" 2>/dev/null || true
+
+            if [[ -f "$ANALYSIS_FILE" ]]; then
+                log_analysis_summary "$ANALYSIS_FILE" 2>/dev/null || true
+                rm -f "$ANALYSIS_FILE"
+            fi
+        fi
+
+        # Show files modified
+        show_files_modified
+
+        # Show story duration
+        echo -e "${YELLOW}Story duration:${NC} $(get_story_elapsed)"
+        echo ""
+    fi
+
+    # Always show output (truncated in quiet mode)
+    if [[ "$VERBOSE" == "false" ]]; then
+        if [ ${#OUTPUT} -gt 2000 ]; then
+            echo "${OUTPUT:0:1000}"
+            echo "... [truncated] ..."
+            echo "${OUTPUT: -500}"
+        else
+            echo "$OUTPUT"
+        fi
+    else
+        # In verbose mode, show the story completion box from Claude output
+        # (The full output is in the analysis, just show completion signals)
+        if echo "$OUTPUT" | grep -q '┌─────────────────────────────────────────────────────────────────────┐'; then
+            echo "$OUTPUT" | grep -A 20 '┌─────────────────────────────────────────────────────────────────────┐' | head -25
+        else
+            # Fallback: show last 500 chars
+            echo "${OUTPUT: -500}"
+        fi
+    fi
+
+    rm -f "$OUTPUT_FILE"
+
+    # ========================================================================
+    # Check Completion Signals
+    # ========================================================================
+
     if echo "$OUTPUT" | grep -q '<promise>STORY_DONE</promise>'; then
         echo -e "${GREEN}Story $NEXT_STORY completed successfully${NC}"
-        echo "[$(date -Iseconds)] $NEXT_STORY DONE" >> "$PROGRESS_FILE"
+        echo "[$(date -Iseconds)] $NEXT_STORY DONE (duration: $(get_story_elapsed))" >> "$PROGRESS_FILE"
     elif echo "$OUTPUT" | grep -q '<promise>ALL_DONE</promise>'; then
         echo -e "${GREEN}All stories complete!${NC}"
         echo "[$(date -Iseconds)] ALL_DONE" >> "$PROGRESS_FILE"
