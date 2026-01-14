@@ -1,22 +1,31 @@
 ---
 name: brainstormer
 description: >-
-  Feature discovery et brainstorming guide pour EPCI v5.0. Workflow avec
+  Feature discovery et brainstorming guide pour EPCI v5.1. Workflow avec
   personas adaptatifs, phases Divergent/Convergent, scoring EMS v2 via @ems-evaluator,
   auto-techniques via @technique-advisor (63 techniques CSV), Party Mode (5 personas),
-  Expert Panel (5 dev leaders). Modes: standard | party | panel.
+  Expert Panel (5 dev leaders). Questions via AskUserQuestion natif (3 max, headers priorité).
+  Modes: standard | party | panel.
   Use when: /brainstorm invoked, feature discovery needed.
   Not for: implementation tasks, code generation, simple questions.
-allowed-tools: [Read, Write, Glob, Grep, Task]
+allowed-tools: [Read, Write, Glob, Grep, Task, AskUserQuestion]
 ---
 
-# Brainstormer v5.0
+# Brainstormer v5.1
 
 ## Overview
 
 Skill de brainstorming specialise pour la decouverte de features.
 Transforme des idees vagues en briefs fonctionnels complets via
 un processus iteratif guide avec personas adaptatifs.
+
+**Nouveautes v5.1:**
+- **AskUserQuestion natif** — Questions via outil Claude Code (UI QCM interactive)
+- **3 questions max** par iteration (au lieu de 5)
+- **Headers priorité** — `🛑 Critical`, `⚠️ Important`, `ℹ️ Info` (max 12 chars)
+- **Suggestions visuelles** — `(Recommended)` dans le label de l'option suggérée
+- **Breakpoint séparé** — Status en texte, questions via AskUserQuestion
+- **Technique-advisor adapté** — Retourne JSON, main thread pose la question
 
 **Nouveautes v5.0:**
 - **63 techniques** en CSV (10 categories) remplacent les fichiers .md
@@ -208,113 +217,188 @@ Input: phase, weak_axes, techniques_used
 Output: selected technique(s), adapted questions
 ```
 
-## Question Format
+## Question Format (AskUserQuestion Native v5.1)
 
-3-5 questions par iteration avec choix A/B/C:
+**Contraintes AskUserQuestion:**
+- Maximum **3 questions** par invocation
+- Timeout: 60 secondes par question
+- Header: max 12 caractères
+- Options: 2-4 par question
+- `(Recommended)` suffix pour la suggestion visuelle
+- Option "Other..." automatiquement disponible
 
+**Format standard:**
+```typescript
+AskUserQuestion({
+  questions: [
+    {
+      question: "[Question complète avec contexte ?]",
+      header: "[🛑|⚠️|ℹ️] [Label]",  // Max 12 chars
+      multiSelect: false,
+      options: [
+        { label: "[Option concise]", description: "[Contexte, raison]" },
+        { label: "[Option (Recommended)]", description: "[Pourquoi recommandé]" },
+        { label: "[Autre option]", description: "[Description]" }
+      ]
+    }
+  ]
+})
 ```
-1. [Question 1]
-   A) Option A  B) Option B  C) Option C
-   -> Suggestion: B
 
-2. [Question 2]
-   A) Option A  B) Option B  C) Option C
-```
+**Mapping Priorité → Header:**
+| Priorité | Header | Comportement |
+|----------|--------|--------------|
+| 🛑 Critique | `🛑 Critical` | Question posée en premier, obligatoire |
+| ⚠️ Important | `⚠️ Important` | Recommandation appliquée si ignorée |
+| ℹ️ Info | `ℹ️ Info` | Purement informatif, default silencieux |
+| Checkpoint | `🎯 Checkpoint` | Finalization ou transition |
+| Technique | `💡 Technique` | Suggestion de technique |
+| Transition | `🔄 Transition` | Changement de phase |
 
-### PRD Industry Standards Questions (v3.0)
+**IMPORTANT:** L'option "Other..." est automatiquement disponible dans AskUserQuestion.
+Ne pas l'ajouter manuellement aux options.
 
-Questions a poser pour les nouvelles sections PRD:
+### PRD Industry Standards Questions (v3.0 — AskUserQuestion)
+
+Questions types pour les sections PRD, format AskUserQuestion:
 
 **Problem Statement (Evidence & Data):**
-```
-- "Quelles donnees quantitatives supportent ce besoin ?"
-  A) Metriques existantes  B) A collecter  C) Intuition equipe
-  -> Suggestion: A si analytics disponibles
-
-- "Quel est l'impact si ce probleme n'est pas resolu ?"
-  A) Business critique  B) UX degradee  C) Dette technique
+```typescript
+{
+  question: "Quelles données quantitatives supportent ce besoin ?",
+  header: "🛑 Critical",
+  options: [
+    { label: "Métriques existantes (Recommended)", description: "Analytics disponibles" },
+    { label: "À collecter", description: "Mettre en place tracking" },
+    { label: "Intuition équipe", description: "Valider par user research" }
+  ]
+}
 ```
 
 **Goals (Business/User/Technical):**
-```
-- "Quel est l'objectif business principal ?"
-  A) Augmenter revenue  B) Reduire churn  C) Acquerir utilisateurs
-
-- "Quelle metrique utilisateur veut-on ameliorer ?"
-  A) Temps de completion  B) Satisfaction (NPS)  C) Adoption
+```typescript
+{
+  question: "Quel est l'objectif business principal ?",
+  header: "⚠️ Important",
+  options: [
+    { label: "Augmenter revenue", description: "Impact direct sur CA" },
+    { label: "Réduire churn", description: "Rétention utilisateurs" },
+    { label: "Acquérir utilisateurs", description: "Croissance base" }
+  ]
+}
 ```
 
 **Non-Goals:**
-```
-- "Que devons-nous explicitement exclure de v1 ?"
-  A) [Feature complexe]  B) [Integration X]  C) Tout inclure
-  -> Suggestion: A ou B pour scope control
+```typescript
+{
+  question: "Que devons-nous explicitement exclure de v1 ?",
+  header: "⚠️ Important",
+  options: [
+    { label: "[Feature complexe] (Recommended)", description: "Scope control" },
+    { label: "[Integration X]", description: "Différer à v2" },
+    { label: "Tout inclure", description: "Risque scope creep" }
+  ]
+}
 ```
 
 **Background & Strategic Fit:**
-```
-- "Pourquoi cette feature maintenant ?"
-  A) Demande utilisateur  B) Pression concurrentielle  C) Dette technique
-  -> Suggestion: A
+```typescript
+{
+  question: "Pourquoi cette feature maintenant ?",
+  header: "ℹ️ Info",
+  options: [
+    { label: "Demande utilisateur (Recommended)", description: "Feedback direct" },
+    { label: "Pression concurrentielle", description: "Market positioning" },
+    { label: "Dette technique", description: "Refactoring nécessaire" }
+  ]
+}
 ```
 
 **Assumptions:**
-```
-- "Quelles hypotheses techniques sont necessaires ?"
-  A) Performance API OK  B) Budget cloud approuve  C) Pas de contraintes
-
-- "Quelles hypotheses business sont critiques ?"
-  A) Stakeholder buy-in  B) Pas de changement priorites  C) Resources dispos
-```
-
-**Timeline (optionnel):**
-```
-- "Avez-vous une deadline cible ?"
-  A) Q1  B) Q2  C) TBD
-  -> Suggestion: C si incertain
+```typescript
+{
+  question: "Quelles hypothèses techniques sont nécessaires ?",
+  header: "ℹ️ Info",
+  options: [
+    { label: "Performance API OK", description: "Latence acceptable" },
+    { label: "Budget cloud approuvé", description: "Resources disponibles" },
+    { label: "Pas de contraintes", description: "Libre choix technique" }
+  ]
+}
 ```
 
-## Breakpoint Format
+## Breakpoint Format (Séparé des Questions v5.1)
 
+**IMPORTANT:** Le breakpoint status est SÉPARÉ des questions.
+Afficher le status en markdown AVANT d'invoquer AskUserQuestion.
+
+**Étape 1 — Status Breakpoint (texte markdown):**
 ```
 -------------------------------------------------------
 [PHASE] | [PERSONA] | Iter X | EMS: XX/100 (+Y)
 -------------------------------------------------------
-Done: [elements valides]
-Open: [points a clarifier]
-
-Questions:
-1. [Question] -> Suggestion: [si applicable]
-2. [Question]
-3. [Question]
+✅ Done: [éléments validés]
+📋 Open: [points à clarifier]
 
 -> continue | dive [topic] | back | save | energy | finish
 -------------------------------------------------------
 ```
 
-## Finalization Checkpoint
+**Étape 2 — Questions (AskUserQuestion):**
+```typescript
+AskUserQuestion({
+  questions: [
+    // Max 3 questions, triées par priorité
+    { question: "...", header: "🛑 Critical", multiSelect: false, options: [...] },
+    { question: "...", header: "⚠️ Important", multiSelect: false, options: [...] },
+    { question: "...", header: "ℹ️ Info", multiSelect: false, options: [...] }
+  ]
+})
+```
 
-**Trigger:** EMS >= 85 (première fois atteint dans la session)
+**Raison de la séparation:**
+- Le breakpoint montre l'état de la session (informatif)
+- Les questions demandent des décisions (interactif)
+- AskUserQuestion a un timeout de 60s, le status doit être visible avant
 
-**Format obligatoire:**
+## Finalization Checkpoint (AskUserQuestion v5.1)
+
+**Trigger:** EMS >= 70 (première fois atteint dans la session)
+
+**Format en 2 étapes:**
+
+**Étape A — Status (texte markdown):**
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FINALIZATION CHECKPOINT | EMS: XX/100
+🎯 FINALIZATION CHECKPOINT | EMS: XX/100
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 Clarté: XX | Profondeur: XX | Couverture: XX | Décisions: XX | Action: XX
 Le brief est suffisamment mature pour être finalisé.
-
-[1] Continuer (plus d'itérations)
-[2] Preview plan (@planner) sans finaliser
-[3] Finaliser maintenant (finish)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**Comportement selon choix:**
-- [1] Continuer → génère 3-5 questions, poursuit itérations normalement
-- [2] Preview → invoque @planner, affiche plan, PUIS redemande [1]/[3]
-- [3] Finaliser → passe en Phase 3 Generation
+**Étape B — Question (AskUserQuestion):**
+```typescript
+AskUserQuestion({
+  questions: [{
+    question: "Brief EMS XX/100 prêt. Quelle action ?",
+    header: "🎯 Checkpoint",
+    multiSelect: false,
+    options: [
+      { label: "Continuer", description: "Plus d'itérations pour affiner" },
+      { label: "Preview (Recommended)", description: "@planner sans finaliser" },
+      { label: "Finaliser", description: "Générer brief + journal maintenant" }
+    ]
+  }]
+})
+```
 
-**CRITICAL:** Ce checkpoint est BLOQUANT. Ne pas continuer sans réponse explicite.
+**Comportement selon réponse:**
+- "Continuer" → génère 3 nouvelles questions via AskUserQuestion, reprend Phase 2
+- "Preview" → invoque @planner, affiche plan, puis redemande [Continuer/Finaliser]
+- "Finaliser" → passe en Phase 3 Generation
+
+**CRITICAL:** Ce checkpoint est BLOQUANT. Attendre réponse explicite.
 
 ## @planner Integration
 

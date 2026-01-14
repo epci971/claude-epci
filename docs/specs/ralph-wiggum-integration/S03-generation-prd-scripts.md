@@ -1,0 +1,172 @@
+# Specification — S03: Generation prd.json & Scripts
+
+> **Parent project**: ralph-wiggum-integration
+> **Spec ID**: S03
+> **Estimated effort**: 2 day(s)
+> **Dependencies**: S02
+> **Blocks**: S04
+
+---
+
+## 1. Context
+
+This sub-spec enriches the `/decompose` command to automatically generate Ralph-compatible outputs: prd.json (user stories), ralph.sh (executable script), and PROMPT.md (customized prompt). It also implements the full Script mode for fresh context execution.
+
+**Source**: `PRD-ralph-wiggum-integration-2025-01-13.md` — US1, US2, US3, US15
+
+---
+
+## 2. Scope
+
+### Included
+
+- US1: Generate prd.json from /decompose
+  - prd.json v2 schema with enhanced tracking
+  - Automatic story extraction from specs
+  - Acceptance criteria and tasks mapping
+  - Dependency inference
+
+- US2: Generated ralph.sh script
+  - Executable loop script
+  - Integration with Circuit Breaker (S02)
+  - Integration with Response Analyzer (S02)
+  - prd.json update on story completion
+
+- US3: Intelligent prompt.md
+  - Stack detection (package.json, composer.json, etc.)
+  - Pre-filled commands based on stack
+  - RALPH_STATUS section
+  - Customization markers
+
+- US15: Mode Script Externe (Fresh Context)
+  - New Claude instance per story
+  - Crash recovery with --continue
+  - Session state persistence
+
+### Excluded
+
+- Mode Hook — see S01
+- /ralph command — see S04
+- Circuit Breaker implementation — see S02 (already done)
+
+---
+
+## 3. Tasks
+
+### Skill ralph-converter (US1, US2, US3)
+
+- [ ] Create `src/skills/core/ralph-converter/SKILL.md`
+  - [ ] prd.json v2 generation logic
+  - [ ] Story inference rules (category, type, complexity)
+  - [ ] Acceptance criteria extraction from specs
+  - [ ] Task extraction from specs
+  - [ ] Dependency mapping from INDEX.md
+
+- [ ] Create `src/skills/core/ralph-converter/references/`
+  - [ ] `prd-schema-v2.json` — JSON schema
+  - [ ] `inference-rules.md` — Documentation
+
+### Templates
+
+- [ ] Create `src/templates/ralph/PROMPT.md`
+  - [ ] Project context section
+  - [ ] Stack-specific commands (npm/pip/composer)
+  - [ ] RALPH_STATUS instructions
+  - [ ] "CUSTOMIZE" markers for user sections
+
+- [ ] Create `src/templates/ralph/ralph.sh`
+  - [ ] Loop structure with prd.json tracking
+  - [ ] Integration with lib/ scripts
+  - [ ] Claude invocation (claude --print)
+  - [ ] Story completion detection
+  - [ ] Commit automation
+
+### Mode Script (US15)
+
+- [ ] Implement fresh context invocation
+- [ ] Session state file (.ralph-session.json)
+- [ ] --continue flag for crash recovery
+- [ ] progress.txt logging
+
+### Update /decompose
+
+- [ ] Modify `src/commands/decompose.md`
+  - [ ] Add --granularity flag documentation
+  - [ ] Document automatic prd.json generation
+  - [ ] Document automatic ralph.sh generation
+  - [ ] Document automatic PROMPT.md generation
+
+### Tests
+
+- [ ] prd.json schema validation
+- [ ] Story inference accuracy
+- [ ] Stack detection
+- [ ] ralph.sh execution (dry-run)
+
+---
+
+## 4. Acceptance Criteria
+
+| ID | Criterion | Verification |
+|----|-----------|--------------|
+| S03-AC1 | `/decompose` generates prd.json with stories | File check |
+| S03-AC2 | `--granularity small` generates 3-5 stories/day | Story count |
+| S03-AC3 | prd.json follows v2 schema | Schema validation |
+| S03-AC4 | ralph.sh is executable (chmod +x) | File permissions |
+| S03-AC5 | ralph.sh loops on passes=false stories | Script review |
+| S03-AC6 | Story completion updates prd.json (passes=true) | Manual test |
+| S03-AC7 | Node.js project → npm commands in PROMPT.md | Content check |
+| S03-AC8 | PHP project → composer commands in PROMPT.md | Content check |
+| S03-AC9 | PROMPT.md contains RALPH_STATUS section | Content check |
+| S03-AC10 | "CUSTOMIZE" markers present in PROMPT.md | Content check |
+| S03-AC11 | Fresh context mode launches new Claude instance | Process check |
+| S03-AC12 | --continue resumes from .ralph-session.json | Manual test |
+
+---
+
+## 5. Technical Notes
+
+### Stack Detection Rules
+
+| File | Stack | Commands |
+|------|-------|----------|
+| `package.json` | Node.js | npm test, npm run lint |
+| `composer.json` | PHP | composer test, phpcs |
+| `requirements.txt` | Python | pytest, flake8 |
+| `pom.xml` | Java | mvn test |
+| `Cargo.toml` | Rust | cargo test |
+
+### prd.json v2 Key Fields
+
+```json
+{
+  "version": "2.0",
+  "config": {
+    "max_iterations": 50,
+    "test_command": "npm test",
+    "granularity": "small"
+  },
+  "userStories": [
+    {
+      "id": "US-001",
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [...],
+      "tasks": [...],
+      "execution": { "attempts": 0 }
+    }
+  ]
+}
+```
+
+### Files to Create
+
+| File | Type | Lines (est.) |
+|------|------|--------------|
+| `src/skills/core/ralph-converter/SKILL.md` | Markdown | ~300 |
+| `src/templates/ralph/PROMPT.md` | Markdown | ~150 |
+| `src/templates/ralph/ralph.sh` | Bash | ~400 |
+
+---
+
+*Generated by /decompose — Project: ralph-wiggum-integration*

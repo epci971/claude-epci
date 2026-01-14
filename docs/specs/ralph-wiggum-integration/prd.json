@@ -1,266 +1,2351 @@
 {
-  "project": "ralph-wiggum-integration",
-  "source": "PRD-ralph-wiggum-integration-2025-01-13.md",
-  "generated": "2025-01-13",
-  "granularity": "standard",
-  "total_stories": 32,
-  "estimated_hours": 48,
-  "stories": [
+  "$schema": "https://epci.dev/schemas/prd-v2.json",
+  "version": "2.0",
+  "branchName": "feature/ralph-wiggum-integration",
+  "projectName": "Ralph Wiggum Integration",
+  "generatedAt": "2025-01-14T00:00:00.000Z",
+  "generatedBy": "EPCI /decompose v5.2",
+  "config": {
+    "max_iterations": 50,
+    "test_command": "python src/scripts/validate_all.py",
+    "lint_command": "python -m flake8 src/",
+    "granularity": "small"
+  },
+  "userStories": [
     {
       "id": "US-001",
-      "title": "Create ralph-stop-hook.sh with hook registration",
-      "parent_spec": "S01-mode-hook.md",
-      "estimated_minutes": 90,
+      "title": "Create ralph-stop-hook.sh script",
+      "category": "infra",
+      "type": "Script",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Script is executable (chmod +x)",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Script reads JSONL transcript",
+          "done": false
+        },
+        {
+          "id": "AC3",
+          "description": "Script handles hook registration",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create file structure src/hooks/ralph-stop-hook.sh",
+          "done": false
+        },
+        {
+          "id": "T2",
+          "description": "Implement hook initialization",
+          "done": false
+        },
+        {
+          "id": "T3",
+          "description": "Add transcript reading logic",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": [],
+        "blocks": ["US-002", "US-005"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-mode-hook-anthropic.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
     },
     {
       "id": "US-002",
-      "title": "Implement YAML frontmatter parsing in stop hook",
-      "parent_spec": "S01-mode-hook.md",
-      "estimated_minutes": 60,
+      "title": "Implement JSONL transcript reading",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Can read JSONL transcript file",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Extracts last Claude response",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Find JSONL transcript path",
+          "done": false
+        },
+        { "id": "T2", "description": "Parse JSONL format", "done": false },
+        {
+          "id": "T3",
+          "description": "Extract assistant messages",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-001"],
+        "blocks": ["US-003"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-mode-hook-anthropic.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-003",
-      "title": "Implement completion detection (<promise>COMPLETE</promise>)",
-      "parent_spec": "S01-mode-hook.md",
-      "estimated_minutes": 60,
+      "title": "Implement completion promise detection",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Detects <promise>COMPLETE</promise> tags",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Returns true when completion found",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Implement regex pattern for promise tags",
+          "done": false
+        },
+        {
+          "id": "T2",
+          "description": "Search in transcript output",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-002"],
+        "blocks": ["US-004"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-mode-hook-anthropic.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-004",
-      "title": "Create ralph-loop.local.md template",
-      "parent_spec": "S01-mode-hook.md",
-      "estimated_minutes": 45,
+      "title": "Implement prompt re-injection",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Re-injects prompt on non-completion",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Updates iteration counter",
+          "done": false
+        },
+        {
+          "id": "AC3",
+          "description": "Respects max_iterations limit",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Read state file for iteration count",
+          "done": false
+        },
+        {
+          "id": "T2",
+          "description": "Increment iteration counter",
+          "done": false
+        },
+        { "id": "T3", "description": "Check max_iterations", "done": false },
+        {
+          "id": "T4",
+          "description": "Output prompt for re-injection",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-003"],
+        "blocks": ["US-007"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-mode-hook-anthropic.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-005",
-      "title": "Create /cancel-ralph command",
-      "parent_spec": "S01-mode-hook.md",
-      "estimated_minutes": 60,
+      "title": "Create ralph-loop.local.md template",
+      "category": "docs",
+      "type": "Task",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Template has YAML frontmatter",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Contains iteration, max_iterations, completion_promise fields",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Create template file", "done": false },
+        {
+          "id": "T2",
+          "description": "Document usage in comments",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-001"],
+        "blocks": ["US-006"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-mode-hook-anthropic.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 30
+      }
     },
     {
       "id": "US-006",
-      "title": "Create circuit_breaker.sh with cb_init and cb_get_state",
-      "parent_spec": "S02-circuit-breaker.md",
-      "estimated_minutes": 90,
+      "title": "Create cancel-ralph command",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Removes state file when active loop exists",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Shows 'no active loop' when none exists",
+          "done": false
+        },
+        {
+          "id": "AC3",
+          "description": "Displays confirmation with iteration count",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create src/commands/cancel-ralph.md",
+          "done": false
+        },
+        {
+          "id": "T2",
+          "description": "Implement state file detection",
+          "done": false
+        },
+        { "id": "T3", "description": "Implement cleanup logic", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-005"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-mode-hook-anthropic.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-007",
-      "title": "Implement cb_record_success and cb_record_failure",
-      "parent_spec": "S02-circuit-breaker.md",
-      "estimated_minutes": 60,
+      "title": "Write stop hook tests",
+      "category": "test",
+      "type": "Test",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Tests completion detection",
+          "done": false
+        },
+        { "id": "AC2", "description": "Tests iteration limit", "done": false },
+        {
+          "id": "AC3",
+          "description": "Tests state file management",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Create test file", "done": false },
+        {
+          "id": "T2",
+          "description": "Write completion detection tests",
+          "done": false
+        },
+        { "id": "T3", "description": "Write iteration tests", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-004"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S01-mode-hook-anthropic.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
     },
     {
       "id": "US-008",
-      "title": "Implement state transitions (CLOSED/HALF_OPEN/OPEN)",
-      "parent_spec": "S02-circuit-breaker.md",
-      "estimated_minutes": 90,
+      "title": "Create circuit_breaker.sh state machine",
+      "category": "infra",
+      "type": "Script",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Implements CLOSED/HALF_OPEN/OPEN states",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "State persistence in .ralph-circuit-state.json",
+          "done": false
+        },
+        { "id": "AC3", "description": "Configurable thresholds", "done": false }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create src/scripts/lib/circuit_breaker.sh",
+          "done": false
+        },
+        { "id": "T2", "description": "Implement state machine", "done": false },
+        { "id": "T3", "description": "Add persistence layer", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": [],
+        "blocks": ["US-009", "US-010", "US-029"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
     },
     {
       "id": "US-009",
-      "title": "Implement same error detection and cb_reset",
-      "parent_spec": "S02-circuit-breaker.md",
-      "estimated_minutes": 60,
+      "title": "Implement no-progress tracking",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Tracks files_modified count",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Increments counter when files_modified == 0",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Add no_progress_count variable",
+          "done": false
+        },
+        { "id": "T2", "description": "Implement tracking logic", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-008"],
+        "blocks": ["US-011"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-010",
-      "title": "Create response_analyzer.sh with ra_init and ra_detect_format",
-      "parent_spec": "S03-response-analyzer.md",
-      "estimated_minutes": 90,
+      "title": "Implement same-error tracking",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        { "id": "AC1", "description": "Stores last N errors", "done": false },
+        {
+          "id": "AC2",
+          "description": "Detects identical consecutive errors",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Add error history array", "done": false },
+        {
+          "id": "T2",
+          "description": "Implement comparison logic",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-008"],
+        "blocks": ["US-011"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-011",
-      "title": "Implement ra_parse_json and ra_parse_text",
-      "parent_spec": "S03-response-analyzer.md",
-      "estimated_minutes": 90,
+      "title": "Implement state transitions (CLOSED/HALF_OPEN/OPEN)",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "3 no-progress -> HALF_OPEN",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "HALF_OPEN + no progress -> OPEN",
+          "done": false
+        },
+        {
+          "id": "AC3",
+          "description": "Progress in HALF_OPEN -> CLOSED",
+          "done": false
+        },
+        { "id": "AC4", "description": "5 same errors -> OPEN", "done": false }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Implement transition functions",
+          "done": false
+        },
+        { "id": "T2", "description": "Add threshold checks", "done": false },
+        { "id": "T3", "description": "Update state persistence", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-009", "US-010"],
+        "blocks": ["US-012"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
     },
     {
       "id": "US-012",
-      "title": "Implement RALPH_STATUS block parsing",
-      "parent_spec": "S03-response-analyzer.md",
-      "estimated_minutes": 60,
+      "title": "Implement circuit reset function",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Reset returns circuit to CLOSED",
+          "done": false
+        },
+        { "id": "AC2", "description": "Clears all counters", "done": false }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Add reset_circuit function",
+          "done": false
+        },
+        { "id": "T2", "description": "Clear state file", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-011"],
+        "blocks": ["US-020"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 30
+      }
     },
     {
       "id": "US-013",
-      "title": "Implement dual-condition exit logic (ra_should_exit)",
-      "parent_spec": "S03-response-analyzer.md",
-      "estimated_minutes": 90,
+      "title": "Create response_analyzer.sh",
+      "category": "infra",
+      "type": "Script",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        { "id": "AC1", "description": "Script is executable", "done": false },
+        {
+          "id": "AC2",
+          "description": "Has main analyze function",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create src/scripts/lib/response_analyzer.sh",
+          "done": false
+        },
+        {
+          "id": "T2",
+          "description": "Define function signatures",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": [],
+        "blocks": ["US-014", "US-029"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
     },
     {
       "id": "US-014",
-      "title": "Create PROMPT.md template with RALPH_STATUS section",
-      "parent_spec": "S03-response-analyzer.md",
-      "estimated_minutes": 60,
+      "title": "Implement JSON parsing with jq",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Parses JSON output with jq",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Extracts status, exit_signal, work_type",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Check jq availability", "done": false },
+        {
+          "id": "T2",
+          "description": "Implement JSON extraction",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-013"],
+        "blocks": ["US-015"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-015",
-      "title": "Create date_utils.sh with cross-platform functions",
-      "parent_spec": "S04-mode-script.md",
-      "estimated_minutes": 60,
+      "title": "Implement RALPH_STATUS extraction",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Extracts RALPH_STATUS block from text",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Parses all required fields",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Implement regex for block extraction",
+          "done": false
+        },
+        { "id": "T2", "description": "Parse individual fields", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-014"],
+        "blocks": ["US-016", "US-019"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-016",
-      "title": "Create ralph_loop.sh main structure and argument parsing",
-      "parent_spec": "S04-mode-script.md",
-      "estimated_minutes": 90,
+      "title": "Implement stuck loop detection",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Compares last 3 outputs",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Returns true if same error repeated",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Store output history", "done": false },
+        { "id": "T2", "description": "Implement comparison", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-015"],
+        "blocks": ["US-017"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-017",
-      "title": "Implement main loop with story execution",
-      "parent_spec": "S04-mode-script.md",
-      "estimated_minutes": 120,
+      "title": "Implement dual-condition exit evaluation",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "indicators >= 2 AND EXIT_SIGNAL=true -> project_complete",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "indicators >= 2 BUT EXIT_SIGNAL=false -> continue",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Count completion indicators",
+          "done": false
+        },
+        { "id": "T2", "description": "Check EXIT_SIGNAL value", "done": false },
+        {
+          "id": "T3",
+          "description": "Return appropriate exit reason",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-016"],
+        "blocks": ["US-021", "US-022"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-018",
-      "title": "Implement session management and --continue flag",
-      "parent_spec": "S04-mode-script.md",
-      "estimated_minutes": 90,
+      "title": "Create date_utils.sh",
+      "category": "infra",
+      "type": "Script",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Cross-platform date functions",
+          "done": false
+        },
+        { "id": "AC2", "description": "ISO 8601 formatting", "done": false }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create src/scripts/lib/date_utils.sh",
+          "done": false
+        },
+        { "id": "T2", "description": "Add platform detection", "done": false },
+        { "id": "T3", "description": "Add date functions", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": [],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 30
+      }
     },
     {
       "id": "US-019",
-      "title": "Implement Ctrl+C handling and checkpoint saving",
-      "parent_spec": "S04-mode-script.md",
-      "estimated_minutes": 60,
+      "title": "Document RALPH_STATUS format",
+      "category": "docs",
+      "type": "Task",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Format documented in templates",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "All required fields listed",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Add RALPH_STATUS section to PROMPT.md template",
+          "done": false
+        },
+        { "id": "T2", "description": "Document field meanings", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-015"],
+        "blocks": ["US-027"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 30
+      }
     },
     {
       "id": "US-020",
-      "title": "Create ralph-converter skill structure",
-      "parent_spec": "S05-generation.md",
-      "estimated_minutes": 90,
+      "title": "Write Circuit Breaker tests",
+      "category": "test",
+      "type": "Test",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Tests state transitions",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Tests threshold behavior",
+          "done": false
+        },
+        { "id": "AC3", "description": "Tests reset function", "done": false }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Create BATS test file", "done": false },
+        {
+          "id": "T2",
+          "description": "Write state transition tests",
+          "done": false
+        },
+        { "id": "T3", "description": "Write reset tests", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-012"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
     },
     {
       "id": "US-021",
-      "title": "Implement spec parsing and granularity-based splitting",
-      "parent_spec": "S05-generation.md",
-      "estimated_minutes": 120,
+      "title": "Write Response Analyzer tests",
+      "category": "test",
+      "type": "Test",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        { "id": "AC1", "description": "Tests JSON parsing", "done": false },
+        {
+          "id": "AC2",
+          "description": "Tests RALPH_STATUS extraction",
+          "done": false
+        },
+        {
+          "id": "AC3",
+          "description": "Tests dual-condition exit",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Create test file", "done": false },
+        { "id": "T2", "description": "Write JSON tests", "done": false },
+        { "id": "T3", "description": "Write RALPH_STATUS tests", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-017"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S02-circuit-breaker-analyzer.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
     },
     {
       "id": "US-022",
-      "title": "Implement prd.json generation with parent_spec mapping",
-      "parent_spec": "S05-generation.md",
-      "estimated_minutes": 90,
+      "title": "Create ralph-converter skill structure",
+      "category": "backend",
+      "type": "Task",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Skill directory created",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "SKILL.md with proper frontmatter",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create src/skills/core/ralph-converter/",
+          "done": false
+        },
+        {
+          "id": "T2",
+          "description": "Create SKILL.md structure",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-017"],
+        "blocks": ["US-023"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 30
+      }
     },
     {
       "id": "US-023",
-      "title": "Implement ralph.sh launcher script generation",
-      "parent_spec": "S05-generation.md",
-      "estimated_minutes": 60,
+      "title": "Implement prd.json v2 generation",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Generates valid prd.json v2 schema",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Includes all required fields",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Define JSON structure", "done": false },
+        {
+          "id": "T2",
+          "description": "Implement generation logic",
+          "done": false
+        },
+        { "id": "T3", "description": "Add config section", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-022"],
+        "blocks": ["US-024"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
     },
     {
       "id": "US-024",
-      "title": "Implement PROMPT.md stack detection and generation",
-      "parent_spec": "S05-generation.md",
-      "estimated_minutes": 90,
+      "title": "Implement story inference rules",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Infers category from title keywords",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Infers type from title keywords",
+          "done": false
+        },
+        {
+          "id": "AC3",
+          "description": "Infers complexity from time estimate",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Define inference rules", "done": false },
+        {
+          "id": "T2",
+          "description": "Implement keyword matching",
+          "done": false
+        },
+        {
+          "id": "T3",
+          "description": "Implement complexity calculation",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-023"],
+        "blocks": ["US-025"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-025",
-      "title": "Create @ralph-executor agent definition",
-      "parent_spec": "S06-ralph-executor.md",
-      "estimated_minutes": 90,
+      "title": "Implement acceptance criteria extraction",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Extracts AC from spec sections",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Formats as structured array",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Parse ## Acceptance Criteria section",
+          "done": false
+        },
+        {
+          "id": "T2",
+          "description": "Convert to JSON structure",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-024"],
+        "blocks": ["US-026"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-026",
-      "title": "Implement /brief integration and routing logic",
-      "parent_spec": "S06-ralph-executor.md",
-      "estimated_minutes": 120,
+      "title": "Implement dependency mapping",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Maps depends_on from INDEX.md",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Calculates blocks inversely",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Parse dependency column from INDEX",
+          "done": false
+        },
+        { "id": "T2", "description": "Build dependency graph", "done": false },
+        { "id": "T3", "description": "Calculate inverse blocks", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-025"],
+        "blocks": ["US-031", "US-032"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-027",
-      "title": "Create ralph-analyzer skill for result analysis",
-      "parent_spec": "S06-ralph-executor.md",
-      "estimated_minutes": 90,
+      "title": "Create PROMPT.md template",
+      "category": "docs",
+      "type": "Task",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Template has RALPH_STATUS section",
+          "done": false
+        },
+        { "id": "AC2", "description": "Has CUSTOMIZE markers", "done": false }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create src/templates/ralph/PROMPT.md",
+          "done": false
+        },
+        {
+          "id": "T2",
+          "description": "Add RALPH_STATUS instructions",
+          "done": false
+        },
+        {
+          "id": "T3",
+          "description": "Add stack-specific placeholders",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-019"],
+        "blocks": ["US-028"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-028",
-      "title": "Implement minimal Feature Document generation",
-      "parent_spec": "S06-ralph-executor.md",
-      "estimated_minutes": 60,
+      "title": "Implement stack detection",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Detects Node.js from package.json",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Detects PHP from composer.json",
+          "done": false
+        },
+        {
+          "id": "AC3",
+          "description": "Detects Python from requirements.txt",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Check for config files", "done": false },
+        { "id": "T2", "description": "Return stack type", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-027"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-029",
-      "title": "Create /ralph command with argument parsing",
-      "parent_spec": "S07-ralph-command.md",
-      "estimated_minutes": 90,
+      "title": "Create ralph.sh template",
+      "category": "infra",
+      "type": "Script",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Template loops on passes=false stories",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Integrates with Circuit Breaker",
+          "done": false
+        },
+        {
+          "id": "AC3",
+          "description": "Integrates with Response Analyzer",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create src/templates/ralph/ralph.sh",
+          "done": false
+        },
+        { "id": "T2", "description": "Implement main loop", "done": false },
+        { "id": "T3", "description": "Add library integrations", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-008", "US-013"],
+        "blocks": ["US-030", "US-044"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
     },
     {
       "id": "US-030",
-      "title": "Implement hybrid mode and progress display",
-      "parent_spec": "S07-ralph-command.md",
-      "estimated_minutes": 90,
+      "title": "Implement session state persistence",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
       "priority": 1,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Creates .ralph-session.json",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Supports --continue flag",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Define session structure",
+          "done": false
+        },
+        { "id": "T2", "description": "Implement save/load", "done": false },
+        { "id": "T3", "description": "Handle --continue", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-029"],
+        "blocks": ["US-033"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     },
     {
       "id": "US-031",
-      "title": "Implement security levels and rate limiting",
-      "parent_spec": "S08-polish-migration.md",
-      "estimated_minutes": 90,
-      "priority": 2,
-      "passes": false
+      "title": "Update decompose command documentation",
+      "category": "docs",
+      "type": "Task",
+      "complexity": "S",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Documents --granularity flag",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Documents auto prd.json generation",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Update src/commands/decompose.md",
+          "done": false
+        },
+        { "id": "T2", "description": "Add examples", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-026"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 30
+      }
     },
     {
       "id": "US-032",
-      "title": "Implement /orchestrate deprecation and documentation updates",
-      "parent_spec": "S08-polish-migration.md",
-      "estimated_minutes": 90,
+      "title": "Write ralph-converter tests",
+      "category": "test",
+      "type": "Test",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        { "id": "AC1", "description": "Tests prd.json schema", "done": false },
+        { "id": "AC2", "description": "Tests inference rules", "done": false }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Create test file", "done": false },
+        {
+          "id": "T2",
+          "description": "Write schema validation tests",
+          "done": false
+        },
+        { "id": "T3", "description": "Write inference tests", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-026"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S03-generation-prd-scripts.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
+    },
+    {
+      "id": "US-033",
+      "title": "Create ralph-executor agent structure",
+      "category": "backend",
+      "type": "Task",
+      "complexity": "S",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        { "id": "AC1", "description": "Agent file created", "done": false },
+        { "id": "AC2", "description": "Proper frontmatter", "done": false }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create src/agents/ralph-executor.md",
+          "done": false
+        },
+        { "id": "T2", "description": "Define input/output", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-030"],
+        "blocks": ["US-034"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S04-integration-commande-ralph.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 30
+      }
+    },
+    {
+      "id": "US-034",
+      "title": "Implement story context loading",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Loads parent_spec from story.context",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Passes content to /brief",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Read parent_spec path", "done": false },
+        { "id": "T2", "description": "Load spec content", "done": false },
+        { "id": "T3", "description": "Format for /brief", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-033"],
+        "blocks": ["US-035"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S04-integration-commande-ralph.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
+    },
+    {
+      "id": "US-035",
+      "title": "Implement /brief integration",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Calls /brief with story context",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Receives complexity assessment",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Format /brief call", "done": false },
+        { "id": "T2", "description": "Parse complexity result", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-034"],
+        "blocks": ["US-036"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S04-integration-commande-ralph.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
+    },
+    {
+      "id": "US-036",
+      "title": "Implement complexity-based routing",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "TINY/SMALL -> /quick --autonomous",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "STANDARD+ -> /epci --autonomous",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Check complexity value", "done": false },
+        {
+          "id": "T2",
+          "description": "Route to appropriate command",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-035"],
+        "blocks": ["US-037"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S04-integration-commande-ralph.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
+    },
+    {
+      "id": "US-037",
+      "title": "Implement Feature Document generation",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Generates minimal Feature Document",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Records story completion",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create minimal doc template",
+          "done": false
+        },
+        {
+          "id": "T2",
+          "description": "Write doc after completion",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-036"],
+        "blocks": ["US-038", "US-041"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S04-integration-commande-ralph.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
+    },
+    {
+      "id": "US-038",
+      "title": "Create ralph command structure",
+      "category": "backend",
+      "type": "Task",
+      "complexity": "S",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        { "id": "AC1", "description": "Command file created", "done": false },
+        { "id": "AC2", "description": "Arguments documented", "done": false }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Create src/commands/ralph.md",
+          "done": false
+        },
+        { "id": "T2", "description": "Define arguments table", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-037"],
+        "blocks": ["US-039"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S04-integration-commande-ralph.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 30
+      }
+    },
+    {
+      "id": "US-039",
+      "title": "Implement mode selection and flags",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "--mode hook|script works",
+          "done": false
+        },
+        { "id": "AC2", "description": "--dry-run shows plan", "done": false },
+        {
+          "id": "AC3",
+          "description": "--max-iterations required",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Parse command flags", "done": false },
+        { "id": "T2", "description": "Implement mode dispatch", "done": false },
+        { "id": "T3", "description": "Validate required flags", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-038"],
+        "blocks": ["US-040", "US-042", "US-045"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S04-integration-commande-ralph.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
+    },
+    {
+      "id": "US-040",
+      "title": "Implement dry-run mode",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        { "id": "AC1", "description": "Shows execution plan", "done": false },
+        { "id": "AC2", "description": "No actual execution", "done": false }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Generate plan summary", "done": false },
+        {
+          "id": "T2",
+          "description": "Display without executing",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-039"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S04-integration-commande-ralph.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
+    },
+    {
+      "id": "US-041",
+      "title": "Write ralph-executor tests",
+      "category": "test",
+      "type": "Test",
+      "complexity": "M",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        { "id": "AC1", "description": "Tests context loading", "done": false },
+        { "id": "AC2", "description": "Tests routing logic", "done": false }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Create test file", "done": false },
+        { "id": "T2", "description": "Write mock story tests", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-037"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S04-integration-commande-ralph.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
+    },
+    {
+      "id": "US-042",
+      "title": "Implement --safety-level flag",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
       "priority": 2,
-      "passes": false
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "minimal only checks max-iterations",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "moderate shows sandbox warning",
+          "done": false
+        },
+        {
+          "id": "AC3",
+          "description": "strict generates settings.json",
+          "done": false
+        }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Parse safety-level flag", "done": false },
+        {
+          "id": "T2",
+          "description": "Implement level behaviors",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["US-039"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S05-securite-polish.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
+    },
+    {
+      "id": "US-043",
+      "title": "Add /orchestrate deprecation warning",
+      "category": "docs",
+      "type": "Task",
+      "complexity": "S",
+      "priority": 2,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "Warning displayed on usage",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Suggests /ralph alternative",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Add deprecation notice to orchestrate.md",
+          "done": false
+        },
+        { "id": "T2", "description": "Update CLAUDE.md", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": [],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S05-securite-polish.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 30
+      }
+    },
+    {
+      "id": "US-044",
+      "title": "Implement rate limiting",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "M",
+      "priority": 2,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "100 calls/hour default limit",
+          "done": false
+        },
+        {
+          "id": "AC2",
+          "description": "Countdown on limit reached",
+          "done": false
+        },
+        {
+          "id": "AC3",
+          "description": "--calls flag adjusts limit",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "id": "T1",
+          "description": "Track call count per hour",
+          "done": false
+        },
+        { "id": "T2", "description": "Implement countdown", "done": false },
+        { "id": "T3", "description": "Detect API 5h limit", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-029"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S05-securite-polish.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 90
+      }
+    },
+    {
+      "id": "US-045",
+      "title": "Implement intelligent mode selection",
+      "category": "backend",
+      "type": "Logic",
+      "complexity": "S",
+      "priority": 2,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "id": "AC1",
+          "description": "<10 stories, <2h -> hook",
+          "done": false
+        },
+        { "id": "AC2", "description": ">=10 stories -> script", "done": false },
+        { "id": "AC3", "description": "Shows reasoning message", "done": false }
+      ],
+      "tasks": [
+        { "id": "T1", "description": "Count stories", "done": false },
+        { "id": "T2", "description": "Estimate duration", "done": false },
+        { "id": "T3", "description": "Apply selection rules", "done": false },
+        { "id": "T4", "description": "Display recommendation", "done": false }
+      ],
+      "dependencies": {
+        "depends_on": ["US-039"],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "S05-securite-polish.md",
+        "parent_brief": "docs/briefs/ralph-wiggum-integration/PRD-ralph-wiggum-integration-2025-01-13.md",
+        "estimated_minutes": 60
+      }
     }
   ]
 }

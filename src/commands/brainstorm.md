@@ -1,23 +1,31 @@
 ---
 description: >-
-  Brainstorming guide v5.0 pour decouvrir et specifier une feature.
+  Brainstorming guide v5.1 pour decouvrir et specifier une feature.
   Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
-  Brief output conforme PRD Industry Standards v3.0 (Executive Summary,
-  Problem Statement, Goals/Non-Goals, Timeline, FAQ, Assumptions).
+  Brief output conforme PRD Industry Standards v3.0.
+  Questions via AskUserQuestion natif (3 max, headers priorite, suggestions).
   Finalization Checkpoint obligatoire a EMS >= 70 (bloquant).
-  Session persistence, energy checkpoints, 3-5 questions avec A/B/C.
+  Session persistence, energy checkpoints.
   Use when: idee vague a transformer en specs, incertitude technique.
 argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--competitive] [--c7] [--seq]"
-allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch]
+allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch, AskUserQuestion]
 ---
 
-# /brainstorm — Feature Discovery v5.0
+# /brainstorm — Feature Discovery v5.1
 
 ## Overview
 
 Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
+
+**Nouveautes v5.1**:
+- **AskUserQuestion natif** — Questions via outil Claude Code (UI QCM interactive)
+- **3 questions max** par iteration (au lieu de 5)
+- **Headers priorité** — `🛑 Critical`, `⚠️ Important`, `ℹ️ Info` (max 12 chars)
+- **Suggestions visuelles** — `(Recommended)` dans le label de l'option suggérée
+- **Breakpoint séparé** — Status en texte, questions via AskUserQuestion
+- **Technique-advisor adapté** — Retourne JSON, main thread pose la question
 
 **Nouveautes v5.0**:
 - **Brief PRD Industry Standards v3.0** — Executive Summary, Problem Statement, Goals/Non-Goals, Timeline & Milestones, FAQ, Assumptions, Appendix
@@ -104,11 +112,37 @@ Reformulation: "Une feature de notifications pour les utilisateurs"
 4. **Initialiser session** — Phase: Divergent, Persona: Architecte, EMS: ~25
 5. **SYNC @Explore** — Attendre completion si non termine
 6. **Generer HMW** (si pas `--no-hmw`) — 3 questions "How Might We" **avec contexte codebase**
-7. **Questions de cadrage** — 3-5 max avec suggestions et **tags priorité**:
-   - 🛑 Critique (bloquant) — Question essentielle, réponse obligatoire
-   - ⚠️ Important (risque) — Recommandée, suggestion appliquée si ignorée
-   - ℹ️ Information (optionnel) — Purement informatif
-8. **Afficher breakpoint**
+7. **Afficher status breakpoint** (texte markdown):
+   ```
+   -------------------------------------------------------
+   PHASE 1 — INITIALISATION COMPLÈTE
+   -------------------------------------------------------
+   ✅ Contexte chargé | ✅ @Explore terminé | ✅ HMW générées
+   Prochaine étape: Questions de cadrage (3 max)
+   -------------------------------------------------------
+   ```
+8. **Questions de cadrage** — Utiliser AskUserQuestion (3 max):
+   - Header pour priorité: `🛑 Critical`, `⚠️ Important`, `ℹ️ Info` (max 12 chars)
+   - `(Recommended)` sur l'option suggérée basée sur patterns codebase
+   - Ordre: 🛑 d'abord, puis ⚠️, puis ℹ️
+   - Option "Other..." automatiquement disponible
+   ```typescript
+   AskUserQuestion({
+     questions: [
+       {
+         question: "Quelle est la cible principale de cette feature ?",
+         header: "🛑 Critical",
+         multiSelect: false,
+         options: [
+           { label: "Utilisateurs finaux", description: "Focus UX et facilité d'usage" },
+           { label: "Développeurs (Recommended)", description: "Focus API et intégration" },
+           { label: "Admins", description: "Focus gestion et monitoring" }
+         ]
+       },
+       // ... 2 autres questions max
+     ]
+   })
+   ```
 
 > **Note v4.8**: HMW generes APRES @Explore pour questions contextuelles basees sur le codebase.
 > **Note v4.9**: Input clarification en Step 0 ne s'applique qu'a l'input initial, pas aux iterations.
@@ -120,34 +154,111 @@ Boucle jusqu'a `finish`:
 1. **Integrer reponses** utilisateur
 2. **Recalculer EMS** via `@ems-evaluator`
    - Output: scores, delta, `weak_axes[]` (axes < 50)
-3. **Auto-selection technique** (v4.8+):
+3. **Auto-selection technique** (v4.8+ — AskUserQuestion):
    - Si `weak_axes` non vide ET technique pas dans les 2 dernieres iterations:
-     - Invoquer `@technique-advisor` mode auto-select
-     - Proposer: `💡 Technique suggérée: [X] → Appliquer? [Y/n]`
-   - Si 2+ axes faibles: proposer mix de techniques
+     - Invoquer `@technique-advisor` (subagent) → retourne JSON structuré
+     - **Main thread** pose la question via AskUserQuestion:
+     ```typescript
+     // Technique unique (1 axe faible)
+     AskUserQuestion({
+       questions: [{
+         question: "Technique suggérée: [NOM] pour améliorer [AXE] (XX%). Appliquer ?",
+         header: "💡 Technique",
+         multiSelect: false,
+         options: [
+           { label: "Appliquer (Recommended)", description: "[description technique]" },
+           { label: "Autre technique", description: "Choisir parmi alternatives" },
+           { label: "Ignorer", description: "Continuer sans technique" }
+         ]
+       }]
+     })
+
+     // Mix (2+ axes faibles)
+     AskUserQuestion({
+       questions: [{
+         question: "2 axes faibles détectés. Quelle(s) technique(s) appliquer ?",
+         header: "💡 Mix",
+         multiSelect: true,
+         options: [
+           { label: "[Technique1]", description: "Pour [Axe1] (XX%)" },
+           { label: "[Technique2]", description: "Pour [Axe2] (YY%)" },
+           { label: "Les deux (Recommended)", description: "Application séquentielle" }
+         ]
+       }]
+     })
+     ```
    - Desactiver avec `--no-technique`
 4. **Transition check** (si EMS = 50 et Divergent):
-   ```
-   PHASE TRANSITION | EMS: 50/100
-   [1] Continuer Divergent  [2] Passer Convergent  [3] Technique
-   ```
-5. **Finalization checkpoint** (si EMS >= 85):
+   - **Étape A — Status (texte)**:
    ```
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   FINALIZATION CHECKPOINT | EMS: XX/100
+   🔄 PHASE TRANSITION | EMS: 50/100
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Mi-parcours atteint. Choix de direction requis.
+   ```
+   - **Étape B — Question (AskUserQuestion)**:
+   ```typescript
+   AskUserQuestion({
+     questions: [{
+       question: "Mi-parcours EMS 50. Quelle direction prendre ?",
+       header: "🔄 Transition",
+       multiSelect: false,
+       options: [
+         { label: "Continuer Divergent", description: "Explorer plus d'options" },
+         { label: "Passer Convergent (Recommended)", description: "Commencer à converger" },
+         { label: "Appliquer technique", description: "Utiliser technique pour débloquer" }
+       ]
+     }]
+   })
+   ```
+5. **Finalization checkpoint** (si EMS >= 70):
+   - **Étape A — Status (texte)**:
+   ```
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   🎯 FINALIZATION CHECKPOINT | EMS: XX/100
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   📊 Clarté: XX | Profondeur: XX | Couverture: XX | Décisions: XX | Action: XX
    Le brief est suffisamment mature pour être finalisé.
-
-   [1] Continuer (plus d'itérations)
-   [2] Preview plan (@planner) sans finaliser
-   [3] Finaliser maintenant (finish)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ```
-   **IMPORTANT**: Ne JAMAIS finaliser automatiquement. Toujours attendre le choix explicite.
-6. **Generer 3-5 questions** avec suggestions A/B/C et **tags priorité** (si choix [1]):
-   - Format: `Q1: 🛑 [question] → A) [opt1] B) [opt2] C) [opt3]`
+   - **Étape B — Question (AskUserQuestion)**:
+   ```typescript
+   AskUserQuestion({
+     questions: [{
+       question: "Brief EMS XX/100 prêt. Quelle action ?",
+       header: "🎯 Checkpoint",
+       multiSelect: false,
+       options: [
+         { label: "Continuer", description: "Plus d'itérations pour affiner" },
+         { label: "Preview (Recommended)", description: "@planner sans finaliser" },
+         { label: "Finaliser", description: "Générer brief + journal maintenant" }
+       ]
+     }]
+   })
+   ```
+   - **Comportement**: Continuer → questions, Preview → @planner puis redemande, Finaliser → Phase 3
+   - **CRITICAL**: Checkpoint BLOQUANT. Attendre réponse explicite.
+6. **Afficher status breakpoint** (texte markdown AVANT questions):
+   ```
+   -------------------------------------------------------
+   [PHASE] | [PERSONA] | Iter X | EMS: XX/100 (+Y)
+   -------------------------------------------------------
+   ✅ Done: [éléments validés]
+   📋 Open: [points à clarifier]
+   -> continue | dive | back | save | energy | finish
+   -------------------------------------------------------
+   ```
+7. **Générer questions** — AskUserQuestion (3 max, si choix Continuer):
+   ```typescript
+   AskUserQuestion({
+     questions: [
+       { question: "...", header: "🛑 Critical", multiSelect: false, options: [...] },
+       { question: "...", header: "⚠️ Important", multiSelect: false, options: [...] },
+       { question: "...", header: "ℹ️ Info", multiSelect: false, options: [...] }
+     ]
+   })
+   ```
    - Ordre: 🛑 d'abord, puis ⚠️, puis ℹ️
-7. **Afficher breakpoint compact**
+   - `(Recommended)` sur option suggérée
 8. **Preview check** (si Convergent et EMS >= 65 et choix [2]):
    - Proposer `@planner preview? [Y/n]`
    - Si patterns auth: `@security-auditor preview? [Y/n]`

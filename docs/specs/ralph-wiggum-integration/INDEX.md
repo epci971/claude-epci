@@ -1,9 +1,10 @@
 # Ralph Wiggum Integration — Index
 
-> **Generated**: 2025-01-13
+> **Generated**: 2025-01-14
 > **Source**: PRD-ralph-wiggum-integration-2025-01-13.md
-> **Sub-specs**: 8
-> **Total effort**: 18 jours (séquentiel) / 12 jours (parallélisé)
+> **Sub-specs**: 5
+> **Total effort**: 12 days
+> **User Stories**: 16 (11 Must-have, 5 Should-have)
 
 ---
 
@@ -11,14 +12,23 @@
 
 | ID | Title | Effort | Priority | Dependencies | Status |
 |----|-------|--------|----------|--------------|--------|
-| S01 | Mode Hook Anthropic | 2j | 1 | — | Pending |
-| S02 | Circuit Breaker | 2j | 1 | — | Pending |
-| S03 | Response Analyzer + RALPH_STATUS | 2j | 1 | S02 | Pending |
-| S04 | Mode Script Externe | 2j | 1 | S02, S03 | Pending |
-| S05 | Génération prd.json et templates | 3j | 1 | S03 | Pending |
-| S06 | Subagent @ralph-executor | 3j | 1 | S01, S04 | Pending |
-| S07 | Commande /ralph unifiée | 2j | 1 | S06 | Pending |
-| S08 | Polish & Migration | 2j | 2 | S07 | Pending |
+| S01 | Mode Hook (Anthropic) | 2j | Must | - | Pending |
+| S02 | Circuit Breaker & Analyzer | 3j | Must | - | Pending |
+| S03 | Generation prd.json & Scripts | 2j | Must | S02 | Pending |
+| S04 | Integration Commande Ralph | 3j | Must | S01, S02, S03 | Pending |
+| S05 | Security & Polish | 2j | Should | S04 | Pending |
+
+---
+
+## User Stories Mapping
+
+| Spec | User Stories | Complexity | Total |
+|------|-------------|------------|-------|
+| S01 | US13 (M), US14 (S) | M+S | 2 |
+| S02 | US9 (M), US10 (M), US11 (S) | M+M+S | 3 |
+| S03 | US1 (M), US2 (M), US3 (S), US15 (M) | M+M+S+M | 4 |
+| S04 | US4 (L), US5 (M), US6 (M) | L+M+M | 3 |
+| S05 | US7 (S), US8 (S), US12 (S), US16 (S) | S+S+S+S | 4 |
 
 ---
 
@@ -26,24 +36,17 @@
 
 ```mermaid
 flowchart TD
-    S01[S01: Mode Hook Anthropic] --> S06[S06: @ralph-executor]
-    S02[S02: Circuit Breaker] --> S03[S03: Response Analyzer]
-    S03 --> S04[S04: Mode Script]
-    S03 --> S05[S05: Génération]
+    S01[S01: Mode Hook] --> S04[S04: Integration]
+    S02[S02: Circuit Breaker] --> S03[S03: Generation]
     S02 --> S04
-    S04 --> S06
-    S05 --> S06
-    S06 --> S07[S07: /ralph]
-    S07 --> S08[S08: Polish]
+    S03 --> S04
+    S04 --> S05[S05: Polish]
 
     style S01 fill:#e1f5fe
     style S02 fill:#e1f5fe
     style S03 fill:#fff3e0
     style S04 fill:#fff3e0
-    style S05 fill:#fff3e0
-    style S06 fill:#ffebee
-    style S07 fill:#f3e5f5
-    style S08 fill:#e8f5e9
+    style S05 fill:#e8f5e9
 ```
 
 ---
@@ -55,86 +58,88 @@ gantt
     title Ralph Wiggum Integration
     dateFormat  YYYY-MM-DD
 
-    section Phase 1 - Foundations
-    S01 Mode Hook Anthropic     :s01, 2025-01-14, 2d
-    S02 Circuit Breaker         :s02, 2025-01-14, 2d
+    section Foundations
+    S01 Mode Hook           :s01, 2025-01-15, 2d
+    S02 Circuit Breaker     :s02, 2025-01-15, 3d
 
-    section Phase 2 - Core Infrastructure
-    S03 Response Analyzer       :s03, after s02, 2d
-    S04 Mode Script Externe     :s04, after s03, 2d
-    S05 Génération templates    :s05, after s03, 3d
+    section Core
+    S03 Generation          :s03, after s02, 2d
+    S04 Integration         :s04, after s03, 3d
 
-    section Phase 3 - Integration
-    S06 @ralph-executor         :s06, after s04 s05 s01, 3d
-    S07 Commande /ralph         :s07, after s06, 2d
-
-    section Phase 4 - Polish
-    S08 Polish & Migration      :s08, after s07, 2d
+    section Finalization
+    S05 Polish              :s05, after s04, 2d
 ```
 
 ---
 
-## User Stories Mapping
+## Parallelization
 
-| Sub-spec | User Stories | Priorité |
-|----------|--------------|----------|
-| S01 | US13 (Mode Stop Hook), US14 (/cancel-ralph) | Must-have |
-| S02 | US9 (Circuit Breaker Pattern) | Must-have |
-| S03 | US10 (Response Analyzer), US11 (RALPH_STATUS) | Must-have |
-| S04 | US15 (Mode Script Externe) | Must-have |
-| S05 | US1 (prd.json), US2 (ralph.sh), US3 (prompt.md) | Must-have |
-| S06 | US4 (Subagent @ralph-executor) | Must-have |
-| S07 | US5 (Commande /ralph), US6 (Mode hybride) | Must-have |
-| S08 | US7 (Sécurité), US8 (Dépréciation), US12 (Rate Limiting), US16 (Sélection intelligente) | Should-have |
+**Parallelizable specs**: S01 and S02 can run in parallel (independent foundations)
+
+**Critical path**: S02 → S03 → S04 → S05 (8 days)
+
+**Optimized duration**: ~9 days (vs 12 days sequential)
 
 ---
 
-## Files to Create/Modify
+## Files Overview
 
-| File | Action | Sub-spec |
-|------|--------|----------|
-| `src/hooks/ralph-stop-hook.sh` | Create | S01 |
-| `src/templates/ralph/ralph-loop.local.md` | Create | S01 |
-| `src/commands/cancel-ralph.md` | Create | S01 |
-| `src/scripts/lib/circuit_breaker.sh` | Create | S02 |
-| `src/scripts/lib/response_analyzer.sh` | Create | S03 |
-| `src/templates/ralph/PROMPT.md` | Create | S03 |
-| `src/scripts/ralph_loop.sh` | Create | S04 |
-| `src/scripts/lib/date_utils.sh` | Create | S04 |
-| `src/skills/core/ralph-converter/SKILL.md` | Create | S05 |
-| `src/commands/decompose.md` | Modify | S05 |
-| `src/agents/ralph-executor.md` | Create | S06 |
-| `src/skills/core/ralph-analyzer/SKILL.md` | Create | S06 |
-| `src/commands/ralph.md` | Create | S07 |
-| `src/commands/orchestrate.md` | Modify (deprecate) | S08 |
+### Commands (2 new, 1 modified)
+- `src/commands/ralph.md` — New unified command
+- `src/commands/cancel-ralph.md` — New cancellation command
+- `src/commands/decompose.md` — Modified (prd.json generation)
+
+### Scripts (4 new)
+- `src/scripts/ralph_loop.sh` — Main loop script
+- `src/scripts/lib/circuit_breaker.sh` — Circuit Breaker pattern
+- `src/scripts/lib/response_analyzer.sh` — Response parsing
+- `src/scripts/lib/date_utils.sh` — Date utilities
+
+### Hooks (1 new)
+- `src/hooks/ralph-stop-hook.sh` — Stop hook for mode hook
+
+### Skills (2 new)
+- `src/skills/core/ralph-converter/SKILL.md` — prd.json conversion
+- `src/skills/core/ralph-analyzer/SKILL.md` — Response analysis
+
+### Agents (1 new)
+- `src/agents/ralph-executor.md` — Story execution agent
+
+### Templates (2 new)
+- `src/templates/ralph/PROMPT.md` — System prompt template
+- `src/templates/ralph/ralph-loop.local.md` — State file template
 
 ---
 
 ## Usage
 
-Launch a sub-spec:
+### Manual Execution (spec by spec)
 
 ```bash
-/brief @docs/specs/ralph-wiggum-integration/S01-mode-hook.md
+# Analyze and execute a single spec
+/epci:brief @docs/specs/ralph-wiggum-integration/S01-mode-hook-anthropic.md
+# → Routes to /epci:quick (TINY/SMALL) or /epci:epci (STANDARD/LARGE)
 ```
 
-Execute with Ralph (after all specs complete):
+### Autonomous Execution (overnight)
 
 ```bash
-/ralph docs/specs/ralph-wiggum-integration/
+# Execute all specs autonomously
+/epci:ralph docs/specs/ralph-wiggum-integration/
+# → Uses prd.json, executes via @ralph-executor
+# → Each story routes through /epci:brief → /epci:quick or /epci:epci
 ```
+
+### EPCI Command Reference
+
+| Command | Usage |
+|---------|-------|
+| `/epci:brief` | Analyze spec/story, assess complexity |
+| `/epci:quick` | Fast workflow for TINY/SMALL (<200 LOC) |
+| `/epci:epci` | Full workflow for STANDARD/LARGE (>200 LOC) |
+| `/epci:ralph` | Autonomous overnight execution |
+| `/epci:commit` | Git commit with EPCI context |
 
 ---
 
-## Risk Summary
-
-| Risk | Probability | Impact | Mitigation | Related Spec |
-|------|-------------|--------|------------|--------------|
-| Coûts overnight explosent | M | H | --max-iterations + rate limiting | S02, S08 |
-| RALPH_STATUS non respecté | M | H | Validation prompt.md + fallback | S03 |
-| Circuit Breaker trop sensible | M | M | Seuils configurables | S02 |
-| Complexité scripts Bash | M | M | Tests BATS + documentation | S02, S03, S04 |
-
----
-
-*Generated by /decompose — Project: ralph-wiggum-integration*
+_Generated by /decompose — Project: ralph-wiggum-integration_

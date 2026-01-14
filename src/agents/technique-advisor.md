@@ -4,6 +4,7 @@ description: >-
   Selects and applies brainstorming techniques based on context (v5.1).
   Uses CSV library with 66 techniques across 11 categories.
   Supports modes: Standard, Auto-Select, Mix, Random, Progressive.
+  Returns JSON data for main thread AskUserQuestion (subagent limitation).
   Use when: technique selection needed in brainstorm session.
   Do NOT use for: implementation planning, code review.
 model: haiku
@@ -92,14 +93,46 @@ Invoque automatiquement quand `@ems-evaluator` retourne `weak_axes` non vide.
 4. Si 2+ axes faibles: passer en Mode Mix
 5. Scorer par pertinence (axe le plus faible = priorite)
 
-**Output Format Auto-Select**:
+**Output Format Auto-Select (JSON pour Main Thread)**:
 
+**IMPORTANT**: Ce subagent NE PEUT PAS utiliser AskUserQuestion (non disponible en subagent).
+Retourner des données JSON structurées que le main thread transformera en AskUserQuestion.
+
+```json
+{
+  "mode": "auto-select",
+  "suggested_technique": {
+    "name": "Six Hats",
+    "slug": "six-hats",
+    "category": "structured",
+    "description": "Explore sous 6 perspectives différentes",
+    "phase": "divergent",
+    "difficulty": "easy"
+  },
+  "reason": "Couverture 35% — technique pour explorer plus d'angles",
+  "weak_axes": [{"name": "Couverture", "score": 35}],
+  "alternatives": [
+    {"name": "Brain Writing", "slug": "brain-writing", "category": "collaborative"},
+    {"name": "What If", "slug": "what-if", "category": "creative"}
+  ],
+  "is_mix": false
+}
 ```
-💡 Technique suggérée: [NOM] ([CATEGORIE])
 
-Raison: Axe [X] à [Y]% — [technique] aide à [effet]
-
-→ Appliquer? [Y/n/autre]
+**Main Thread transforme en AskUserQuestion:**
+```typescript
+AskUserQuestion({
+  questions: [{
+    question: "Technique suggérée: Six Hats pour Couverture (35%). Appliquer ?",
+    header: "💡 Technique",
+    multiSelect: false,
+    options: [
+      { label: "Appliquer (Recommended)", description: "Six Hats - explore sous 6 perspectives" },
+      { label: "Autre technique", description: "Brain Writing ou What If" },
+      { label: "Ignorer", description: "Continuer sans technique" }
+    ]
+  }]
+})
 ```
 
 ### Mode 3: Mix (v4.8+)
@@ -116,17 +149,50 @@ Declenche quand 2+ axes sont faibles (score < 50).
 - Eviter 2 techniques de meme categorie
 - Ordre: Divergent d'abord, puis Convergent
 
-**Output Format Mix**:
+**Output Format Mix (JSON pour Main Thread)**:
 
+```json
+{
+  "mode": "mix",
+  "suggested_techniques": [
+    {
+      "name": "5 Whys",
+      "slug": "5whys",
+      "category": "deep",
+      "description": "Creuser la cause racine",
+      "for_axis": {"name": "Profondeur", "score": 42}
+    },
+    {
+      "name": "MoSCoW",
+      "slug": "moscow",
+      "category": "structured",
+      "description": "Prioriser must/should/could/wont",
+      "for_axis": {"name": "Decisions", "score": 38}
+    }
+  ],
+  "reason": "Profondeur 42%, Decisions 38%",
+  "weak_axes": [
+    {"name": "Profondeur", "score": 42},
+    {"name": "Decisions", "score": 38}
+  ],
+  "is_mix": true
+}
 ```
-💡 TECHNIQUES SUGGÉRÉES | Iteration [N]
 
-Axes faibles: [Axis1] ([X]%), [Axis2] ([Y]%)
-
-[1] [Technique1] ([category]) → [Axis1]
-[2] [Technique2] ([category]) → [Axis2]
-
-→ [1] #1 seul  [2] #2 seul  [b] Both  [n] Ignorer
+**Main Thread transforme en AskUserQuestion:**
+```typescript
+AskUserQuestion({
+  questions: [{
+    question: "2 axes faibles: Profondeur (42%), Décisions (38%). Quelle(s) technique(s) ?",
+    header: "💡 Mix",
+    multiSelect: true,
+    options: [
+      { label: "5 Whys", description: "Pour Profondeur - creuser la cause racine" },
+      { label: "MoSCoW", description: "Pour Décisions - prioriser must/should/could" },
+      { label: "Les deux (Recommended)", description: "Application séquentielle" }
+    ]
+  }]
+})
 ```
 
 ### Mode 4: Random (`--random` flag)
@@ -144,14 +210,38 @@ Selection aleatoire avec equilibrage de categories.
 4. Selection aleatoire ponderee
 5. Marquer `source: "random"` dans session
 
-**Output Format Random**:
+**Output Format Random (JSON pour Main Thread)**:
 
+```json
+{
+  "mode": "random",
+  "suggested_technique": {
+    "name": "Chaos Theory",
+    "slug": "chaos",
+    "category": "wild",
+    "description": "Introduire des perturbations aléatoires",
+    "phase": "divergent",
+    "difficulty": "medium"
+  },
+  "reason": "Sélection aléatoire pondérée par catégories peu utilisées",
+  "category_weights": {"wild": 0.8, "creative": 0.5, "structured": 0.2}
+}
 ```
-🎲 Technique aléatoire: [NOM] ([CATEGORIE])
 
-Cette technique va vous faire explorer: [description courte]
-
-→ Appliquer? [Y/reshuffle/n]
+**Main Thread transforme en AskUserQuestion:**
+```typescript
+AskUserQuestion({
+  questions: [{
+    question: "Technique aléatoire: Chaos Theory. Appliquer ?",
+    header: "🎲 Random",
+    multiSelect: false,
+    options: [
+      { label: "Appliquer (Recommended)", description: "Chaos Theory - perturbations aléatoires" },
+      { label: "Re-shuffle", description: "Tirer une autre technique" },
+      { label: "Ignorer", description: "Continuer sans technique" }
+    ]
+  }]
+})
 ```
 
 ### Mode 5: Progressive (`--progressive` flag)
@@ -170,16 +260,43 @@ Selection basee sur la phase progressive du brainstorming.
 | Convergence | 51-75 | structured, deep |
 | Action | 76+ | structured uniquement |
 
-**Output Format Progressive**:
+**Output Format Progressive (JSON pour Main Thread)**:
 
+```json
+{
+  "mode": "progressive",
+  "progressive_phase": {
+    "name": "Exploration",
+    "ems_range": "31-50",
+    "objective": "Explorer en profondeur les pistes identifiées"
+  },
+  "suggested_technique": {
+    "name": "Future Self",
+    "slug": "future-self",
+    "category": "introspective",
+    "description": "Se projeter dans le futur pour identifier les besoins",
+    "phase": "divergent",
+    "difficulty": "easy"
+  },
+  "current_ems": 45,
+  "reason": "Phase Exploration (EMS 45) - techniques introspectives recommandées"
+}
 ```
-📈 Phase Progressive: [PHASE_NAME] (EMS: [X]/100)
 
-Technique recommandée: [NOM] ([CATEGORIE])
-
-Objectif phase: [description de l'objectif]
-
-→ Appliquer? [Y/n]
+**Main Thread transforme en AskUserQuestion:**
+```typescript
+AskUserQuestion({
+  questions: [{
+    question: "Phase Exploration (EMS 45). Technique: Future Self. Appliquer ?",
+    header: "📈 Progress",
+    multiSelect: false,
+    options: [
+      { label: "Appliquer (Recommended)", description: "Future Self - projection futur" },
+      { label: "Autre technique", description: "Choisir dans catégorie introspective" },
+      { label: "Ignorer", description: "Continuer sans technique" }
+    ]
+  }]
+})
 ```
 
 ## EMS Axis -> Category Mapping
@@ -204,26 +321,64 @@ Objectif phase: [description de l'objectif]
 | Clarte + Profondeur | first-principles | 5whys |
 | Decisions + Actionnabilite | scoring | constraint-mapping |
 
-## Output Format Standard
+## Output Format Standard (JSON pour Main Thread)
 
-```markdown
-## Technique: [NAME] ([CATEGORY])
+Quand une technique est appliquée, retourner les questions adaptées en JSON:
 
-**Description**: [From CSV description]
+```json
+{
+  "mode": "standard",
+  "technique": {
+    "name": "Six Hats",
+    "slug": "six-hats",
+    "category": "structured",
+    "description": "Explore sous 6 perspectives différentes",
+    "phase": "convergent",
+    "difficulty": "easy"
+  },
+  "adapted_questions": [
+    {
+      "question": "Perspective Blanche (faits): Quelles données avons-nous ?",
+      "header": "🛑 Critical",
+      "options": [
+        {"label": "Métriques existantes (Recommended)", "description": "Analytics disponibles"},
+        {"label": "À collecter", "description": "User research nécessaire"},
+        {"label": "Pas de données", "description": "Intuition équipe"}
+      ]
+    },
+    {
+      "question": "Perspective Rouge (émotions): Quel ressenti utilisateur visons-nous ?",
+      "header": "⚠️ Important",
+      "options": [
+        {"label": "Satisfaction", "description": "Objectif NPS élevé"},
+        {"label": "Efficacité (Recommended)", "description": "Gain de temps"},
+        {"label": "Confiance", "description": "Sécurité perçue"}
+      ]
+    },
+    {
+      "question": "Perspective Noire (risques): Quel risque principal ?",
+      "header": "ℹ️ Info",
+      "options": [
+        {"label": "Performance", "description": "Latence, scalabilité"},
+        {"label": "Adoption", "description": "Courbe d'apprentissage"},
+        {"label": "Sécurité", "description": "Vulnérabilités"}
+      ]
+    }
+  ]
+}
+```
 
-**Phase**: [divergent/convergent] | **Difficulty**: [easy/medium/hard]
-
-**Adapted Questions**:
-
-1. [Question adapted to current context]
-   A) [Option A]  B) [Option B]  C) [Option C]
-   -> Suggestion: [A|B|C]
-
-2. [Question adapted to current context]
-   A) [Option A]  B) [Option B]  C) [Option C]
-
-3. [Question adapted to current context]
-   A) [Option A]  B) [Option B]  C) [Option C]
+**Main Thread transforme en AskUserQuestion:**
+```typescript
+// Les questions adaptées sont directement utilisables
+AskUserQuestion({
+  questions: technique_output.adapted_questions.map(q => ({
+    question: q.question,
+    header: q.header,
+    multiSelect: false,
+    options: q.options
+  }))
+})
 ```
 
 ## Session Tracking
