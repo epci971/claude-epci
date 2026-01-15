@@ -1,7 +1,7 @@
 ---
 description: >-
-  Structured debugging workflow with adaptive routing. Diagnoses bugs using
-  thought tree analysis, solution scoring, and automatic research (web + MCP).
+  Diagnose and fix bugs using structured workflow with adaptive routing.
+  Uses thought tree analysis, solution scoring, and automatic research (web + MCP).
   Routes to Trivial/Quick/Complet mode based on complexity.
 argument-hint: "[error message | stack trace] [--full] [--turbo] [--no-report] [--c7] [--seq] [--no-clarify]"
 allowed-tools: [Read, Glob, Grep, Bash, Task, WebFetch, WebSearch, Write, Edit]
@@ -69,6 +69,8 @@ prompt: "Analyze this error and identify the most likely root cause with confide
 | **Skills** | project-memory, debugging-strategy, mcp, [stack-skill] |
 | **Subagents** | @code-reviewer (Complet mode), @security-auditor (if security bug) |
 | **MCP** | Context7 (error docs), Sequential (multi-step reasoning) |
+
+> **Note**: Bash non restreint car /debug nécessite l'exécution de commandes variées (tests, git, build tools) pour le diagnostic.
 
 ## Pre-Workflow: Load Context
 
@@ -383,7 +385,7 @@ Generate multiple solutions with scores:
 
 ---
 
-## Completion
+## Output
 
 ### If --commit flag active
 
@@ -428,6 +430,27 @@ Reviews:
 {If --commit: 📝 Contexte commit préparé → /commit}
 Next: Verify fix in production environment
 ```
+
+---
+
+## Memory Integration
+
+**Execute `post-debug-complete` hooks** for history tracking:
+
+```bash
+python3 src/hooks/runner.py post-debug --context '{
+  "mode": "<Trivial|Quick|Complet>",
+  "bug_slug": "<slug>",
+  "root_cause": "<primary cause>",
+  "files_modified": ["<files>"],
+  "resolution_time": "<duration>"
+}'
+```
+
+**Effects**:
+- Saves debug session to `.project-memory/history/debug/`
+- Updates bug resolution metrics
+- Enables pattern detection for recurring issues
 
 ---
 
