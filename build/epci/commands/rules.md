@@ -42,7 +42,7 @@ contextual rules files tailored to the project.
 **Reference**: `rules-generator/references/rule-classifier.md`
 
 1. **Parse input and flags**
-   - If `--add` flag present → **Mode ADD** (see `references/rules-add-mode.md`)
+   - If `--add` flag present → **Mode ADD** (see @references/rules/add-mode.md)
    - If explicit flags (`--force`, `--validate-only`, `--dry-run`, `--stack`) → **Mode GENERATE** (Step 1)
    - Else → Classify input text
 
@@ -58,7 +58,7 @@ contextual rules files tailored to the project.
    | "?" at end (question) | -0.3 |
 
    **Routing**:
-   - Score >= 0.7 → **Mode ADD** (see `references/rules-add-mode.md`)
+   - Score >= 0.7 → **Mode ADD** (see @references/rules/add-mode.md)
    - Score 0.4-0.7 → Ask for confirmation
    - Score < 0.4 → **Mode GENERATE** (Step 1)
 
@@ -76,7 +76,7 @@ contextual rules files tailored to the project.
 
 ### Mode ADD: Incremental Rule Addition
 
-**Full details:** See `references/rules-add-mode.md`
+**Full details:** See @references/rules/add-mode.md
 
 Quick summary of steps:
 - **A1**: Clarity assessment (score)

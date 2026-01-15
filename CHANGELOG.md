@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.3] - 2026-01-15
+
+### Added
+
+- **New agent**: `@statusline-setup` for Claude Code status line configuration
+
+### Changed
+
+- **File references**: Added `@` syntax rule in CLAUDE.md (Section 9)
+  - All file references must use `@path` instead of backticks or markdown links
+  - Corrected 28 occurrences across 5 command files
+
+### Fixed
+
+- **plugin.json**: Added missing `statusline-setup.md` agent (16 agents total)
+- **Subagents count**: Updated from 15 to 16 in CLAUDE.md
+
 ## [5.2.0] - 2026-01-15
 
 ### Changed

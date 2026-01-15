@@ -279,7 +279,7 @@ Boucle jusqu'a `finish`:
 
 ### Project Estimation & Completion Summary
 
-See [completion-summary.md](references/brainstorm/completion-summary.md) for full format.
+See @references/brainstorm/completion-summary.md for full format.
 
 **Quick reference:**
 - TINY (≤2j) → `/brief` → `/quick --autonomous`
@@ -290,13 +290,13 @@ See [completion-summary.md](references/brainstorm/completion-summary.md) for ful
 
 ## Commands
 
-See [commands.md](references/brainstorm/commands.md) for full reference.
+See @references/brainstorm/commands.md for full reference.
 
 **Quick reference:** `continue`, `dive`, `pivot`, `status`, `finish`, `party`, `panel`
 
 ## Flags
 
-See [flags.md](references/brainstorm/flags.md) for full reference.
+See @references/brainstorm/flags.md for full reference.
 
 **Quick reference:** `--quick`, `--turbo`, `--no-hmw`, `--competitive`, `--party`, `--panel`
 
@@ -304,15 +304,15 @@ See [flags.md](references/brainstorm/flags.md) for full reference.
 
 | Topic | Reference |
 |-------|-----------|
-| Commands | [commands.md](references/brainstorm/commands.md) |
-| Flags | [flags.md](references/brainstorm/flags.md) |
-| Completion summary | [completion-summary.md](references/brainstorm/completion-summary.md) |
-| Turbo mode | [turbo-mode.md](references/brainstorm/turbo-mode.md) |
-| Random mode | [random-mode.md](references/brainstorm/random-mode.md) |
-| Progressive mode | [progressive-mode.md](references/brainstorm/progressive-mode.md) |
-| Spike process | [spike-process.md](references/brainstorm/spike-process.md) |
-| Session commands | [session-commands.md](references/brainstorm/session-commands.md) |
-| Energy checkpoints | [energy-checkpoints.md](references/brainstorm/energy-checkpoints.md) |
+| Commands | @references/brainstorm/commands.md |
+| Flags | @references/brainstorm/flags.md |
+| Completion summary | @references/brainstorm/completion-summary.md |
+| Turbo mode | @references/brainstorm/turbo-mode.md |
+| Random mode | @references/brainstorm/random-mode.md |
+| Progressive mode | @references/brainstorm/progressive-mode.md |
+| Spike process | @references/brainstorm/spike-process.md |
+| Session commands | @references/brainstorm/session-commands.md |
+| Energy checkpoints | @references/brainstorm/energy-checkpoints.md |
 
 ## Agents
 

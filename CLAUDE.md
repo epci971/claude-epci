@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.2.0 | **Date** : Janvier 2025
+> **Version** : 5.2.3 | **Date** : Janvier 2025
 
 ---
 
@@ -13,7 +13,7 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
 | **Simplicité**      | 13 commandes spécialisées                                     |
-| **Modularité**      | 30 Skills, 15 Subagents, Hooks natifs                         |
+| **Modularité**      | 30 Skills, 16 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
 

@@ -1,6 +1,6 @@
 {
   "name": "epci",
-  "version": "5.2.2",
+  "version": "5.2.3",
   "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability, project memory, and batch orchestration",
   "author": {
     "name": "EPCI Team"
@@ -36,7 +36,8 @@
     "./agents/technique-advisor.md",
     "./agents/party-orchestrator.md",
     "./agents/expert-panel.md",
-    "./agents/rule-clarifier.md"
+    "./agents/rule-clarifier.md",
+    "./agents/statusline-setup.md"
   ],
   "skills": [
     "./skills/core/epci-core/SKILL.md",

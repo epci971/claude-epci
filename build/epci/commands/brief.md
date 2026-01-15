@@ -392,6 +392,13 @@ Present ALL analysis results in a consolidated breakpoint:
 │                                                                     │
 │ 🚀 COMMANDE RECOMMANDÉE: {COMMAND} {FLAGS}                         │
 │                                                                     │
+│ [If STANDARD or LARGE:]                                             │
+│ 💡 TIP: Worktree recommandé                                         │
+│    Pour isoler cette feature dans un worktree:                      │
+│      ./src/scripts/worktree-create.sh {slug}                        │
+│      cd ~/worktrees/{project}/{slug}                                │
+│      claude                                                         │
+│                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │ OPTIONS:                                                            │
 │                                                                     │
