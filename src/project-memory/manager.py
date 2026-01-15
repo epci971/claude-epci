@@ -83,7 +83,7 @@ class IntegrationConfig:
 @dataclass
 class EpciInfo:
     """EPCI plugin metadata."""
-    plugin_version: str = "3.5.0"
+    plugin_version: str = "5.3.0"
     features_completed: int = 0
     last_session: Optional[str] = None
     initialized_at: Optional[str] = None
