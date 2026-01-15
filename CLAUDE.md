@@ -12,7 +12,7 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
-| **Simplicité**      | 13 commandes spécialisées                                     |
+| **Simplicité**      | 14 commandes spécialisées                                     |
 | **Modularité**      | 30 Skills, 16 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
@@ -391,7 +391,7 @@ cd docs/specs/migration/
 
 ---
 
-## 4. Commands (13)
+## 4. Commands (14)
 
 | Commande      | Rôle                                                        |
 | ------------- | ----------------------------------------------------------- |
@@ -408,6 +408,7 @@ cd docs/specs/migration/
 | `/memory`     | Gestion mémoire projet + learning (calibration, préférences)|
 | `/promptor`   | Voice-to-brief — dictée vocale → brief structuré + Notion   |
 | `/create`     | Component Factory (skill\|command\|agent)                   |
+| `/save-plan`  | Sauvegarde plans natifs → docs/plans/ avec slug auto-généré |
 
 ---
 

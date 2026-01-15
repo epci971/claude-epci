@@ -26,7 +26,7 @@ Systeme de gestion du developpement avec commandes, skills, subagents et hooks.
 ```
 src/
 ├── agents/           # 15 subagents (validateurs, reviewers, turbo, brainstorm)
-├── commands/         # 13 commandes EPCI
+├── commands/         # 14 commandes EPCI
 ├── hooks/            # Systeme hooks (runner.py)
 ├── mcp/              # MCP Integration (config, activation)
 ├── orchestration/    # Wave orchestration
