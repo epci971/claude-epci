@@ -1,15 +1,11 @@
 ---
 description: >-
-  Brainstorming guide v5.2 pour decouvrir et specifier une feature.
-  Personas adaptatifs, phases Divergent/Convergent, scoring EMS v2.
-  Brief output conforme PRD Industry Standards v3.0.
-  Breakpoints style /brief (boite ASCII + EMS 5 axes visuels).
-  Questions via AskUserQuestion natif (3 max, headers priorite, suggestions).
-  Finalization Checkpoint obligatoire a EMS >= 70 (bloquant).
-  Session persistence, energy checkpoints.
-  Use when: idee vague a transformer en specs, incertitude technique.
+  Transformer une idee vague en brief fonctionnel via brainstorming structure.
+  Phases Divergent/Convergent, scoring EMS v2, personas adaptatifs.
+  Breakpoints style /brief, questions via AskUserQuestion (3 max).
+  Use when: incertitude technique, idee a clarifier.
 argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--competitive] [--c7] [--seq]"
-allowed-tools: [Read, Write, Bash, Glob, Grep, Task, WebFetch, WebSearch, AskUserQuestion]
+allowed-tools: [Read, Write, Glob, Grep, Task, WebFetch, WebSearch, AskUserQuestion]
 ---
 
 # /brainstorm — Feature Discovery v5.2
@@ -25,6 +21,24 @@ iteratives pour construire des specifications exhaustives.
 ```
 /brainstorm [description de la feature souhaitee]
 ```
+
+## Arguments
+
+| Argument | Type | Required | Description |
+|----------|------|----------|-------------|
+| `description` | String | Oui | Description de la feature a explorer |
+| `--template` | Enum | Non | Template: `feature`, `problem`, `decision` |
+| `--quick` | Flag | Non | Mode rapide (moins d'iterations) |
+| `--turbo` | Flag | Non | Mode turbo via @clarifier (Haiku) |
+| `--random` | Flag | Non | Technique aleatoire |
+| `--progressive` | Flag | Non | Mode progressif |
+| `--no-hmw` | Flag | Non | Desactive les questions HMW |
+| `--no-security` | Flag | Non | Desactive @security-auditor |
+| `--no-technique` | Flag | Non | Desactive auto-suggestion techniques |
+| `--no-clarify` | Flag | Non | Desactive clarification initiale |
+| `--competitive` | Flag | Non | Active analyse concurrentielle |
+| `--c7` | Flag | Non | Active Context7 MCP |
+| `--seq` | Flag | Non | Active Sequential MCP |
 
 ## Configuration
 
@@ -370,6 +384,26 @@ Points de controle automatiques pour gerer la fatigue cognitive.
 
 Forcer manuellement: commande `energy`
 
+## Error Handling
+
+| Error | Recovery |
+|-------|----------|
+| @Explore timeout | Continue avec contexte partiel, marquer exploration incomplete |
+| @ems-evaluator echec | Utiliser estimation manuelle, continuer iterations |
+| @technique-advisor indisponible | Proposer technique par defaut (Six Hats) |
+| Session file corrupted | Archiver et demarrer nouvelle session |
+| EMS stagnation (delta < 3 sur 3 iterations) | Proposer pivot ou changement technique |
+
+## Constraints
+
+| Constraint | Value | Rationale |
+|------------|-------|-----------|
+| Max iterations | 10 | Eviter sessions trop longues |
+| EMS minimum pour finaliser | 70 | Garantir qualite brief |
+| Questions par iteration | 3 max | Eviter surcharge cognitive |
+| Techniques par session | 5 max | Focus sur convergence |
+| Session timeout | 2h | Preservation contexte |
+
 ## Skill Reference
 
 Pour les details complets (EMS system, personas, techniques, formats):
@@ -387,6 +421,16 @@ Pour les details complets (EMS system, personas, techniques, formats):
 1. Lancer `/brief` avec le contenu du brief
 2. L'exploration ciblee identifie les fichiers exacts
 3. Le brief et journal servent de documentation
+
+## See Also
+
+| Command | Relation |
+|---------|----------|
+| `/brief` | Utilise le brief genere par /brainstorm |
+| `/epci` | Workflow complet apres brief valide |
+| `/quick` | Workflow rapide pour TINY/SMALL |
+| `/decompose` | Pour projets LARGE (>5 jours) |
+| `/debug` | Si besoin diagnostic technique |
 
 ## Skills Charges
 

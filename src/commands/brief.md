@@ -1,636 +1,318 @@
 ---
 description: >-
-    EPCI entry point. Validates and reformulates the brief, performs thorough
-    exploration, evaluates complexity, generates output (inline brief or Feature
-    Document), and routes to appropriate workflow (/quick, /epci).
+    Valider et reformuler un brief, explorer le codebase, évaluer la complexité,
+    et router vers le workflow approprié (/quick ou /epci).
 argument-hint: "[brief] [--turbo] [--rephrase] [--no-rephrase] [--no-clarify] [--c7] [--seq] [--magic] [--play]"
-allowed-tools: [Read, Write, Glob, Grep, Bash, Task]
+allowed-tools: [Read, Write, Glob, Grep, Task]
 ---
 
 # EPCI Brief — Entry Point
 
 ## Overview
 
-This command is the single entry point for the EPCI workflow.
-It transforms a raw brief into a structured brief and routes to the appropriate workflow.
+Cette commande est le point d'entrée unique du workflow EPCI.
+Elle transforme un brief brut en brief structuré et route vers le workflow approprié.
 
-**Key principle**: Validate the need BEFORE exploring the codebase.
-
-**Output Paths (CRITICAL):**
-- TINY/SMALL → Inline brief (no file created)
-- STANDARD/LARGE → `docs/features/<slug>.md` (Write tool, **NOT** native plan mode)
+**Principe clé**: Valider le besoin AVANT d'explorer le codebase.
 
 ## Configuration
 
 | Element       | Value                                                                                                      |
 | ------------- | ---------------------------------------------------------------------------------------------------------- |
-| **Thinking**  | `think hard` (default) / `ultrathink` (LARGE or high uncertainty)                                          |
+| **Thinking**  | `think hard` (default) / `ultrathink` (LARGE ou incertitude élevée)                                        |
 | **Skills**    | project-memory, epci-core, architecture-patterns, flags-system, mcp, personas, input-clarifier, [stack-skill auto-detected] |
 | **Subagents** | @Explore (thorough), @clarifier (turbo mode)                                                               |
 
-**Thinking mode selection:**
+**Sélection du mode thinking:**
 
-- `think hard`: Default for most briefs
-- `ultrathink`: When complexity appears LARGE or technical uncertainty is high
+- `think hard`: Par défaut pour la plupart des briefs
+- `ultrathink`: Quand complexité LARGE ou incertitude technique élevée
 
-### --turbo Mode (MANDATORY Instructions)
+## Arguments
 
-**When `--turbo` flag is active, you MUST follow these rules:**
+| Argument | Type | Requis | Description |
+|----------|------|--------|-------------|
+| `brief` | string | Oui | Le brief à analyser (texte ou chemin fichier) |
+| `--turbo` | flag | Non | Mode rapide avec @clarifier (Haiku) |
+| `--rephrase` | flag | Non | Force la reformulation du brief |
+| `--no-rephrase` | flag | Non | Désactive la reformulation |
+| `--no-clarify` | flag | Non | Désactive la clarification d'artefacts vocaux |
+| `--c7` | flag | Non | Active Context7 MCP |
+| `--seq` | flag | Non | Active Sequential MCP |
+| `--magic` | flag | Non | Active Magic MCP (21st.dev) |
+| `--play` | flag | Non | Active Playwright MCP |
 
-1. **Use @clarifier (Haiku)** for fast clarification:
+## Flags
 
-    ```
-    Invoke @clarifier via Task tool with model: haiku
-    Maximum 2 questions, suggestions included
-    Skip deep analysis, focus on blocking ambiguities
-    ```
+| Flag | Effet | Défaut |
+|------|-------|--------|
+| `--turbo` | Mode rapide: @clarifier Haiku, max 2 questions, breakpoints réduits | Off |
+| `--rephrase` | Force la reformulation même si brief structuré | Off |
+| `--no-rephrase` | Désactive reformulation, garde brief original | Off |
+| `--no-clarify` | Désactive détection artefacts vocaux | Off |
+| `--c7` | Active Context7 pour documentation externe | Auto |
+| `--seq` | Active Sequential pour raisonnement multi-étapes | Auto |
+| `--magic` | Active Magic pour génération UI | Auto |
+| `--play` | Active Playwright pour tests E2E | Auto |
 
-2. **Use @Explore with Haiku model** for faster codebase analysis:
+**Auto-activation**: Les flags MCP sont auto-activés selon les personas détectés (voir Step 3.5).
 
-    ```
-    Invoke @Explore via Task tool with model: haiku
-    Focus: Quick scan, file identification only
-    Skip: Deep pattern analysis (defer to implementation)
-    ```
+> Voir @src/commands/references/brief/turbo-mode.md pour les instructions détaillées du mode --turbo.
 
-3. **Maximum 2 clarification questions** — Focus on blocking ambiguities only
+## Output
 
-4. **Auto-accept suggestions** if confidence > 0.7:
-    - If AI suggestions have high confidence, skip question [1] option
-    - Present only [2] Validate, [3] Modify, [4] Launch
+| Catégorie | Output | Emplacement |
+|-----------|--------|-------------|
+| TINY | Brief inline | Réponse directe (pas de fichier) |
+| SMALL | Brief inline | Réponse directe (pas de fichier) |
+| STANDARD | Feature Document | `docs/features/<slug>.md` |
+| LARGE | Feature Document | `docs/features/<slug>.md` |
 
-5. **Suggest --turbo automatically** if:
-    - `.project-memory/` exists (experienced project)
-    - Coming from `/brainstorm` with EMS > 60
-    - Category is STANDARD (not LARGE)
+**Après génération**: Route automatiquement vers `/quick` (TINY/SMALL) ou `/epci` (STANDARD/LARGE).
 
-6. **Reduced breakpoints** — Compact format, single confirmation step
-
-**Turbo Suggestion Logic:**
-
-```
-IF .project-memory/ exists AND category != LARGE:
-   Display: "💡 --turbo recommandé (projet connu)"
-   Auto-add --turbo to recommended command
-```
+> Voir @src/commands/references/brief/output-templates.md pour les templates détaillés.
 
 ## Process
 
-**Follow ALL steps in sequence. Steps 1 and 4 have MANDATORY BREAKPOINTS.**
+**Suivre TOUTES les étapes en séquence. Les Steps 1 et 4 ont des BREAKPOINTS OBLIGATOIRES.**
 
 ---
 
-### Step 0: Load Project Memory
+### Step 0: Charger la Mémoire Projet
 
 **Skill**: `project-memory`
 
-Load project context from `.project-memory/` directory. The skill handles:
+Charger le contexte projet depuis `.project-memory/`. Le skill gère:
 
-- Reading context, conventions, settings, patterns
-- Loading velocity metrics and feature history
-- Applying defaults and displaying memory status
+- Lecture context, conventions, settings, patterns
+- Chargement métriques vélocité et historique features
+- Application des défauts et affichage statut mémoire
 
-**If `.project-memory/` does not exist:** Continue without context. Suggest `/memory init` at workflow end.
+**Si `.project-memory/` n'existe pas:** Continuer sans contexte. Suggérer `/memory init` à la fin du workflow.
 
 ---
 
-### Step 0.5: Input Type Detection (CONDITIONAL)
+### Step 0.5: Détection Type Input (CONDITIONNEL)
 
-**Detect input type and extract brief content:**
+**Détecter type input et extraire contenu brief:**
 
 ```
-IF input starts with "/" or "./" or "docs/" or "@":
+IF input commence par "/" ou "./" ou "docs/" ou "@":
    → INPUT_TYPE = "file"
-   → Read file content using Read tool
-   → Extract brief content from file
-   → Detect slug from filename or path
+   → Lire contenu fichier avec Read tool
+   → Extraire contenu brief du fichier
+   → Détecter slug depuis filename ou path
 ELSE:
    → INPUT_TYPE = "text"
-   → Use input directly as brief content
+   → Utiliser input directement comme contenu brief
 ```
 
-**File Input Handling (from /brainstorm or external):**
+**Gestion Input Fichier (depuis /brainstorm ou externe):**
 
-| Source | Path Pattern | Action |
+| Source | Pattern Path | Action |
 |--------|--------------|--------|
-| `/brainstorm` | `docs/briefs/<slug>/brief-*.md` | Read file, extract structured brief |
-| External file | `*.md` or `@filepath` | Read file, use as raw brief |
+| `/brainstorm` | `docs/briefs/<slug>/brief-*.md` | Lire fichier, extraire brief structuré |
+| Fichier externe | `*.md` ou `@filepath` | Lire fichier, utiliser comme brief brut |
 
-**⚠️ IMPORTANT:** Even when input is a file from `/brainstorm`, Step 5 MUST still create a Feature Document in `docs/features/<slug>.md`. The brainstorm output in `docs/briefs/` is a **source**, not the final Feature Document.
-
-```
-docs/briefs/<slug>/brief-*.md  →  INPUT (source from brainstorm)
-docs/features/<slug>.md        →  OUTPUT (Feature Document for /epci)
-```
+**IMPORTANT:** Même avec input fichier depuis `/brainstorm`, Step 5 DOIT créer un Feature Document dans `docs/features/<slug>.md`. Le output brainstorm dans `docs/briefs/` est une **source**, pas le Feature Document final.
 
 ---
 
-### Step 1: Reformulation + Validation (MANDATORY BREAKPOINT)
+### Step 1: Reformulation + Validation (BREAKPOINT OBLIGATOIRE)
 
-**BREAKPOINT OBLIGATOIRE** — Toujours affiche pour valider le besoin AVANT exploration.
+**BREAKPOINT OBLIGATOIRE** — Toujours affiché pour valider le besoin AVANT exploration.
 
-#### Pre-step: Input Clarification (Conditional)
+> Voir @src/commands/references/brief/reformulation-process.md pour la logique détaillée de reformulation.
 
-**Skill**: `input-clarifier`
+> Voir @src/commands/references/brief/breakpoint-formats.md pour le format du breakpoint.
 
-Before reformulation, check if input needs clarification (voice artifacts detected).
+**Attendre choix utilisateur:**
 
-```
-IF --no-clarify flag:
-   → Skip clarification, proceed to reformulation checks
-
-ELSE:
-   → Calculate clarity score using input-clarifier skill
-   → IF score < 0.6: Show reformulation prompt (from input-clarifier)
-   → Use cleaned input for subsequent reformulation
-```
-
-> **Note**: This uses the centralized `input-clarifier` skill for consistent artifact detection across all commands. See `src/skills/core/input-clarifier/` for patterns.
-
-#### SKIP CONDITIONS (rares)
-
-| Condition | How to detect | Action |
-|-----------|---------------|--------|
-| **Flag `--no-rephrase`** | User explicitly skipped | SKIP — go to Step 2 |
-| **Brief already structured** | Contains "## Objectif", "## Context", "## Critères" headers | SKIP — already from /brainstorm |
-
-**If ANY skip condition is met:** Display brief as-is with validation breakpoint, then proceed to Step 2.
-
-#### TRIGGER CONDITIONS (if ANY is true → MUST reformulate)
-
-| Condition | How to detect |
-|-----------|---------------|
-| **Flag `--rephrase`** | User explicitly requested |
-| **Clarity score < 0.6** | Detected by input-clarifier skill (voice artifacts, self-corrections) |
-| **Vague/incomplete brief** | < 30 words AND contains vague terms: `système`, `améliorer`, `ajouter`, `truc`, `chose`, `something` |
-| **No clear action verb** | Missing: `implémenter`, `créer`, `ajouter`, `corriger`, `fixer`, `add`, `create`, `fix`, `implement` |
-
-#### ACTION: Reformulation Process
-
-**If triggered, you MUST:**
-
-1. **Use cleaned input** from input-clarifier (if clarification was triggered)
-   - Artifacts already removed by the skill
-   - Self-corrections already resolved
-
-2. **Detect template type:**
-   - **FEATURE**: Keywords `ajouter`, `créer`, `implémenter`, `nouveau`, `add`, `create`
-   - **PROBLEM**: Keywords `bug`, `erreur`, `fixer`, `corriger`, `cassé`, `fix`, `broken`
-   - **DECISION**: Keywords `choisir`, `quelle`, `comment`, `stratégie`, `which`, `how`
-
-3. **Restructure into format:**
-
-```
-**Objectif**: [Action verb] + [what] + [purpose]
-**Contexte**: [Domain detected] | [Initial understanding]
-**Contraintes**: [Extracted from brief OR "À définir"]
-**Critères de succès**: [Based on template type]
-```
-
-#### BREAKPOINT Format (ALWAYS DISPLAYED)
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 📝 VALIDATION DU BRIEF                                              │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 📄 BRIEF ORIGINAL                                                   │
-│ "{raw_brief}"                                                       │
-│                                                                     │
-│ [If reformulated:]                                                  │
-│ 📊 DÉTECTION                                                        │
-│ ├── Artefacts vocaux: {COUNT} trouvés                              │
-│ ├── Type détecté: {FEATURE|PROBLEM|DECISION}                       │
-│ └── Reformulation: OUI                                             │
-│                                                                     │
-│ ✨ BRIEF REFORMULÉ                                                  │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ **Objectif**: {goal}                                            │ │
-│ │ **Contexte**: {context}                                         │ │
-│ │ **Contraintes**: {constraints}                                  │ │
-│ │ **Critères de succès**: {success_criteria}                      │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ [If NOT reformulated:]                                              │
-│ ✅ Brief propre — pas de reformulation nécessaire                   │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ OPTIONS:                                                            │
-│   [1] Valider → Continuer vers l'exploration                       │
-│   [2] Modifier → Je reformule moi-même                             │
-│   [3] Annuler → Arrêter le workflow                                │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
-**Wait for user choice:**
-
-| Choice | Action |
-|--------|--------|
-| **[1] Valider** | Store validated brief, proceed to Step 2 |
-| **[2] Modifier** | Wait for user input, update brief, show breakpoint again |
-| **[3] Annuler** | Stop workflow |
-
-#### --turbo mode behavior
-
-- Auto-validate if brief is clean (no artifacts detected)
-- Compact format display
-- Only show breakpoint if > 3 voice artifacts detected
+| Choix | Action |
+|-------|--------|
+| **[1] Valider** | Stocker brief validé, procéder au Step 2 |
+| **[2] Modifier** | Attendre input utilisateur, mettre à jour brief, réafficher breakpoint |
+| **[3] Annuler** | Arrêter workflow |
 
 ---
 
-### Step 2: Exploration (MANDATORY)
+### Step 2: Exploration (OBLIGATOIRE)
 
-**🪝 Execute `pre-brief` hooks** (if configured in `hooks/active/`)
+**Exécuter hooks `pre-brief`** (si configurés dans `hooks/active/`)
 
-**Use the VALIDATED brief from Step 1.**
+**Utiliser le brief VALIDÉ du Step 1.**
 
-**Action:** Invoke @Explore (thorough level) using the Task tool to:
+**Action:** Invoquer @Explore (niveau thorough) via Task tool pour:
 
-- Scan complete project structure
-- Identify all technologies, frameworks, versions
-- Map architectural patterns (Repository, Service, Controller, etc.)
-- Identify files potentially impacted by the brief
-- Estimate dependencies and coupling
-- Detect existing test patterns
+- Scanner structure projet complète
+- Identifier toutes technologies, frameworks, versions
+- Mapper patterns architecturaux (Repository, Service, Controller, etc.)
+- Identifier fichiers potentiellement impactés par le brief
+- Estimer dépendances et couplage
+- Détecter patterns de test existants
 
-**Internal outputs** (store for Step 3):
+**Sorties internes** (stocker pour Step 3):
 
-- List of candidate files with probable action (Create/Modify/Delete)
-- Detailed technical stack
-- Detected architectural patterns
-- Identified risks
+- Liste fichiers candidats avec action probable (Create/Modify/Delete)
+- Stack technique détaillé
+- Patterns architecturaux détectés
+- Risques identifiés
 
-#### Error Handling
+#### Gestion des Erreurs
 
-If @Explore fails or times out:
-1. Log warning: "Exploration incomplete"
-2. Continue with partial results if available
-3. Mark complexity as UNKNOWN
-4. Suggest `--think-hard` for safety
-5. Display warning in Step 4 breakpoint
+Si @Explore échoue ou timeout:
+1. Logger warning: "Exploration incomplète"
+2. Continuer avec résultats partiels si disponibles
+3. Marquer complexité comme UNKNOWN
+4. Suggérer `--think-hard` par sécurité
+5. Afficher warning dans breakpoint Step 4
 
 ---
 
-### Step 3: Analysis & Complexity Evaluation (Internal)
+### Step 3: Analyse & Évaluation Complexité (Interne)
 
-**DO NOT OUTPUT ANYTHING IN THIS STEP** — Prepare data for the breakpoint.
+**NE RIEN AFFICHER DANS CETTE ÉTAPE** — Préparer données pour le breakpoint.
 
-Analyze the brief and exploration results to prepare:
+Analyser brief et résultats exploration pour préparer:
 
-#### 3.1 Complexity Evaluation
+#### 3.1 Évaluation Complexité
 
-| Criteria       | TINY | SMALL    | STANDARD | LARGE |
+| Critère        | TINY | SMALL    | STANDARD | LARGE |
 | -------------- | ---- | -------- | -------- | ----- |
-| Files          | 1    | 2-3      | 4-10     | 10+   |
-| Estimated LOC  | <50  | <200     | <1000    | 1000+ |
-| Risk           | None | Low      | Medium   | High  |
-| Tests required | No   | Optional | Yes      | Yes+  |
-| Arch impacted  | No   | No       | Possible | Yes   |
+| Fichiers       | 1    | 2-3      | 4-10     | 10+   |
+| LOC estimé     | <50  | <200     | <1000    | 1000+ |
+| Risque         | Aucun| Faible   | Moyen    | Élevé |
+| Tests requis   | Non  | Optionnel| Oui      | Oui+  |
+| Arch impactée  | Non  | Non      | Possible | Oui   |
 
-**Flag Auto-Activation:**
+**Auto-Activation Flags:**
 
-| Condition                      | Threshold | Flag           |
-| ------------------------------ | --------- | -------------- |
-| Files impacted                 | 3-10      | `--think`      |
-| Files impacted                 | >10       | `--think-hard` |
-| Refactoring/migration detected | true      | `--think-hard` |
-| Sensitive file patterns        | any match | `--safe`       |
-| Complexity score               | >0.7      | `--wave`       |
+| Condition                      | Seuil  | Flag           |
+| ------------------------------ | ------ | -------------- |
+| Fichiers impactés              | 3-10   | `--think`      |
+| Fichiers impactés              | >10    | `--think-hard` |
+| Refactoring/migration détecté  | true   | `--think-hard` |
+| Patterns fichiers sensibles    | match  | `--safe`       |
+| Score complexité               | >0.7   | `--wave`       |
 
-**Sensitive file patterns:**
+**Patterns fichiers sensibles:**
 
 ```
 **/auth/**  **/security/**  **/payment/**
 **/password/**  **/api/v*/admin/**
 ```
 
-#### 3.2 Clarification Questions (2-3 max)
+#### 3.2 Questions de Clarification (2-3 max)
 
-- Identify gaps, ambiguities, missing information
-- Prepare suggestions for each question
-- **Assign priority tags** (see `clarification-intelligente` skill):
-  - 🛑 Critique (bloquant) — MUST answer before proceeding
-  - ⚠️ Important (risque) — Recommended, suggestion applied if skipped
-  - ℹ️ Information (optionnel) — Optional, suggestion applied silently
+- Identifier lacunes, ambiguïtés, informations manquantes
+- Préparer suggestions pour chaque question
+- **Assigner tags priorité** (voir skill `clarification-intelligente`):
+  - 🛑 Critique (bloquant) — DOIT répondre avant de continuer
+  - ⚠️ Important (risque) — Recommandé, suggestion appliquée si ignoré
+  - ℹ️ Information (optionnel) — Optionnel, suggestion appliquée silencieusement
 
-#### 3.3 AI Suggestions (3-5 max)
+#### 3.3 Suggestions IA (3-5 max)
 
-- Architecture recommendations
-- Implementation approach
-- Risks and mitigations
-- Stack-specific best practices
+- Recommandations architecture
+- Approche implémentation
+- Risques et mitigations
+- Best practices spécifiques stack
 
-#### 3.4 Persona Detection (F09)
+#### 3.4 Détection Persona (F09)
 
-- Score all 6 personas using algorithm from `src/skills/personas/SKILL.md`
+- Scorer les 6 personas avec algorithme depuis `src/skills/personas/SKILL.md`
 - `Score = (keywords × 0.4) + (files × 0.4) + (stack × 0.2)`
-- If score > 0.6: Auto-activate persona
-- If score 0.4-0.6: Suggest persona in breakpoint
-- Include active/suggested persona in FLAGS line
+- Si score > 0.6: Auto-activer persona
+- Si score 0.4-0.6: Suggérer persona dans breakpoint
+- Inclure persona actif/suggéré dans ligne FLAGS
 
-#### 3.5 MCP Activation (F12)
+#### 3.5 Activation MCP (F12)
 
-- Based on activated personas, determine MCP servers to activate
-- Check keyword triggers in brief text
-- Check file pattern triggers in impacted files
-- Check flag triggers (`--c7`, `--seq`, `--magic`, `--play`, `--think-hard`)
-- Auto-activate MCPs based on `src/skills/mcp/SKILL.md` matrix
-- Include active MCP flags in FLAGS line: `--c7 (auto: architect)`
+- Selon personas activés, déterminer serveurs MCP à activer
+- Vérifier triggers keywords dans texte brief
+- Vérifier triggers patterns fichiers dans fichiers impactés
+- Vérifier triggers flags (`--c7`, `--seq`, `--magic`, `--play`, `--think-hard`)
+- Auto-activer MCPs selon matrice `src/skills/mcp/SKILL.md`
+- Inclure flags MCP actifs dans ligne FLAGS: `--c7 (auto: architect)`
 
 ---
 
-### Step 4: BREAKPOINT — Analysis Review (MANDATORY)
+### Step 4: BREAKPOINT — Revue Analyse (OBLIGATOIRE)
 
-**MANDATORY:** Display this breakpoint and WAIT for user choice before proceeding.
+**OBLIGATOIRE:** Afficher ce breakpoint et ATTENDRE choix utilisateur avant de continuer.
 
-Present ALL analysis results in a consolidated breakpoint:
+> Voir @src/commands/references/brief/breakpoint-formats.md pour le format complet du breakpoint.
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ⏸️  BREAKPOINT — ANALYSE DU BRIEF                                   │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 📊 EXPLORATION                                                      │
-│ ├── Stack détecté: {STACK}                                         │
-│ ├── Fichiers impactés: {FILE_COUNT}                                │
-│ ├── Patterns identifiés: {PATTERNS}                                │
-│ └── Risques détectés: {RISK_COUNT}                                 │
-│                                                                     │
-│ 📋 QUESTIONS DE CLARIFICATION                                       │
-│                                                                     │
-│ Q1: {TAG_1} {question_1}                                            │
-│     → Suggestion: {suggestion_1}                                    │
-│                                                                     │
-│ Q2: {TAG_2} {question_2}                                            │
-│     → Suggestion: {suggestion_2}                                    │
-│                                                                     │
-│ Q3: {TAG_3} {question_3}                                            │
-│     → Suggestion: {suggestion_3}                                    │
-│                                                                     │
-│ Légende: 🛑 Critique (obligatoire) | ⚠️ Important | ℹ️ Optionnel    │
-│                                                                     │
-│ 💡 SUGGESTIONS IA                                                   │
-│                                                                     │
-│ Architecture:                                                       │
-│   • {architecture_suggestion}                                       │
-│                                                                     │
-│ Implémentation:                                                     │
-│   • {implementation_suggestion}                                     │
-│                                                                     │
-│ Risques à considérer:                                               │
-│   • {risk_suggestion}                                               │
-│                                                                     │
-│ Best practices {stack}:                                             │
-│   • {stack_suggestion}                                              │
-│                                                                     │
-│ 📈 ÉVALUATION                                                       │
-│ ├── Catégorie: {CATEGORY}                                          │
-│ ├── Fichiers: {FILE_COUNT}                                         │
-│ ├── LOC estimé: ~{LOC}                                             │
-│ ├── Risque: {RISK_LEVEL}                                           │
-│ └── Flags: {FLAGS}                                                 │
-│                                                                     │
-│ 🚀 COMMANDE RECOMMANDÉE: {COMMAND} {FLAGS}                         │
-│                                                                     │
-│ [If STANDARD or LARGE:]                                             │
-│ 💡 TIP: Worktree recommandé                                         │
-│    Pour isoler cette feature dans un worktree:                      │
-│      ./src/scripts/worktree-create.sh {slug}                        │
-│      cd ~/worktrees/{project}/{slug}                                │
-│      claude                                                         │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ OPTIONS:                                                            │
-│                                                                     │
-│   [1] Répondre aux questions                                        │
-│       → Je fournis mes réponses aux questions de clarification     │
-│                                                                     │
-│   [2] Valider les suggestions                                       │
-│       → J'accepte les suggestions IA telles quelles                │
-│                                                                     │
-│   [3] Modifier les suggestions                                      │
-│       → Je veux changer certaines suggestions                      │
-│                                                                     │
-│   [4] Lancer {COMMAND} {FLAGS}                                      │
-│       → Tout est OK, on passe à l'implémentation                   │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
+**Attendre réponse utilisateur.** Traiter selon choix:
 
-**Wait for user response.** Process based on choice:
-
-| Choice           | Action                                                                                   |
+| Choix            | Action                                                                                   |
 | ---------------- | ---------------------------------------------------------------------------------------- |
-| **[1] Répondre** | Wait for user answers, incorporate into brief, show breakpoint again                     |
-| **[2] Valider**  | Use suggestions as-is, generate output (Step 5), show breakpoint again with updated eval |
-| **[3] Modifier** | Wait for modifications, update suggestions, show breakpoint again                        |
-| **[4] Lancer**   | Generate output (Step 5) then execute the recommended command                            |
+| **[1] Répondre** | Attendre réponses utilisateur, incorporer dans brief, réafficher breakpoint              |
+| **[2] Valider**  | Utiliser suggestions telles quelles, générer output (Step 5), réafficher breakpoint avec éval mise à jour |
+| **[3] Modifier** | Attendre modifications, mettre à jour suggestions, réafficher breakpoint                 |
+| **[4] Lancer**   | Générer output (Step 5) puis exécuter commande recommandée                               |
 
-**After [1], [2], or [3]:** Update analysis and show breakpoint again until user chooses [4].
-**After [4]:** Proceed to Step 5 (generate output) then Step 6 (execute command).
-
----
-
-### Step 5: Generate Output (MANDATORY)
-
-**DO NOT SKIP THIS STEP** — You MUST generate the appropriate output based on complexity.
-
-Based on complexity evaluation, generate the appropriate output:
-
-#### If TINY or SMALL → Inline Brief
-
-Generate a structured brief directly in your response (no file created):
-
-```markdown
-# Functional Brief — [Title]
-
-## Context
-
-[Summary of the need in 2-3 sentences]
-
-## Detected Stack
-
-[Stack identified by @Explore]
-
-## Target Files
-
-- `path/to/file.ext` (action: Create/Modify)
-
-## Acceptance Criteria
-
-- [ ] Criterion 1 (measurable)
-- [ ] Criterion 2 (measurable)
-
-## Memory Summary
-
-[If .project-memory/ exists, include key context:]
-
-- **Project**: [project name from context.json]
-- **Conventions**: [key conventions from conventions.json]
-- **Patterns**: [relevant patterns if any]
-
-## Category: [TINY|SMALL]
-
-## Suggested Flags
-
-- [flag] (auto/recommended) — if any detected
-
-→ Launch `/quick`
-```
-
-#### ⚠️ CRITICAL: Feature Document vs Native Plan Mode
-
-**NE PAS** utiliser le mode plan natif de Claude Code pour les Feature Documents EPCI.
-
-| ❌ INCORRECT | ✅ CORRECT |
-|--------------|-----------|
-| EnterPlanMode tool | Write tool |
-| `~/.claude/plans/` | `docs/features/<slug>.md` |
-| Plan natif Claude Code | Feature Document EPCI |
-
-**Raison** : Les Feature Documents EPCI sont des fichiers persistants dans le repo git pour traçabilité, pas des plans temporaires Claude Code.
+**Après [1], [2], ou [3]:** Mettre à jour analyse et réafficher breakpoint jusqu'à choix [4].
+**Après [4]:** Procéder au Step 5 (générer output) puis Step 6 (exécuter commande).
 
 ---
 
-#### If STANDARD or LARGE → Feature Document (USE WRITE TOOL)
+### Step 5: Générer Output (OBLIGATOIRE)
 
-**MANDATORY:** Use the **Write tool** (NOT EnterPlanMode, NOT native plan mode) to create the file `docs/features/<slug>.md`
+**NE PAS IGNORER CETTE ÉTAPE** — OBLIGATOIRE de générer l'output approprié selon complexité.
 
-**Path Requirements:**
-- Path MUST be `docs/features/<slug>.md` (in project directory)
-- Path MUST NOT be `~/.claude/plans/` or `.claude/plans/`
-- Tool MUST be Write, NOT EnterPlanMode
+> Voir @src/commands/references/brief/output-templates.md pour les templates détaillés et instructions critiques.
 
-```
-IF output_path contains ".claude/plans":
-   ╔══════════════════════════════════════════════════════════════╗
-   ║ ❌ ERROR: Wrong Output Path                                   ║
-   ╠══════════════════════════════════════════════════════════════╣
-   ║ Feature Documents must be saved in docs/features/             ║
-   ║ NOT in ~/.claude/plans/                                       ║
-   ║                                                               ║
-   ║ → Use Write tool with path: docs/features/<slug>.md           ║
-   ╚══════════════════════════════════════════════════════════════╝
-   RETRY with correct path
-```
+**Selon évaluation complexité:**
 
-Create the directory if needed, then write the Feature Document:
+| Catégorie | Action | Output |
+|-----------|--------|--------|
+| TINY/SMALL | Générer brief inline | Réponse directe |
+| STANDARD/LARGE | Créer Feature Document avec Write tool | `docs/features/<slug>.md` |
 
-```markdown
-# Feature Document — [Title]
-
-> **Slug**: `<slug>`
-> **Category**: [STANDARD|LARGE]
-> **Date**: [YYYY-MM-DD]
+**CRITIQUE:** Utiliser Write tool, PAS EnterPlanMode. Les Feature Documents vont dans `docs/features/`, PAS dans `~/.claude/plans/`.
 
 ---
 
-## §1 — Functional Brief
-
-### Context
-
-[Summary of the need]
-
-### Detected Stack
-
-- **Framework**: [detected]
-- **Language**: [detected]
-- **Patterns**: [detected patterns]
-
-### Acceptance Criteria
-
-- [ ] Criterion 1 (measurable)
-- [ ] Criterion 2 (measurable)
-
-### Constraints
-
-- [Technical constraint]
-- [Other constraint if applicable]
-
-### Out of Scope
-
-- [Explicit exclusion 1]
-- [Explicit exclusion 2]
-
-### Evaluation
-
-- **Category**: [STANDARD|LARGE]
-- **Estimated files**: X
-- **Estimated LOC**: ~Y
-- **Risk**: [Low|Medium|High]
-- **Justification**: [Reason for categorization]
-
-### Suggested Flags
-
-| Flag           | Source | Reason              |
-| -------------- | ------ | ------------------- |
-| `--think-hard` | auto   | >10 files impacted  |
-| `--safe`       | auto   | auth files detected |
-| `--wave`       | auto   | complexity > 0.7    |
-
-### Memory Summary
-
-[If .project-memory/ exists, include context loaded in Step 0:]
-
-- **Project**: [project name]
-- **Stack**: [detected stack from context.json]
-- **Conventions**: [key conventions]
-- **Velocity**: [features_completed count, if available]
+**Exécuter hooks `post-brief`** (si configurés dans `hooks/active/`)
 
 ---
 
-## §2 — Implementation Plan
+### Step 6: Exécuter Commande Recommandée
 
-[To be completed by /epci Phase 1]
+**OBLIGATOIRE:** Après génération output, exécuter la commande recommandée.
 
----
+**Table de routing:**
 
-## §3 — Implementation & Finalization
+| Catégorie | Commande             | Output           | Flags typiques              |
+| --------- | -------------------- | ---------------- | --------------------------- |
+| TINY      | `/epci:quick --autonomous` | Brief inline | `--autonomous` (auto)      |
+| SMALL     | `/epci:quick`        | Brief inline     | `--think` si 3+ fichiers    |
+| STANDARD  | `/epci:epci`         | Feature Document | `--think` ou `--think-hard` |
+| LARGE     | `/epci:epci --large` | Feature Document | `--think-hard --wave`       |
 
-[To be completed by /epci Phases 2-3]
-```
-
----
-
-**🪝 Execute `post-brief` hooks** (if configured in `hooks/active/`)
-
----
-
-### Step 6: Execute Recommended Command
-
-**MANDATORY:** After generating output, execute the recommended command.
-
-**Routing table:**
-
-| Category | Command              | Output           | Typical Flags               |
-| -------- | -------------------- | ---------------- | --------------------------- |
-| TINY     | `/epci:quick --autonomous` | Inline brief | `--autonomous` (auto)      |
-| SMALL    | `/epci:quick`        | Inline brief     | `--think` if 3+ files       |
-| STANDARD | `/epci:epci`         | Feature Document | `--think` or `--think-hard` |
-| LARGE    | `/epci:epci --large` | Feature Document | `--think-hard --wave`       |
-
-**TINY Optimized Routing:**
+**Routing Optimisé TINY:**
 ```
 IF category == TINY:
-   Skip clarification questions (no ambiguity expected)
-   Route directly to /quick --autonomous
-   Display: "Mode TINY détecté → exécution autonome"
+   Ignorer questions clarification (pas d'ambiguïté attendue)
+   Router directement vers /quick --autonomous
+   Afficher: "Mode TINY détecté → exécution autonome"
 ```
 
-**Note:** `--large` is an alias for `--think-hard --wave`. Both forms are accepted.
+**Note:** `--large` est un alias pour `--think-hard --wave`. Les deux formes sont acceptées.
 
-**Action:** Use the SlashCommand tool to execute the recommended command with flags.
+**Action:** Utiliser Skill tool pour exécuter la commande recommandée avec flags.
 
 ---
 
-### Step 7: Rules Suggestion (Optional)
+### Step 7: Suggestion Rules (Optionnel)
 
-If `.claude/` directory does not exist in the project:
+Si répertoire `.claude/` n'existe pas dans le projet:
 
 ```
 💡 Aucune règle projet détectée (.claude/ absent).
    → Lancez /rules pour générer les conventions projet automatiquement.
 ```
 
-This suggestion appears at the end of the breakpoint, after the recommended command.
-The user can run `/rules` before or after the main workflow.
+Cette suggestion apparaît à la fin du breakpoint, après la commande recommandée.
+L'utilisateur peut exécuter `/rules` avant ou après le workflow principal.
