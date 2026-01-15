@@ -216,7 +216,7 @@ Overview with:
 - **Complexite**: S (<45min), M (45-90min), L (>90min)
 - **Priorite**: P1 (Must), P2 (Should), P3 (Could)
 
-See `references/decompose-templates.md` for full template.
+See @references/decompose/templates.md for full template.
 
 #### Step 4.5: Generate prd.json v2 (MANDATORY)
 
@@ -515,14 +515,14 @@ ln -s ../../scripts/lib {output_dir}/lib
 
 ## Output Formats
 
-**Complete templates:** See `references/decompose-templates.md` for:
+**Complete templates:** See @references/decompose/templates.md for:
 - INDEX.md — Overview with Mermaid diagrams
 - backlog.md — Structured backlog table
 - SXX-{name}.md — Sub-spec template
 
 ## Edge Cases
 
-**Detailed edge case handling:** See `references/decompose-edge-cases.md`
+**Detailed edge case handling:** See @references/decompose/edge-cases.md
 
 | Code | Situation | Action |
 |------|-----------|--------|
@@ -535,7 +535,7 @@ ln -s ../../scripts/lib {output_dir}/lib
 
 ## Examples
 
-**Usage examples:** See `references/decompose-examples.md`
+**Usage examples:** See @references/decompose/examples.md
 
 Quick reference:
 

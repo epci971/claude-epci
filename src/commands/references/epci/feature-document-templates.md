@@ -315,7 +315,7 @@ Project uses Symfony best practices, test coverage requirement: >80%
 
 ## Related Documentation
 
-- **Main command**: `src/commands/epci.md`
-- **Native plan import**: `references/native-plan-import.md`
-- **@plan-validator**: `src/agents/plan-validator.md`
-- **Project memory**: `src/skills/core/project-memory/SKILL.md`
+- **Main command**: @src/commands/epci.md
+- **Native plan import**: @references/epci/native-plan-import.md
+- **@plan-validator**: @src/agents/plan-validator.md
+- **Project memory**: @src/skills/core/project-memory/SKILL.md

@@ -20,39 +20,6 @@ Transforme une idee vague en brief fonctionnel complet, pret pour EPCI.
 Utilise l'analyse du codebase, des personas adaptatifs et des questions
 iteratives pour construire des specifications exhaustives.
 
-**Nouveautes v5.2**:
-- **Breakpoints style /brief** — Boîtes ASCII (`┌─ │ ├─ └─`) au lieu de tirets simples
-- **EMS 5 axes visuels** — Barres de progression (`████████░░`) à chaque itération
-- **Axes faibles marqués** — `[WEAK]` sur les axes < 50
-- **Progression EMS** — Historique visible au checkpoint (Init→Iter1→Iter2→Final)
-- **Tracking obligatoire** — `ems_history` stocké dans session_state
-- **Journal corrigé** — Axes standards obligatoires (pas d'invention)
-
-**Nouveautes v5.1**:
-- **AskUserQuestion natif** — Questions via outil Claude Code (UI QCM interactive)
-- **3 questions max** par iteration (au lieu de 5)
-- **Headers priorité** — `🛑 Critical`, `⚠️ Important`, `ℹ️ Info` (max 12 chars)
-- **Suggestions visuelles** — `(Recommended)` dans le label de l'option suggérée
-- **Breakpoint séparé** — Status en texte, questions via AskUserQuestion
-- **Technique-advisor adapté** — Retourne JSON, main thread pose la question
-
-**Nouveautes v5.0**:
-- **Brief PRD Industry Standards v3.0** — Executive Summary, Problem Statement, Goals/Non-Goals, Timeline & Milestones, FAQ, Assumptions, Appendix
-- **Flag `--competitive`** — Active la section Competitive Analysis
-- **Finalization Checkpoint** abaisse a EMS >= 70 (bloquant)
-- Pas de finalisation automatique — toujours choix explicite
-
-**Nouveautes v4.9**:
-- **Finalization Checkpoint** obligatoire a EMS >= 85 (bloquant)
-- Pas de finalisation automatique — toujours choix explicite
-
-**Nouveautes v4.8**:
-- Auto-selection de techniques basee sur axes EMS faibles (< 50)
-- Mix de techniques quand 2+ axes faibles
-- Transition check explicite Divergent → Convergent
-- Preview @planner/@security en phase
-- Hook post-brainstorm documente
-
 ## Usage
 
 ```
@@ -310,205 +277,42 @@ Boucle jusqu'a `finish`:
 
 ---
 
-### Project Estimation & Next Steps Logic
+### Project Estimation & Completion Summary
 
-**Step 8: Calculate Project Estimation**
+See @references/brainstorm/completion-summary.md for full format.
 
-Calculate total estimated effort from User Stories to determine project category:
-
-```python
-# Sum complexity from Must-have stories
-total_effort = sum(
-    1 if story.complexite == "S" else
-    3 if story.complexite == "M" else
-    5 for story in must_have_stories
-)
-
-# Determine category
-if total_effort <= 2:
-    category = "TINY"
-elif total_effort <= 5:
-    category = "SMALL/STANDARD"
-else:
-    category = "LARGE"
-```
-
-**Step 10: Completion Summary Format**
-
-Display structured summary with next steps recommendation:
-
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✅ BRAINSTORM COMPLETED | EMS: {score}/100
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📁 Files Generated:
-├── Brief: ./docs/briefs/{slug}/brief-{slug}-{date}.md
-└── Journal: ./docs/briefs/{slug}/journal-{slug}-{date}.md
-
-📊 Project Estimation:
-├── User Stories: {total_count} ({must_count} Must-have, {should_count} Should-have, {could_count} Could-have)
-├── Estimated Effort: {total_effort} days ({must_effort}j Must-have + {should_effort}j Should-have)
-└── Complexity Category: {TINY|SMALL|STANDARD|LARGE}
-
-🎯 RECOMMENDED NEXT STEPS:
-
-{if category == "TINY"}
-  TINY project detected (≤2 days)
-
-  → /brief @./docs/briefs/{slug}/brief-{slug}-{date}.md
-    Claude will route automatically to /quick --autonomous
-
-{else if category == "SMALL/STANDARD" and total_effort <= 5}
-  SMALL/STANDARD project ({total_effort} days)
-
-  Option 1 (Recommended): Direct EPCI workflow
-  → /brief @./docs/briefs/{slug}/brief-{slug}-{date}.md
-
-  Option 2: Decompose first (if you want granular tracking)
-  → /decompose ./docs/briefs/{slug}/brief-{slug}-{date}.md
-
-{else if category == "LARGE"}
-  ⚠️  LARGE project detected ({total_effort} days)
-
-  Recommended: Decompose into manageable sub-specs
-  → /decompose ./docs/briefs/{slug}/brief-{slug}-{date}.md
-     Breaks down into sub-specs of 1-5 days each
-     Generates INDEX.md with dependency graph
-
-  Then, choose execution strategy:
-
-  Option A: Batch execution (recommended for 5+ sub-specs)
-  → /orchestrate ./docs/specs/{slug}/
-     Automatic DAG-based execution with priority handling
-
-  Option B: Manual execution (for sequential control)
-  → /brief @./docs/specs/{slug}/S01-{name}.md
-     Execute each sub-spec individually as needed
-
-  Alternative: Direct workflow (not recommended for >10 days)
-  → /brief @./docs/briefs/{slug}/brief-{slug}-{date}.md --large
-{end if}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📈 Session Metrics:
-├── Techniques applied: {techniques_list}
-├── Duration: ~{duration} min
-├── Iterations: {count}
-└── Phase transitions: {phase_transitions}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-**Effort Calculation Examples:**
-
-| User Stories | Complexity | Calculated Effort | Category | Recommended Command |
-|--------------|------------|-------------------|----------|---------------------|
-| US1, US2 | S, S | 1 + 1 = 2j | TINY | `/brief` → `/quick --autonomous` |
-| US1, US2, US3 | S, M, M | 1 + 3 + 3 = 7j | LARGE | `/decompose` |
-| US1, US2 | M, M | 3 + 3 = 6j | LARGE | `/decompose` |
-| US1, US2, US3 | S, S, M | 1 + 1 + 3 = 5j | STANDARD | `/brief` (or `/decompose` for tracking) |
-
-**Important Notes:**
-
-- Only Must-have stories count toward MVP effort
-- Should-have and Could-have are mentioned but don't trigger LARGE category
-- If total effort > 5 days from Must-have alone → Always recommend `/decompose`
-- If 3-5 days → Present both options, let user decide
-- If ≤2 days → Direct to `/brief` (will auto-route to `/quick`)
+**Quick reference:**
+- TINY (≤2j) → `/brief` → `/quick --autonomous`
+- SMALL/STANDARD (3-5j) → `/brief` or `/decompose`
+- LARGE (>5j) → `/decompose` → `/orchestrate`
 
 ---
 
 ## Commands
 
-### Standard Commands
+See @references/brainstorm/commands.md for full reference.
 
-| Commande | Action |
-|----------|--------|
-| `continue` | Iteration suivante (3-5 questions) |
-| `dive [topic]` | Approfondir un aspect |
-| `pivot` | Reorienter si vrai besoin emerge |
-| `status` | Afficher EMS detaille (5 axes) |
-| `modes` | Afficher/changer persona |
-| `mode [nom]` | Forcer persona (architecte/sparring/pragmatique) |
-| `premortem` | Exercice anticipation risques |
-| `diverge` | Forcer phase Divergent |
-| `converge` | Forcer phase Convergent + @planner |
-| `scoring` | Evaluer et prioriser idees |
-| `framework [x]` | Appliquer framework (moscow/5whys/swot) |
-| `technique [x]` | Afficher technique complete via @technique-advisor |
-| `spike [duration] [q]` | Exploration technique (voir reference) |
-| `security-check` | Invoquer @security-auditor |
-| `plan-preview` | Invoquer @planner |
-| `save` | Sauvegarder session |
-| `back` | Iteration precedente |
-| `energy` | Forcer energy check |
-| `finish` | Generer brief + journal |
-
-### Party Mode Commands (v5.0)
-
-| Commande | Action |
-|----------|--------|
-| `party` | Demarrer discussion multi-persona |
-| `party add [persona]` | Ajouter persona au round actuel |
-| `party focus [persona]` | Deep dive d'un persona specifique |
-| `party exit` | Quitter party mode, retour standard |
-
-**Personas disponibles**: Architect, Security, Frontend, Backend, QA
-
-### Expert Panel Commands (v5.0)
-
-| Commande | Action |
-|----------|--------|
-| `panel` | Demarrer panel d'experts (phase discussion) |
-| `panel debate` | Passer en phase debate (stress-test) |
-| `panel socratic` | Passer en phase socratic (questions) |
-| `panel exit` | Quitter panel mode, retour standard |
-
-**Experts disponibles**: Martin, Fowler, Newman, Gamma, Beck
+**Quick reference:** `continue`, `dive`, `pivot`, `status`, `finish`, `party`, `panel`
 
 ## Flags
 
-### Core Flags
+See @references/brainstorm/flags.md for full reference.
 
-| Flag | Effet |
-|------|-------|
-| `--template [name]` | Forcer template (feature/problem/decision) |
-| `--no-hmw` | Desactiver HMW |
-| `--quick` | 3 iter max, skip validation |
-| `--turbo` | Mode turbo (voir reference) |
-| `--no-security` | Desactiver @security-auditor auto |
-| `--no-plan` | Desactiver @planner auto |
-| `--no-technique` | Desactiver auto-suggestion techniques |
-| `--no-clarify` | Desactiver clarification input initial |
-| `--force-clarify` | Forcer clarification meme si input clair |
-| `--competitive` | Activer section Competitive Analysis dans le brief (PRD v3.0) |
-
-### Technique Mode Flags (v5.0)
-
-| Flag | Effet |
-|------|-------|
-| `--random` | Selection aleatoire techniques avec equilibrage categories |
-| `--progressive` | Mode 4 phases progressives (Expansion → Exploration → Convergence → Action) |
-
-### Collaboration Mode Flags (v5.0)
-
-| Flag | Effet |
-|------|-------|
-| `--party` | Demarrer en party mode (multi-persona) |
-| `--panel` | Demarrer en expert panel mode |
-
-**Note**: `--party` et `--panel` sont mutuellement exclusifs. Un seul mode actif a la fois.
+**Quick reference:** `--quick`, `--turbo`, `--no-hmw`, `--competitive`, `--party`, `--panel`
 
 ## References
 
 | Topic | Reference |
 |-------|-----------|
-| Turbo mode | [brainstorm-turbo-mode.md](references/brainstorm-turbo-mode.md) |
-| Random mode | [brainstorm-random-mode.md](references/brainstorm-random-mode.md) |
-| Progressive mode | [brainstorm-progressive-mode.md](references/brainstorm-progressive-mode.md) |
-| Spike process | [brainstorm-spike-process.md](references/brainstorm-spike-process.md) |
-| Session commands | [brainstorm-session-commands.md](references/brainstorm-session-commands.md) |
-| Energy checkpoints | [brainstorm-energy-checkpoints.md](references/brainstorm-energy-checkpoints.md) |
+| Commands | @references/brainstorm/commands.md |
+| Flags | @references/brainstorm/flags.md |
+| Completion summary | @references/brainstorm/completion-summary.md |
+| Turbo mode | @references/brainstorm/turbo-mode.md |
+| Random mode | @references/brainstorm/random-mode.md |
+| Progressive mode | @references/brainstorm/progressive-mode.md |
+| Spike process | @references/brainstorm/spike-process.md |
+| Session commands | @references/brainstorm/session-commands.md |
+| Energy checkpoints | @references/brainstorm/energy-checkpoints.md |
 
 ## Agents
 

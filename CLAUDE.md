@@ -530,6 +530,28 @@ cd docs/specs/migration/
 | Skills    | dossier/SKILL.md | `php-symfony/SKILL.md` |
 | Scripts   | snake_case.py    | `validate_skill.py`    |
 
+### Références de fichiers
+
+Pour référencer un fichier dans une commande ou un skill, utiliser la syntaxe `@` de Claude Code :
+
+| Correct | Incorrect |
+|---------|-----------|
+| `See @references/brainstorm/commands.md` | `` See `references/brainstorm/commands.md` `` |
+| `See @src/skills/core/epci-core/SKILL.md` | `See [SKILL.md](src/skills/core/epci-core/SKILL.md)` |
+| `Consulte @docs/architecture.md` | `` Consulte `docs/architecture.md` `` |
+
+**Exemples d'usage :**
+```markdown
+## Architecture
+Consulte notre architecture dans @docs/architecture.md
+
+## Patterns
+Les patterns à suivre sont définis dans @src/patterns/index.ts
+
+## Compare ces fichiers
+Compare @src/old-version.js avec @src/new-version.js
+```
+
 ### Limites tokens
 
 | Composant    | Limite        |

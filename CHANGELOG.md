@@ -5,6 +5,66 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.0] - 2026-01-15
+
+### Changed
+
+- **Brainstorm v5.2**: Breakpoint display improvements
+  - ASCII box format (`┌─ │ ├─ └─`) instead of simple dashes
+  - EMS 5-axis visual progress bars (`████████░░`)
+  - `[WEAK]` markers on axes < 50
+  - EMS progression history visible at checkpoints
+  - Mandatory `ems_history` tracking in session_state
+  - Journal corrected to use only standard axes
+
+- **References reorganization**: Command-specific subdirectories
+  - New structure: `references/brainstorm/`, `references/epci/`, etc.
+  - Migrated 16 existing reference files to new structure
+  - Created 3 new reference files: commands.md, flags.md, completion-summary.md
+  - Changelog consolidated in root CHANGELOG.md
+
+## [5.1.0] - 2026-01-XX
+
+### Changed
+
+- **Brainstorm v5.1**: Native question system
+  - AskUserQuestion native tool integration (interactive QCM UI)
+  - Maximum 3 questions per iteration (reduced from 5)
+  - Priority headers: `🛑 Critical`, `⚠️ Important`, `ℹ️ Info`
+  - Visual recommendations: `(Recommended)` in option labels
+  - Separated breakpoint: Status as text, questions via AskUserQuestion
+  - @technique-advisor returns JSON, main thread handles display
+
+## [5.0.0] - 2026-01-XX
+
+### Added
+
+- **Brainstorm v5.0**: PRD Industry Standards v3.0
+  - Executive Summary, Problem Statement, Goals/Non-Goals sections
+  - Timeline & Milestones, FAQ, Assumptions, Appendix sections
+  - `--competitive` flag for Competitive Analysis section
+  - Finalization Checkpoint lowered to EMS >= 70 (blocking)
+  - No automatic finalization — always requires explicit user choice
+
+## [4.9.0] - 2026-01-XX
+
+### Changed
+
+- **Brainstorm v4.9**: Finalization Checkpoint
+  - Mandatory checkpoint at EMS >= 85 (blocking)
+  - No automatic finalization — explicit user choice required
+
+## [4.8.0] - 2026-01-XX
+
+### Added
+
+- **Brainstorm v4.8**: Auto-technique system
+  - Auto-selection of techniques based on weak EMS axes (< 50)
+  - Mix of techniques when 2+ axes weak
+  - Explicit transition check Divergent → Convergent
+  - Preview @planner/@security in Convergent phase
+  - Post-brainstorm hook documented
+
 ## [4.7.0] - 2026-01-06
 
 ### Added

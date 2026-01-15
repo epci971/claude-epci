@@ -57,7 +57,7 @@ flowchart LR
 - **Breakpoints:** 1 only (pre-commit), skip BP1/BP2
 - **Time savings:** 30-50%
 
-**Full specification:** See `references/turbo-mode.md` for:
+**Full specification:** See @references/shared/turbo-mode.md for:
 - Phase-specific behavior (Phase 1/2/3)
 - Agent invocation patterns (@planner, @implementer)
 - Parallel review execution
@@ -85,7 +85,7 @@ flowchart LR
 
 **Structure:** §1 (Brief), §2 (Plan), §3 (Implementation)
 
-**Templates:** See `references/feature-document-templates.md` for complete §1/§2/§3 templates and examples.
+**Templates:** See @references/epci/feature-document-templates.md for complete §1/§2/§3 templates and examples.
 
 **Prerequisite:** §1 must be complete before running `/epci`.
 
@@ -114,7 +114,7 @@ Execute hooks at workflow points: `python3 src/hooks/runner.py <hook-type> --con
 
 **Available:** `pre-phase-1`, `post-phase-1`, `pre-phase-2`, `post-phase-2`, `post-phase-3`, `on-breakpoint`, `pre-agent`, `post-agent`
 
-**Full documentation:** See `references/hooks.md` and `hooks/README.md` for hook points, configuration, context schema, and examples.
+**Full documentation:** See @references/shared/hooks.md and @hooks/README.md for hook points, configuration, context schema, and examples.
 
 ---
 
@@ -177,7 +177,7 @@ Import a native Claude Code plan as base for Phase 1. Native plan is copied to F
 3. Copy plan to §2 "Plan Original (Natif)" section
 4. Proceed to prerequisite check
 
-**Full workflow (5 steps):** See `references/native-plan-import.md`
+**Full workflow (5 steps):** See @references/epci/native-plan-import.md
 
 **Key behaviors:**
 - §1 generated via @Explore if missing (exploration conditional)
@@ -316,7 +316,7 @@ IF all_checks_pass:
 - **Scenario A** (Native plan): Update "✅ Plan Raffiné & Validé" section with atomic tasks
 - **Scenario B** (Standard): Create complete §2 from scratch
 
-**Templates:** See `references/feature-document-templates.md` (Scenario A/B templates)
+**Templates:** See @references/epci/feature-document-templates.md (Scenario A/B templates)
 
 **Required elements:** Impacted files, atomic tasks (2-15 min), dependencies, tests, risks, @plan-validator verdict
 
