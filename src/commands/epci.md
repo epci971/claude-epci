@@ -272,6 +272,46 @@ IF all_checks_pass:
 
 **MANDATORY:** Display breakpoint and WAIT for user confirmation.
 
+**Afficher ce breakpoint:**
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ⏸️  BREAKPOINT PHASE 1 — Plan Validé                                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ 📊 MÉTRIQUES                                                        │
+│ ├── Complexité: {CATEGORY} (score: {SCORE})                        │
+│ ├── Fichiers impactés: {FILE_COUNT}                                │
+│ ├── Temps estimé: {TIME_ESTIMATE}                                  │
+│ └── Risque: {RISK_LEVEL} {RISK_DESCRIPTION}                        │
+│                                                                     │
+│ ✅ VALIDATIONS                                                      │
+│ ├── @plan-validator: {VERDICT}                                     │
+│ │   ├── Completeness: {STATUS}                                     │
+│ │   ├── Consistency: {STATUS}                                      │
+│ │   ├── Feasibility: {STATUS}                                      │
+│ │   └── Quality: {STATUS}                                          │
+│ └── Skills chargés: {SKILLS_LIST}                                  │
+│                                                                     │
+│ 📋 PREVIEW PHASE 2                                                  │
+│ ├── Tâche 1: {TASK_1_TITLE} ({TASK_1_TIME})                       │
+│ ├── Tâche 2: {TASK_2_TITLE} ({TASK_2_TIME})                       │
+│ ├── Tâche 3: {TASK_3_TITLE} ({TASK_3_TIME})                       │
+│ └── ... ({REMAINING_TASKS} tâches restantes)                       │
+│                                                                     │
+│ 🔗 Feature Document: {FEATURE_DOC_PATH}                            │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Options:                                                            │
+│   • Tapez "Continuer" → Passer à Phase 2 (Implémentation)         │
+│   • Tapez "Modifier le plan" → Réviser le plan                     │
+│   • Tapez "Voir détails" → Afficher Feature Document complet       │
+│   • Tapez "Annuler" → Abandonner le workflow                       │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+> Référence détaillée: @src/skills/core/breakpoint-metrics/templates/bp1-template.md
+
 **User options:** "Continuer" / "Modifier le plan" / "Voir details" / "Annuler"
 
 ---
@@ -314,6 +354,42 @@ IF all_checks_pass:
 ### BREAKPOINT BP2 (MANDATORY)
 
 **MANDATORY:** Display breakpoint and WAIT for user confirmation.
+
+**Afficher ce breakpoint:**
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ⏸️  BREAKPOINT PHASE 2 — Code Implémenté                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ 📊 MÉTRIQUES                                                        │
+│ ├── Tâches: {COMPLETED}/{TOTAL} complétées                         │
+│ ├── Tests: {TEST_COUNT} {TEST_STATUS}                              │
+│ ├── Coverage: {COVERAGE}%                                          │
+│ └── Déviations: {DEVIATION_STATUS}                                 │
+│                                                                     │
+│ ✅ VALIDATIONS                                                      │
+│ ├── @code-reviewer: {CR_VERDICT} ({CR_SUMMARY})                    │
+│ ├── @security-auditor: {SA_VERDICT}                                │
+│ └── @qa-reviewer: {QA_VERDICT}                                     │
+│                                                                     │
+│ 📋 PREVIEW PHASE 3                                                  │
+│ ├── Commit structuré avec message conventionnel                    │
+│ ├── Génération documentation (@doc-generator)                      │
+│ └── Préparation PR                                                 │
+│                                                                     │
+│ 🔗 Feature Document: {FEATURE_DOC_PATH}                            │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ Options:                                                            │
+│   • Tapez "Continuer" → Passer à Phase 3 (Finalisation)           │
+│   • Tapez "Corriger issues" → Adresser les problèmes signalés     │
+│   • Tapez "Voir rapports" → Afficher rapports des agents          │
+│   • Tapez "Annuler" → Abandonner le workflow                       │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+> Référence détaillée: @src/skills/core/breakpoint-metrics/templates/bp2-template.md
 
 **User options:** "Continuer" / "Corriger issues" / "Voir rapports" / "Annuler"
 

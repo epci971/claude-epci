@@ -71,9 +71,9 @@
    - Creer fichier session: `.project-memory/sessions/quick-{timestamp}.json`
    - Enregistrer: timestamp, description, complexite, taches du plan
 
-### Breakpoint Leger (sauf --autonomous)
+### Breakpoint Leger (SI --confirm)
 
-**⚠️ Afficher ce breakpoint et auto-continuer apres 3 secondes.**
+**⚠️ SI `--confirm` actif, afficher ce breakpoint et attendre validation.**
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -84,15 +84,16 @@
 │ [2] {Description tache 2}                                          │
 │ [3] {Description tache 3}                                          │
 │                                                                     │
-│ Auto-continue dans 3s... (Entree=modifier, Echap=annuler)          │
+│ Entree=continuer, M=modifier, Echap=annuler                        │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 **Comportement:**
-- **Defaut (timeout 3s):** Auto-continuer vers phase Code
-- **Entree pressee:** Utilisateur veut modifier le plan → demander les changements
+- **Defaut (pas de --confirm):** Pas de breakpoint, continuer directement
+- **Flag `--confirm`:** Afficher breakpoint, attendre input utilisateur
+- **Entree pressee:** Continuer vers phase Code
+- **M pressee:** Modifier le plan
 - **Echap pressee:** Annuler le workflow
-- **Flag `--autonomous`:** Ignorer le breakpoint entierement
 
 ---
 

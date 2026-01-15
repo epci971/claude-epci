@@ -3,7 +3,7 @@ description: >-
   Execute autonomous EPCT workflow for TINY and SMALL features. Four phases:
   Explore, Plan, Code, Test with adaptive model switching (Haiku/Sonnet).
   TINY mode: <50 LOC, 1 file. SMALL mode: <200 LOC, 2-3 files.
-argument-hint: "[--autonomous] [--quick-turbo] [--uc] [--turbo] [--no-hooks]"
+argument-hint: "[--confirm] [--quick-turbo] [--uc] [--turbo] [--no-hooks]"
 allowed-tools: [Read, Write, Edit, Bash(npm:*), Bash(pytest:*), Bash(php:*), Bash(eslint:*), Bash(flake8:*), Bash(git:*), Grep, Glob, Task]
 ---
 
@@ -52,9 +52,9 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
 
 | Flag | Effet | Auto-Declenchement |
 |------|-------|-------------------|
-| `--autonomous` | Ignorer breakpoint plan, execution continue | TINY detecte |
+| `--confirm` | Activer breakpoint plan avec attente utilisateur | Jamais (explicite) |
 | `--quick-turbo` | Forcer modele Haiku partout (TINY uniquement) | Jamais (explicite) |
-| `--no-bp` | Alias pour `--autonomous` | - (alias) |
+| `--bp` | Alias pour `--confirm` | - (alias) |
 
 ### Flags Herites
 
@@ -95,8 +95,8 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
     │
     ▼
 [P] PLAN ─────────────────────────────────────────────────────────────
-    │                         ⏸️ BP leger (3s auto-continue)
-    ▼                         [ignorer SI --autonomous]
+    │                         ⏸️ BP leger (SI --confirm)
+    ▼
 [C] CODE ─────────────────────────────────────────────────────────────
     │
     ▼
@@ -121,10 +121,11 @@ Collecte rapide du contexte et verification de la complexite.
 
 Generation du decoupage atomique des taches.
 
-- TINY: 1-2 taches maximum
+- TINY: 1-2 taches maximum (inline, sans subagent)
 - SMALL: 3-5 taches atomiques
+- SMALL+ (proche limite): Invoquer @planner (Sonnet) via Task tool
 
-**⏸️ Breakpoint leger** (sauf `--autonomous`): auto-continue apres 3s.
+**⏸️ Breakpoint leger** (SI `--confirm`): attente validation utilisateur.
 
 ### [C] CODE Phase (variable)
 

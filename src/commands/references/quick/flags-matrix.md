@@ -8,11 +8,11 @@
 
 | Combinaison | Comportement |
 |-------------|--------------|
-| `--autonomous` seul | Ignorer BP plan, execution continue |
+| `--confirm` seul | Afficher BP plan, attendre validation |
 | `--quick-turbo` seul | Haiku partout (TINY uniquement, erreur si SMALL) |
-| `--autonomous --quick-turbo` | Ignorer BP + Haiku partout |
-| `--turbo --autonomous` | `--turbo` a la priorite (workflow turbo existant) |
-| `--safe --autonomous` | `--safe` gagne, breakpoints maintenus |
+| `--confirm --quick-turbo` | BP + Haiku partout |
+| `--turbo --confirm` | `--turbo` a la priorite (workflow turbo existant) |
+| `--safe` seul | Force `--confirm` implicitement |
 
 ---
 
@@ -86,9 +86,9 @@ Pour features SMALL uniquement:
 3. **Auto-commit** — Ignorer le breakpoint pre-commit
 4. **Sortie compacte** — Resume uniquement
 
-**Note:** `--turbo` et `--autonomous` sont differents:
+**Note:** `--turbo` et `--confirm` sont differents:
 - `--turbo`: Utilise l'infrastructure turbo existante, auto-commit
-- `--autonomous`: Utilise le nouveau workflow EPCT, ignore BP plan uniquement
+- `--confirm`: Active le breakpoint plan (desactive par defaut)
 
 ---
 
