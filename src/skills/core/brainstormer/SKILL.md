@@ -1,17 +1,17 @@
 ---
 name: brainstormer
 description: >-
-  Feature discovery et brainstorming guide pour EPCI v5.1. Workflow avec
+  Feature discovery et brainstorming guide pour EPCI v5.3. Workflow avec
   personas adaptatifs, phases Divergent/Convergent, scoring EMS v2 via @ems-evaluator,
   auto-techniques via @technique-advisor (63 techniques CSV), Party Mode (5 personas),
-  Expert Panel (5 dev leaders). Questions via AskUserQuestion natif (3 max, headers priorité).
-  Modes: standard | party | panel.
+  Expert Panel (5 dev leaders). Breakpoints via @skill:breakpoint-display (ems-status,
+  plan-review, analysis, validation). Modes: standard | party | panel.
   Use when: /brainstorm invoked, feature discovery needed.
   Not for: implementation tasks, code generation, simple questions.
 allowed-tools: [Read, Write, Glob, Grep, Task, AskUserQuestion]
 ---
 
-# Brainstormer v5.1
+# Brainstormer v5.3
 
 ## Overview
 
@@ -19,12 +19,17 @@ Skill de brainstorming specialise pour la decouverte de features.
 Transforme des idees vagues en briefs fonctionnels complets via
 un processus iteratif guide avec personas adaptatifs.
 
+**Nouveautes v5.3:**
+- **Breakpoints via skill** — Utilise `@skill:breakpoint-display` pour tous les breakpoints
+- **Nouveau type ems-status** — Affichage EMS 5 axes avec barres de progression
+- **~57% économie tokens** — Via skill centralisé au lieu de ASCII boxes manuelles
+- **Cohérence UI** — Format unifié avec /brief et /epci
+
 **Nouveautes v5.1:**
 - **AskUserQuestion natif** — Questions via outil Claude Code (UI QCM interactive)
 - **3 questions max** par iteration (au lieu de 5)
 - **Headers priorité** — `🛑 Critical`, `⚠️ Important`, `ℹ️ Info` (max 12 chars)
 - **Suggestions visuelles** — `(Recommended)` dans le label de l'option suggérée
-- **Breakpoint séparé** — Status en texte, questions via AskUserQuestion
 - **Technique-advisor adapté** — Retourne JSON, main thread pose la question
 
 **Nouveautes v5.0:**
@@ -270,100 +275,95 @@ Sections PRD avec exemples de questions :
 
 > Voir `brainstorm.md` pour exemples TypeScript détaillés.
 
-## Breakpoint Format (v5.2 — Boîte ASCII + EMS détaillé)
+## Breakpoint Format (v5.3 — via @skill:breakpoint-display)
 
-**IMPORTANT:** Le breakpoint status est SÉPARÉ des questions.
-Afficher le status en markdown AVANT d'invoquer AskUserQuestion.
+**IMPORTANT:** Tous les breakpoints utilisent maintenant le skill centralisé `breakpoint-display`.
 
-**Étape 1 — Status Breakpoint (texte markdown, style /brief):**
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 📊 BRAINSTORM | [PHASE] [PERSONA] | Iter X                          │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 🎯 EMS: XX/100 (+Y)                                                 │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ Clarté      ████████░░ 80  │ Profondeur   ██████░░░░ 60        │ │
-│ │ Couverture  █████░░░░░ 50  │ Décisions    ████████░░ 75        │ │
-│ │ Action      ███████░░░ 70  │              [WEAK: Couverture]   │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ ✅ Done: [éléments validés cette itération]                        │
-│ 📋 Open: [points restants à clarifier]                             │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ -> continue | dive [topic] | back | save | energy | finish         │
-└─────────────────────────────────────────────────────────────────────┘
+**Status Breakpoint (display-only):**
+```yaml
+@skill:breakpoint-display
+  type: ems-status
+  title: "BRAINSTORM STATUS"
+  data:
+    phase: "{DIVERGENT|CONVERGENT}"
+    persona: "{Architecte|Sparring|Pragmatique}"
+    iteration: {N}
+    ems:
+      score: {EMS}
+      delta: "{+N}"
+      axes: {clarity: X, depth: X, coverage: X, decisions: X, actionability: X}
+      weak_axes: ["{axes < 50}"]
+      progression: ["Init(22)", "Iter1(38)", ..., "Current({EMS})"]
+    done: ["{éléments validés}"]
+    open: ["{points restants}"]
+    commands: ["continue", "dive", "back", "save", "energy", "finish"]
 ```
 
-**Génération des barres de progression** (utiliser output @ems-evaluator compact) :
-- 10 caractères par barre : `█` (pleins) + `░` (vides)
-- Score/10 arrondi = nombre de `█`
-- Axes < 50 marqués `[WEAK]`
-
-**Étape 2 — Questions (AskUserQuestion):**
-```typescript
-AskUserQuestion({
-  questions: [
-    // Max 3 questions, triées par priorité
-    { question: "...", header: "🛑 Critical", multiSelect: false, options: [...] },
-    { question: "...", header: "⚠️ Important", multiSelect: false, options: [...] },
-    { question: "...", header: "ℹ️ Info", multiSelect: false, options: [...] }
-  ]
-})
+**Questions Breakpoint (interactive):**
+```yaml
+@skill:breakpoint-display
+  type: analysis
+  title: "QUESTIONS ITÉRATION"
+  data:
+    context:
+      phase: "{PHASE}"
+      iteration: {N}
+      ems: {EMS}
+    questions:
+      - {tag: "🛑", text: "{question}", suggestion: "{suggestion}"}
+      - {tag: "⚠️", text: "{question}", suggestion: "{suggestion}"}
+      - {tag: "ℹ️", text: "{question}", suggestion: "{suggestion}"}
+  ask:
+    question: "Répondez aux questions"
+    header: "📋 Questions"
+    options:
+      - {label: "Répondre (Recommended)", description: "Répondre une par une"}
+      - {label: "Valider suggestions", description: "Accepter suggestions IA"}
+      - {label: "Finish", description: "Finaliser maintenant"}
 ```
 
-**Raison de la séparation:**
-- Le breakpoint montre l'état de la session (informatif) avec EMS visuel
-- Les questions demandent des décisions (interactif)
-- AskUserQuestion a un timeout de 60s, le status doit être visible avant
+**Avantages v5.3:**
+- ~57% économie tokens via skill centralisé
+- Format cohérent avec /brief et /epci
+- UI native Claude Code avec boutons
 
-## Finalization Checkpoint (v5.2 — Boîte ASCII + Progression)
+Voir `src/skills/core/breakpoint-display/templates/ems-status.md` pour détails du rendu.
+
+## Finalization Checkpoint (v5.3 — via @skill:breakpoint-display)
 
 **Trigger:** EMS >= 70 (première fois atteint dans la session)
 
-**Format en 2 étapes:**
-
-**Étape A — Status (texte markdown, style /brief):**
+**Breakpoint:**
+```yaml
+@skill:breakpoint-display
+  type: plan-review
+  title: "FINALIZATION CHECKPOINT"
+  data:
+    metrics:
+      ems_score: {EMS}
+      ems_delta: "{delta}"
+      axes: {clarity: X, depth: X, coverage: X, decisions: X, actionability: X}
+      weak_axes: []
+    progression: "Init(22) → Iter1(38) → ... → Final({EMS})"
+    preview_next_phase:
+      phase_name: "Phase 3: Generation"
+      tasks:
+        - {title: "Générer brief PRD v3.0", time: "auto"}
+        - {title: "Créer journal exploration", time: "auto"}
+      message: "Le brief est suffisamment mature pour être finalisé."
+  ask:
+    question: "Brief EMS {EMS}/100 prêt. Quelle action ?"
+    header: "🎯 Checkpoint"
+    options:
+      - {label: "Continuer", description: "Plus d'itérations pour affiner"}
+      - {label: "Preview (Recommended)", description: "@planner sans finaliser"}
+      - {label: "Finaliser", description: "Générer brief + journal maintenant"}
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 🎯 FINALIZATION CHECKPOINT                                          │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 📊 EMS FINAL: XX/100                                                │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ Clarté      ████████░░ 80  │ Profondeur   ██████████ 95        │ │
-│ │ Couverture  ████████░░ 75  │ Décisions    ████████░░ 80        │ │
-│ │ Action      ███████░░░ 70  │                                   │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ 📈 Progression: Init(22) → Iter1(38) → Iter2(55) → Final(XX)       │
-│                                                                     │
-│ Le brief est suffisamment mature pour être finalisé.               │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
 
-**Note:** La ligne "Progression" utilise `ems_history` stocké pendant les itérations.
-
-**Étape B — Question (AskUserQuestion):**
-```typescript
-AskUserQuestion({
-  questions: [{
-    question: "Brief EMS XX/100 prêt. Quelle action ?",
-    header: "🎯 Checkpoint",
-    multiSelect: false,
-    options: [
-      { label: "Continuer", description: "Plus d'itérations pour affiner" },
-      { label: "Preview (Recommended)", description: "@planner sans finaliser" },
-      { label: "Finaliser", description: "Générer brief + journal maintenant" }
-    ]
-  }]
-})
-```
+**Note:** La ligne "progression" utilise `ems_history` stocké pendant les itérations.
 
 **Comportement selon réponse:**
-- "Continuer" → génère 3 nouvelles questions via AskUserQuestion, reprend Phase 2
+- "Continuer" → génère 3 nouvelles questions via breakpoint `type:analysis`, reprend Phase 2
 - "Preview" → invoque @planner, affiche plan, puis redemande [Continuer/Finaliser]
 - "Finaliser" → passe en Phase 3 Generation
 

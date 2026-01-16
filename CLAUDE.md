@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.3.4 | **Date** : Janvier 2025
+> **Version** : 5.3.6 | **Date** : Janvier 2025
 
 ---
 
@@ -16,6 +16,22 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | **Modularité**      | 32 Skills, 16 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v5.3.6 (Full Breakpoint Migration)
+
+- **Migration complète breakpoint-display** : Toutes les commandes EPCI utilisent maintenant le skill centralisé
+- **6 commandes migrées** : `/debug`, `/decompose`, `/orchestrate`, `/commit`, `/save-plan`, `/quick`
+- **12 breakpoints au total** : Tous migrés vers `@skill:breakpoint-display`
+- **~70% économie tokens moyenne** : Breakpoints uniformisés via skill centralisé
+- **Cohérence UI totale** : Toutes les commandes EPCI avec boutons natifs AskUserQuestion
+
+### Nouveautés v5.3.5 (Brainstorm Migration)
+
+- **Migration `/brainstorm` vers `breakpoint-display`** : 6 breakpoints migrés vers skill centralisé
+- **Nouveau template `ems-status`** : Affichage EMS 5 axes avec barres de progression pour brainstorm
+- **9 types de breakpoints** : validation, plan-review, analysis, decomposition, diagnostic, interactive-plan, lightweight, info-only, ems-status
+- **~57% économie tokens** : Breakpoints brainstorm via skill au lieu de ASCII boxes manuelles
+- **Cohérence UI complète** : `/brief`, `/epci` et `/brainstorm` utilisent maintenant le même système
 
 ### Nouveautés v5.3.4 (Breakpoint Display Skill)
 

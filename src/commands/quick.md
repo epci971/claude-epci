@@ -76,7 +76,7 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
 | Element | Valeur |
 |---------|--------|
 | **Thinking** | Adaptatif par phase (voir matrice modeles) |
-| **Skills** | project-memory, epci-core, code-conventions, flags-system, [stack] |
+| **Skills** | project-memory, epci-core, code-conventions, flags-system, breakpoint-display, [stack] |
 | **Subagents** | @Explore, @clarifier, @planner, @implementer (conditionnel) |
 
 > Voir @references/quick/flags-matrix.md pour les matrices modeles et subagents.
@@ -125,7 +125,27 @@ Generation du decoupage atomique des taches.
 - SMALL: 3-5 taches atomiques
 - SMALL+ (proche limite): Invoquer @planner (Sonnet) via Task tool
 
-**⏸️ Breakpoint leger** (SI `--confirm`): attente validation utilisateur.
+**⏸️ Breakpoint leger** (SI `--confirm`): via `@skill:breakpoint-display type:lightweight`
+
+```yaml
+@skill:breakpoint-display
+  type: lightweight
+  title: "QUICK PLAN"
+  data:
+    mode: "{TINY|SMALL}"
+    tasks:
+      - {id: 1, description: "{task 1}"}
+      - {id: 2, description: "{task 2}"}
+      - {id: 3, description: "{task 3}"}
+    auto_continue: 3  # seconds
+  ask:  # Only if --confirm flag
+    question: "Plan OK ?"
+    header: "⏸️ Plan"
+    options:
+      - {label: "Continuer (Recommended)", description: "Auto-continue dans 3s..."}
+      - {label: "Modifier", description: "Ajuster le plan"}
+      - {label: "Annuler", description: "Abandonner"}
+```
 
 ### [C] CODE Phase (variable)
 
@@ -234,12 +254,9 @@ Temps: 12s
 [E] Explore: 2 fichiers identifies, SMALL confirme
     @Explore (Haiku): patterns detectes
 [P] Plan: 3 taches generees
-    ┌─────────────────────────────────────────┐
-    │ [1] Ecrire test pour isActive()         │
-    │ [2] Implementer methode isActive()      │
-    │ [3] Verifier que tests passent          │
-    │ Auto-continue dans 3s...                │
-    └─────────────────────────────────────────┘
+    @skill:breakpoint-display type:lightweight
+    Tasks: [1] Ecrire test, [2] Implementer, [3] Verifier
+    (Auto-continue dans 3s si --confirm)
 [C] Code: @implementer (Sonnet) execute
 [T] Test: 3/3 tests reussis
 

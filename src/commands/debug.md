@@ -283,31 +283,36 @@ Generate multiple solutions with scores:
 
 #### Step C.2: BREAKPOINT (MANDATORY)
 
-**⚠️ MANDATORY:** Wait for user confirmation.
+**⚠️ MANDATORY:** Wait for user confirmation via `@skill:breakpoint-display`.
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ⏸️  BREAKPOINT — Diagnostic Complete                                │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 🔍 ROOT CAUSE ANALYSIS                                              │
-│ ├── 🎯 Primary (XX%): [Cause]                                      │
-│ ├── 🔸 Secondary (XX%): [Cause]                                    │
-│ └── 🔹 Tertiary (XX%): [Cause]                                     │
-│                                                                     │
-│ 💡 RECOMMENDED SOLUTION                                             │
-│ ├── [Solution #1] — Score: XX/100                                  │
-│ ├── Est. LOC: XX                                                   │
-│ ├── Files: X                                                       │
-│ └── Risk: [Level]                                                  │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ Options:                                                            │
-│   • Tapez "Continuer" → Implémenter solution #1                    │
-│   • Tapez "Solution 2" → Choisir solution alternative              │
-│   • Tapez "Détails" → Voir analyse complète                        │
-│   • Tapez "Annuler" → Abandonner                                   │
-└─────────────────────────────────────────────────────────────────────┘
+**Skill**: `breakpoint-display`
+
+```yaml
+@skill:breakpoint-display
+  type: diagnostic
+  title: "DIAGNOSTIC COMPLETE"
+  data:
+    root_cause_analysis:
+      primary: {cause: "{cause}", confidence: XX, evidence: "{evidence}"}
+      secondary: {cause: "{cause}", confidence: XX, evidence: "{evidence}"}
+      tertiary: {cause: "{cause}", confidence: XX, evidence: "{evidence}"}
+    recommended_solution:
+      title: "{solution name}"
+      score: XX
+      est_loc: XX
+      files: X
+      risk: "{Low|Medium|High}"
+    alternative_solutions:
+      - {title: "{solution 2}", score: XX}
+      - {title: "{solution 3}", score: XX}
+  ask:
+    question: "Comment souhaitez-vous procéder ?"
+    header: "💡 Solution"
+    options:
+      - {label: "Continuer (Recommended)", description: "Implémenter solution #1"}
+      - {label: "Solution 2", description: "Choisir solution alternative"}
+      - {label: "Détails", description: "Voir analyse complète"}
+      - {label: "Annuler", description: "Abandonner diagnostic"}
 ```
 
 #### Step C.3: Implement Fix
@@ -503,6 +508,7 @@ Input: "Intermittent authentication failures in production"
 
 - `project-memory` (context)
 - `debugging-strategy` (methodology)
+- `breakpoint-display` (interactive breakpoints)
 - `mcp` (Context7 for error docs, Sequential for reasoning)
 - `[stack-skill]` (auto-detected: php-symfony, javascript-react, python-django, java-springboot)
 

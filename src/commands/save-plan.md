@@ -20,7 +20,7 @@ Sauvegarde les plans natifs Claude Code dans le projet pour versioning et collab
 | Element | Value |
 |---------|-------|
 | **Thinking** | None (simple command) |
-| **Skills** | None |
+| **Skills** | breakpoint-display |
 | **Subagents** | None |
 
 ## Arguments (tous optionnels)
@@ -169,68 +169,37 @@ Anglais: the, a, an, to, for, of, in, on, at, by, with, from, is, are, was, were
 
 ### Step 4: Breakpoint de confirmation
 
-**OBLIGATOIRE** - Afficher le breakpoint et attendre confirmation:
+**OBLIGATOIRE** - Afficher le breakpoint via `@skill:breakpoint-display` et attendre confirmation.
 
-```
-+----------------------------------------------------------+
-| SAVE PLAN — Confirmation                                  |
-+----------------------------------------------------------+
-|                                                          |
-| Source detectee: {source_path}                           |
-| Slug genere: {slug}                                      |
-| Destination: docs/plans/{slug}-{timestamp}.md            |
-|                                                          |
-| [1] Confirmer et sauvegarder                             |
-| [2] Modifier le slug                                     |
-| [3] Annuler                                              |
-|                                                          |
-+----------------------------------------------------------+
+**Skill**: `breakpoint-display`
+
+```yaml
+@skill:breakpoint-display
+  type: validation
+  title: "SAVE PLAN — Confirmation"
+  data:
+    source_detected: "{source_path}"
+    slug_generated: "{slug}"
+    destination: "docs/plans/{slug}-{timestamp}.md"
+    auto_detected: {true|false}
+  ask:
+    question: "Souhaitez-vous sauvegarder ce plan ?"
+    header: "💾 Save Plan"
+    options:
+      - {label: "Confirmer (Recommended)", description: "Sauvegarder le plan"}
+      - {label: "Modifier slug", description: "Changer le slug généré"}
+      - {label: "Annuler", description: "Ne pas sauvegarder"}
 ```
 
 **Attendre la reponse utilisateur.**
 
-**Si [1] Confirmer:** Continuer vers Step 5.
+**Si "Confirmer":** Continuer vers Step 5.
 
-**Si [2] Modifier:** Demander le nouveau slug, puis continuer.
+**Si "Modifier slug":** Demander le nouveau slug via AskUserQuestion, puis continuer.
 
-**Si [3] Annuler:**
+**Si "Annuler":** Afficher message d'annulation et **STOP**.
 
-```
-+----------------------------------------------------------+
-| CANCELLED                                                 |
-+----------------------------------------------------------+
-|                                                          |
-| Plan not saved. No changes made.                         |
-|                                                          |
-+----------------------------------------------------------+
-```
-
-**STOP** - Ne pas continuer.
-
-**Si `--dry-run`:** Afficher ce qui serait fait et **STOP**.
-
-```
-+----------------------------------------------------------+
-| DRY RUN — No changes made                                 |
-+----------------------------------------------------------+
-|                                                          |
-| Would create: docs/plans/{slug}-{timestamp}.md           |
-|                                                          |
-| Source: {source_path}                                    |
-| Slug: {slug}                                             |
-| Auto-detected: {true|false}                              |
-|                                                          |
-| Frontmatter that would be added:                         |
-| ---                                                      |
-| saved_at: "{ISO timestamp}"                              |
-| source: "{source_path}"                                  |
-| slug: "{slug}"                                           |
-| original_filename: "{filename}"                          |
-| auto_detected: {true|false}                              |
-| ---                                                      |
-|                                                          |
-+----------------------------------------------------------+
-```
+**Si `--dry-run`:** Afficher ce qui serait fait (source, slug, destination, frontmatter) et **STOP**.
 
 ---
 

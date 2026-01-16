@@ -35,6 +35,7 @@ Skill centralisé pour afficher des breakpoints interactifs avec validation util
 | **interactive-plan** | DAG + reorder + skip options | ✅ Oui | @templates/interactive-plan.md |
 | **lightweight** | Auto-continue avec timeout 3s | ⚠️ Optionnel | @templates/lightweight.md |
 | **info-only** | Display metrics sans interaction | ❌ Non | @templates/info-only.md |
+| **ems-status** | EMS 5 axes + progression brainstorm | ❌ Non | @templates/ems-status.md |
 
 ## Usage Pattern
 
@@ -241,6 +242,38 @@ Table specs + menu modifications multi-niveau.
   }
 ```
 
+### Type: ems-status
+
+Status brainstorm avec EMS 5 axes et progression (display-only).
+
+```typescript
+@skill:breakpoint-display
+  type: ems-status
+  title: "BRAINSTORM STATUS"
+  data: {
+    phase: "DIVERGENT",
+    persona: "Architecte",
+    iteration: 3,
+    ems: {
+      score: 65,
+      delta: "+12",
+      axes: {
+        clarity: 80,
+        depth: 60,
+        coverage: 45,
+        decisions: 75,
+        actionability: 70
+      },
+      weak_axes: ["coverage"],
+      progression: ["Init(22)", "Iter1(38)", "Iter2(53)", "Current(65)"]
+    },
+    done: ["Cible identifiée", "Contraintes listées"],
+    open: ["Délais à préciser", "Intégrations externes"],
+    commands: ["continue", "dive", "back", "save", "energy", "finish"]
+  }
+  // No 'ask' - display only with command hints
+```
+
 ## Reusable Components
 
 Le skill utilise des composants réutilisables pour cohérence :
@@ -340,8 +373,9 @@ Retourner la réponse au workflow appelant pour traitement.
 | interactive-plan | ~320 tokens | ~95 tokens | 70% |
 | lightweight | ~100 tokens | ~40 tokens | 60% |
 | info-only | ~150 tokens | ~60 tokens | 60% |
+| ems-status | ~150 tokens | ~65 tokens | 57% |
 
-**Moyenne : 73% réduction tokens**
+**Moyenne : 71% réduction tokens**
 
 ## Migration Guide
 

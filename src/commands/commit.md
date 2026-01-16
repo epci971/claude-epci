@@ -38,7 +38,7 @@ Centralized commit command that:
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think` (default) |
-| **Skills** | git-workflow |
+| **Skills** | git-workflow, breakpoint-display |
 | **Subagents** | None |
 
 ## Context File Schema
@@ -157,34 +157,32 @@ python3 src/hooks/runner.py pre-commit --context '{
 }'
 ```
 
-**Display breakpoint:**
+**Display breakpoint via `@skill:breakpoint-display`:**
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ⏸️  BREAKPOINT — Validation Commit                                  │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 📝 MESSAGE DE COMMIT                                                │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ {TYPE}({SCOPE}): {DESCRIPTION}                                  │ │
-│ │                                                                 │ │
-│ │ - {DETAIL_1}                                                    │ │
-│ │ - {DETAIL_2}                                                    │ │
-│ │                                                                 │ │
-│ │ Refs: {FEATURE_DOC}                                             │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ 📋 RÉSUMÉ                                                           │
-│ ├── Source: {epci|quick|debug|standalone}                          │
-│ ├── Fichiers: {FILE_COUNT}                                         │
-│ └── Mode: {normal|amend|dry-run}                                   │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ Options:                                                            │
-│   • Tapez "Commiter" → Exécuter git commit                         │
-│   • Tapez "Modifier" → Éditer le message de commit                 │
-│   • Tapez "Annuler" → Abandonner le commit                         │
-└─────────────────────────────────────────────────────────────────────┘
+**Skill**: `breakpoint-display`
+
+```yaml
+@skill:breakpoint-display
+  type: validation
+  title: "VALIDATION COMMIT"
+  data:
+    commit_message:
+      type: "{TYPE}"
+      scope: "{SCOPE}"
+      description: "{DESCRIPTION}"
+      details: ["{DETAIL_1}", "{DETAIL_2}"]
+      refs: "{FEATURE_DOC}"
+    summary:
+      source: "{epci|quick|debug|standalone}"
+      file_count: {FILE_COUNT}
+      mode: "{normal|amend|dry-run}"
+  ask:
+    question: "Le commit vous convient-il ?"
+    header: "📝 Commit"
+    options:
+      - {label: "Commiter (Recommended)", description: "Exécuter git commit"}
+      - {label: "Modifier", description: "Éditer le message de commit"}
+      - {label: "Annuler", description: "Abandonner le commit"}
 ```
 
 **If `--auto-commit` active:** Skip breakpoint, proceed directly to Step 4.
