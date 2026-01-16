@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.3.1 | **Date** : Janvier 2025
+> **Version** : 5.3.4 | **Date** : Janvier 2025
 
 ---
 
@@ -13,9 +13,20 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
 | **Simplicité**      | 14 commandes spécialisées                                     |
-| **Modularité**      | 31 Skills, 16 Subagents, Hooks natifs                         |
+| **Modularité**      | 32 Skills, 16 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v5.3.4 (Breakpoint Display Skill)
+
+- **Nouveau skill `breakpoint-display`** : Système unifié pour affichage breakpoints interactifs
+- **73% réduction tokens** : ~300 tokens/breakpoint → ~80 tokens via skill centralisé
+- **AskUserQuestion natif** : UI Claude Code native avec boutons cliquables vs choix textuels
+- **8 types de breakpoints** : validation, plan-review, analysis, decomposition, diagnostic, interactive-plan, lightweight, info-only
+- **4 composants réutilisables** : metrics-block, validations-block, preview-block, flags-block
+- **Migration /brief et /epci** : 4 breakpoints migrés vers nouveau système (Step 1, Step 4, BP1, BP2)
+- **Guides complets** : AskUserQuestion integration guide + migration guide pour 9 commandes
+- **32 Skills** : Total des skills EPCI passe de 31 à 32
 
 ### Nouveautés v5.3.0 (Save Plan)
 
@@ -456,15 +467,16 @@ cd docs/specs/migration/
 
 ---
 
-## 6. Skills (30)
+## 6. Skills (32)
 
-### Core (18)
+### Core (19)
 
 `epci-core`, `architecture-patterns`, `code-conventions`, `testing-strategy`,
 `git-workflow`, `flags-system`, `project-memory`, `brainstormer`,
 `debugging-strategy`, `learning-optimizer`, `breakpoint-metrics`,
 `clarification-intelligente`, `proactive-suggestions`, `rules-generator`,
-`input-clarifier`, `orchestrator-batch`, `ralph-analyzer`, `ralph-converter`
+`input-clarifier`, `orchestrator-batch`, `ralph-analyzer`, `ralph-converter`,
+`breakpoint-display`
 
 ### Stack (5) — Auto-détectés
 
