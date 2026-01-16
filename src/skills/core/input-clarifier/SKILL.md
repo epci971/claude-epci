@@ -5,15 +5,34 @@ description: >-
   artifacts (hesitations, fillers, self-corrections) and proposes reformulation
   only when needed (clarity score < 0.6). Ultra-fast, non-blocking for clear inputs.
   Use when: Any command receives free-form user input (brief, brainstorm, debug, promptor).
-  Not for: Structured inputs (flags, file paths, subcommands), iteration responses in brainstorm.
+  Not for: Structured inputs (flags, file paths, subcommands), iteration responses in brainstorm,
+  semantic clarification questions (use clarification-intelligente).
 ---
 
 # Input Clarifier
 
 ## Overview
 
-Module de clarification conditionnelle pour les inputs dictés. Se déclenche uniquement
-quand l'input est détecté comme confus, permettant un workflow fluide pour les inputs clairs.
+Module de clarification conditionnelle pour les inputs dictés (Step 0.5 — PRE-reformulation).
+Se déclenche uniquement quand l'input est détecté comme confus, permettant un workflow
+fluide pour les inputs clairs.
+
+> **Note:** Ne pas confondre avec `clarification-intelligente` qui génère des questions
+> sémantiques de contenu APRÈS la reformulation (Step 3.2). Ces deux skills sont complémentaires.
+
+| Aspect | input-clarifier | clarification-intelligente |
+|--------|-----------------|---------------------------|
+| **Phase** | Step 0.5 (PRE-reformulation) | Step 3.2 (POST-reformulation) |
+| **But** | Nettoyage artefacts vocaux | Questions sémantiques de contenu |
+| **Scope** | Qualité de FORME | Qualité de CONTENU |
+| **Model** | Haiku (ultra-rapide) | Opus/Sonnet (approfondi) |
+| **Condition** | score < 0.6 (conditionnel) | Toujours actif |
+| **Output** | Texte nettoyé + score | 2-3 questions avec priorité |
+
+**Workflow complet:**
+```
+Input brut → [input-clarifier] → Input propre → [reformulation] → Brief → [clarification-intelligente] → Questions
+```
 
 ## Configuration
 

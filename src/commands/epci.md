@@ -351,7 +351,7 @@ Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuest
 | Element | Value |
 |---------|-------|
 | **Thinking** | Based on flags: `think` (default), `think hard` (--think-hard) |
-| **Skills** | testing-strategy, code-conventions, flags-system, [stack] |
+| **Skills** | testing-strategy, code-conventions, flags-system, tdd-workflow, [stack] |
 | **Subagents** | @code-reviewer (mandatory), @security-auditor*, @qa-reviewer* |
 
 ### Conditional Subagents
@@ -367,7 +367,18 @@ Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuest
 
 ### Process Summary
 
-1. **TDD Cycle** — For each task: RED → GREEN → REFACTOR
+1. **TDD Cycle** — Skill: `tdd-workflow`
+   Pour chaque tache, invoquer le skill pour cycle RED → GREEN → REFACTOR → VERIFY:
+   ```yaml
+   @skill:tdd-workflow
+     input:
+       task: "{task_description}"
+       target_file: "{target_file}"
+       test_file: "{test_file}"
+       stack: "{detected_stack}"
+   ```
+   > Voir @src/skills/core/tdd-workflow/SKILL.md pour state machine complete.
+
 2. **Reviews** — @code-reviewer, @security-auditor*, @qa-reviewer*
 3. **Fix issues** — Address Critical/Important findings
 

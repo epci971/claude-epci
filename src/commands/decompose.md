@@ -91,7 +91,7 @@ Document: {filename}
 
 **DO NOT SKIP:** Analyze the document structure and detect dependencies.
 
-**Skills loaded:** `architecture-patterns`, `flags-system`
+**Skills loaded:** `architecture-patterns`, `flags-system`, `complexity-calculator`
 
 **Structure detection:**
 
@@ -122,6 +122,25 @@ Document: {filename}
 | < min-days           | Merge with adjacent block |
 | min-days to max-days | Target granularity        |
 | > max-days           | Seek sub-decomposition    |
+
+**Effort estimation via skill:**
+
+Pour chaque bloc identifie, invoquer `@skill:complexity-calculator` pour:
+- Estimer l'effort en jours (score → categorie → effort)
+- Detecter si bloc doit etre subdivise (score > 0.70)
+- Identifier risques specifiques au bloc
+
+```yaml
+@skill:complexity-calculator
+  input:
+    brief: "{bloc_description}"
+    files_impacted: [{path: "...", action: "..."}]
+    exploration_results:
+      patterns: ["{patterns_du_bloc}"]
+      risks: ["{risques_identifies}"]
+```
+
+> Voir @src/skills/core/complexity-calculator/SKILL.md pour mapping score → categorie → effort.
 
 **Input format detection:**
 
@@ -365,6 +384,7 @@ ln -s ../../scripts/lib {output_dir}/lib
 | `project-memory`        | Pre-Workflow | Load context and conventions       |
 | `architecture-patterns` | Phase 2      | Identify decomposition patterns    |
 | `flags-system`          | All          | Handle --think levels              |
+| `complexity-calculator` | Phase 2      | Estimate effort per sub-spec       |
 | `breakpoint-display`    | Phase 3      | Interactive breakpoints            |
 | `ralph-converter`       | Phase 4      | Generate prd.json, ralph.sh, PROMPT.md |
 | `mcp`                   | Phase 2      | Context7 for architecture patterns |

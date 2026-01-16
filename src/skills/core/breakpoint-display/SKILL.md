@@ -284,6 +284,110 @@ Le skill utilise des composants réutilisables pour cohérence :
 | **Validations Block** | @components/validations-block.md | Verdicts agents (@plan-validator, etc.) |
 | **Preview Block** | @components/preview-block.md | Preview tâches prochaine phase |
 | **Flags Block** | @components/flags-block.md | Flags actifs avec sources (auto/user) |
+| **Suggestions Block** | @components/suggestions-block.md | Suggestions proactives (Discovery Mode) |
+
+## Suggestions Field (v5.3.7)
+
+Champ optionnel `suggestions[]` pour afficher des suggestions proactives dans les breakpoints.
+Activé via flag `--suggest` dans `/brainstorm` (Discovery Mode).
+
+### Structure
+
+```yaml
+data:
+  # ... existing fields ...
+  suggestions:
+    - pattern: "{pattern_id}"
+      text: "{suggestion_text}"
+      priority: "P1|P2|P3"
+      action: "{command_or_null}"  # Optional
+```
+
+### Supported Types
+
+| Type | Suggestions Support | Usage |
+|------|---------------------|-------|
+| `ems-status` | ✅ Oui | Suggestions EMS-aware en brainstorm |
+| `plan-review` | ✅ Oui | Suggestions convergence/transition |
+| `analysis` | ✅ Oui | Suggestions architecture/security |
+| `validation` | ❌ Non | Simple validation, pas de suggestions |
+| `decomposition` | ⚠️ Optionnel | Suggestions scope si LARGE |
+| `diagnostic` | ⚠️ Optionnel | Suggestions debugging patterns |
+| `lightweight` | ❌ Non | Auto-continue, pas de temps |
+| `info-only` | ❌ Non | Display only |
+
+### Display Format
+
+**Quand `suggestions[]` présent et non-vide:**
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 💡 SUGGESTIONS PROACTIVES                                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 🔴 [P1] Patterns auth détectés — considérez @security-auditor preview       │
+│        → security-check                                                     │
+│ 🟡 [P2] Coverage à 35% — essayez Six Hats pour perspectives stakeholders   │
+│        → technique six-hats                                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Priority Icons:**
+
+| Priority | Icon | Color |
+|----------|------|-------|
+| P1 | 🔴 | Critical |
+| P2 | 🟡 | Important |
+| P3 | 🟢 | Nice-to-have |
+
+### Example: ems-status with suggestions
+
+```typescript
+@skill:breakpoint-display
+  type: ems-status
+  title: "BRAINSTORM STATUS"
+  data:
+    phase: "DIVERGENT"
+    persona: "Architecte"
+    iteration: 3
+    ems:
+      score: 65
+      delta: "+12"
+      axes: {clarity: 80, depth: 60, coverage: 35, decisions: 75, actionability: 70}
+      weak_axes: ["coverage"]
+      progression: ["Init(22)", "Iter1(38)", "Iter2(53)", "Current(65)"]
+    done: ["Cible identifiée", "Contraintes listées"]
+    open: ["Délais à préciser"]
+    commands: ["continue", "dive", "back", "save", "finish"]
+    # NEW: Suggestions field
+    suggestions:
+      - pattern: "coverage-low"
+        text: "Coverage à 35% — essayez Six Hats pour perspectives stakeholders"
+        priority: P2
+        action: "technique six-hats"
+      - pattern: "security-early"
+        text: "Patterns auth détectés — considérez @security-auditor preview"
+        priority: P1
+        action: "security-check"
+```
+
+### Conditional Display
+
+```
+IF suggestions[] is present AND non-empty AND --suggest flag active:
+   Display suggestions block BEFORE ask section
+   Sort by priority (P1 first, then P2, then P3)
+   Max 3 suggestions displayed
+
+ELSE:
+   Skip suggestions block (backward compatible)
+```
+
+### Integration with proactive-suggestions skill
+
+See @src/skills/core/proactive-suggestions/SKILL.md section "Discovery Mode" for:
+- Pattern catalog
+- Priority levels
+- Learning integration
 
 ## AskUserQuestion Integration
 

@@ -20,7 +20,7 @@ Elle transforme un brief brut en brief structuré et route vers le workflow appr
 | Element       | Value                                                                                                      |
 | ------------- | ---------------------------------------------------------------------------------------------------------- |
 | **Thinking**  | `think hard` (default) / `ultrathink` (LARGE ou incertitude élevée)                                        |
-| **Skills**    | project-memory, epci-core, architecture-patterns, flags-system, mcp, personas, input-clarifier, [stack-skill auto-detected] |
+| **Skills**    | project-memory, epci-core, architecture-patterns, flags-system, mcp, personas, input-clarifier, complexity-calculator, [stack-skill auto-detected] |
 | **Subagents** | @Explore (thorough), @clarifier (turbo mode)                                                               |
 
 **Sélection du mode thinking:**
@@ -213,30 +213,40 @@ Analyser brief et résultats exploration pour préparer:
 
 #### 3.1 Évaluation Complexité
 
-| Critère        | TINY | SMALL    | STANDARD | LARGE |
-| -------------- | ---- | -------- | -------- | ----- |
-| Fichiers       | 1    | 2-3      | 4-10     | 10+   |
-| LOC estimé     | <50  | <200     | <1000    | 1000+ |
-| Risque         | Aucun| Faible   | Moyen    | Élevé |
-| Tests requis   | Non  | Optionnel| Oui      | Oui+  |
-| Arch impactée  | Non  | Non      | Possible | Oui   |
+**Skill:** `complexity-calculator`
 
-**Auto-Activation Flags:**
+Invoquer le skill pour calculer la catégorie de complexité :
+
+```yaml
+@skill:complexity-calculator
+  input:
+    brief: "{validated_brief}"
+    files_impacted: [{path: "...", action: "Create|Modify|Delete"}]
+    exploration_results:
+      stack: "{stack_info}"
+      patterns: ["{pattern1}", "{pattern2}"]
+      risks: ["{risk1}", "{risk2}"]
+```
+
+Le skill retourne:
+- `category`: TINY | SMALL | STANDARD | LARGE
+- `score`: 0.0-1.0
+- `confidence`: 0.0-1.0
+- `workflow_command`: /quick | /epci
+- `flags_recommended`: [flags]
+- `warnings`: [warnings]
+
+> Voir @src/skills/core/complexity-calculator/SKILL.md pour la formule complète et les seuils.
+
+**Auto-Activation Flags** (basé sur le résultat du skill):
 
 | Condition                      | Seuil  | Flag           |
 | ------------------------------ | ------ | -------------- |
 | Fichiers impactés              | 3-10   | `--think`      |
 | Fichiers impactés              | >10    | `--think-hard` |
 | Refactoring/migration détecté  | true   | `--think-hard` |
-| Patterns fichiers sensibles    | match  | `--safe`       |
+| Risk factor détecté            | match  | `--safe`       |
 | Score complexité               | >0.7   | `--wave`       |
-
-**Patterns fichiers sensibles:**
-
-```
-**/auth/**  **/security/**  **/payment/**
-**/password/**  **/api/v*/admin/**
-```
 
 #### 3.2 Questions de Clarification (2-3 max)
 

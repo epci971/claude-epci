@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.3.6 | **Date** : Janvier 2025
+> **Version** : 5.3.8 | **Date** : Janvier 2025
 
 ---
 
@@ -13,9 +13,28 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
 | **Simplicité**      | 14 commandes spécialisées                                     |
-| **Modularité**      | 32 Skills, 16 Subagents, Hooks natifs                         |
+| **Modularité**      | 34 Skills, 16 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v5.3.8 (Skills Integration & Default Suggestions)
+
+- **Intégration `complexity-calculator`** : Calcul complexité centralisé intégré dans `/brief`, `/quick`, `/decompose`, `/ralph-exec`
+- **Intégration `tdd-workflow`** : Cycle TDD standardisé intégré dans `/epci`, `/quick`, `/ralph-exec`
+- **Suggestions proactives par défaut** : `/brainstorm` affiche maintenant les suggestions automatiquement
+- **Nouveau flag `--no-suggest`** : Remplace `--suggest` pour désactiver les suggestions (par défaut activées)
+- **Références skills unifiées** : Toutes les commandes référencent les skills via `@skill:` invocations
+- **Documentation enrichie** : Exemples d'invocation skill dans chaque commande
+
+### Nouveautés v5.3.7 (Discovery Mode & New Skills)
+
+- **Discovery Mode pour /brainstorm** : Flag `--suggest` pour suggestions proactives (maintenant par défaut en v5.3.8)
+- **12 patterns discovery** : Catalogue de suggestions contextuelles (arch, security, ems-based)
+- **Champ `suggestions[]`** : Nouveau champ dans breakpoint-display pour suggestions
+- **Nouveau skill `complexity-calculator`** : Calcul centralisé complexité TINY/SMALL/STANDARD/LARGE
+- **Nouveau skill `tdd-workflow`** : Cycle TDD standardisé RED-GREEN-REFACTOR-VERIFY
+- **Documentation clarifiée** : `input-clarifier` vs `clarification-intelligente` mieux documentés
+- **34 Skills** : Total passe de 32 à 34 skills
 
 ### Nouveautés v5.3.6 (Full Breakpoint Migration)
 
@@ -158,14 +177,14 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 ```
 src/
 ├── agents/           # 15 subagents (7 core + 3 turbo + 5 brainstorm)
-├── commands/         # 13 commandes (brief, epci, quick, ralph-exec, etc.)
+├── commands/         # 14 commandes (brief, epci, quick, ralph-exec, etc.)
 ├── hooks/            # Système hooks (runner.py, examples/, active/)
 ├── mcp/              # MCP Integration (config, activation, registry)
 ├── orchestration/    # Wave orchestration
 ├── scripts/          # Validation (validate_all.py, etc.)
 ├── settings/         # Configuration (flags.md)
-└── skills/           # 30 skills
-    ├── core/         # 18 skills fondamentaux (inclut ralph-analyzer, ralph-converter)
+└── skills/           # 34 skills
+    ├── core/         # 21 skills fondamentaux (inclut complexity-calculator, tdd-workflow)
     ├── stack/        # 5 skills technologie (react, django, symfony, spring, frontend)
     ├── personas/     # Système personas
     ├── mcp/          # MCP skill
@@ -439,7 +458,7 @@ cd docs/specs/migration/
 | `/orchestrate`| Exécution batch de specs — DAG, priorité                    |
 | `/commit`     | Finalisation git avec contexte EPCI                         |
 | `/rules`      | Génère .claude/rules/ — conventions projet automatiques     |
-| `/brainstorm` | Feature discovery v4.8 — Auto-techniques, mix, transition checks |
+| `/brainstorm` | Feature discovery v5.3.8 — Suggestions proactives par défaut, `--no-suggest` pour désactiver |
 | `/debug`      | Diagnostic bugs structuré                                   |
 | `/decompose`  | Décomposition PRD en sous-specs + backlog.md + prd.json + ralph.sh |
 | `/memory`     | Gestion mémoire projet + learning (calibration, préférences)|
@@ -483,16 +502,16 @@ cd docs/specs/migration/
 
 ---
 
-## 6. Skills (32)
+## 6. Skills (34)
 
-### Core (19)
+### Core (21)
 
 `epci-core`, `architecture-patterns`, `code-conventions`, `testing-strategy`,
 `git-workflow`, `flags-system`, `project-memory`, `brainstormer`,
 `debugging-strategy`, `learning-optimizer`, `breakpoint-metrics`,
 `clarification-intelligente`, `proactive-suggestions`, `rules-generator`,
 `input-clarifier`, `orchestrator-batch`, `ralph-analyzer`, `ralph-converter`,
-`breakpoint-display`
+`breakpoint-display`, `complexity-calculator` (integrated v5.3.8), `tdd-workflow` (integrated v5.3.8)
 
 ### Stack (5) — Auto-détectés
 

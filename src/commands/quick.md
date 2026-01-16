@@ -76,7 +76,7 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
 | Element | Valeur |
 |---------|--------|
 | **Thinking** | Adaptatif par phase (voir matrice modeles) |
-| **Skills** | project-memory, epci-core, code-conventions, flags-system, breakpoint-display, [stack] |
+| **Skills** | project-memory, epci-core, code-conventions, flags-system, breakpoint-display, complexity-calculator, tdd-workflow, [stack] |
 | **Subagents** | @Explore, @clarifier, @planner, @implementer (conditionnel) |
 
 > Voir @references/quick/flags-matrix.md pour les matrices modeles et subagents.
@@ -110,10 +110,26 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
 
 **Modele:** Haiku (TINY et SMALL)
 
-Collecte rapide du contexte et verification de la complexite.
+**Skill:** `complexity-calculator`
 
-- SI brief absent → Suggerer `/brief` d'abord
-- SI complexite > SMALL → Escalader vers `/epci`
+Collecte rapide du contexte et verification de la complexite via skill.
+
+1. Collecter contexte via @Explore (quick mode)
+2. Invoquer `@skill:complexity-calculator` avec donnees exploration:
+   ```yaml
+   @skill:complexity-calculator
+     input:
+       brief: "{brief_text}"
+       files_impacted: [{path: "...", action: "..."}]
+       exploration_results: {...}
+   ```
+3. Analyser resultat:
+   - SI brief absent → Suggerer `/brief` d'abord
+   - SI category > SMALL → Escalader vers `/epci`
+   - SI category == TINY/SMALL → Continuer workflow
+4. Stocker category pour resume final
+
+> Voir @src/skills/core/complexity-calculator/SKILL.md pour details.
 
 ### [P] PLAN Phase (10-15s)
 
@@ -151,21 +167,46 @@ Generation du decoupage atomique des taches.
 
 **Modele:** Haiku (TINY) | Sonnet (SMALL)
 
+**Skill:** `tdd-workflow` (SMALL uniquement)
+
 Execution des taches d'implementation.
 
-- TINY: Implementation directe
-- SMALL: Invoquer @implementer (Sonnet)
-- SI erreur: Reessayer (max 2x), PUIS escalader modele
+- **TINY**: Implementation directe (skip TDD formel)
+- **SMALL**: Invoquer `@skill:tdd-workflow` avec mode="quick":
+  ```yaml
+  @skill:tdd-workflow
+    input:
+      task: "{task_description}"
+      mode: "quick"
+      stack: "{detected_stack}"
+  ```
+  - RED: Test simple
+  - GREEN: Implementation minimale
+  - REFACTOR: Skip (optionnel pour vitesse)
+- SI erreur: Reessayer (max 2x), activer recovery du skill
+
+> Voir @src/skills/core/tdd-workflow/SKILL.md pour integration /quick.
 
 ### [T] TEST Phase (5-10s)
 
 **Modele:** Haiku (validation) | Sonnet + `think hard` (SI correction necessaire)
 
+**Skill:** `tdd-workflow` (phase VERIFY)
+
 Verification de la correction de l'implementation.
 
-- Executer tests existants
-- Verification lint/format
-- SI echec tests: Tenter auto-correction
+- Executer phase VERIFY du skill:
+  ```yaml
+  @skill:tdd-workflow
+    phase: "verify"
+    input:
+      test_command: "{auto_detected}"
+      lint_command: "{auto_detected}"
+  ```
+- Verification lint/format integree
+- SI echec tests: Activer recovery du skill (max 2 retries)
+
+> Voir @src/skills/core/tdd-workflow/SKILL.md pour error recovery.
 
 > Voir @references/quick/epct-workflow.md pour le detail complet de chaque phase.
 

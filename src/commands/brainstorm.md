@@ -4,11 +4,11 @@ description: >-
   Phases Divergent/Convergent, scoring EMS v2, personas adaptatifs.
   Breakpoints style /brief, questions via AskUserQuestion (3 max).
   Use when: incertitude technique, idee a clarifier.
-argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--competitive] [--c7] [--seq]"
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--no-suggest] [--competitive] [--c7] [--seq]"
 allowed-tools: [Read, Write, Glob, Grep, Task, WebFetch, WebSearch, AskUserQuestion]
 ---
 
-# /brainstorm — Feature Discovery v5.2
+# /brainstorm — Feature Discovery v5.3.8
 
 ## Overview
 
@@ -36,6 +36,7 @@ iteratives pour construire des specifications exhaustives.
 | `--no-security` | Flag | Non | Desactive @security-auditor |
 | `--no-technique` | Flag | Non | Desactive auto-suggestion techniques |
 | `--no-clarify` | Flag | Non | Desactive clarification initiale |
+| `--no-suggest` | Flag | Non | Desactive suggestions proactives (par defaut activees) |
 | `--competitive` | Flag | Non | Active analyse concurrentielle |
 | `--c7` | Flag | Non | Active Context7 MCP |
 | `--seq` | Flag | Non | Active Sequential MCP |
@@ -45,7 +46,7 @@ iteratives pour construire des specifications exhaustives.
 | Element | Valeur |
 |---------|--------|
 | **Thinking** | `think hard` (adaptatif) |
-| **Skills** | `brainstormer`, `project-memory`, `architecture-patterns`, `mcp` |
+| **Skills** | `brainstormer`, `project-memory`, `architecture-patterns`, `mcp`, `proactive-suggestions` |
 | **Subagents** | `@Explore`, `@clarifier`, `@planner`, `@security-auditor`, `@ems-evaluator`, `@technique-advisor` |
 | **Personas** | Architecte (defaut), Sparring, Pragmatique |
 | **Phases** | Divergent -> Convergent |
@@ -255,6 +256,12 @@ Boucle jusqu'a `finish`:
        done: ["{éléments validés}"]
        open: ["{points restants}"]
        commands: ["continue", "dive", "back", "save", "energy", "finish"]
+       # v5.3.8: Suggestions proactives (par defaut, sauf --no-suggest)
+       suggestions:  # Unless --no-suggest flag
+         - pattern: "{pattern_id}"
+           text: "{suggestion based on weak_axes}"
+           priority: "P1|P2|P3"
+           action: "{command or null}"
    ```
 5. **Transition check** (si EMS = 50 et Divergent):
    ```yaml
@@ -269,6 +276,12 @@ Boucle jusqu'a `finish`:
        preview_next_phase:
          phase_name: "CONVERGENT"
          description: "Passage de l'exploration à la convergence"
+       # v5.3.7: Suggestions convergence (si --suggest actif)
+       suggestions:  # Only if --suggest flag
+         - pattern: "convergence-framework"
+           text: "Utilisez MoSCoW pour prioriser les User Stories"
+           priority: P2
+           action: "technique moscow"
      ask:
        question: "Mi-parcours EMS 50. Quelle direction prendre ?"
        header: "🔄 Transition"
@@ -295,6 +308,12 @@ Boucle jusqu'a `finish`:
            - {title: "Générer brief PRD v3.0", time: "auto"}
            - {title: "Créer journal exploration", time: "auto"}
          message: "Le brief est suffisamment mature pour être finalisé."
+       # v5.3.7: Suggestions validation (si --suggest actif)
+       suggestions:  # Only if --suggest flag
+         - pattern: "brief-validation"
+           text: "Vérifiez la section Non-Goals avant finalisation"
+           priority: P2
+           action: null
      ask:
        question: "Brief EMS {EMS}/100 prêt. Quelle action ?"
        header: "🎯 Checkpoint"
@@ -523,3 +542,60 @@ Pour les details complets (EMS system, personas, techniques, formats):
 - `project-memory` — Contexte projet
 - `architecture-patterns` — Suggestions architecture
 - `clarification-intelligente` — Systeme de questions
+- `proactive-suggestions` — Suggestions proactives (par defaut, sauf `--no-suggest`)
+
+---
+
+## Suggestions Proactives (par defaut) — v5.3.8
+
+Les suggestions proactives sont activees par defaut dans tous les breakpoints du brainstorm.
+
+### Desactivation
+
+```bash
+/brainstorm "feature description" --no-suggest
+```
+
+### Comportement
+
+Les suggestions sont affichees automatiquement (sauf si `--no-suggest`):
+
+1. **Phase 1** — Après @Explore, suggestions architecture affichées
+2. **Phase 2** — Suggestions basées sur weak_axes EMS
+3. **Transition EMS=50** — Suggestions convergence (MoSCoW, RICE)
+4. **Finalization checkpoint** — Suggestions validation brief
+
+### Suggestions dans breakpoints
+
+Les breakpoints `ems-status`, `plan-review`, et `analysis` incluent un champ `suggestions[]`:
+
+```yaml
+@skill:breakpoint-display
+  type: ems-status
+  data:
+    # ... fields existants ...
+    suggestions:
+      - pattern: "coverage-low"
+        text: "Coverage à 35% — essayez Six Hats"
+        priority: P2
+        action: "technique six-hats"
+```
+
+### Pattern Catalog
+
+| Pattern | Trigger | Priority |
+|---------|---------|----------|
+| `arch-microservices` | files > 10 + distributed | P2 |
+| `security-early` | auth/payment keywords | P1 |
+| `scope-large` | complexity LARGE | P2 |
+| `ems-stagnant` | delta < 3 × 2 iter | P2 |
+| `coverage-low` | Coverage < 40 | P2 |
+| `decisions-pending` | Decisions < 40 | P2 |
+
+Voir @src/skills/core/proactive-suggestions/SKILL.md pour le catalogue complet.
+
+### Learning
+
+Les suggestions acceptées/ignorées sont trackées pour améliorer les recommandations futures.
+
+Stockage: `.project-memory/learning/discovery_feedback.yaml`
