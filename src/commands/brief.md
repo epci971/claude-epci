@@ -124,50 +124,51 @@ ELSE:
 
 > Voir @src/commands/references/brief/reformulation-process.md pour la logique détaillée de reformulation.
 
-**Afficher ce breakpoint:**
+**Invoquer le skill @breakpoint-display:**
 
+Utiliser le skill `breakpoint-display` avec type `validation` pour afficher le breakpoint de manière unifiée :
+
+```typescript
+@skill:breakpoint-display
+  type: validation
+  title: "VALIDATION DU BRIEF"
+  data: {
+    original: "{raw_brief}",
+    modified: {true|false},
+    detection_info: {
+      artefacts_vocaux: {count},
+      type_detected: "{FEATURE|PROBLEM|DECISION}",
+      reformulation: "OUI"
+    },
+    modified_content: {
+      objectif: "{goal}",
+      contexte: "{context}",
+      contraintes: "{constraints}",
+      success_criteria: "{success_criteria}"
+    }
+  }
+  ask: {
+    question: "Le brief vous convient-il ?",
+    header: "📝 Validation",
+    options: [
+      {label: "Valider (Recommended)", description: "Continuer vers exploration"},
+      {label: "Modifier", description: "Je reformule moi-même"},
+      {label: "Annuler", description: "Arrêter workflow"}
+    ]
+  }
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 📝 VALIDATION DU BRIEF                                              │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 📄 BRIEF ORIGINAL                                                   │
-│ "{raw_brief}"                                                       │
-│                                                                     │
-│ [Si reformulé:]                                                     │
-│ 📊 DÉTECTION                                                        │
-│ ├── Artefacts vocaux: {COUNT} trouvés                              │
-│ ├── Type détecté: {FEATURE|PROBLEM|DECISION}                       │
-│ └── Reformulation: OUI                                             │
-│                                                                     │
-│ ✨ BRIEF REFORMULÉ                                                  │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ **Objectif**: {goal}                                            │ │
-│ │ **Contexte**: {context}                                         │ │
-│ │ **Contraintes**: {constraints}                                  │ │
-│ │ **Critères de succès**: {success_criteria}                      │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ [Si NON reformulé:]                                                 │
-│ ✅ Brief propre — pas de reformulation nécessaire                   │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ OPTIONS:                                                            │
-│   [1] Valider → Continuer vers l'exploration                       │
-│   [2] Modifier → Je reformule moi-même                             │
-│   [3] Annuler → Arrêter le workflow                                │
-└─────────────────────────────────────────────────────────────────────┘
-```
 
-> Référence détaillée: @src/commands/references/brief/breakpoint-formats.md
+Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
 
-**Attendre choix utilisateur:**
+> Référence: @src/skills/core/breakpoint-display/templates/validation.md
+
+**Attendre réponse utilisateur et traiter selon choix:**
 
 | Choix | Action |
 |-------|--------|
-| **[1] Valider** | Stocker brief validé, procéder au Step 2 |
-| **[2] Modifier** | Attendre input utilisateur, mettre à jour brief, réafficher breakpoint |
-| **[3] Annuler** | Arrêter workflow |
+| **Valider (Recommended)** | Stocker brief validé, procéder au Step 2 |
+| **Modifier** | Attendre input utilisateur, mettre à jour brief, réafficher breakpoint |
+| **Annuler** | Arrêter workflow |
 
 ---
 
@@ -276,93 +277,72 @@ Analyser brief et résultats exploration pour préparer:
 
 **OBLIGATOIRE:** Afficher ce breakpoint et ATTENDRE choix utilisateur avant de continuer.
 
-**Afficher ce breakpoint:**
+**Invoquer le skill @breakpoint-display:**
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ⏸️  BREAKPOINT — ANALYSE DU BRIEF                                   │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ 📊 EXPLORATION                                                      │
-│ ├── Stack détecté: {STACK}                                         │
-│ ├── Fichiers impactés: {FILE_COUNT}                                │
-│ ├── Patterns identifiés: {PATTERNS}                                │
-│ └── Risques détectés: {RISK_COUNT}                                 │
-│                                                                     │
-│ 📋 QUESTIONS DE CLARIFICATION                                       │
-│                                                                     │
-│ Q1: {TAG_1} {question_1}                                            │
-│     → Suggestion: {suggestion_1}                                    │
-│                                                                     │
-│ Q2: {TAG_2} {question_2}                                            │
-│     → Suggestion: {suggestion_2}                                    │
-│                                                                     │
-│ Q3: {TAG_3} {question_3}                                            │
-│     → Suggestion: {suggestion_3}                                    │
-│                                                                     │
-│ Légende: 🛑 Critique (obligatoire) | ⚠️ Important | ℹ️ Optionnel    │
-│                                                                     │
-│ 💡 SUGGESTIONS IA                                                   │
-│                                                                     │
-│ Architecture:                                                       │
-│   • {architecture_suggestion}                                       │
-│                                                                     │
-│ Implémentation:                                                     │
-│   • {implementation_suggestion}                                     │
-│                                                                     │
-│ Risques à considérer:                                               │
-│   • {risk_suggestion}                                               │
-│                                                                     │
-│ Best practices {stack}:                                             │
-│   • {stack_suggestion}                                              │
-│                                                                     │
-│ 📈 ÉVALUATION                                                       │
-│ ├── Catégorie: {CATEGORY}                                          │
-│ ├── Fichiers: {FILE_COUNT}                                         │
-│ ├── LOC estimé: ~{LOC}                                             │
-│ ├── Risque: {RISK_LEVEL}                                           │
-│ └── Flags: {FLAGS}                                                 │
-│                                                                     │
-│ 🚀 COMMANDE RECOMMANDÉE: {COMMAND} {FLAGS}                         │
-│                                                                     │
-│ [Si STANDARD ou LARGE:]                                             │
-│ 💡 TIP: Worktree recommandé                                         │
-│    Pour isoler cette feature dans un worktree:                      │
-│      ./src/scripts/worktree-create.sh {slug}                        │
-│      cd ~/worktrees/{project}/{slug}                                │
-│      claude                                                         │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ OPTIONS:                                                            │
-│                                                                     │
-│   [1] Répondre aux questions                                        │
-│       → Je fournis mes réponses aux questions de clarification     │
-│                                                                     │
-│   [2] Valider les suggestions                                       │
-│       → J'accepte les suggestions IA telles quelles                │
-│                                                                     │
-│   [3] Modifier les suggestions                                      │
-│       → Je veux changer certaines suggestions                      │
-│                                                                     │
-│   [4] Lancer {COMMAND} {FLAGS}                                      │
-│       → Tout est OK, on passe à l'implémentation                   │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+Utiliser le skill `breakpoint-display` avec type `analysis` pour afficher le breakpoint de manière unifiée :
+
+```typescript
+@skill:breakpoint-display
+  type: analysis
+  title: "ANALYSE DU BRIEF"
+  data: {
+    exploration: {
+      stack: "{STACK}",
+      files_impacted: {FILE_COUNT},
+      patterns: ["{pattern1}", "{pattern2}", ...],
+      risks: ["{risk1}", "{risk2}", ...]
+    },
+    questions: [
+      {
+        tag: "{🛑|⚠️|ℹ️}",
+        text: "{question}",
+        suggestion: "{suggestion}"
+      },
+      ...
+    ],
+    suggestions: {
+      architecture: "{architecture_suggestion}",
+      implementation: "{implementation_suggestion}",
+      risks: "{risk_suggestion}",
+      stack_specific: "{stack_best_practices}"
+    },
+    evaluation: {
+      category: "{TINY|SMALL|STANDARD|LARGE}",
+      files: {FILE_COUNT},
+      loc_estimate: {LOC},
+      risk: "{LOW|MEDIUM|HIGH}",
+      flags: ["{flag1}", "{flag2}", ...]
+    },
+    recommended_command: "{COMMAND} {FLAGS}",
+    worktree_tip: {true if STANDARD or LARGE, false otherwise}
+  }
+  ask: {
+    question: "Comment souhaitez-vous procéder avec cette analyse ?",
+    header: "🚀 Action",
+    options: [
+      {label: "Répondre questions", description: "Je fournis réponses clarification"},
+      {label: "Valider suggestions (Recommended)", description: "J'accepte suggestions IA telles quelles"},
+      {label: "Modifier suggestions", description: "Je veux changer certaines suggestions"},
+      {label: "Lancer {COMMAND}", description: "Tout OK, passer implémentation"}
+    ]
+  }
 ```
 
-> Référence détaillée: @src/commands/references/brief/breakpoint-formats.md
+Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
 
-**Attendre réponse utilisateur.** Traiter selon choix:
+> Référence: @src/skills/core/breakpoint-display/templates/analysis.md
 
-| Choix            | Action                                                                                   |
-| ---------------- | ---------------------------------------------------------------------------------------- |
-| **[1] Répondre** | Attendre réponses utilisateur, incorporer dans brief, réafficher breakpoint              |
-| **[2] Valider**  | Utiliser suggestions telles quelles, générer output (Step 5), réafficher breakpoint avec éval mise à jour |
-| **[3] Modifier** | Attendre modifications, mettre à jour suggestions, réafficher breakpoint                 |
-| **[4] Lancer**   | Générer output (Step 5) puis exécuter commande recommandée                               |
+**Attendre réponse utilisateur et traiter selon choix:**
 
-**Après [1], [2], ou [3]:** Mettre à jour analyse et réafficher breakpoint jusqu'à choix [4].
-**Après [4]:** Procéder au Step 5 (générer output) puis Step 6 (exécuter commande).
+| Choix | Action |
+|-------|--------|
+| **Répondre questions** | Attendre réponses utilisateur, incorporer dans brief, réafficher breakpoint |
+| **Valider suggestions (Recommended)** | Utiliser suggestions telles quelles, générer output (Step 5), réafficher breakpoint avec éval mise à jour |
+| **Modifier suggestions** | Attendre modifications, mettre à jour suggestions, réafficher breakpoint |
+| **Lancer {COMMAND}** | Générer output (Step 5) puis exécuter commande recommandée |
+
+**Après premiers 3 choix:** Mettre à jour analyse et réafficher breakpoint jusqu'à choix final.
+**Après choix "Lancer":** Procéder au Step 5 (générer output) puis Step 6 (exécuter commande).
 
 ---
 
