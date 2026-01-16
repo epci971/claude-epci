@@ -272,7 +272,73 @@ IF all_checks_pass:
 
 **MANDATORY:** Display breakpoint and WAIT for user confirmation.
 
-**User options:** "Continuer" / "Modifier le plan" / "Voir details" / "Annuler"
+**Invoquer le skill @breakpoint-display:**
+
+Utiliser le skill `breakpoint-display` avec type `plan-review` pour afficher le breakpoint de manière unifiée :
+
+```typescript
+@skill:breakpoint-display
+  type: plan-review
+  title: "PHASE 1 — Plan Validé"
+  data: {
+    flags: {
+      active: ["{flag1}", "{flag2}", ...],
+      sources: {
+        "{flag1}": "{source (auto: reason or user)}",
+        "{flag2}": "{source}",
+        ...
+      }
+    },
+    metrics: {
+      complexity: "{CATEGORY}",
+      complexity_score: {SCORE},
+      files_impacted: {FILE_COUNT},
+      time_estimate: "{TIME_ESTIMATE}",
+      risk_level: "{RISK_LEVEL}",
+      risk_description: "{RISK_DESCRIPTION}"
+    },
+    validations: {
+      plan_validator: {
+        verdict: "{VERDICT}",
+        completeness: "{STATUS}",
+        consistency: "{STATUS}",
+        feasibility: "{STATUS}",
+        quality: "{STATUS}"
+      }
+    },
+    skills_loaded: ["{skill1}", "{skill2}", ...],
+    preview_next_phase: {
+      phase_name: "Phase 2: Implementation",
+      tasks: [
+        {title: "{TASK_1_TITLE}", time: "{TASK_1_TIME}"},
+        {title: "{TASK_2_TITLE}", time: "{TASK_2_TIME}"},
+        {title: "{TASK_3_TITLE}", time: "{TASK_3_TIME}"}
+      ],
+      remaining_tasks: {REMAINING_TASKS}
+    },
+    feature_doc_path: "{FEATURE_DOC_PATH}"
+  }
+  ask: {
+    question: "Comment souhaitez-vous procéder ?",
+    header: "🚀 Phase 2",
+    options: [
+      {label: "Continuer (Recommended)", description: "Passer à Phase 2 Implémentation"},
+      {label: "Modifier plan", description: "Réviser plan avant implémentation"},
+      {label: "Voir détails", description: "Afficher Feature Document complet"},
+      {label: "Annuler", description: "Abandonner workflow"}
+    ]
+  }
+```
+
+Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
+
+> Référence: @src/skills/core/breakpoint-display/templates/plan-review.md
+
+**Attendre réponse utilisateur et traiter selon choix:**
+- **Continuer (Recommended)**: Passer à Phase 2
+- **Modifier plan**: Réviser §2, réafficher breakpoint
+- **Voir détails**: Afficher Feature Document, puis réafficher breakpoint
+- **Annuler**: Arrêter workflow
 
 ---
 
@@ -285,7 +351,7 @@ IF all_checks_pass:
 | Element | Value |
 |---------|-------|
 | **Thinking** | Based on flags: `think` (default), `think hard` (--think-hard) |
-| **Skills** | testing-strategy, code-conventions, flags-system, [stack] |
+| **Skills** | testing-strategy, code-conventions, flags-system, tdd-workflow, [stack] |
 | **Subagents** | @code-reviewer (mandatory), @security-auditor*, @qa-reviewer* |
 
 ### Conditional Subagents
@@ -301,7 +367,18 @@ IF all_checks_pass:
 
 ### Process Summary
 
-1. **TDD Cycle** — For each task: RED → GREEN → REFACTOR
+1. **TDD Cycle** — Skill: `tdd-workflow`
+   Pour chaque tache, invoquer le skill pour cycle RED → GREEN → REFACTOR → VERIFY:
+   ```yaml
+   @skill:tdd-workflow
+     input:
+       task: "{task_description}"
+       target_file: "{target_file}"
+       test_file: "{test_file}"
+       stack: "{detected_stack}"
+   ```
+   > Voir @src/skills/core/tdd-workflow/SKILL.md pour state machine complete.
+
 2. **Reviews** — @code-reviewer, @security-auditor*, @qa-reviewer*
 3. **Fix issues** — Address Critical/Important findings
 
@@ -315,7 +392,75 @@ IF all_checks_pass:
 
 **MANDATORY:** Display breakpoint and WAIT for user confirmation.
 
-**User options:** "Continuer" / "Corriger issues" / "Voir rapports" / "Annuler"
+**Invoquer le skill @breakpoint-display:**
+
+Utiliser le skill `breakpoint-display` avec type `plan-review` pour afficher le breakpoint de manière unifiée :
+
+```typescript
+@skill:breakpoint-display
+  type: plan-review
+  title: "PHASE 2 — Code Implémenté"
+  data: {
+    metrics: {
+      complexity: "{CATEGORY}",
+      complexity_score: {SCORE},
+      files_impacted: {FILE_COUNT},
+      time_estimate: "{TIME_ESTIMATE} (actual: {ACTUAL_TIME})",
+      risk_level: "{RISK_LEVEL}",
+      risk_description: "{RISK_DESCRIPTION}"
+    },
+    implementation_metrics: {
+      tasks_completed: {COMPLETED},
+      tasks_total: {TOTAL},
+      tests_count: {TEST_COUNT},
+      tests_status: "{TEST_STATUS}",
+      coverage: {COVERAGE},
+      deviations: "{DEVIATION_STATUS}"
+    },
+    validations: {
+      code_reviewer: {
+        verdict: "{CR_VERDICT}",
+        summary: "{CR_SUMMARY}"
+      },
+      security_auditor: {
+        verdict: "{SA_VERDICT}"
+      },
+      qa_reviewer: {
+        verdict: "{QA_VERDICT}"
+      }
+    },
+    preview_next_phase: {
+      phase_name: "Phase 3: Finalization",
+      tasks: [
+        {title: "Commit structuré avec message conventionnel", time: "5min"},
+        {title: "Génération documentation (@doc-generator)", time: "10min"},
+        {title: "Préparation PR", time: "5min"}
+      ],
+      remaining_tasks: 0
+    },
+    feature_doc_path: "{FEATURE_DOC_PATH}"
+  }
+  ask: {
+    question: "Comment souhaitez-vous procéder ?",
+    header: "🚀 Phase 3",
+    options: [
+      {label: "Continuer (Recommended)", description: "Passer à Phase 3 Finalisation"},
+      {label: "Corriger issues", description: "Adresser problèmes signalés"},
+      {label: "Voir rapports", description: "Afficher rapports agents détaillés"},
+      {label: "Annuler", description: "Abandonner workflow"}
+    ]
+  }
+```
+
+Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
+
+> Référence: @src/skills/core/breakpoint-display/templates/plan-review.md
+
+**Attendre réponse utilisateur et traiter selon choix:**
+- **Continuer (Recommended)**: Passer à Phase 3
+- **Corriger issues**: Adresser problèmes, refaire reviews, réafficher breakpoint
+- **Voir rapports**: Afficher détails agents, puis réafficher breakpoint
+- **Annuler**: Arrêter workflow
 
 ---
 

@@ -1,10 +1,11 @@
 ---
 name: clarification-intelligente
 description: >-
-    Système de clarification contextuelle intelligent pour EPCI.
-    Use when: /brief needs to generate clarification questions,
+    Système de clarification sémantique intelligent pour EPCI. Génère des questions
+    de clarification contextuelles APRÈS reformulation du brief (Step 3.2).
+    Use when: /brief needs to generate clarification questions (POST-reformulation),
     analyzing briefs for domain detection, or finding similar features.
-    Not for: direct implementation tasks, code generation, or when brief is already complete.
+    Not for: voice artifact cleanup (use input-clarifier), direct implementation tasks.
 allowed-tools: [Read]
 ---
 
@@ -12,7 +13,21 @@ allowed-tools: [Read]
 
 ## Overview
 
-Ce skill fournit le système de clarification intelligente pour la phase de brief EPCI.
+Ce skill fournit le système de clarification sémantique intelligente pour la phase de brief EPCI.
+Il génère des questions de clarification contextuelles **APRÈS** la reformulation du brief.
+
+> **Note:** Ne pas confondre avec `input-clarifier` qui nettoie les artefacts vocaux
+> AVANT la reformulation (Step 0.5). Ces deux skills sont complémentaires.
+
+| Aspect | clarification-intelligente | input-clarifier |
+|--------|---------------------------|-----------------|
+| **Phase** | Step 3.2 (POST-reformulation) | Step 0.5 (PRE-reformulation) |
+| **But** | Questions sémantiques de contenu | Nettoyage artefacts vocaux |
+| **Scope** | Qualité de CONTENU | Qualité de FORME |
+| **Model** | Opus/Sonnet (approfondi) | Haiku (ultra-rapide) |
+| **Condition** | Toujours actif | score < 0.6 (conditionnel) |
+| **Output** | 2-3 questions avec priorité | Texte nettoyé + score |
+
 Il transforme les questions génériques en questions contextuelles basées sur:
 
 - L'historique des features (Project Memory F04)

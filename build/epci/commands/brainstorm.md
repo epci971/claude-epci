@@ -4,11 +4,11 @@ description: >-
   Phases Divergent/Convergent, scoring EMS v2, personas adaptatifs.
   Breakpoints style /brief, questions via AskUserQuestion (3 max).
   Use when: incertitude technique, idee a clarifier.
-argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--competitive] [--c7] [--seq]"
+argument-hint: "[description] [--template feature|problem|decision] [--quick] [--turbo] [--random] [--progressive] [--no-hmw] [--no-security] [--no-technique] [--no-clarify] [--no-suggest] [--competitive] [--c7] [--seq]"
 allowed-tools: [Read, Write, Glob, Grep, Task, WebFetch, WebSearch, AskUserQuestion]
 ---
 
-# /brainstorm — Feature Discovery v5.2
+# /brainstorm — Feature Discovery v5.3.8
 
 ## Overview
 
@@ -36,6 +36,7 @@ iteratives pour construire des specifications exhaustives.
 | `--no-security` | Flag | Non | Desactive @security-auditor |
 | `--no-technique` | Flag | Non | Desactive auto-suggestion techniques |
 | `--no-clarify` | Flag | Non | Desactive clarification initiale |
+| `--no-suggest` | Flag | Non | Desactive suggestions proactives (par defaut activees) |
 | `--competitive` | Flag | Non | Active analyse concurrentielle |
 | `--c7` | Flag | Non | Active Context7 MCP |
 | `--seq` | Flag | Non | Active Sequential MCP |
@@ -45,7 +46,7 @@ iteratives pour construire des specifications exhaustives.
 | Element | Valeur |
 |---------|--------|
 | **Thinking** | `think hard` (adaptatif) |
-| **Skills** | `brainstormer`, `project-memory`, `architecture-patterns`, `mcp` |
+| **Skills** | `brainstormer`, `project-memory`, `architecture-patterns`, `mcp`, `proactive-suggestions` |
 | **Subagents** | `@Explore`, `@clarifier`, `@planner`, `@security-auditor`, `@ems-evaluator`, `@technique-advisor` |
 | **Personas** | Architecte (defaut), Sparring, Pragmatique |
 | **Phases** | Divergent -> Convergent |
@@ -63,7 +64,7 @@ iteratives pour construire des specifications exhaustives.
 
 ### Step 0 — Input Clarification (Conditional)
 
-**Skill**: `input-clarifier`
+**Skill**: `input-clarifier`, `breakpoint-display`
 
 Clarify initial description if confusing (dictated input with hesitations, fillers, etc.).
 
@@ -75,21 +76,30 @@ IF --no-clarify flag:
 
 ELSE:
    → Calculate clarity score on initial description
-   → IF score < 0.6: Show reformulation prompt
+   → IF score < 0.6: Show reformulation breakpoint
    → IF score >= 0.6: Continue to Phase 1
 ```
 
-**Example trigger:**
-```
-Input: "euh une feature de notifications, genre tu vois pour les users"
-Score: 0.4 → Clarification triggered
-
-⚠️ Input confus détecté
-
-Original: "euh une feature de notifications, genre tu vois pour les users"
-Reformulation: "Une feature de notifications pour les utilisateurs"
-
-[1] ✅ Utiliser   [2] ✏️ Modifier   [3] ➡️ Garder
+**Breakpoint (si clarification requise):**
+```yaml
+@skill:breakpoint-display
+  type: validation
+  title: "CLARIFICATION INPUT"
+  data:
+    original: "{input_brut}"
+    modified: true
+    detection_info:
+      clarity_score: {score}
+      artefacts: ["euh", "genre", "tu vois"]
+    modified_content:
+      reformulated: "{input_clarifie}"
+  ask:
+    question: "La reformulation vous convient-elle ?"
+    header: "⚠️ Clarify"
+    options:
+      - {label: "✅ Utiliser (Recommended)", description: "Version clarifiée"}
+      - {label: "✏️ Modifier", description: "Éditer la reformulation"}
+      - {label: "➡️ Garder original", description: "Utiliser tel quel"}
 ```
 
 ---
@@ -102,40 +112,51 @@ Reformulation: "Une feature de notifications pour les utilisateurs"
 4. **Initialiser session** — Phase: Divergent, Persona: Architecte, EMS: ~25
 5. **SYNC @Explore** — Attendre completion si non termine
 6. **Generer HMW** (si pas `--no-hmw`) — 3 questions "How Might We" **avec contexte codebase**
-7. **Afficher status breakpoint** (texte markdown):
+7. **Afficher status breakpoint:**
+   ```yaml
+   @skill:breakpoint-display
+     type: ems-status
+     title: "PHASE 1 — INITIALISATION"
+     data:
+       phase: "DIVERGENT"
+       persona: "Architecte"
+       iteration: 0
+       ems:
+         score: 25
+         delta: null
+         axes: {clarity: 30, depth: 20, coverage: 20, decisions: 25, actionability: 30}
+         weak_axes: ["depth", "coverage", "decisions"]
+         progression: ["Init(25)"]
+       done: ["Contexte chargé", "@Explore terminé", "HMW générées"]
+       open: ["Questions de cadrage"]
+       commands: ["continue"]
    ```
-   -------------------------------------------------------
-   PHASE 1 — INITIALISATION COMPLÈTE
-   -------------------------------------------------------
-   ✅ Contexte chargé | ✅ @Explore terminé | ✅ HMW générées
-   Prochaine étape: Questions de cadrage (3 max)
-   -------------------------------------------------------
-   ```
-8. **Questions de cadrage** — Utiliser AskUserQuestion (3 max):
-   - Header pour priorité: `🛑 Critical`, `⚠️ Important`, `ℹ️ Info` (max 12 chars)
-   - `(Recommended)` sur l'option suggérée basée sur patterns codebase
-   - Ordre: 🛑 d'abord, puis ⚠️, puis ℹ️
-   - Option "Other..." automatiquement disponible
-   ```typescript
-   AskUserQuestion({
-     questions: [
-       {
-         question: "Quelle est la cible principale de cette feature ?",
-         header: "🛑 Critical",
-         multiSelect: false,
-         options: [
-           { label: "Utilisateurs finaux", description: "Focus UX et facilité d'usage" },
-           { label: "Développeurs (Recommended)", description: "Focus API et intégration" },
-           { label: "Admins", description: "Focus gestion et monitoring" }
-         ]
-       },
-       // ... 2 autres questions max
-     ]
-   })
+8. **Questions de cadrage** (breakpoint AskUserQuestion):
+   ```yaml
+   @skill:breakpoint-display
+     type: analysis
+     title: "QUESTIONS CADRAGE"
+     data:
+       context:
+         phase: "DIVERGENT"
+         iteration: 0
+         ems: 25
+       questions:
+         - {tag: "🛑", text: "Quelle cible principale ?", suggestion: "{basé sur @Explore}"}
+         - {tag: "⚠️", text: "Contraintes techniques ?", suggestion: "{basé sur stack}"}
+         - {tag: "ℹ️", text: "Délai souhaité ?", suggestion: "Non spécifié"}
+     ask:
+       question: "Répondez aux questions de cadrage"
+       header: "📋 Cadrage"
+       options:
+         - {label: "Répondre (Recommended)", description: "Répondre une par une"}
+         - {label: "Valider suggestions", description: "Accepter suggestions IA"}
+         - {label: "Skip", description: "Passer directement aux itérations"}
    ```
 
 > **Note v4.8**: HMW generes APRES @Explore pour questions contextuelles basees sur le codebase.
 > **Note v4.9**: Input clarification en Step 0 ne s'applique qu'a l'input initial, pas aux iterations.
+> **Note v5.3**: Breakpoints via @skill:breakpoint-display pour cohérence et économie tokens.
 
 ### Phase 2 — Iterations
 
@@ -164,20 +185,52 @@ Boucle jusqu'a `finish`:
    IF weak_axes[] non vide
       AND technique pas appliquée dans les 2 dernières iterations:
    THEN:
-      a) Invoquer @technique-advisor (haiku) avec:
-         - weak_axes, phase, techniques_used[-2:]
-      b) Recevoir JSON: {mode, suggested_technique(s), reason}
-      c) Afficher suggestion via AskUserQuestion:
-         - Header: "💡 Technique" ou "💡 Mix"
-         - Options: Appliquer (Recommended), Autre, Ignorer
+      a) Invoquer @technique-advisor (haiku)
+      b) Afficher breakpoint suggestion
    ```
 
-   **Trace attendue:**
+   **Breakpoint technique unique:**
+   ```yaml
+   @skill:breakpoint-display
+     type: validation
+     title: "TECHNIQUE SUGGÉRÉE"
+     data:
+       original: null
+       modified: false
+       detection_info:
+         weak_axes: ["Couverture"]
+         technique: "Six Hats"
+         category: "creative"
+         reason: "Axe Couverture à 35% — exploration angles multiples"
+     ask:
+       question: "Appliquer cette technique ?"
+       header: "💡 Technique"
+       options:
+         - {label: "Appliquer (Recommended)", description: "Utiliser Six Hats"}
+         - {label: "Autre technique", description: "Choisir une autre"}
+         - {label: "Ignorer", description: "Continuer sans technique"}
    ```
-   [EMS: 45] weak_axes: ["Couverture", "Actionnabilité"]
-   → @technique-advisor invoqué (mode: mix)
-   → Suggestion: "Six Hats" + "Pre-mortem"
-   → AskUserQuestion affiché avec options
+
+   **Breakpoint technique mix (2+ axes faibles):**
+   ```yaml
+   @skill:breakpoint-display
+     type: validation
+     title: "TECHNIQUES SUGGÉRÉES"
+     data:
+       original: null
+       modified: false
+       detection_info:
+         weak_axes: ["Couverture", "Actionnabilité"]
+         techniques: ["Six Hats", "Pre-mortem"]
+         reason: "2 axes faibles nécessitent techniques complémentaires"
+     ask:
+       question: "Quelles techniques appliquer ?"
+       header: "💡 Mix"
+       options:
+         - {label: "Six Hats (Recommended)", description: "→ Couverture (35%)"}
+         - {label: "Pre-mortem", description: "→ Actionnabilité (42%)"}
+         - {label: "Les deux", description: "Appliquer en séquence"}
+         - {label: "Ignorer", description: "Continuer sans technique"}
    ```
 
    **SKIP uniquement si:**
@@ -185,64 +238,114 @@ Boucle jusqu'a `finish`:
    - Technique appliquée dans les 2 dernières iterations
    - EMS >= 70 (proche finish)
 
-4. **Afficher breakpoint** (v5.2 — boîte ASCII avec EMS détaillé):
-   - Voir format détaillé dans `src/skills/core/brainstormer/SKILL.md` section "Breakpoint Format"
-   - Utiliser output compact JSON de `@ems-evaluator` pour les barres de progression
+4. **Afficher breakpoint status** (via skill):
+   ```yaml
+   @skill:breakpoint-display
+     type: ems-status
+     title: "BRAINSTORM STATUS"
+     data:
+       phase: "{DIVERGENT|CONVERGENT}"
+       persona: "{Architecte|Sparring|Pragmatique}"
+       iteration: {N}
+       ems:
+         score: {EMS}
+         delta: "{+N}"
+         axes: {clarity: X, depth: X, coverage: X, decisions: X, actionability: X}
+         weak_axes: ["{axes < 50}"]
+         progression: ["Init(22)", "Iter1(38)", ..., "Current({EMS})"]
+       done: ["{éléments validés}"]
+       open: ["{points restants}"]
+       commands: ["continue", "dive", "back", "save", "energy", "finish"]
+       # v5.3.8: Suggestions proactives (par defaut, sauf --no-suggest)
+       suggestions:  # Unless --no-suggest flag
+         - pattern: "{pattern_id}"
+           text: "{suggestion based on weak_axes}"
+           priority: "P1|P2|P3"
+           action: "{command or null}"
+   ```
 5. **Transition check** (si EMS = 50 et Divergent):
-   - **Étape A — Status (texte)**:
-   ```
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   🔄 PHASE TRANSITION | EMS: 50/100
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Mi-parcours atteint. Choix de direction requis.
-   ```
-   - **Étape B — Question (AskUserQuestion)**:
-   ```typescript
-   AskUserQuestion({
-     questions: [{
-       question: "Mi-parcours EMS 50. Quelle direction prendre ?",
-       header: "🔄 Transition",
-       multiSelect: false,
-       options: [
-         { label: "Continuer Divergent", description: "Explorer plus d'options" },
-         { label: "Passer Convergent (Recommended)", description: "Commencer à converger" },
-         { label: "Appliquer technique", description: "Utiliser technique pour débloquer" }
-       ]
-     }]
-   })
+   ```yaml
+   @skill:breakpoint-display
+     type: plan-review
+     title: "PHASE TRANSITION"
+     data:
+       metrics:
+         ems_score: 50
+         ems_delta: "{delta}"
+         milestone: "Mi-parcours atteint"
+       preview_next_phase:
+         phase_name: "CONVERGENT"
+         description: "Passage de l'exploration à la convergence"
+       # v5.3.7: Suggestions convergence (si --suggest actif)
+       suggestions:  # Only if --suggest flag
+         - pattern: "convergence-framework"
+           text: "Utilisez MoSCoW pour prioriser les User Stories"
+           priority: P2
+           action: "technique moscow"
+     ask:
+       question: "Mi-parcours EMS 50. Quelle direction prendre ?"
+       header: "🔄 Transition"
+       options:
+         - {label: "Continuer Divergent", description: "Explorer plus d'options"}
+         - {label: "Passer Convergent (Recommended)", description: "Commencer à converger"}
+         - {label: "Appliquer technique", description: "Utiliser technique pour débloquer"}
    ```
 6. **Finalization checkpoint** (si EMS >= 70):
-   - **Utiliser format boîte ASCII v5.2** (voir SKILL.md section "Finalization Checkpoint")
-   - Inclut: EMS final avec 5 axes visuels + ligne de progression
-   - **Étape B — Question (AskUserQuestion)**:
-   ```typescript
-   AskUserQuestion({
-     questions: [{
-       question: "Brief EMS XX/100 prêt. Quelle action ?",
-       header: "🎯 Checkpoint",
-       multiSelect: false,
-       options: [
-         { label: "Continuer", description: "Plus d'itérations pour affiner" },
-         { label: "Preview (Recommended)", description: "@planner sans finaliser" },
-         { label: "Finaliser", description: "Générer brief + journal maintenant" }
-       ]
-     }]
-   })
+   ```yaml
+   @skill:breakpoint-display
+     type: plan-review
+     title: "FINALIZATION CHECKPOINT"
+     data:
+       metrics:
+         ems_score: {EMS}
+         ems_delta: "{delta}"
+         axes: {clarity: X, depth: X, coverage: X, decisions: X, actionability: X}
+         weak_axes: []
+       progression: "Init(22) → Iter1(38) → ... → Final({EMS})"
+       preview_next_phase:
+         phase_name: "Phase 3: Generation"
+         tasks:
+           - {title: "Générer brief PRD v3.0", time: "auto"}
+           - {title: "Créer journal exploration", time: "auto"}
+         message: "Le brief est suffisamment mature pour être finalisé."
+       # v5.3.7: Suggestions validation (si --suggest actif)
+       suggestions:  # Only if --suggest flag
+         - pattern: "brief-validation"
+           text: "Vérifiez la section Non-Goals avant finalisation"
+           priority: P2
+           action: null
+     ask:
+       question: "Brief EMS {EMS}/100 prêt. Quelle action ?"
+       header: "🎯 Checkpoint"
+       options:
+         - {label: "Continuer", description: "Plus d'itérations pour affiner"}
+         - {label: "Preview (Recommended)", description: "@planner sans finaliser"}
+         - {label: "Finaliser", description: "Générer brief + journal maintenant"}
    ```
    - **Comportement**: Continuer → questions, Preview → @planner puis redemande, Finaliser → Phase 3
    - **CRITICAL**: Checkpoint BLOQUANT. Attendre réponse explicite.
-7. **Générer questions** — AskUserQuestion (3 max, si choix Continuer):
-   ```typescript
-   AskUserQuestion({
-     questions: [
-       { question: "...", header: "🛑 Critical", multiSelect: false, options: [...] },
-       { question: "...", header: "⚠️ Important", multiSelect: false, options: [...] },
-       { question: "...", header: "ℹ️ Info", multiSelect: false, options: [...] }
-     ]
-   })
+7. **Générer questions** (si choix Continuer):
+   ```yaml
+   @skill:breakpoint-display
+     type: analysis
+     title: "QUESTIONS ITÉRATION"
+     data:
+       context:
+         phase: "{PHASE}"
+         iteration: {N}
+         ems: {EMS}
+       questions:
+         - {tag: "🛑", text: "{question critique}", suggestion: "{suggestion}"}
+         - {tag: "⚠️", text: "{question importante}", suggestion: "{suggestion}"}
+         - {tag: "ℹ️", text: "{question info}", suggestion: "{suggestion}"}
+     ask:
+       question: "Répondez aux questions pour affiner le brief"
+       header: "📋 Questions"
+       options:
+         - {label: "Répondre (Recommended)", description: "Répondre une par une"}
+         - {label: "Valider suggestions", description: "Accepter suggestions IA"}
+         - {label: "Finish", description: "Finaliser maintenant"}
    ```
-   - Ordre: 🛑 d'abord, puis ⚠️, puis ℹ️
-   - `(Recommended)` sur option suggérée
 8. **Preview check** (si Convergent et EMS >= 65 et choix [2]):
    - Proposer `@planner preview? [Y/n]`
    - Si patterns auth: `@security-auditor preview? [Y/n]`
@@ -435,6 +538,64 @@ Pour les details complets (EMS system, personas, techniques, formats):
 ## Skills Charges
 
 - `brainstormer` — Logique metier principale
+- `breakpoint-display` — Affichage breakpoints interactifs (v5.3)
 - `project-memory` — Contexte projet
 - `architecture-patterns` — Suggestions architecture
 - `clarification-intelligente` — Systeme de questions
+- `proactive-suggestions` — Suggestions proactives (par defaut, sauf `--no-suggest`)
+
+---
+
+## Suggestions Proactives (par defaut) — v5.3.8
+
+Les suggestions proactives sont activees par defaut dans tous les breakpoints du brainstorm.
+
+### Desactivation
+
+```bash
+/brainstorm "feature description" --no-suggest
+```
+
+### Comportement
+
+Les suggestions sont affichees automatiquement (sauf si `--no-suggest`):
+
+1. **Phase 1** — Après @Explore, suggestions architecture affichées
+2. **Phase 2** — Suggestions basées sur weak_axes EMS
+3. **Transition EMS=50** — Suggestions convergence (MoSCoW, RICE)
+4. **Finalization checkpoint** — Suggestions validation brief
+
+### Suggestions dans breakpoints
+
+Les breakpoints `ems-status`, `plan-review`, et `analysis` incluent un champ `suggestions[]`:
+
+```yaml
+@skill:breakpoint-display
+  type: ems-status
+  data:
+    # ... fields existants ...
+    suggestions:
+      - pattern: "coverage-low"
+        text: "Coverage à 35% — essayez Six Hats"
+        priority: P2
+        action: "technique six-hats"
+```
+
+### Pattern Catalog
+
+| Pattern | Trigger | Priority |
+|---------|---------|----------|
+| `arch-microservices` | files > 10 + distributed | P2 |
+| `security-early` | auth/payment keywords | P1 |
+| `scope-large` | complexity LARGE | P2 |
+| `ems-stagnant` | delta < 3 × 2 iter | P2 |
+| `coverage-low` | Coverage < 40 | P2 |
+| `decisions-pending` | Decisions < 40 | P2 |
+
+Voir @src/skills/core/proactive-suggestions/SKILL.md pour le catalogue complet.
+
+### Learning
+
+Les suggestions acceptées/ignorées sont trackées pour améliorer les recommandations futures.
+
+Stockage: `.project-memory/learning/discovery_feedback.yaml`

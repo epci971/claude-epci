@@ -3,7 +3,7 @@ description: >-
   Execute autonomous EPCT workflow for TINY and SMALL features. Four phases:
   Explore, Plan, Code, Test with adaptive model switching (Haiku/Sonnet).
   TINY mode: <50 LOC, 1 file. SMALL mode: <200 LOC, 2-3 files.
-argument-hint: "[--autonomous] [--quick-turbo] [--uc] [--turbo] [--no-hooks]"
+argument-hint: "[--confirm] [--quick-turbo] [--uc] [--turbo] [--no-hooks]"
 allowed-tools: [Read, Write, Edit, Bash(npm:*), Bash(pytest:*), Bash(php:*), Bash(eslint:*), Bash(flake8:*), Bash(git:*), Grep, Glob, Task]
 ---
 
@@ -52,9 +52,9 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
 
 | Flag | Effet | Auto-Declenchement |
 |------|-------|-------------------|
-| `--autonomous` | Ignorer breakpoint plan, execution continue | TINY detecte |
+| `--confirm` | Activer breakpoint plan avec attente utilisateur | Jamais (explicite) |
 | `--quick-turbo` | Forcer modele Haiku partout (TINY uniquement) | Jamais (explicite) |
-| `--no-bp` | Alias pour `--autonomous` | - (alias) |
+| `--bp` | Alias pour `--confirm` | - (alias) |
 
 ### Flags Herites
 
@@ -76,7 +76,7 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
 | Element | Valeur |
 |---------|--------|
 | **Thinking** | Adaptatif par phase (voir matrice modeles) |
-| **Skills** | project-memory, epci-core, code-conventions, flags-system, [stack] |
+| **Skills** | project-memory, epci-core, code-conventions, flags-system, breakpoint-display, complexity-calculator, tdd-workflow, [stack] |
 | **Subagents** | @Explore, @clarifier, @planner, @implementer (conditionnel) |
 
 > Voir @references/quick/flags-matrix.md pour les matrices modeles et subagents.
@@ -95,8 +95,8 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
     │
     ▼
 [P] PLAN ─────────────────────────────────────────────────────────────
-    │                         ⏸️ BP leger (3s auto-continue)
-    ▼                         [ignorer SI --autonomous]
+    │                         ⏸️ BP leger (SI --confirm)
+    ▼
 [C] CODE ─────────────────────────────────────────────────────────────
     │
     ▼
@@ -110,10 +110,26 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
 
 **Modele:** Haiku (TINY et SMALL)
 
-Collecte rapide du contexte et verification de la complexite.
+**Skill:** `complexity-calculator`
 
-- SI brief absent → Suggerer `/brief` d'abord
-- SI complexite > SMALL → Escalader vers `/epci`
+Collecte rapide du contexte et verification de la complexite via skill.
+
+1. Collecter contexte via @Explore (quick mode)
+2. Invoquer `@skill:complexity-calculator` avec donnees exploration:
+   ```yaml
+   @skill:complexity-calculator
+     input:
+       brief: "{brief_text}"
+       files_impacted: [{path: "...", action: "..."}]
+       exploration_results: {...}
+   ```
+3. Analyser resultat:
+   - SI brief absent → Suggerer `/brief` d'abord
+   - SI category > SMALL → Escalader vers `/epci`
+   - SI category == TINY/SMALL → Continuer workflow
+4. Stocker category pour resume final
+
+> Voir @src/skills/core/complexity-calculator/SKILL.md pour details.
 
 ### [P] PLAN Phase (10-15s)
 
@@ -121,30 +137,76 @@ Collecte rapide du contexte et verification de la complexite.
 
 Generation du decoupage atomique des taches.
 
-- TINY: 1-2 taches maximum
+- TINY: 1-2 taches maximum (inline, sans subagent)
 - SMALL: 3-5 taches atomiques
+- SMALL+ (proche limite): Invoquer @planner (Sonnet) via Task tool
 
-**⏸️ Breakpoint leger** (sauf `--autonomous`): auto-continue apres 3s.
+**⏸️ Breakpoint leger** (SI `--confirm`): via `@skill:breakpoint-display type:lightweight`
+
+```yaml
+@skill:breakpoint-display
+  type: lightweight
+  title: "QUICK PLAN"
+  data:
+    mode: "{TINY|SMALL}"
+    tasks:
+      - {id: 1, description: "{task 1}"}
+      - {id: 2, description: "{task 2}"}
+      - {id: 3, description: "{task 3}"}
+    auto_continue: 3  # seconds
+  ask:  # Only if --confirm flag
+    question: "Plan OK ?"
+    header: "⏸️ Plan"
+    options:
+      - {label: "Continuer (Recommended)", description: "Auto-continue dans 3s..."}
+      - {label: "Modifier", description: "Ajuster le plan"}
+      - {label: "Annuler", description: "Abandonner"}
+```
 
 ### [C] CODE Phase (variable)
 
 **Modele:** Haiku (TINY) | Sonnet (SMALL)
 
+**Skill:** `tdd-workflow` (SMALL uniquement)
+
 Execution des taches d'implementation.
 
-- TINY: Implementation directe
-- SMALL: Invoquer @implementer (Sonnet)
-- SI erreur: Reessayer (max 2x), PUIS escalader modele
+- **TINY**: Implementation directe (skip TDD formel)
+- **SMALL**: Invoquer `@skill:tdd-workflow` avec mode="quick":
+  ```yaml
+  @skill:tdd-workflow
+    input:
+      task: "{task_description}"
+      mode: "quick"
+      stack: "{detected_stack}"
+  ```
+  - RED: Test simple
+  - GREEN: Implementation minimale
+  - REFACTOR: Skip (optionnel pour vitesse)
+- SI erreur: Reessayer (max 2x), activer recovery du skill
+
+> Voir @src/skills/core/tdd-workflow/SKILL.md pour integration /quick.
 
 ### [T] TEST Phase (5-10s)
 
 **Modele:** Haiku (validation) | Sonnet + `think hard` (SI correction necessaire)
 
+**Skill:** `tdd-workflow` (phase VERIFY)
+
 Verification de la correction de l'implementation.
 
-- Executer tests existants
-- Verification lint/format
-- SI echec tests: Tenter auto-correction
+- Executer phase VERIFY du skill:
+  ```yaml
+  @skill:tdd-workflow
+    phase: "verify"
+    input:
+      test_command: "{auto_detected}"
+      lint_command: "{auto_detected}"
+  ```
+- Verification lint/format integree
+- SI echec tests: Activer recovery du skill (max 2 retries)
+
+> Voir @src/skills/core/tdd-workflow/SKILL.md pour error recovery.
 
 > Voir @references/quick/epct-workflow.md pour le detail complet de chaque phase.
 
@@ -233,12 +295,9 @@ Temps: 12s
 [E] Explore: 2 fichiers identifies, SMALL confirme
     @Explore (Haiku): patterns detectes
 [P] Plan: 3 taches generees
-    ┌─────────────────────────────────────────┐
-    │ [1] Ecrire test pour isActive()         │
-    │ [2] Implementer methode isActive()      │
-    │ [3] Verifier que tests passent          │
-    │ Auto-continue dans 3s...                │
-    └─────────────────────────────────────────┘
+    @skill:breakpoint-display type:lightweight
+    Tasks: [1] Ecrire test, [2] Implementer, [3] Verifier
+    (Auto-continue dans 3s si --confirm)
 [C] Code: @implementer (Sonnet) execute
 [T] Test: 3/3 tests reussis
 

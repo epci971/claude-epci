@@ -20,7 +20,7 @@ Elle transforme un brief brut en brief structuré et route vers le workflow appr
 | Element       | Value                                                                                                      |
 | ------------- | ---------------------------------------------------------------------------------------------------------- |
 | **Thinking**  | `think hard` (default) / `ultrathink` (LARGE ou incertitude élevée)                                        |
-| **Skills**    | project-memory, epci-core, architecture-patterns, flags-system, mcp, personas, input-clarifier, [stack-skill auto-detected] |
+| **Skills**    | project-memory, epci-core, architecture-patterns, flags-system, mcp, personas, input-clarifier, complexity-calculator, [stack-skill auto-detected] |
 | **Subagents** | @Explore (thorough), @clarifier (turbo mode)                                                               |
 
 **Sélection du mode thinking:**
@@ -124,15 +124,51 @@ ELSE:
 
 > Voir @src/commands/references/brief/reformulation-process.md pour la logique détaillée de reformulation.
 
-> Voir @src/commands/references/brief/breakpoint-formats.md pour le format du breakpoint.
+**Invoquer le skill @breakpoint-display:**
 
-**Attendre choix utilisateur:**
+Utiliser le skill `breakpoint-display` avec type `validation` pour afficher le breakpoint de manière unifiée :
+
+```typescript
+@skill:breakpoint-display
+  type: validation
+  title: "VALIDATION DU BRIEF"
+  data: {
+    original: "{raw_brief}",
+    modified: {true|false},
+    detection_info: {
+      artefacts_vocaux: {count},
+      type_detected: "{FEATURE|PROBLEM|DECISION}",
+      reformulation: "OUI"
+    },
+    modified_content: {
+      objectif: "{goal}",
+      contexte: "{context}",
+      contraintes: "{constraints}",
+      success_criteria: "{success_criteria}"
+    }
+  }
+  ask: {
+    question: "Le brief vous convient-il ?",
+    header: "📝 Validation",
+    options: [
+      {label: "Valider (Recommended)", description: "Continuer vers exploration"},
+      {label: "Modifier", description: "Je reformule moi-même"},
+      {label: "Annuler", description: "Arrêter workflow"}
+    ]
+  }
+```
+
+Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
+
+> Référence: @src/skills/core/breakpoint-display/templates/validation.md
+
+**Attendre réponse utilisateur et traiter selon choix:**
 
 | Choix | Action |
 |-------|--------|
-| **[1] Valider** | Stocker brief validé, procéder au Step 2 |
-| **[2] Modifier** | Attendre input utilisateur, mettre à jour brief, réafficher breakpoint |
-| **[3] Annuler** | Arrêter workflow |
+| **Valider (Recommended)** | Stocker brief validé, procéder au Step 2 |
+| **Modifier** | Attendre input utilisateur, mettre à jour brief, réafficher breakpoint |
+| **Annuler** | Arrêter workflow |
 
 ---
 
@@ -177,30 +213,40 @@ Analyser brief et résultats exploration pour préparer:
 
 #### 3.1 Évaluation Complexité
 
-| Critère        | TINY | SMALL    | STANDARD | LARGE |
-| -------------- | ---- | -------- | -------- | ----- |
-| Fichiers       | 1    | 2-3      | 4-10     | 10+   |
-| LOC estimé     | <50  | <200     | <1000    | 1000+ |
-| Risque         | Aucun| Faible   | Moyen    | Élevé |
-| Tests requis   | Non  | Optionnel| Oui      | Oui+  |
-| Arch impactée  | Non  | Non      | Possible | Oui   |
+**Skill:** `complexity-calculator`
 
-**Auto-Activation Flags:**
+Invoquer le skill pour calculer la catégorie de complexité :
+
+```yaml
+@skill:complexity-calculator
+  input:
+    brief: "{validated_brief}"
+    files_impacted: [{path: "...", action: "Create|Modify|Delete"}]
+    exploration_results:
+      stack: "{stack_info}"
+      patterns: ["{pattern1}", "{pattern2}"]
+      risks: ["{risk1}", "{risk2}"]
+```
+
+Le skill retourne:
+- `category`: TINY | SMALL | STANDARD | LARGE
+- `score`: 0.0-1.0
+- `confidence`: 0.0-1.0
+- `workflow_command`: /quick | /epci
+- `flags_recommended`: [flags]
+- `warnings`: [warnings]
+
+> Voir @src/skills/core/complexity-calculator/SKILL.md pour la formule complète et les seuils.
+
+**Auto-Activation Flags** (basé sur le résultat du skill):
 
 | Condition                      | Seuil  | Flag           |
 | ------------------------------ | ------ | -------------- |
 | Fichiers impactés              | 3-10   | `--think`      |
 | Fichiers impactés              | >10    | `--think-hard` |
 | Refactoring/migration détecté  | true   | `--think-hard` |
-| Patterns fichiers sensibles    | match  | `--safe`       |
+| Risk factor détecté            | match  | `--safe`       |
 | Score complexité               | >0.7   | `--wave`       |
-
-**Patterns fichiers sensibles:**
-
-```
-**/auth/**  **/security/**  **/payment/**
-**/password/**  **/api/v*/admin/**
-```
 
 #### 3.2 Questions de Clarification (2-3 max)
 
@@ -241,19 +287,72 @@ Analyser brief et résultats exploration pour préparer:
 
 **OBLIGATOIRE:** Afficher ce breakpoint et ATTENDRE choix utilisateur avant de continuer.
 
-> Voir @src/commands/references/brief/breakpoint-formats.md pour le format complet du breakpoint.
+**Invoquer le skill @breakpoint-display:**
 
-**Attendre réponse utilisateur.** Traiter selon choix:
+Utiliser le skill `breakpoint-display` avec type `analysis` pour afficher le breakpoint de manière unifiée :
 
-| Choix            | Action                                                                                   |
-| ---------------- | ---------------------------------------------------------------------------------------- |
-| **[1] Répondre** | Attendre réponses utilisateur, incorporer dans brief, réafficher breakpoint              |
-| **[2] Valider**  | Utiliser suggestions telles quelles, générer output (Step 5), réafficher breakpoint avec éval mise à jour |
-| **[3] Modifier** | Attendre modifications, mettre à jour suggestions, réafficher breakpoint                 |
-| **[4] Lancer**   | Générer output (Step 5) puis exécuter commande recommandée                               |
+```typescript
+@skill:breakpoint-display
+  type: analysis
+  title: "ANALYSE DU BRIEF"
+  data: {
+    exploration: {
+      stack: "{STACK}",
+      files_impacted: {FILE_COUNT},
+      patterns: ["{pattern1}", "{pattern2}", ...],
+      risks: ["{risk1}", "{risk2}", ...]
+    },
+    questions: [
+      {
+        tag: "{🛑|⚠️|ℹ️}",
+        text: "{question}",
+        suggestion: "{suggestion}"
+      },
+      ...
+    ],
+    suggestions: {
+      architecture: "{architecture_suggestion}",
+      implementation: "{implementation_suggestion}",
+      risks: "{risk_suggestion}",
+      stack_specific: "{stack_best_practices}"
+    },
+    evaluation: {
+      category: "{TINY|SMALL|STANDARD|LARGE}",
+      files: {FILE_COUNT},
+      loc_estimate: {LOC},
+      risk: "{LOW|MEDIUM|HIGH}",
+      flags: ["{flag1}", "{flag2}", ...]
+    },
+    recommended_command: "{COMMAND} {FLAGS}",
+    worktree_tip: {true if STANDARD or LARGE, false otherwise}
+  }
+  ask: {
+    question: "Comment souhaitez-vous procéder avec cette analyse ?",
+    header: "🚀 Action",
+    options: [
+      {label: "Répondre questions", description: "Je fournis réponses clarification"},
+      {label: "Valider suggestions (Recommended)", description: "J'accepte suggestions IA telles quelles"},
+      {label: "Modifier suggestions", description: "Je veux changer certaines suggestions"},
+      {label: "Lancer {COMMAND}", description: "Tout OK, passer implémentation"}
+    ]
+  }
+```
 
-**Après [1], [2], ou [3]:** Mettre à jour analyse et réafficher breakpoint jusqu'à choix [4].
-**Après [4]:** Procéder au Step 5 (générer output) puis Step 6 (exécuter commande).
+Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
+
+> Référence: @src/skills/core/breakpoint-display/templates/analysis.md
+
+**Attendre réponse utilisateur et traiter selon choix:**
+
+| Choix | Action |
+|-------|--------|
+| **Répondre questions** | Attendre réponses utilisateur, incorporer dans brief, réafficher breakpoint |
+| **Valider suggestions (Recommended)** | Utiliser suggestions telles quelles, générer output (Step 5), réafficher breakpoint avec éval mise à jour |
+| **Modifier suggestions** | Attendre modifications, mettre à jour suggestions, réafficher breakpoint |
+| **Lancer {COMMAND}** | Générer output (Step 5) puis exécuter commande recommandée |
+
+**Après premiers 3 choix:** Mettre à jour analyse et réafficher breakpoint jusqu'à choix final.
+**Après choix "Lancer":** Procéder au Step 5 (générer output) puis Step 6 (exécuter commande).
 
 ---
 

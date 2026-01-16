@@ -42,7 +42,7 @@ tested, and committed.
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think hard` (LARGE batch) |
-| **Skills** | orchestrator-batch, project-memory, epci-core |
+| **Skills** | orchestrator-batch, project-memory, epci-core, breakpoint-display |
 | **Subagents** | None (invokes /brief, /epci, /quick internally) |
 
 ## Process
@@ -97,36 +97,36 @@ IF validation fails:
 
 ### Phase 3: Interactive Plan (MANDATORY BREAKPOINT)
 
-**Display execution plan table:**
+**MANDATORY:** Display the execution plan via `@skill:breakpoint-display` and WAIT for user validation.
 
+**Skill**: `breakpoint-display`
+
+```yaml
+@skill:breakpoint-display
+  type: interactive-plan
+  title: "ORCHESTRATION PLAN"
+  data:
+    specs_count: {N}
+    specs:
+      - {order: 1, id: "S02-xxx", effort: "2h", priority: 1, deps: "-", est: "15min"}
+      - {order: 2, id: "S01-xxx", effort: "4h", priority: "2*", deps: "-", est: "25min"}
+      - {order: 3, id: "S03-xxx", effort: "3h", priority: "-", deps: "S01,S02", est: "20min"}
+    notes: ["* Priority inherited from dependent"]
+    total_time: "{TIME}"
+    max_retries: {N}
+  ask:
+    question: "Comment souhaitez-vous procéder ?"
+    header: "🚀 Exécution"
+    options:
+      - {label: "Lancer (Recommended)", description: "Démarrer l'exécution du plan"}
+      - {label: "Modifier", description: "Ajuster priorités ou ordre"}
+      - {label: "Skip specs", description: "Ignorer certaines specs"}
+      - {label: "Annuler", description: "Abandonner l'orchestration"}
 ```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ORCHESTRATION PLAN — {N} specs
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-| # | Spec | Effort | Priority | Deps | Est. |
-|---|------|--------|----------|------|------|
-| 1 | S02-xxx | 2h | 1 | - | 15min |
-| 2 | S01-xxx | 4h | 2* | - | 25min |
-| 3 | S03-xxx | 3h | - | S01,S02 | 20min |
+**Si choix "Modifier":** Demander les modifications via AskUserQuestion.
 
-* Priority inherited from dependent
-
-Total: ~{TIME} | Max retries: {N}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-[Y] Launch  [n] Cancel  [edit] Modify  [reorder] Change order  [skip X] Ignore
-> _
-```
-
-**Actions:**
-| Input | Action |
-|-------|--------|
-| `Y` or `y` | Start execution |
-| `n` | Abort orchestration |
-| `edit` | Modify priority values |
-| `reorder` | Manual order adjustment |
-| `skip S01,S02` | Mark specs to skip |
+**Si choix "Skip specs":** Demander la liste des specs à ignorer.
 
 **--dry-run behavior**: Display plan and exit without executing.
 

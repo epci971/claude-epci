@@ -32,7 +32,7 @@ Execute ONE user story from prd.json autonomously using EPCT workflow (Explore, 
 | Element | Value |
 |---------|-------|
 | **Thinking** | `think` (default) / `think hard` (on retry) |
-| **Skills** | project-memory, testing-strategy, git-workflow, code-conventions |
+| **Skills** | project-memory, testing-strategy, git-workflow, code-conventions, complexity-calculator, tdd-workflow |
 | **Subagents** | @planner (M/L), @implementer (M/L), @Explore (quick), @plan-validator (L/XL), @code-reviewer (L/XL), @qa-reviewer (L/XL, conditional) |
 
 ---
@@ -283,16 +283,32 @@ FOR attempt = 1 to max_attempts (default 5):
 
 ### Step C.1: Implementation
 
-**For S/M complexity (direct implementation):**
+**Skill:** `tdd-workflow`
+
+**For S complexity (direct implementation):**
 - Use Edit tool directly for changes
 - Follow code conventions from .project-memory/
 
-**For L/XL complexity (use @implementer):**
+**For M/L/XL complexity (use tdd-workflow + @implementer):**
+
+Invoquer `@skill:tdd-workflow` avec mode adapte:
+```yaml
+@skill:tdd-workflow
+  input:
+    task: "{task_description}"
+    mode: "ralph"  # Optimise pour vitesse
+    stack: "{detected_stack}"
+    skip_refactor: true  # Optionnel pour vitesse
+```
+
+Pour L/XL, combiner avec @implementer:
 ```
 Task tool with subagent_type="epci:implementer", model="sonnet"
 Input: Single task from plan
-Output: Implemented code
+Output: Implemented code following TDD cycle
 ```
+
+> Voir @src/skills/core/tdd-workflow/SKILL.md pour integration Ralph.
 
 ### Step C.2: Testing
 

@@ -91,7 +91,7 @@ Document: {filename}
 
 **DO NOT SKIP:** Analyze the document structure and detect dependencies.
 
-**Skills loaded:** `architecture-patterns`, `flags-system`
+**Skills loaded:** `architecture-patterns`, `flags-system`, `complexity-calculator`
 
 **Structure detection:**
 
@@ -123,6 +123,25 @@ Document: {filename}
 | min-days to max-days | Target granularity        |
 | > max-days           | Seek sub-decomposition    |
 
+**Effort estimation via skill:**
+
+Pour chaque bloc identifie, invoquer `@skill:complexity-calculator` pour:
+- Estimer l'effort en jours (score → categorie → effort)
+- Detecter si bloc doit etre subdivise (score > 0.70)
+- Identifier risques specifiques au bloc
+
+```yaml
+@skill:complexity-calculator
+  input:
+    brief: "{bloc_description}"
+    files_impacted: [{path: "...", action: "..."}]
+    exploration_results:
+      patterns: ["{patterns_du_bloc}"]
+      risks: ["{risques_identifies}"]
+```
+
+> Voir @src/skills/core/complexity-calculator/SKILL.md pour mapping score → categorie → effort.
+
 **Input format detection:**
 
 | Format | Detection | Behavior |
@@ -138,54 +157,53 @@ Document: {filename}
 
 ### Phase 3: Proposal (MANDATORY — WAIT FOR USER)
 
-**MANDATORY:** Display the breakpoint and WAIT for user validation before proceeding.
+**MANDATORY:** Display the breakpoint via `@skill:breakpoint-display` and WAIT for user validation.
 
-Present decomposition proposal for user validation:
+**Skill**: `breakpoint-display`
 
-```
-+---------------------------------------------------------------------+
-| BREAKPOINT — VALIDATION DECOUPAGE                                    |
-+---------------------------------------------------------------------+
-|                                                                     |
-| ANALYSE DE: {filename}                                              |
-| ├── Lignes: {line_count}                                            |
-| ├── Effort total detecte: {total_days} jours                        |
-| └── Structure: {phases} phases, {steps} etapes                      |
-|                                                                     |
-| DECOUPAGE PROPOSE: {count} sous-specs                               |
-|                                                                     |
-| | ID  | Title        | Effort | Priority | Dependencies | Status  | |
-| |-----|--------------|--------|----------|--------------|---------|  |
-| | S01 | {name_1}     | {d1}j  | -        | -            | Pending | |
-| | S02 | {name_2}     | {d2}j  | -        | S01          | Pending | |
-| | ... | ...          | ...    | ...      | ...          | ...     | |
-|                                                                     |
-| PARALLELISATION: {parallel_count} specs parallelisables             |
-| DUREE OPTIMISEE: {optimized_days}j (vs {sequential_days}j seq)      |
-|                                                                     |
-| ALERTES: {alerts_or_none}                                           |
-|                                                                     |
-| @decompose-validator: {verdict}                                     |
-|                                                                     |
-| Options:                                                            |
-|   * "Valider" -> Generer les fichiers                               |
-|   * "Modifier" -> Ajuster le decoupage                              |
-|   * "Annuler" -> Abandonner                                         |
-+---------------------------------------------------------------------+
+```yaml
+@skill:breakpoint-display
+  type: decomposition
+  title: "VALIDATION DÉCOUPAGE"
+  data:
+    source_file: "{filename}"
+    analysis:
+      lines: {line_count}
+      total_effort: {total_days}
+      structure: "{phases} phases, {steps} étapes"
+    specs:
+      - {id: "S01", title: "{name_1}", effort: {d1}, priority: "-", deps: "-", status: "Pending"}
+      - {id: "S02", title: "{name_2}", effort: {d2}, priority: "-", deps: "S01", status: "Pending"}
+      # ... autres specs
+    parallelization: {parallel_count}
+    optimized_duration: {optimized_days}
+    sequential_duration: {sequential_days}
+    alerts: ["{alerts_or_none}"]
+    validator_verdict: "{@decompose-validator verdict}"
+  ask:
+    question: "Le découpage vous convient-il ?"
+    header: "📋 Découpage"
+    options:
+      - {label: "Valider (Recommended)", description: "Générer les fichiers"}
+      - {label: "Modifier", description: "Ajuster le découpage"}
+      - {label: "Annuler", description: "Abandonner décomposition"}
 ```
 
-**Modify option sub-menu:**
+**Si choix "Modifier", afficher sous-menu via AskUserQuestion:**
 
-```
-Que souhaitez-vous modifier ?
-
-[1] Fusionner des specs — Ex: "Fusionner S04 et S05"
-[2] Decouper une spec — Ex: "Decouper S07 en 2"
-[3] Renommer — Ex: "S03 → Modeles Fondamentaux"
-[4] Changer dependances — Ex: "S06 ne depend plus de S03"
-[5] Ajuster estimation — Ex: "S08 = 3 jours"
-
-Votre choix (ou texte libre):
+```yaml
+@skill:breakpoint-display (second-level)
+  type: decomposition-modify
+  title: "MODIFICATION DÉCOUPAGE"
+  ask:
+    question: "Que souhaitez-vous modifier ?"
+    header: "🔧 Modifier"
+    multiSelect: true
+    options:
+      - {label: "Fusionner specs", description: "Ex: Fusionner S04 et S05"}
+      - {label: "Découper spec", description: "Ex: Découper S07 en 2 parties"}
+      - {label: "Renommer", description: "Ex: S03 → Modèles Fondamentaux"}
+      - {label: "Changer dépendances", description: "Ex: S06 ne dépend plus de S03"}
 ```
 
 ### Phase 4: Generation (USE WRITE TOOL — MANDATORY)
@@ -366,6 +384,8 @@ ln -s ../../scripts/lib {output_dir}/lib
 | `project-memory`        | Pre-Workflow | Load context and conventions       |
 | `architecture-patterns` | Phase 2      | Identify decomposition patterns    |
 | `flags-system`          | All          | Handle --think levels              |
+| `complexity-calculator` | Phase 2      | Estimate effort per sub-spec       |
+| `breakpoint-display`    | Phase 3      | Interactive breakpoints            |
 | `ralph-converter`       | Phase 4      | Generate prd.json, ralph.sh, PROMPT.md |
 | `mcp`                   | Phase 2      | Context7 for architecture patterns |
 
