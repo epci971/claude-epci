@@ -23,6 +23,54 @@ Skill centralisé pour afficher des breakpoints interactifs avec validation util
 - 🛠️ **Maintenabilité** : 1 skill vs 9 implémentations
 - ✨ **Évolutivité** : Nouveaux types facilement ajoutés
 
+---
+
+## MANDATORY EXECUTION — Instructions Impératives
+
+**QUAND tu rencontres `@skill:breakpoint-display` dans une commande, tu DOIS exécuter ces 4 étapes :**
+
+### Étape 1 : Parser les paramètres
+
+Extraire : `type`, `title`, `data`, `ask` (optionnel).
+
+### Étape 2 : AFFICHER le breakpoint ASCII
+
+Tu DOIS afficher une boîte ASCII avec bordures `┌───┐` `└───┘` selon le type.
+
+**Templates détaillés :** Voir @references/execution-templates.md
+
+**Structure générale :**
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ⏸️  {title}                                                          │
+├─────────────────────────────────────────────────────────────────────┤
+│ [Contenu selon type - voir templates]                               │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Types supportés :** validation, analysis, plan-review, decomposition, ems-status, diagnostic, interactive-plan, lightweight, info-only.
+
+### Étape 3 : INVOQUER AskUserQuestion (si `ask` présent)
+
+```typescript
+AskUserQuestion({
+  questions: [{
+    question: ask.question,
+    header: ask.header,       // Max 12 caractères
+    multiSelect: ask.multiSelect || false,
+    options: ask.options      // Array de {label, description}
+  }]
+})
+```
+
+**Types SANS AskUserQuestion :** `info-only`, `ems-status`, `lightweight`.
+
+### Étape 4 : RETOURNER le choix
+
+Retourner le choix utilisateur au workflow appelant.
+
+---
+
 ## Supported Breakpoint Types
 
 | Type | Usage | AskUserQuestion | Template |
