@@ -33,18 +33,47 @@ Skill centralisé pour afficher des breakpoints interactifs avec validation util
 
 Extraire : `type`, `title`, `data`, `ask` (optionnel).
 
-### Étape 2 : AFFICHER le breakpoint ASCII
+### Étape 2 : LIRE le template puis AFFICHER le breakpoint ASCII
 
-Tu DOIS afficher une boîte ASCII avec bordures `┌───┐` `└───┘` selon le type.
+**⚠️ OBLIGATOIRE** : Tu DOIS lire le fichier template correspondant au type AVANT d'afficher.
 
-**Templates détaillés :** Voir @references/execution-templates.md
+**Fichier template** : `references/execution-templates.md` (dans le même dossier que ce SKILL.md)
+
+**Sections à trouver selon le type :**
+
+| Type | Section dans execution-templates.md |
+|------|-------------------------------------|
+| `validation` | "Template: validation" |
+| `analysis` | "Template: analysis" |
+| `plan-review` | "Template: plan-review" |
+| `decomposition` | "Template: decomposition" |
+| `ems-status` | "Template: ems-status" |
+| `diagnostic` | "Template: diagnostic" |
+| `interactive-plan` | "Template: interactive-plan" |
+| `research-prompt` | "Template: research-prompt" |
+| `lightweight` | "Template: lightweight" |
+| `info-only` | "Template: info-only" |
+
+**INSTRUCTION CONCRÈTE :**
+```
+1. Localiser ce skill (SKILL.md) dans le projet
+2. Lire le fichier references/execution-templates.md (même dossier)
+3. Trouver la section "Template: {type}"
+4. Afficher la boîte ASCII en substituant les variables {data.xxx} par les valeurs réelles
+```
+
+**Chemins selon contexte :**
+- Repo dev : `src/skills/core/breakpoint-display/references/execution-templates.md`
+- Plugin installé : `skills/core/breakpoint-display/references/execution-templates.md`
+
+Tu DOIS afficher une boîte ASCII avec bordures `┌───┐` `└───┘` selon le template.
 
 **Structure générale :**
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ⏸️  {title}                                                          │
 ├─────────────────────────────────────────────────────────────────────┤
-│ [Contenu selon type - voir templates]                               │
+│ [Contenu selon type - voir template lu]                             │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
