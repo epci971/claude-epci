@@ -3,7 +3,7 @@ description: >-
   Complete EPCI workflow in 3 phases for STANDARD and LARGE features.
   Phase 1: Analysis and planning. Phase 2: TDD implementation.
   Phase 3: Finalization and documentation. Includes breakpoints between phases.
-argument-hint: "[--large] [--turbo] [--from-native-plan <file>] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--sequential] [--parallel] [--uc] [--no-hooks] [--continue]"
+argument-hint: "[--large] [--turbo] [--think|--think-hard|--ultrathink] [--safe] [--wave] [--sequential] [--parallel] [--uc] [--no-hooks] [--continue]"
 allowed-tools: [Read, Write, Edit, Bash(git:*), Bash(python3:*), Bash(npm:*), Bash(php:*), Grep, Glob, Task]
 ---
 
@@ -69,7 +69,6 @@ Three-phase workflow with mandatory breakpoints:
 |----------|-------------|
 | `--large` | Alias for `--think-hard --wave` (backward compatible) |
 | `--turbo` | Speed-optimized mode: @planner/@implementer (Sonnet), parallel reviews, 1 breakpoint |
-| `--from-native-plan <file>` | Import native Claude Code plan as base for §2. Automatically creates §1 if missing via @Explore. |
 | `--continue` | Continue from last phase (resume after interruption) |
 | `--no-hooks` | Disable all hook execution |
 
@@ -163,19 +162,37 @@ When `--wave` flag is enabled, agents execute in parallel using DAG-based orches
 
 ---
 
-## Step 0.5: Import Native Plan (CONDITIONAL)
+## Step 0.5: Auto-Detect Native Plan (CONDITIONAL)
 
-**Condition:** `--from-native-plan <file>` flag provided
+**Condition:** Argument de contexte `@<file>` fourni (ex: `/epci slug @docs/plans/plan.md`)
 
-Import a native Claude Code plan as base for Phase 1. Native plan is copied to Feature Document §2 for full traceability.
+Auto-detect and import a saved native plan based on path or frontmatter.
 
-**Summary:**
-1. Read native plan from `<file>` (can be anywhere, e.g., ~/.claude/)
-2. Check §1 status → Run @Explore IF §1 missing/incomplete
-3. Copy plan to §2 "Plan Original (Natif)" section
-4. Proceed to prerequisite check
+**Detection Algorithm:**
+```python
+def is_native_plan(file_path):
+    # Criterion 1: Path contains docs/plans/
+    if "docs/plans/" in file_path:
+        return True
+    # Criterion 2: Frontmatter with saved_at
+    frontmatter = parse_yaml_frontmatter(read_file(file_path))
+    if frontmatter and "saved_at" in frontmatter:
+        return True
+    return False
+```
 
-**Full workflow:** See @references/epci/native-plan-import.md
+**Process:**
+1. Extract path from `@<path>` argument
+2. Call `is_native_plan(path)` to detect
+3. IF native plan detected:
+   - Extract metadata (slug, source, content)
+   - Create/update Feature Document with §2 "Plan Original (Natif)"
+   - Check §1 → Run @Explore IF §1 missing/incomplete
+4. ELSE: Ignore, proceed with standard workflow
+
+**Note:** No flag needed — detection based on path/frontmatter.
+
+**Full workflow:** See @references/epci/native-plan-detection.md
 
 ---
 

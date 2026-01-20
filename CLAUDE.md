@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.4.1 | **Date** : Janvier 2025
+> **Version** : 5.6.0 | **Date** : Janvier 2025
 
 ---
 
@@ -17,175 +17,15 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
 
-### Nouveautés v5.4.0 (Perplexity Research Integration)
+### Nouveautés v5.6.0
 
-- **Nouveau skill `perplexity-research`** : Recherche externe via Perplexity Pro (human-in-the-loop)
-- **Nouveau type breakpoint `research-prompt`** : Affiche prompt copyable avec mode Standard/Deep Research
-- **Intégration `/brief`** : Step 2.1 propose recherche si librairie externe ou architecture complexe
-- **Intégration `/debug`** : Step 1.2.1 propose recherche si Context7/WebSearch insuffisants
-- **Intégration `/brainstorm`** : Phase 1 (market analysis) + Phase 2 (axes faibles)
-- **35 Skills** : Total passe de 34 à 35 skills
-- **10 types breakpoints** : Ajout de `research-prompt` au système breakpoint-display
+> Voir [CHANGELOG.md](CHANGELOG.md) pour l'historique complet des versions.
 
-### Nouveautés v5.3.10 (Anti-Plan-Natif Fix)
-
-- **Fix critique `/brief`** : Correction du bug où `/brief` basculait en mode plan natif au lieu de générer un Feature Document
-- **Garde anti-plan-natif** : Nouvelle box ASCII de vérification obligatoire dans Step 5 de `/brief`
-- **Règle globale CLAUDE.md** : Protection anti-EnterPlanMode ajoutée dans `~/.claude/CLAUDE.md`
-- **Routing restauré** : Step 6 (routing vers `/quick` ou `/epci`) s'exécute correctement après Step 5
-
-### Nouveautés v5.3.8 (Skills Integration & Default Suggestions)
-
-- **Intégration `complexity-calculator`** : Calcul complexité centralisé intégré dans `/brief`, `/quick`, `/decompose`, `/ralph-exec`
-- **Intégration `tdd-workflow`** : Cycle TDD standardisé intégré dans `/epci`, `/quick`, `/ralph-exec`
-- **Suggestions proactives par défaut** : `/brainstorm` affiche maintenant les suggestions automatiquement
-- **Nouveau flag `--no-suggest`** : Remplace `--suggest` pour désactiver les suggestions (par défaut activées)
-- **Références skills unifiées** : Toutes les commandes référencent les skills via `@skill:` invocations
-- **Documentation enrichie** : Exemples d'invocation skill dans chaque commande
-
-### Nouveautés v5.3.7 (Discovery Mode & New Skills)
-
-- **Discovery Mode pour /brainstorm** : Flag `--suggest` pour suggestions proactives (maintenant par défaut en v5.3.8)
-- **12 patterns discovery** : Catalogue de suggestions contextuelles (arch, security, ems-based)
-- **Champ `suggestions[]`** : Nouveau champ dans breakpoint-display pour suggestions
-- **Nouveau skill `complexity-calculator`** : Calcul centralisé complexité TINY/SMALL/STANDARD/LARGE
-- **Nouveau skill `tdd-workflow`** : Cycle TDD standardisé RED-GREEN-REFACTOR-VERIFY
-- **Documentation clarifiée** : `input-clarifier` vs `clarification-intelligente` mieux documentés
-- **34 Skills** : Total passe de 32 à 34 skills
-
-### Nouveautés v5.3.6 (Full Breakpoint Migration)
-
-- **Migration complète breakpoint-display** : Toutes les commandes EPCI utilisent maintenant le skill centralisé
-- **6 commandes migrées** : `/debug`, `/decompose`, `/orchestrate`, `/commit`, `/save-plan`, `/quick`
-- **12 breakpoints au total** : Tous migrés vers `@skill:breakpoint-display`
-- **~70% économie tokens moyenne** : Breakpoints uniformisés via skill centralisé
-- **Cohérence UI totale** : Toutes les commandes EPCI avec boutons natifs AskUserQuestion
-
-### Nouveautés v5.3.5 (Brainstorm Migration)
-
-- **Migration `/brainstorm` vers `breakpoint-display`** : 6 breakpoints migrés vers skill centralisé
-- **Nouveau template `ems-status`** : Affichage EMS 5 axes avec barres de progression pour brainstorm
-- **9 types de breakpoints** : validation, plan-review, analysis, decomposition, diagnostic, interactive-plan, lightweight, info-only, ems-status
-- **~57% économie tokens** : Breakpoints brainstorm via skill au lieu de ASCII boxes manuelles
-- **Cohérence UI complète** : `/brief`, `/epci` et `/brainstorm` utilisent maintenant le même système
-
-### Nouveautés v5.3.4 (Breakpoint Display Skill)
-
-- **Nouveau skill `breakpoint-display`** : Système unifié pour affichage breakpoints interactifs
-- **73% réduction tokens** : ~300 tokens/breakpoint → ~80 tokens via skill centralisé
-- **AskUserQuestion natif** : UI Claude Code native avec boutons cliquables vs choix textuels
-- **8 types de breakpoints** : validation, plan-review, analysis, decomposition, diagnostic, interactive-plan, lightweight, info-only
-- **4 composants réutilisables** : metrics-block, validations-block, preview-block, flags-block
-- **Migration /brief et /epci** : 4 breakpoints migrés vers nouveau système (Step 1, Step 4, BP1, BP2)
-- **Guides complets** : AskUserQuestion integration guide + migration guide pour 9 commandes
-- **32 Skills** : Total des skills EPCI passe de 31 à 32
-
-### Nouveautés v5.3.0 (Save Plan)
-
-- **Nouvelle commande `/save-plan`** : Sauvegarde les plans natifs Claude Code dans le projet
-- **Auto-détection du plan** : Détecte automatiquement le dernier plan dans `~/.claude/plans/`
-- **Auto-génération du slug** : Génère un slug intelligent basé sur le contenu du plan
-- **Horodatage complet** : Format `<slug>-<YYYYMMDD-HHmmss>.md` pour éviter les collisions
-- **Frontmatter YAML** : Métadonnées ajoutées (saved_at, source, slug, auto_detected)
-- **Breakpoint de confirmation** : Validation du slug avant sauvegarde
-- **14 commandes** : Total des commandes EPCI passe de 13 à 14
-
-### Nouveautés v5.2.0 (Ralph Simplification)
-
-- **Suppression `/ralph` et `/cancel-ralph`** : Remplacés par workflow plus simple
-- **Nouvelle commande `/ralph-exec`** : Exécute UNE story avec EPCT inline (sans routing vers /brief ou /epci)
-- **Suppression `@ralph-executor`** : Logique migrée dans `/ralph-exec`
-- **Libération contexte** : Chaque appel `claude "/ralph-exec"` = contexte frais
-- **Promise tag simplifié** : `<promise>STORY_DONE</promise>` pour détection complétion
-- **ralph.sh mis à jour** : Appelle `/ralph-exec` au lieu de PROMPT.md
-- **Workflow overnight simplifié** : `./ralph.sh` directement depuis terminal
-
-**Architecture simplifiée** :
-```
-/decompose → prd.json + ralph.sh
-                    │
-                    ↓
-            ./ralph.sh (terminal)
-                    │
-          ┌─────────┴─────────┐
-          ▼                   ▼
-  claude "/ralph-exec"  claude "/ralph-exec"
-   (contexte frais)      (contexte frais)
-```
-
-### Nouveautés v5.1.2 (Auto Backlog Generation)
-
-- **Génération automatique backlog.md** : `/decompose` génère maintenant automatiquement le backlog table
-- **Génération automatique prd.json** : Plus besoin de flag, toujours généré
-- **Deux niveaux de granularité** : Sub-specs (1-5 jours) + Stories (1-2h) dans backlog
-
-### Nouveautés v4.9.1 (Native Plan Integration)
-
-- **Flag `--from-native-plan <file>`** : Import du plan natif Claude Code comme base pour Phase 1
-- **Exploration conditionnelle** : @Explore automatique si §1 manquant lors de l'import
-- **Copie automatique pour traçabilité** : Plan natif archivé dans Feature Document §2
-- **Raffinement intelligent** : Phase 1 raffine le plan natif (2-15 min) au lieu de repartir de zéro
-- **Workflow hybride** : `/epci` peut maintenant fonctionner avec ou sans `/brief` préalable
-- **Traçabilité git** : Plan natif copié dans le projet pour collaboration d'équipe
-
-### Nouveautés v4.9 (Expert Panel & Rule Clarifier)
-
-- **3 nouveaux agents** : `@expert-panel`, `@party-orchestrator`, `@rule-clarifier` pour brainstorming v5.0
-- **Nouveau skill** : `input-clarifier` pour validation entrées utilisateur
-- **Finalization Checkpoint obligatoire** : À EMS >= 70, checkpoint bloquant avec choix [1] Continuer / [2] Preview / [3] Finaliser
-- **Pas de finalisation automatique** : Ne JAMAIS passer en Phase 3 sans choix explicite utilisateur
-- **Preview sans finalisation** : Option [2] permet de voir le plan @planner puis revenir au brainstorm
-
-### Nouveautés v4.8.1 (Finalization Checkpoint)
-
-- **Finalization Checkpoint** : EMS >= 85 pour déclencher checkpoint
-
-### Nouveautés v4.8 (Auto-Techniques Brainstorm)
-
-- **Auto-sélection techniques** : Basée sur axes EMS faibles (< 50) via `@technique-advisor`
-- **Mix de techniques** : Proposition de 2 techniques complémentaires si 2+ axes faibles
-- **Transition check explicite** : Choix Divergent/Convergent à EMS=50
-- **Preview @planner/@security** : En phase Convergent à EMS >= 65
-- **Hook post-brainstorm documenté** : Tracking `techniques_applied` dans métriques
-- **Flag `--no-technique`** : Désactive l'auto-suggestion de techniques
-- **Workflow Phase 1 réordonné** : HMW générés après @Explore pour contexte codebase
-
-### Nouveautés v4.6 (Brief Refactoring)
-
-- **Inversion reformulation/exploration** : La reformulation est maintenant AVANT l'exploration dans `/brief`
-- **Breakpoint validation obligatoire** : Toujours afficher un breakpoint apres reformulation pour valider le besoin
-- **Hooks pre-brief et post-brief actifs** : Nouveaux hooks pour tracabilite complete
-- **Fusion Analysis + Complexity** : Step 2 et Step 4 fusionnees pour eliminer la redondance
-- **@clarifier explicite** : Invocation @clarifier (Haiku) documentee dans mode --turbo
-- **Gestion erreur @Explore** : Fallback documente si exploration echoue
-
-### Nouveautés v4.5 (Brainstorming v4.1 — SuperPowers Integration)
-
-- **One-at-a-Time Questions** : Une question à la fois avec choix multiples A/B/C (pattern SuperPowers)
-- **Section-by-Section Validation** : Validation incrémentale du brief section par section
-- **@planner in Brainstorm** : Plan préliminaire automatique en phase Convergent
-- **@security-auditor in Brainstorm** : Analyse sécurité conditionnelle si patterns auth/payment détectés
-- **Nouvelles commandes brainstorm** : `batch`, `plan-preview`, `security-check`
-- **Nouveaux flags** : `--no-security`, `--no-plan`
-
-### Nouveautés v4.4
-
-- **Fusion learn → memory** : `/learn` supprimé, learning intégré dans `/memory` via subcommands `learn status|reset|calibrate`
-- **Ajout `/commit`** : Commande dédiée pour finalisation git avec contexte EPCI
-- **3 nouveaux agents turbo** : `@clarifier`, `@planner`, `@implementer` pour modes rapides
-- **Hooks obligatoires documentés** : Section 11 ajoutée pour garantir la mise à jour mémoire
-
-### Nouveautés v4.3
-
-- **Fusion spike → brainstorm** : `/spike` supprimé, exploration technique intégrée dans `/brainstorm` via commande `spike [duration] [question]`
-
-### Nouveautés v4.2
-
-- **Renommage commandes** : Préfixe `epci-` supprimé (ex: `/epci:brief` au lieu de `/epci:epci-brief`)
-- **MCP Integration** : Context7 (docs), Sequential (reasoning), Magic (UI), Playwright (E2E)
-- **Auto-activation MCP** : Basée sur personas et contexte
-- **Flags MCP** : `--c7`, `--seq`, `--magic`, `--play`, `--no-mcp`
-- **6 Personas** : Architect, Frontend, Backend, Security, QA, Doc
+**Highlights :**
+- **Skip [E][P] pour /quick avec plan natif** : Détection automatique → exécution directe [C][T]
+- **Extraction tâches intelligente** : Supporte checkboxes, listes, headers, bullets
+- **SMALL par défaut** : Plan natif implique complexité minimale → Sonnet
+- **Workflow simplifié** : `/quick @docs/plans/...` = exécution immédiate
 
 ---
 
@@ -237,29 +77,35 @@ Brief brut → /brief → Évaluation
 
 > **Note** : Pour les incertitudes techniques, utiliser `/brainstorm` avec la commande `spike [duration] [question]` intégrée.
 
-### Workflow avec Plan Natif (v4.9.1+)
+### Workflow avec Plan Natif (v5.6.0+)
 
-Nouveau workflow permettant d'utiliser le plan natif de Claude Code :
+**Plus besoin de flag** — détection automatique basée sur `docs/plans/`.
+**Nouveau v5.6.0** : `/quick` skip [E][P] pour exécution accélérée.
 
 ```
-Plan Natif Claude Code → /epci --from-native-plan plan.md --slug feature-name
-                              ↓
-                         [Step 0.5]
-                              ↓
-                    ┌─────────┴─────────┐
-                    ▼                   ▼
-              §1 existe ?           §1 manquant
-                  ↓                     ↓
-            Utilise §1          Lance @Explore
-                  ↓                     ↓
-                  └──────────┬──────────┘
-                             ↓
-                    Copie plan natif en §2
-                             ↓
-                    Phase 1: Raffine plan
-                    (découpage 2-15 min)
-                             ↓
-                    Phase 2-3: Standard
+Plan Natif Claude Code → /save-plan → /brief @docs/plans/... (AUTO-DETECTION)
+                                             ↓
+                                    ┌────────┴────────┐
+                                    ▼                 ▼
+                              TINY/SMALL          STD/LARGE
+                                    ↓                 ↓
+                    /quick @docs/plans/...    /epci slug @docs/plans/...
+                                    ↓                 ↓
+                         Skip [E][P] (v5.6+)    §2 intègre plan
+                                    ↓                 ↓
+                           [C][T] direct       Phase 1-3 standard
+```
+
+**Algorithme de détection** (unifié entre commandes) :
+
+```python
+def is_native_plan(file_path):
+    if "docs/plans/" in file_path:
+        return True
+    frontmatter = parse_yaml_frontmatter(read_file(file_path))
+    if frontmatter and "saved_at" in frontmatter:
+        return True
+    return False
 ```
 
 **Commandes** :
@@ -271,29 +117,35 @@ Plan Natif Claude Code → /epci --from-native-plan plan.md --slug feature-name
 /epci feature-slug
 # → Phase 1-3 complètes
 
-# Workflow B : Avec plan natif (nouveau)
+# Workflow B : Via /brief avec plan natif (AUTO-DETECTION)
 <mode plan natif Claude Code>
-# → Génère ~/.claude/plans/plan.md
-/epci --from-native-plan ~/.claude/plans/plan.md --slug feature-auth
-# → Crée §1 via @Explore (si manquant)
-# → Copie plan natif en §2
-# → Raffine en Phase 1
-# → Phase 2-3 standard
+# → ~/.claude/plans/random-name.md
+/save-plan
+# → docs/plans/auth-oauth-20260120-143052.md
+/brief @docs/plans/auth-oauth-20260120-143052.md
+# → Détecte plan natif automatiquement
+# → Route vers /quick ou /epci avec contexte @path
 
-# Workflow C : Hybride
-/brief "description feature"
-# → Crée Feature Document avec §1
-<mode plan natif Claude Code>
-# → Génère plan haut niveau
-/epci --from-native-plan ~/.claude/plans/plan.md --slug feature-slug
-# → Utilise §1 existant + plan natif comme base
+# Workflow C : Direct /epci avec plan natif
+/epci auth-oauth @docs/plans/auth-oauth-20260120-143052.md
+# → Auto-détecte plan natif (chemin docs/plans/)
+# → Intègre en §2 automatiquement
 # → Phase 1 raffine le plan natif
+
+# Workflow D : Direct /quick pour petits scopes (Fast Path v5.6.0+)
+/quick "small fix" @docs/plans/fix-20260120.md
+# → Auto-détecte plan natif (chemin docs/plans/)
+# → Skip [E][P] — tâches extraites du plan
+# → Phase [C] avec Sonnet (SMALL par défaut)
+# → Phase [T] validation
 ```
 
-**Avantages du workflow B/C** :
-- ✅ Plan natif comme base haut niveau
-- ✅ Phase 1 raffine (2-15 min, tests, validation)
-- ✅ Traçabilité : plan copié dans git
+> **Note v5.6.0** : Quand un plan natif est fourni à `/quick`, les phases [E] et [P] sont automatiquement sautées car l'exploration et la planification sont déjà faites.
+
+**Avantages** :
+- ✅ Plus de flag à retenir — détection automatique
+- ✅ Plan natif archivé dans git (`docs/plans/`)
+- ✅ Skip intelligent [E][P] pour exécution accélérée
 - ✅ Collaboration : équipe voit le raisonnement initial
 
 ---
@@ -859,19 +711,41 @@ Certains skills (comme `breakpoint-display`) ont une section `MANDATORY EXECUTIO
 
 ```yaml
 # Quand tu rencontres @skill:<name> :
-1. LIRE src/skills/core/<name>/SKILL.md
-2. TROUVER section "MANDATORY EXECUTION"
-3. EXECUTER les instructions de cette section
-4. ATTENDRE la réponse utilisateur si AskUserQuestion requis
+1. LOCALISER le skill dans le projet :
+   - Repo dev : src/skills/core/<name>/SKILL.md
+   - Plugin installé : skills/core/<name>/SKILL.md
+2. LIRE le fichier SKILL.md avec Read tool
+3. TROUVER section "MANDATORY EXECUTION"
+4. SI le skill référence des templates (ex: references/...) :
+   → LIRE le fichier template avec Read tool (dans le même dossier que SKILL.md)
+5. EXECUTER les instructions de la section MANDATORY EXECUTION
+6. ATTENDRE la réponse utilisateur si AskUserQuestion requis
 ```
+
+**Exemple concret pour `breakpoint-display`** (repo dev) :
+
+```yaml
+# Quand tu vois @skill:breakpoint-display type: analysis :
+1. Read("src/skills/core/breakpoint-display/SKILL.md")
+2. Trouver section "MANDATORY EXECUTION"
+3. Read("src/skills/core/breakpoint-display/references/execution-templates.md")
+4. Trouver section "Template: analysis"
+5. Afficher la boîte ASCII selon le template (avec ┌───┐ └───┘)
+6. Invoquer AskUserQuestion avec les options définies dans ask:
+7. Attendre la réponse
+```
+
+**Note** : Dans le plugin installé, remplacer `src/skills/` par `skills/`.
+
+**IMPORTANT** : Les breakpoints DOIVENT utiliser des boîtes ASCII (`┌───┐` `└───┘`), PAS des tableaux markdown simples.
 
 **Skills avec MANDATORY EXECUTION** :
 
-| Skill | Usage |
-|-------|-------|
-| `breakpoint-display` | Affichage breakpoints interactifs ASCII |
-| `complexity-calculator` | Calcul catégorie TINY/SMALL/STANDARD/LARGE |
-| `tdd-workflow` | Cycle TDD RED-GREEN-REFACTOR-VERIFY |
+| Skill | Usage | Fichier templates (relatif au skill) |
+|-------|-------|--------------------------------------|
+| `breakpoint-display` | Breakpoints interactifs ASCII | `references/execution-templates.md` |
+| `complexity-calculator` | Calcul catégorie TINY/SMALL/STANDARD/LARGE | Inline dans SKILL.md |
+| `tdd-workflow` | Cycle TDD RED-GREEN-REFACTOR-VERIFY | Inline dans SKILL.md |
 
 ### Préfixe `epci:` dans les scripts automatisés
 

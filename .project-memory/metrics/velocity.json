@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "summary": {
-    "total_features": 18,
+    "total_features": 19,
     "avg_time_tiny": null,
     "avg_time_small": null,
     "avg_time_standard": null,
@@ -22,7 +22,7 @@
       "avg_loc": null
     },
     "STANDARD": {
-      "count": 6,
+      "count": 7,
       "avg_time": null,
       "avg_files": null,
       "avg_loc": null
@@ -36,12 +36,6 @@
   },
   "trend": {
     "last_5_features": [
-      {
-        "slug": "brainstorm-v42-s03",
-        "complexity": "STANDARD",
-        "estimated": "1h30",
-        "actual": "1h15"
-      },
       {
         "slug": "brainstorm-v43-optimization",
         "complexity": "STANDARD",
@@ -65,9 +59,15 @@
         "complexity": "STANDARD",
         "estimated": null,
         "actual": "45min"
+      },
+      {
+        "slug": "auto-detection-plans-natifs",
+        "complexity": "STANDARD",
+        "estimated": null,
+        "actual": "45min"
       }
     ],
     "velocity_trend": "stable"
   },
-  "updated_at": "2026-01-20T16:59:21.177299Z"
+  "updated_at": "2026-01-20T19:52:00.639231Z"
 }

@@ -1,0 +1,33 @@
+{
+  "slug": "auto-detection-plans-natifs",
+  "title": "Auto Detection Plans Natifs",
+  "created_at": "2026-01-20T19:52:00.597680Z",
+  "complexity": "STANDARD",
+  "completed_at": "2026-01-20T19:52:00.597680Z",
+  "complexity_score": 0.5,
+  "files_modified": [
+    "CLAUDE.md",
+    "src/commands/epci.md",
+    "src/commands/brief.md",
+    "src/commands/quick.md"
+  ],
+  "files_created": 0,
+  "files_updated": 4,
+  "loc_added": 72,
+  "loc_removed": 66,
+  "tests_created": 0,
+  "test_coverage": null,
+  "estimated_time": null,
+  "actual_time": "45min",
+  "phases": {
+    "phase_1": "2026-01-20T19:52:00.597680Z",
+    "phase_2": "2026-01-20T19:52:00.597680Z",
+    "phase_3": "2026-01-20T19:52:00.597680Z"
+  },
+  "agents_used": [],
+  "issues_found": {},
+  "related_features": [],
+  "feature_document": null,
+  "commit_hash": "80b0116",
+  "branch": "master"
+}

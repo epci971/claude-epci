@@ -1,15 +1,42 @@
 {
-  "source": "quick",
+  "feature_slug": "auto-detection-plans-natifs",
+  "feature_doc": "docs/features/auto-detection-plans-natifs-20260120-191823.md",
   "type": "feat",
-  "scope": "decompose",
-  "description": "add prd.json v2 schema with enhanced tracking fields",
-  "files": [
-    "src/skills/core/ralph-converter/SKILL.md",
-    "src/commands/decompose.md",
-    "src/commands/references/decompose-templates.md",
-    "src/agents/ralph-executor.md"
+  "scope": "commands",
+  "description": "implement auto-detection for native plans without explicit flag",
+  "breaking_change": true,
+  "breaking_description": "--from-native-plan flag removed; use @docs/plans/... argument instead for auto-detection",
+  "version_bump": {
+    "from": "5.4.1",
+    "to": "5.5.0"
+  },
+  "phases_completed": ["Phase 1", "Phase 2", "Phase T"],
+  "tasks_completed": 21,
+  "tests_passed": 4,
+  "files_modified": [
+    "CLAUDE.md",
+    "src/commands/epci.md",
+    "src/commands/brief.md",
+    "src/commands/quick.md",
+    "src/commands/save-plan.md",
+    "src/commands/references/epci/native-plan-detection.md",
+    "src/commands/references/epci/feature-document-templates.md",
+    "src/.claude-plugin/plugin.json",
+    "build/epci/commands/epci.md",
+    "build/epci/commands/brief.md",
+    "build/epci/commands/quick.md",
+    "build/epci/commands/save-plan.md",
+    "build/epci/commands/references/epci/native-plan-detection.md",
+    "build/epci/commands/references/epci/feature-document-templates.md",
+    "build/epci/.claude-plugin/plugin.json"
   ],
-  "featureDoc": null,
-  "breaking": false,
-  "ticket": null
+  "key_changes": [
+    "Suppression flag --from-native-plan de /epci",
+    "Algorithme is_native_plan() unifié dans /brief, /epci, /quick",
+    "Détection automatique via chemin docs/plans/ ou frontmatter saved_at",
+    "Routing avec contexte @{path} au lieu de flag explicite",
+    "native-plan-import.md renommé en native-plan-detection.md",
+    "Version 5.4.1 → 5.5.0"
+  ],
+  "timestamp": "2026-01-20T19:45:00Z"
 }

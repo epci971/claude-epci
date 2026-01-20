@@ -23,9 +23,9 @@
 
 ## §2 — Implementation Plan Templates
 
-### Scenario A: With Native Plan Import
+### Scenario A: With Native Plan (Auto-Detected)
 
-Use when `--from-native-plan` flag was used. The §2 already contains native plan metadata and original plan. Update only the "✅ Plan Raffiné & Validé" section:
+Use when a native plan was auto-detected (via `@docs/plans/...` context or `saved_at` frontmatter). The §2 already contains native plan metadata and original plan. Update only the "✅ Plan Raffiné & Validé" section:
 
 ```markdown
 ### ✅ Plan Raffiné & Validé
@@ -299,7 +299,7 @@ Project uses Symfony best practices, test coverage requirement: >80%
 | Situation | Template to Use |
 |-----------|----------------|
 | After `/brief` → `/epci` | Scenario B (Standard) |
-| After `--from-native-plan` | Scenario A (Native Plan) |
+| With native plan context (`@docs/plans/...`) | Scenario A (Native Plan) |
 | During Phase 2 review | §3 Implementation section |
 | Phase 3 finalization | §3 Finalization Checklist |
 
@@ -316,6 +316,6 @@ Project uses Symfony best practices, test coverage requirement: >80%
 ## Related Documentation
 
 - **Main command**: `/epci`
-- **Native plan import**: @references/epci/native-plan-import.md
+- **Native plan detection**: @references/epci/native-plan-detection.md
 - **@plan-validator**: subagent `plan-validator`
 - **Project memory**: skill `project-memory`

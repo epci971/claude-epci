@@ -185,6 +185,55 @@
 
 ---
 
+## Mode Plan Natif (Fast Path)
+
+Quand `/quick` recoit un argument `@docs/plans/...` ou un fichier avec frontmatter `saved_at`:
+
+### Comportement
+
+| Phase | Standard | Plan Natif |
+|-------|----------|------------|
+| [PRE] | Non applicable | Detection + extraction taches |
+| [E] | Execute | **SKIP** |
+| [P] | Execute | **SKIP** |
+| [C] | Taches de [P] | Taches du plan |
+| [T] | Execute | Execute |
+
+### Pourquoi SMALL par defaut ?
+
+Un plan natif implique que:
+1. L'utilisateur a pris le temps de planifier
+2. La feature a une complexite minimale necessitant un plan
+3. TINY serait trop limite pour un plan formalise
+
+→ Donc: Utiliser Sonnet (SMALL) pour garantir la qualite d'execution.
+
+### Extraction des taches
+
+Le systeme supporte plusieurs formats:
+- Checkboxes: `- [ ] Task description`
+- Listes numerotees: `1. Task description`
+- Headers: `## Task 1: Description`
+- Bullets sous section "Tasks:" ou "Plan:"
+
+Si aucun format detecte → Fallback: une tache unique basee sur le titre.
+
+### Detection automatique
+
+```python
+def is_native_plan(file_path):
+    # Critere 1: Chemin dans docs/plans/
+    if "docs/plans/" in file_path:
+        return True
+    # Critere 2: Frontmatter avec saved_at
+    frontmatter = parse_yaml_frontmatter(read_file(file_path))
+    if frontmatter and "saved_at" in frontmatter:
+        return True
+    return False
+```
+
+---
+
 ## Session Persistence
 
 **Emplacement:** `.project-memory/sessions/quick-{timestamp}.json`

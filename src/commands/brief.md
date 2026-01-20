@@ -102,19 +102,42 @@ IF input commence par "/" ou "./" ou "docs/" ou "@":
    → Lire contenu fichier avec Read tool
    → Extraire contenu brief du fichier
    → Détecter slug depuis filename ou path
+   → SI is_native_plan(path): INPUT_TYPE = "native_plan"
 ELSE:
    → INPUT_TYPE = "text"
    → Utiliser input directement comme contenu brief
 ```
 
-**Gestion Input Fichier (depuis /brainstorm ou externe):**
+**Algorithme de détection native plan:**
 
-| Source | Pattern Path | Action |
-|--------|--------------|--------|
-| `/brainstorm` | `docs/briefs/<slug>/brief-*.md` | Lire fichier, extraire brief structuré |
-| Fichier externe | `*.md` ou `@filepath` | Lire fichier, utiliser comme brief brut |
+```python
+def is_native_plan(file_path):
+    # Criterion 1: Path contains docs/plans/
+    if "docs/plans/" in file_path:
+        return True
+    # Criterion 2: Frontmatter with saved_at
+    frontmatter = parse_yaml_frontmatter(read_file(file_path))
+    if frontmatter and "saved_at" in frontmatter:
+        return True
+    return False
+```
 
-**IMPORTANT:** Même avec input fichier depuis `/brainstorm`, Step 5 DOIT créer un Feature Document dans `docs/features/<slug>-<YYYYMMDD-HHmmss>.md`. Le output brainstorm dans `docs/briefs/` est une **source**, pas le Feature Document final.
+**Gestion Input Fichier:**
+
+| Source | Pattern Path | INPUT_TYPE | Action |
+|--------|--------------|------------|--------|
+| `/save-plan` | `docs/plans/*.md` ou frontmatter `saved_at` | `native_plan` | Extraire slug + contenu, utiliser comme contexte |
+| `/brainstorm` | `docs/briefs/<slug>/brief-*.md` | `brainstorm_output` | Lire fichier, extraire brief structuré |
+| Fichier externe | Autre `*.md` ou `@filepath` | `external_file` | Lire fichier, utiliser comme brief brut |
+| Texte inline | Pas de fichier | `text` | Utiliser input directement |
+
+**SI INPUT_TYPE == "native_plan":**
+1. Extraire metadata depuis frontmatter (slug, source, saved_at)
+2. Stocker `native_plan_metadata` pour routing Step 6
+3. Utiliser contenu du plan comme contexte pour @Explore
+4. Le slug détecté sera utilisé pour le Feature Document
+
+**IMPORTANT:** Même avec input fichier depuis `/brainstorm` ou `/save-plan`, Step 5 DOIT créer un Feature Document dans `docs/features/<slug>-<YYYYMMDD-HHmmss>.md`. Ces sources ne sont PAS le Feature Document final.
 
 ---
 
@@ -435,7 +458,7 @@ Le skill retourne:
 
 **OBLIGATOIRE:** Après génération output, exécuter la commande recommandée.
 
-**Table de routing:**
+**Table de routing standard:**
 
 | Catégorie | Commande             | Output           | Flags typiques              |
 | --------- | -------------------- | ---------------- | --------------------------- |
@@ -443,6 +466,18 @@ Le skill retourne:
 | SMALL     | `/epci:quick`        | Brief inline     | `--think` si 3+ fichiers    |
 | STANDARD  | `/epci:epci`         | Feature Document | `--think` ou `--think-hard` |
 | LARGE     | `/epci:epci --large` | Feature Document | `--think-hard --wave`       |
+
+**SI INPUT_TYPE == "native_plan" (Routing avec contexte):**
+
+| Catégorie | Commande                                           | Slug            |
+| --------- | -------------------------------------------------- | --------------- |
+| TINY      | `/epci:quick "{brief}" @{native_plan_path}`        | Auto            |
+| SMALL     | `/epci:quick "{brief}" @{native_plan_path}`        | Auto            |
+| STANDARD  | `/epci:epci {detected_slug} @{native_plan_path}`   | Depuis metadata |
+| LARGE     | `/epci:epci --large {detected_slug} @{native_plan_path}` | Depuis metadata |
+
+**Note:** Le `@{path}` est passé comme argument de contexte.
+Chaque commande cible fait sa propre détection locale via `is_native_plan()`.
 
 **Routing Optimisé TINY:**
 ```

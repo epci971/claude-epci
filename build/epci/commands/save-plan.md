@@ -276,7 +276,9 @@ Utiliser Write tool pour creer le fichier.
 |   auto_detected: {true|false}                            |
 |                                                          |
 | Next steps:                                               |
-|   /epci --from-native-plan {destination_path} --slug {slug} |
+|   /brief @{destination_path}                             |
+|   OR                                                     |
+|   /epci {slug} @{destination_path}                       |
 |                                                          |
 +----------------------------------------------------------+
 ```
@@ -328,8 +330,19 @@ Utiliser Write tool pour creer le fichier.
 # Breakpoint de confirmation
 # Sauvegarde dans docs/plans/auth-oauth-20260115-143052.md
 
-/epci --from-native-plan docs/plans/auth-oauth-20260115-143052.md --slug auth-oauth
-# Utilise le plan sauvegarde pour implementation
+# Option A: Via /brief (Recommended - auto-detection)
+/brief @docs/plans/auth-oauth-20260115-143052.md
+# → Detecte automatiquement le plan natif
+# → Route vers /quick ou /epci avec contexte
+
+# Option B: Direct /epci avec contexte
+/epci auth-oauth @docs/plans/auth-oauth-20260115-143052.md
+# → Auto-detection via chemin docs/plans/
+# → Integre plan en §2 automatiquement
+
+# Option C: Direct /quick pour petits scopes
+/quick "small fix" @docs/plans/fix-20260115.md
+# → Utilise plan comme contexte phase [P]
 ```
 
 ---

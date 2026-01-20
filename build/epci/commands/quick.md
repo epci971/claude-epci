@@ -88,17 +88,27 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
 **⚠️ IMPORTANT: Suivre TOUTES les phases en sequence.**
 
 ```
-/quick "description" [--autonomous] [--quick-turbo]
+/quick "description" [@docs/plans/plan.md]
     │
     ▼
-[E] EXPLORE ──────────────────────────────────────────────────────────
+[PRE] Detection plan natif ────────────────────────────────────────────
     │
-    ▼
-[P] PLAN ─────────────────────────────────────────────────────────────
-    │                         ⏸️ BP leger (SI --confirm)
-    ▼
+    ├── Plan natif detecte? ───────────────────────┐
+    │                                              │
+   NON                                            OUI
+    │                                              │
+    ▼                                              │
+[E] EXPLORE ───────────────────────────────────    │
+    │                                              │
+    ▼                                              │
+[P] PLAN ──────────────────────────────────────    │
+    │       ⏸️ BP leger (SI --confirm)            │
+    │                                              │
+    └──────────────────────────────────────────────┘
+                        │
+                        ▼
 [C] CODE ─────────────────────────────────────────────────────────────
-    │
+    │         (Sonnet pour plan natif / Adaptatif sinon)
     ▼
 [T] TEST ─────────────────────────────────────────────────────────────
     │
@@ -106,13 +116,106 @@ Optimise pour la vitesse avec switching de modele adaptatif et breakpoints minim
 [RESUME FINAL] ───────────────────────────────────────────────────────
 ```
 
+### [PRE] Detection Plan Natif (AVANT [E])
+
+**⚠️ Cette phase s'execute AVANT [E] et determine le chemin d'execution.**
+
+**SI argument contient `@<path>`:**
+
+```python
+path = extract_path(argument)
+IF is_native_plan(path):
+    # === FAST PATH: Skip [E] et [P] ===
+    native_plan_content = read_file(path)
+    tasks = extract_tasks_from_plan(native_plan_content)
+    complexity = "SMALL"  # Defaut — plan natif implique complexite minimale
+    native_plan_mode = True
+
+    # Afficher info
+    print("⚡ Plan natif detecte → Mode accelere [C][T]")
+    print(f"   Source: {path}")
+    print(f"   Taches extraites: {len(tasks)}")
+
+    # GOTO Phase [C] directement
+    GOTO_PHASE_C(tasks, complexity)
+
+ELSE:
+    # Standard path — continuer vers [E]
+    native_plan_mode = False
+    GOTO_PHASE_E()
+```
+
+**Algorithme `is_native_plan()`:**
+```python
+def is_native_plan(file_path):
+    if "docs/plans/" in file_path:
+        return True
+    frontmatter = parse_yaml_frontmatter(read_file(file_path))
+    if frontmatter and "saved_at" in frontmatter:
+        return True
+    return False
+```
+
+**Algorithme `extract_tasks_from_plan(content)`:**
+```python
+def extract_tasks_from_plan(content):
+    """
+    Extrait les taches d'un plan natif.
+    Supporte plusieurs formats courants.
+    """
+    tasks = []
+
+    # Format 1: Checkboxes markdown
+    # - [ ] Task description
+    # - [x] Completed task
+    checkbox_pattern = r'- \[[ x]\] (.+)'
+    tasks.extend(re.findall(checkbox_pattern, content))
+
+    # Format 2: Numbered lists
+    # 1. Task description
+    # 2. Another task
+    numbered_pattern = r'^\d+\.\s+(.+)'
+    if not tasks:
+        tasks.extend(re.findall(numbered_pattern, content, re.MULTILINE))
+
+    # Format 3: Section headers as tasks
+    # ## Task 1: Description
+    # ### Implementation step
+    header_pattern = r'^##+ (?:Task|Step|Etape).*?:\s*(.+)'
+    if not tasks:
+        tasks.extend(re.findall(header_pattern, content, re.MULTILINE | re.IGNORECASE))
+
+    # Format 4: Bullet points under "Tasks" or "Plan" section
+    if not tasks:
+        section_match = re.search(r'(?:Tasks|Plan|Implementation):\s*\n((?:[-*]\s+.+\n?)+)', content, re.IGNORECASE)
+        if section_match:
+            bullets = re.findall(r'[-*]\s+(.+)', section_match.group(1))
+            tasks.extend(bullets)
+
+    # Fallback: Si aucune tache trouvee, creer une tache unique
+    if not tasks:
+        first_header = re.search(r'^#\s+(.+)', content, re.MULTILINE)
+        if first_header:
+            tasks = [f"Implementer: {first_header.group(1)}"]
+        else:
+            tasks = ["Implementer selon le plan fourni"]
+
+    return tasks[:5]  # Maximum 5 taches pour SMALL
+```
+
+---
+
 ### [E] EXPLORE Phase (5-10s)
+
+**⚠️ Phase sautee si plan natif detecte en [PRE]**
 
 **Modele:** Haiku (TINY et SMALL)
 
 **Skill:** `complexity-calculator`
 
 Collecte rapide du contexte et verification de la complexite via skill.
+
+**Step 1: Collecte contexte**
 
 1. Collecter contexte via @Explore (quick mode)
 2. Invoquer `@skill:complexity-calculator` avec donnees exploration:
@@ -133,10 +236,13 @@ Collecte rapide du contexte et verification de la complexite via skill.
 
 ### [P] PLAN Phase (10-15s)
 
+**⚠️ Phase sautee si plan natif detecte en [PRE]**
+
 **Modele:** Haiku (TINY) | Sonnet + `think` (SMALL)
 
 Generation du decoupage atomique des taches.
 
+**Taches:**
 - TINY: 1-2 taches maximum (inline, sans subagent)
 - SMALL: 3-5 taches atomiques
 - SMALL+ (proche limite): Invoquer @planner (Sonnet) via Task tool
@@ -165,11 +271,19 @@ Generation du decoupage atomique des taches.
 
 ### [C] CODE Phase (variable)
 
-**Modele:** Haiku (TINY) | Sonnet (SMALL)
+**Modele:** Haiku (TINY) | Sonnet (SMALL et Plan Natif)
 
 **Skill:** `tdd-workflow` (SMALL uniquement)
 
 Execution des taches d'implementation.
+
+**SI `native_plan_mode == true`:**
+- Taches = `extracted_tasks` (du plan natif via [PRE])
+- Modele = Sonnet (SMALL par defaut pour plan natif)
+- Contexte complet = contenu du plan natif (accessible pour reference)
+
+**SINON:**
+- Comportement existant (taches de Phase [P])
 
 - **TINY**: Implementation directe (skip TDD formel)
 - **SMALL**: Invoquer `@skill:tdd-workflow` avec mode="quick":
@@ -304,6 +418,28 @@ Temps: 12s
 ✅ QUICK COMPLETE — SMALL
 Fichiers: User.php (+15/-0), UserTest.php (+22/-0)
 Temps: 67s
+```
+
+### Exemple Plan Natif (Fast Path)
+
+**Commande:** `/quick "fix auth" @docs/plans/fix-auth-20260120.md`
+
+```
+[PRE] Detection plan natif
+      ⚡ Plan natif detecte → Mode accelere [C][T]
+         Source: docs/plans/fix-auth-20260120.md
+         Taches extraites: 3
+      → Skip [E][P]
+
+[C] Code: Execution taches du plan (Sonnet)
+    [1] Corriger validation token → Done
+    [2] Ajouter test unitaire → Done
+    [3] Mettre a jour config → Done
+[T] Test: 5/5 tests reussis, lint OK
+
+✅ QUICK COMPLETE — SMALL (Plan Natif)
+Fichiers: AuthService.php (+8/-3), AuthTest.php (+15/-0)
+Temps: 42s (accelere)
 ```
 
 ---

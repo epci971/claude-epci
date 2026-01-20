@@ -1,12 +1,29 @@
-# Native Plan Import — Complete Workflow
+# Native Plan Detection — Complete Workflow
 
-> Detailed workflow for importing Claude Code's native plan mode output into EPCI.
+> Detailed workflow for auto-detecting and integrating Claude Code's native plan mode output into EPCI.
 
 ## Overview
 
-Import a native Claude Code plan as the base for EPCI Phase 1 planning. The native plan is copied into the Feature Document for full traceability and team collaboration.
+Auto-detect and import a native Claude Code plan as the base for EPCI Phase 1 planning. The native plan is copied into the Feature Document for full traceability and team collaboration.
 
-**Triggered by:** `--from-native-plan <file>` flag on `/epci` command
+**Triggered by:** Auto-detection when argument `@<path>` contains `docs/plans/` or has `saved_at` frontmatter
+
+**Detection Algorithm:**
+```python
+def is_native_plan(file_path):
+    """Auto-detect a saved native plan."""
+    # Criterion 1: Path in docs/plans/
+    if "docs/plans/" in file_path:
+        return True
+
+    # Criterion 2 (fallback): Frontmatter with saved_at
+    content = read_file(file_path)
+    frontmatter = parse_yaml_frontmatter(content)
+    if frontmatter and "saved_at" in frontmatter:
+        return True
+
+    return False
+```
 
 **Benefits:**
 - Native plan preserved in git (full traceability)
@@ -197,22 +214,64 @@ Since the Feature Document was just created or updated, the prerequisite check s
 
 ## Workflows Supported
 
-### Workflow A: Standalone Native Plan
+### Workflow A: Via /brief (Recommended)
 ```bash
-<generate plan in Claude Code native mode>
-/epci --from-native-plan ~/.claude/plans/plan.md --slug feature-name
+# 1. Create plan in Claude Code native mode
+<mode plan natif>
+# → ~/.claude/plans/random-name.md
+
+# 2. Save to project
+/save-plan
+# → docs/plans/auth-oauth-20260120-143052.md
+
+# 3. Use directly with /brief (AUTO-DETECTION)
+/brief @docs/plans/auth-oauth-20260120-143052.md
+# → Detects native plan automatically
 # → Creates §1 via @Explore
+# → Routes to /quick or /epci with context
+```
+
+### Workflow B: Direct /epci with context
+```bash
+# After saving plan to docs/plans/
+/epci auth-oauth @docs/plans/auth-oauth-20260120-143052.md
+# → Auto-detects native plan (docs/plans/ path)
+# → Uses existing §1 or creates via @Explore
 # → Imports native plan to §2
 # → Refines in Phase 1
 ```
 
-### Workflow B: Hybrid (after /brief)
+### Workflow C: /quick with native plan (Fast Path)
+```bash
+/quick "small fix" @docs/plans/fix-20260120.md
+# → Auto-detects native plan (docs/plans/ path)
+# → Skips [E] and [P] phases
+# → Extracts tasks from plan content
+# → Goes directly to [C] with Sonnet (SMALL)
+# → Executes [T] for validation
+```
+
+**Comportement Fast Path:**
+
+| Phase | Action |
+|-------|--------|
+| [PRE] | Detection + extraction taches du plan |
+| [E] | **SKIP** |
+| [P] | **SKIP** |
+| [C] | Execution des taches extraites (Sonnet) |
+| [T] | Validation tests + lint |
+
+### Workflow D: Hybrid (after /brief without plan)
 ```bash
 /brief "feature description"
 # → Creates §1
 
-<generate additional native plan>
-/epci --from-native-plan ~/.claude/plans/plan.md --slug feature-name
+# Later: generate additional native plan
+<mode plan natif>
+/save-plan
+
+# Use with existing Feature Document
+/epci feature-slug @docs/plans/plan-20260120.md
 # → Uses existing §1
 # → Imports native plan to §2
 # → Refines in Phase 1
