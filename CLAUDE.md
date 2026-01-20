@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.3.8 | **Date** : Janvier 2025
+> **Version** : 5.3.11 | **Date** : Janvier 2025
 
 ---
 
@@ -13,9 +13,26 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | Principe            | Description                                                   |
 | ------------------- | ------------------------------------------------------------- |
 | **Simplicité**      | 14 commandes spécialisées                                     |
-| **Modularité**      | 34 Skills, 16 Subagents, Hooks natifs                         |
+| **Modularité**      | 35 Skills, 16 Subagents, Hooks natifs                         |
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
+
+### Nouveautés v5.3.11 (Perplexity Research Integration)
+
+- **Nouveau skill `perplexity-research`** : Recherche externe via Perplexity Pro (human-in-the-loop)
+- **Nouveau type breakpoint `research-prompt`** : Affiche prompt copyable avec mode Standard/Deep Research
+- **Intégration `/brief`** : Step 2.1 propose recherche si librairie externe ou architecture complexe
+- **Intégration `/debug`** : Step 1.2.1 propose recherche si Context7/WebSearch insuffisants
+- **Intégration `/brainstorm`** : Phase 1 (market analysis) + Phase 2 (axes faibles)
+- **35 Skills** : Total passe de 34 à 35 skills
+- **10 types breakpoints** : Ajout de `research-prompt` au système breakpoint-display
+
+### Nouveautés v5.3.10 (Anti-Plan-Natif Fix)
+
+- **Fix critique `/brief`** : Correction du bug où `/brief` basculait en mode plan natif au lieu de générer un Feature Document
+- **Garde anti-plan-natif** : Nouvelle box ASCII de vérification obligatoire dans Step 5 de `/brief`
+- **Règle globale CLAUDE.md** : Protection anti-EnterPlanMode ajoutée dans `~/.claude/CLAUDE.md`
+- **Routing restauré** : Step 6 (routing vers `/quick` ou `/epci`) s'exécute correctement après Step 5
 
 ### Nouveautés v5.3.8 (Skills Integration & Default Suggestions)
 
@@ -502,16 +519,17 @@ cd docs/specs/migration/
 
 ---
 
-## 6. Skills (34)
+## 6. Skills (35)
 
-### Core (21)
+### Core (22)
 
 `epci-core`, `architecture-patterns`, `code-conventions`, `testing-strategy`,
 `git-workflow`, `flags-system`, `project-memory`, `brainstormer`,
 `debugging-strategy`, `learning-optimizer`, `breakpoint-metrics`,
 `clarification-intelligente`, `proactive-suggestions`, `rules-generator`,
 `input-clarifier`, `orchestrator-batch`, `ralph-analyzer`, `ralph-converter`,
-`breakpoint-display`, `complexity-calculator` (integrated v5.3.8), `tdd-workflow` (integrated v5.3.8)
+`breakpoint-display`, `complexity-calculator` (integrated v5.3.8), `tdd-workflow` (integrated v5.3.8),
+`perplexity-research` (integrated v5.3.11)
 
 ### Stack (5) — Auto-détectés
 

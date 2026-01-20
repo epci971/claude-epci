@@ -124,45 +124,34 @@ ELSE:
 
 > Voir @src/commands/references/brief/reformulation-process.md pour la logique détaillée de reformulation.
 
-**Invoquer le skill @breakpoint-display:**
+**Invoquer le skill breakpoint-display :**
 
-Utiliser le skill `breakpoint-display` avec type `validation` pour afficher le breakpoint de manière unifiée :
-
-```typescript
+```yaml
 @skill:breakpoint-display
   type: validation
   title: "VALIDATION DU BRIEF"
-  data: {
-    original: "{raw_brief}",
-    modified: {true|false},
-    detection_info: {
-      artefacts_vocaux: {count},
-      type_detected: "{FEATURE|PROBLEM|DECISION}",
-      reformulation: "OUI"
-    },
-    modified_content: {
-      objectif: "{goal}",
-      contexte: "{context}",
-      contraintes: "{constraints}",
+  data:
+    original_brief: "{raw_brief}"
+    reformulated: true
+    reformulated_brief:
+      objectif: "{goal}"
+      contexte: "{context}"
+      contraintes: "{constraints}"
       success_criteria: "{success_criteria}"
-    }
-  }
-  ask: {
-    question: "Le brief vous convient-il ?",
-    header: "📝 Validation",
-    options: [
-      {label: "Valider (Recommended)", description: "Continuer vers exploration"},
-      {label: "Modifier", description: "Je reformule moi-même"},
-      {label: "Annuler", description: "Arrêter workflow"}
-    ]
-  }
+  ask:
+    question: "Le brief vous convient-il ?"
+    header: "📝 Validation"
+    multiSelect: false
+    options:
+      - label: "Valider (Recommended)"
+        description: "Continuer vers exploration"
+      - label: "Modifier"
+        description: "Je reformule moi-même"
+      - label: "Annuler"
+        description: "Arrêter workflow"
 ```
 
-Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
-
-> Référence: @src/skills/core/breakpoint-display/templates/validation.md
-
-**Attendre réponse utilisateur et traiter selon choix:**
+**Traiter selon choix:**
 
 | Choix | Action |
 |-------|--------|
@@ -202,6 +191,43 @@ Si @Explore échoue ou timeout:
 3. Marquer complexité comme UNKNOWN
 4. Suggérer `--think-hard` par sécurité
 5. Afficher warning dans breakpoint Step 4
+
+---
+
+### Step 2.1: Recherche Externe (CONDITIONNEL)
+
+**Skill:** `perplexity-research`
+
+Après @Explore, évaluer si recherche externe Perplexity est nécessaire.
+
+```
+IF @Explore detected external library NOT in Context7:
+   OR @Explore detected architecture pattern requiring best practices:
+   OR brief mentions emerging framework/technology:
+THEN:
+   @skill:perplexity-research
+     trigger: "library_unknown|architecture|best_practices"
+     context: "{detected_context}"
+     stack: "{detected_stack}"
+     specific_question: "{generated_question}"
+```
+
+**Triggers /brief:**
+
+| Trigger | Condition |
+|---------|-----------|
+| `library_unknown` | Package détecté mais absent de Context7 |
+| `best_practices` | Framework version récente (>= latest-1) |
+| `architecture` | Keywords: microservices, distributed, event-driven |
+
+**Skip conditions:**
+- Brief catégorie TINY (trop simple)
+- Tous packages dans Context7
+- Flag `--no-research` (si implémenté)
+
+**Si recherche proposée:** Le skill affiche un breakpoint `research-prompt`, l'utilisateur effectue la recherche dans Perplexity et colle les résultats, qui sont intégrés au contexte.
+
+> Voir @src/skills/core/perplexity-research/SKILL.md pour détails complets.
 
 ---
 
@@ -287,62 +313,66 @@ Le skill retourne:
 
 **OBLIGATOIRE:** Afficher ce breakpoint et ATTENDRE choix utilisateur avant de continuer.
 
-**Invoquer le skill @breakpoint-display:**
+**Invoquer le skill breakpoint-display :**
 
-Utiliser le skill `breakpoint-display` avec type `analysis` pour afficher le breakpoint de manière unifiée :
-
-```typescript
+```yaml
 @skill:breakpoint-display
   type: analysis
   title: "ANALYSE DU BRIEF"
-  data: {
-    exploration: {
-      stack: "{STACK}",
-      files_impacted: {FILE_COUNT},
-      patterns: ["{pattern1}", "{pattern2}", ...],
-      risks: ["{risk1}", "{risk2}", ...]
-    },
-    questions: [
-      {
-        tag: "{🛑|⚠️|ℹ️}",
-        text: "{question}",
+  data:
+    exploration:
+      stack: "{STACK}"
+      files_impacted: {FILE_COUNT}
+      patterns: ["{pattern1}", "{pattern2}"]
+      risks: ["{risk1}", "{risk2}"]
+    questions:
+      - tag: "🛑"
+        text: "{question_text}"
         suggestion: "{suggestion}"
-      },
-      ...
-    ],
-    suggestions: {
-      architecture: "{architecture_suggestion}",
-      implementation: "{implementation_suggestion}",
-      risks: "{risk_suggestion}",
+      - tag: "⚠️"
+        text: "{question_text}"
+        suggestion: "{suggestion}"
+    suggestions:
+      architecture: "{architecture_suggestion}"
+      implementation: "{implementation_suggestion}"
+      risks: "{risk_suggestion}"
       stack_specific: "{stack_best_practices}"
-    },
-    evaluation: {
-      category: "{TINY|SMALL|STANDARD|LARGE}",
-      files: {FILE_COUNT},
-      loc_estimate: {LOC},
-      risk: "{LOW|MEDIUM|HIGH}",
-      flags: ["{flag1}", "{flag2}", ...]
-    },
-    recommended_command: "{COMMAND} {FLAGS}",
-    worktree_tip: {true if STANDARD or LARGE, false otherwise}
-  }
-  ask: {
-    question: "Comment souhaitez-vous procéder avec cette analyse ?",
-    header: "🚀 Action",
-    options: [
-      {label: "Répondre questions", description: "Je fournis réponses clarification"},
-      {label: "Valider suggestions (Recommended)", description: "J'accepte suggestions IA telles quelles"},
-      {label: "Modifier suggestions", description: "Je veux changer certaines suggestions"},
-      {label: "Lancer {COMMAND}", description: "Tout OK, passer implémentation"}
-    ]
-  }
+    personas:
+      active:
+        - name: "{persona_name}"
+          score: {0.XX}
+          source: "auto"
+      suggested:
+        - name: "{persona_name}"
+          score: {0.XX}
+    mcp_servers:
+      active:
+        - server: "{c7|seq|magic|play}"
+          source: "{persona_name|keyword|flag}"
+      available: ["{server1}", "{server2}"]
+    evaluation:
+      category: "{TINY|SMALL|STANDARD|LARGE}"
+      files: {FILE_COUNT}
+      loc_estimate: {LOC}
+      risk: "{LOW|MEDIUM|HIGH}"
+      flags: ["{flag1}", "{flag2}"]
+    recommended_command: "{COMMAND} {FLAGS}"
+  ask:
+    question: "Comment souhaitez-vous procéder avec cette analyse ?"
+    header: "🚀 Action"
+    multiSelect: false
+    options:
+      - label: "Répondre questions"
+        description: "Je fournis réponses clarification"
+      - label: "Valider suggestions (Recommended)"
+        description: "J'accepte suggestions IA telles quelles"
+      - label: "Modifier suggestions"
+        description: "Je veux changer certaines suggestions"
+      - label: "Lancer {COMMAND}"
+        description: "Tout OK, passer implémentation"
 ```
 
-Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
-
-> Référence: @src/skills/core/breakpoint-display/templates/analysis.md
-
-**Attendre réponse utilisateur et traiter selon choix:**
+**Traiter selon choix:**
 
 | Choix | Action |
 |-------|--------|
@@ -362,14 +392,38 @@ Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuest
 
 > Voir @src/commands/references/brief/output-templates.md pour les templates détaillés et instructions critiques.
 
+```
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ ⚠️  GARDE ANTI-PLAN-NATIF — VERIFICATION OBLIGATOIRE                         ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║ AVANT d'écrire quoi que ce soit, VÉRIFIER :                                  ║
+║                                                                              ║
+║ ❌ SI output_path contient ".claude/plans" OU "~/.claude/plans":             ║
+║    → ERREUR: Mauvais chemin détecté                                          ║
+║    → STOP et utiliser docs/features/<slug>.md à la place                     ║
+║                                                                              ║
+║ ❌ SI tu es tenté d'utiliser EnterPlanMode:                                  ║
+║    → ERREUR: Mauvais outil                                                   ║
+║    → STOP et utiliser Write tool à la place                                  ║
+║                                                                              ║
+║ ✅ SEUL chemin autorisé: docs/features/<slug>.md                             ║
+║ ✅ SEUL outil autorisé: Write tool                                           ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+```
+
 **Selon évaluation complexité:**
 
 | Catégorie | Action | Output |
 |-----------|--------|--------|
 | TINY/SMALL | Générer brief inline | Réponse directe |
-| STANDARD/LARGE | Créer Feature Document avec Write tool | `docs/features/<slug>.md` |
+| STANDARD/LARGE | Créer Feature Document avec **Write tool** | `docs/features/<slug>.md` |
 
-**CRITIQUE:** Utiliser Write tool, PAS EnterPlanMode. Les Feature Documents vont dans `docs/features/`, PAS dans `~/.claude/plans/`.
+**CRITIQUE:**
+- Utiliser **Write tool**, PAS EnterPlanMode
+- Les Feature Documents vont dans **`docs/features/`**, PAS dans `~/.claude/plans/`
+- **JAMAIS** basculer en mode plan natif pendant `/brief`
 
 ---
 

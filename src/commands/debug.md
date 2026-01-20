@@ -165,6 +165,35 @@ Collect available information:
 - Search: `[error message] [framework] site:github.com/issues`
 - Filter: Results < 2 years, prioritize official docs
 
+#### Step 1.2.1: Perplexity Research (CONDITIONNEL)
+
+**Skill:** `perplexity-research`
+
+Si Context7 et WebSearch insuffisants, proposer recherche Perplexity.
+
+```
+IF Context7.results.count < 3 AND WebSearch.results.count < 5:
+   OR error_message contains "unknown", "undefined", "rare":
+   OR confidence < 60%:
+THEN:
+   @skill:perplexity-research
+     trigger: "bug_complex"
+     context: "Erreur: {error_message}"
+     stack: "{detected_stack}"
+     specific_question: "Root causes et solutions pour cette erreur"
+```
+
+**Mode recommandé:** Deep Research (erreurs rares nécessitent synthèse multi-sources)
+
+**Skip conditions:**
+- Route Trivial (typo, missing import)
+- Confidence >= 80% après Context7
+- Error est un pattern commun (null pointer, syntax error)
+
+**Si résultats collés:** Intégrer dans l'analyse pour améliorer le thought tree.
+
+> Voir @src/skills/core/perplexity-research/SKILL.md pour détails complets.
+
 #### Step 1.3: Build Thought Tree
 
 **⚠️ MANDATORY:** Generate root cause analysis.

@@ -158,6 +158,35 @@ ELSE:
 > **Note v4.9**: Input clarification en Step 0 ne s'applique qu'a l'input initial, pas aux iterations.
 > **Note v5.3**: Breakpoints via @skill:breakpoint-display pour cohérence et économie tokens.
 
+#### Step 6.5: Recherche Marché (CONDITIONNEL)
+
+**Skill:** `perplexity-research`
+
+Après @Explore, si analyse marché/concurrence pertinente.
+
+```
+IF --competitive flag:
+   OR description MATCHES /concurrent|marché|alternative|versus|vs\./i:
+   OR feature_category == "new_market":
+THEN:
+   @skill:perplexity-research
+     trigger: "market"
+     context: "Analyse marché pour {feature_domain}"
+     stack: "N/A"
+     specific_question: "Solutions existantes, gaps, opportunités"
+```
+
+**Mode recommandé:** Deep Research (analyse comparative multi-sources)
+
+**Skip conditions:**
+- Feature simple (refactoring, bugfix)
+- Codebase patterns déjà établis
+- Pas de flag `--competitive` et pas de keywords marché
+
+**Si résultats collés:** Intégrer dans le contexte pour enrichir les HMW et questions de cadrage.
+
+> Voir @src/skills/core/perplexity-research/SKILL.md pour détails complets.
+
 ### Phase 2 — Iterations
 
 Boucle jusqu'a `finish`:
@@ -237,6 +266,40 @@ Boucle jusqu'a `finish`:
    - `--no-technique` flag actif
    - Technique appliquée dans les 2 dernières iterations
    - EMS >= 70 (proche finish)
+
+3.5. **MANDATORY — Recherche ciblée axes faibles** (si conditions remplies):
+
+   **Skill:** `perplexity-research`
+
+   ```
+   IF weak_axes.length > 0
+      AND iteration >= 2
+      AND ems.score < 50
+      AND NOT research_already_proposed_for_this_axis:
+   THEN:
+      @skill:perplexity-research
+        trigger: "targeted"
+        context: "Approfondissement axe {weak_axis}"
+        stack: "{detected_stack}"
+        specific_question: "{axis_specific_question}"
+   ```
+
+   **Questions par axe faible:**
+
+   | Axe | Question ciblée |
+   |-----|-----------------|
+   | Clarté | "Définitions manquantes, ambiguïtés à lever" |
+   | Profondeur | "Détails techniques à approfondir, edge cases" |
+   | Couverture | "Perspectives stakeholders manquantes, cas d'usage non couverts" |
+   | Décisions | "Trade-offs à évaluer, options à considérer" |
+   | Actionnabilité | "Patterns d'implémentation, tâches concrètes" |
+
+   **Skip conditions:**
+   - EMS >= 70 (proche finalisation)
+   - Recherche déjà proposée pour cet axe dans cette session
+   - Flag `--no-research` (si implémenté)
+
+   > Voir @src/skills/core/perplexity-research/SKILL.md pour détails complets.
 
 4. **Afficher breakpoint status** (via skill):
    ```yaml
