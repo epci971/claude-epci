@@ -146,7 +146,7 @@ Each persona automatically activates preferred MCP servers for enhanced context:
 | qa | Playwright | - | E2E tests |
 | doc | Context7 | - | Doc standards |
 
-**Status**: MCP integration active (F12 implemented). See `src/skills/mcp/SKILL.md` for details.
+**Status**: MCP integration active (F12 implemented). See skill `mcp` for details.
 
 ### Fallback Behavior
 

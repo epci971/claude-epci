@@ -73,7 +73,7 @@ Invoquer le skill @breakpoint-display:
 
 #### Breakpoint 1: Step 1 Validation
 
-**Location:** `src/commands/brief.md:121`
+**Location:** `commands/brief.md:121`
 
 **Before:**
 ```markdown
@@ -127,7 +127,7 @@ Invoquer @breakpoint-display type `validation`:
 
 #### Breakpoint 2: Step 4 Analysis
 
-**Location:** `src/commands/brief.md:275`
+**Location:** `commands/brief.md:275`
 
 **Before:**
 ```markdown
@@ -198,7 +198,7 @@ Invoquer @breakpoint-display type `analysis`:
 
 #### Breakpoint 1: Phase 1 — Plan Validé
 
-**Location:** `src/commands/epci.md:271`
+**Location:** `commands/epci.md:271`
 
 **Before:**
 ```markdown
@@ -273,7 +273,7 @@ Invoquer @breakpoint-display type `plan-review`:
 
 #### Breakpoint 2: Phase 2 — Code Implémenté
 
-**Location:** `src/commands/epci.md:354`
+**Location:** `commands/epci.md:354`
 
 **Before:**
 ```markdown
@@ -335,7 +335,7 @@ Invoquer @breakpoint-display type `plan-review`:
 
 ### 3. /decompose (1 breakpoint)
 
-**Location:** `src/commands/decompose.md:147`
+**Location:** `commands/decompose.md:147`
 
 **Type:** `decomposition`
 
@@ -350,7 +350,7 @@ Invoquer @breakpoint-display type `plan-review`:
 
 ### 4. /commit (1 breakpoint)
 
-**Location:** `src/commands/commit.md:144`
+**Location:** `commands/commit.md:144`
 
 **Type:** `validation`
 
@@ -365,7 +365,7 @@ Invoquer @breakpoint-display type `plan-review`:
 
 ### 5. /debug (1 breakpoint)
 
-**Location:** `src/commands/debug.md:284`
+**Location:** `commands/debug.md:284`
 
 **Type:** `diagnostic`
 
@@ -380,7 +380,7 @@ Invoquer @breakpoint-display type `plan-review`:
 
 ### 6. /orchestrate (1 breakpoint)
 
-**Location:** `src/commands/orchestrate.md:98`
+**Location:** `commands/orchestrate.md:98`
 
 **Type:** `interactive-plan`
 
@@ -395,7 +395,7 @@ Invoquer @breakpoint-display type `plan-review`:
 
 ### 7. /save-plan (1 breakpoint)
 
-**Location:** `src/commands/save-plan.md:170`
+**Location:** `commands/save-plan.md:170`
 
 **Type:** `validation`
 
@@ -410,7 +410,7 @@ Invoquer @breakpoint-display type `plan-review`:
 
 ### 8. /quick (1 breakpoint)
 
-**Location:** `src/commands/quick.md:98`
+**Location:** `commands/quick.md:98`
 
 **Type:** `lightweight`
 
@@ -425,7 +425,7 @@ Invoquer @breakpoint-display type `plan-review`:
 
 ### 9. /ralph-exec (1 breakpoint)
 
-**Location:** `src/commands/ralph-exec.md:555`
+**Location:** `commands/ralph-exec.md:555`
 
 **Type:** `info-only`
 
@@ -450,7 +450,7 @@ After migrating each command:
 - [ ] Recommended option marked with `(Recommended)`
 - [ ] Response handling updated in command
 - [ ] Tokens reduced by ~70%+
-- [ ] Command validation passes: `python src/scripts/validate_command.py`
+- [ ] Command validation passes: `python scripts/validate_command.py`
 - [ ] Manual test with sample input
 
 ## Testing Strategy
@@ -489,7 +489,7 @@ If issues arise during migration:
 
 ## References
 
-- Breakpoint Display Skill: @src/skills/core/breakpoint-display/SKILL.md
+- Breakpoint Display Skill: voir skill `breakpoint-display`
 - AskUserQuestion Guide: @references/askuserquestion-guide.md
 - Templates: @templates/
 - Components: @components/

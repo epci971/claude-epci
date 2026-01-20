@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.4.0 | **Date** : Janvier 2025
+> **Version** : 5.4.1 | **Date** : Janvier 2025
 
 ---
 
@@ -193,7 +193,7 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 
 ```
 src/
-├── agents/           # 15 subagents (7 core + 3 turbo + 5 brainstorm)
+├── agents/           # 16 subagents (7 core + 3 turbo + 5 brainstorm + 1 setup)
 ├── commands/         # 14 commandes (brief, epci, quick, ralph-exec, etc.)
 ├── hooks/            # Système hooks (runner.py, examples/, active/)
 ├── mcp/              # MCP Integration (config, activation, registry)
@@ -485,7 +485,7 @@ cd docs/specs/migration/
 
 ---
 
-## 5. Subagents (15)
+## 5. Subagents (16)
 
 ### Core Subagents (7)
 
@@ -517,19 +517,25 @@ cd docs/specs/migration/
 | `@party-orchestrator`| sonnet| Orchestration sessions brainstorm | `/brainstorm` v5.0 |
 | `@rule-clarifier`    | haiku | Clarification règles métier   | `/brainstorm` v5.0 |
 
+### Utility Subagents (1) — v5.2.0+
+
+| Subagent             | Model | Rôle                          | Invoqué par     |
+| -------------------- | ----- | ----------------------------- | --------------- |
+| `@statusline-setup`  | haiku | Configure ccusage statusline  | Manuel, `/brief` (si slug statusline) |
+
 ---
 
 ## 6. Skills (35)
 
-### Core (22)
+### Core (23)
 
 `epci-core`, `architecture-patterns`, `code-conventions`, `testing-strategy`,
 `git-workflow`, `flags-system`, `project-memory`, `brainstormer`,
 `debugging-strategy`, `learning-optimizer`, `breakpoint-metrics`,
 `clarification-intelligente`, `proactive-suggestions`, `rules-generator`,
 `input-clarifier`, `orchestrator-batch`, `ralph-analyzer`, `ralph-converter`,
-`breakpoint-display`, `complexity-calculator` (integrated v5.3.8), `tdd-workflow` (integrated v5.3.8),
-`perplexity-research` (integrated v5.3.11)
+`breakpoint-display`, `complexity-calculator`, `tdd-workflow`,
+`perplexity-research`, `command-auditor`
 
 ### Stack (5) — Auto-détectés
 
@@ -607,6 +613,24 @@ cd docs/specs/migration/
 | Scripts   | snake_case.py    | `validate_skill.py`    |
 
 ### Références et invocations
+
+#### Règle du préfixe `src/` (v5.4.1)
+
+**RÈGLE CRITIQUE** : Ne JAMAIS utiliser le préfixe `src/` dans les références internes entre commandes, skills et agents.
+
+```markdown
+# ❌ INCORRECT — préfixe src/ redondant
+Voir @src/skills/core/tdd-workflow/SKILL.md
+Consulter src/commands/references/brief/turbo-mode.md
+
+# ✅ CORRECT — référence relative sans src/
+Voir documentation du skill `tdd-workflow`
+Consulter @references/brief/turbo-mode.md
+```
+
+**Pourquoi** : Les fichiers du plugin sont déjà dans `src/`, le préfixe est donc redondant et crée de la confusion.
+
+**Exception unique** : Le chemin complet avec `src/` est accepté UNIQUEMENT pour les instructions Read tool qui doivent lire un fichier physique.
 
 #### Convention de référencement des Skills (v5.4.1)
 
@@ -765,3 +789,108 @@ Exécuter l'audit de cohérence régulièrement :
 | Documentation sync | >= 95/100 |
 | Hooks fonctionnels | 100% |
 | Tests passants | 100% |
+
+---
+
+## 13. Worktree Integration (v5.2.2+)
+
+### Concept
+
+Les Git worktrees permettent de développer plusieurs features en parallèle avec isolation totale. EPCI intègre ce workflow pour les features STANDARD et LARGE.
+
+### Scripts disponibles
+
+| Script | Rôle | Usage |
+|--------|------|-------|
+| `worktree-create.sh` | Crée worktree + branche + copie .env | `./src/scripts/worktree-create.sh <feature-slug>` |
+| `worktree-finalize.sh` | Merge + cleanup | `./src/scripts/worktree-finalize.sh` |
+| `worktree-abort.sh` | Abandon propre | `./src/scripts/worktree-abort.sh` |
+
+### Workflow intégré
+
+```
+/brief (STANDARD/LARGE) → Suggestion worktree
+           ↓
+   worktree-create.sh feature-slug
+           ↓
+   cd ../projet-feature-slug
+           ↓
+   /epci feature-slug (dans worktree)
+           ↓
+   worktree-finalize.sh (merge vers main)
+```
+
+### Règles importantes
+
+- **Isolation** : Chaque worktree = branche séparée, fichiers séparés
+- **Copie .env** : Le script copie automatiquement les fichiers d'environnement
+- **Préfixe branche** : `feature/<slug>` créé automatiquement
+- **Cleanup** : `worktree-finalize.sh` supprime le worktree après merge
+
+**Documentation complète** : `docs/guidelines/worktrees.md`
+
+---
+
+## 14. Conventions de Développement Avancées
+
+### Versioning (Convention de bump)
+
+Format : `5.x.y` (majeur.mineur.patch)
+
+**Fichiers à mettre à jour simultanément** :
+
+| Fichier | Champ |
+|---------|-------|
+| `CLAUDE.md` | Header `Version : 5.x.y` |
+| `src/.claude-plugin/plugin.json` | `"version"` |
+| `build/epci/.claude-plugin/plugin.json` | `"version"` |
+
+**Règle** : Toujours bumper les 3 fichiers ensemble dans le même commit.
+
+### MANDATORY EXECUTION pour Skills
+
+Certains skills (comme `breakpoint-display`) ont une section `MANDATORY EXECUTION` qui DOIT être exécutée automatiquement.
+
+**Workflow obligatoire** :
+
+```yaml
+# Quand tu rencontres @skill:<name> :
+1. LIRE src/skills/core/<name>/SKILL.md
+2. TROUVER section "MANDATORY EXECUTION"
+3. EXECUTER les instructions de cette section
+4. ATTENDRE la réponse utilisateur si AskUserQuestion requis
+```
+
+**Skills avec MANDATORY EXECUTION** :
+
+| Skill | Usage |
+|-------|-------|
+| `breakpoint-display` | Affichage breakpoints interactifs ASCII |
+| `complexity-calculator` | Calcul catégorie TINY/SMALL/STANDARD/LARGE |
+| `tdd-workflow` | Cycle TDD RED-GREEN-REFACTOR-VERIFY |
+
+### Préfixe `epci:` dans les scripts automatisés
+
+**Règle** : Dans les scripts shell (ralph.sh, etc.), utiliser le préfixe `epci:` pour les commandes :
+
+```bash
+# ✅ Correct (dans scripts)
+claude "/epci:ralph-exec"
+
+# ❌ Incorrect
+claude "/ralph-exec"
+```
+
+**Raison** : Le préfixe garantit le namespace du plugin et évite les collisions.
+
+### Scopes de commit enrichis
+
+| Scope | Usage | Exemple |
+|-------|-------|---------|
+| `(skills)` | Modification de skills | `feat(skills): add perplexity-research` |
+| `(commands)` | Modification de commandes | `fix(commands): brief routing` |
+| `(infra)` | Scripts, worktree, CI | `feat(infra): add worktree-create.sh` |
+| `(ralph)` | Système Ralph Wiggum | `feat(ralph): verbose mode` |
+| `(decompose)` | Décomposition PRD | `fix(decompose): backlog format` |
+| `(agents)` | Subagents | `feat(agents): add rule-clarifier` |
+| `(hooks)` | Système hooks | `fix(hooks): post-phase-3 memory` |

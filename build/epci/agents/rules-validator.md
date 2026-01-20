@@ -213,7 +213,7 @@ Skip detailed structure validation.
 The agent should use the validation script when available:
 
 ```bash
-python src/scripts/validate_rules.py .claude/rules/ --verbose
+python scripts/validate_rules.py .claude/rules/ --verbose
 ```
 
 Parse script output and include in report.

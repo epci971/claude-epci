@@ -1,0 +1,477 @@
+---
+description: >-
+    Decompose a complex PRD/CDC into actionable sub-specifications (1-5 days each).
+    Generates dependency graph, Gantt planning, backlog table, and prd.json for Ralph execution.
+    Use for large projects (>5 days) before running /brief on each sub-spec or ./ralph.sh for autonomous execution.
+argument-hint: "<file.md> [--output <dir>] [--think <level>] [--min-days <n>] [--max-days <n>] [--granularity <size>]"
+allowed-tools: [Read, Write, Bash(mkdir:*), Bash(ln:*), Bash(touch:*), Grep, Glob, Task, WebFetch]
+---
+
+# EPCI Decompose
+
+## Overview
+
+Automates the decomposition of complex PRD/CDC documents into actionable sub-specifications.
+Each sub-spec targets 1-5 days of effort, enabling iterative EPCI execution.
+
+**Generates automatically:**
+- Sub-spec files (S01-SNN.md)
+- INDEX.md with dependency graph and Gantt planning
+- **backlog.md** — Structured backlog table (Architector/Orchestrator style)
+- **prd.json** — User stories for Ralph autonomous execution
+- **ralph.sh** — Executable loop script calling `/epci:ralph-exec`
+- **progress.txt** — Empty file for iteration logging
+
+**Use case:** A 25-day migration project becomes 9 manageable sub-specs that can be
+executed via `/brief` (manual) or `./ralph.sh` (autonomous overnight).
+
+## Arguments
+
+| Argument          | Description                                                  | Required | Default              |
+| ----------------- | ------------------------------------------------------------ | -------- | -------------------- |
+| `<file.md>`       | Source PRD/CDC file to decompose                             | Yes      | —                    |
+| `--output <dir>`  | Output directory for generated specs                         | No       | `docs/specs/{slug}/` |
+| `--think <level>` | Thinking level: `quick`, `think`, `think-hard`, `ultrathink` | No       | `think`              |
+| `--min-days <n>`  | Minimum effort per sub-spec                                  | No       | `1`                  |
+| `--max-days <n>`  | Maximum effort per sub-spec                                  | No       | `5`                  |
+| `--granularity`   | Story size: `micro` (15-30min), `small` (30-60min), `standard` (1-2h) | No | `small`            |
+
+## Flags
+
+| Flag | Effect | Default |
+|------|--------|---------|
+| `--think <level>` | Thinking level: `quick`, `think`, `think-hard`, `ultrathink` | `think` |
+| `--output <dir>` | Output directory for generated specs | `docs/specs/{slug}/` |
+| `--min-days <n>` | Minimum effort per sub-spec | `1` |
+| `--max-days <n>` | Maximum effort per sub-spec | `5` |
+| `--granularity <size>` | Story size: `micro`, `small`, `standard` | `small` |
+
+## Pre-Workflow: Load Project Memory
+
+**Skill**: `project-memory`
+
+Load project context from `.project-memory/` before analysis. The skill handles:
+
+- Reading context, conventions, settings, patterns
+- Finding similar past decompositions for reference
+- Applying project-specific naming conventions to generated specs
+
+**If `.project-memory/` does not exist:** Continue with defaults.
+
+---
+
+## Process
+
+**IMPORTANT: Follow ALL phases in sequence. Do NOT skip the file generation step.**
+
+### Phase 1: Validation (MANDATORY)
+
+**Checks:**
+
+1. File exists and is readable
+2. File extension is `.md`
+3. Extract title/slug from document
+4. Count lines (complexity indicator)
+
+**Exit conditions:**
+
+- File not found → Error with suggestion
+- Not a `.md` file → Error with suggestion
+
+**Output:**
+
+```
+Document: {filename}
+├── Lines: {count}
+├── Slug: {extracted_slug}
+└── Status: Valid
+```
+
+### Phase 2: Structural Analysis (MANDATORY)
+
+**DO NOT SKIP:** Analyze the document structure and detect dependencies.
+
+**Skills loaded:** `architecture-patterns`, `flags-system`, `complexity-calculator`
+
+**Structure detection:**
+
+| Signal                          | Usage                            |
+| ------------------------------- | -------------------------------- |
+| Headers `## Phase X`            | Level 1 decomposition candidates |
+| Headers `### Step X.Y`          | Sub-decomposition candidates     |
+| Headers `### US[N] —`           | User Story → sub-spec candidate  |
+| `**Complexite**: S/M/L`         | Effort estimate (S=1d, M=3d, L=5d) |
+| `**Priorite**: Must-have`       | Execution priority (MoSCoW)      |
+| Tables with "Effort"            | Reuse existing estimates         |
+| "Checklist" sections            | Validation boundaries            |
+| "Gate", "Prerequisite" mentions | Explicit dependencies            |
+
+**Dependency extraction:**
+
+| Pattern    | Detection                                    |
+| ---------- | -------------------------------------------- |
+| Explicit   | "depends on", "requires", "after", "before"  |
+| Django FK  | `ForeignKey('app.Model')` → model must exist |
+| Imports    | `from X import Y` → Y must exist             |
+| References | `see S01`, `cf. Phase 1`                     |
+
+**Granularity rules:**
+
+| Block effort         | Action                    |
+| -------------------- | ------------------------- |
+| < min-days           | Merge with adjacent block |
+| min-days to max-days | Target granularity        |
+| > max-days           | Seek sub-decomposition    |
+
+**Effort estimation via skill:**
+
+Pour chaque bloc identifie, invoquer `@skill:complexity-calculator` pour:
+- Estimer l'effort en jours (score → categorie → effort)
+- Detecter si bloc doit etre subdivise (score > 0.70)
+- Identifier risques specifiques au bloc
+
+```yaml
+@skill:complexity-calculator
+  input:
+    brief: "{bloc_description}"
+    files_impacted: [{path: "...", action: "..."}]
+    exploration_results:
+      patterns: ["{patterns_du_bloc}"]
+      risks: ["{risques_identifies}"]
+```
+
+> Voir @src/skills/core/complexity-calculator/SKILL.md pour mapping score → categorie → effort.
+
+**Input format detection:**
+
+| Format | Detection | Behavior |
+|--------|-----------|----------|
+| PRD/CDC | `## Phase`, `### Step` headers | Standard decomposition |
+| Brainstorm Brief | `### US[N] —` headers | User Story mapping |
+
+**Invoke @decompose-validator:**
+
+- Check dependency consistency
+- Detect circular dependencies
+- Validate granularity compliance
+
+### Phase 3: Proposal (MANDATORY — WAIT FOR USER)
+
+**MANDATORY:** Display the breakpoint via `@skill:breakpoint-display` and WAIT for user validation.
+
+**Skill**: `breakpoint-display`
+
+```yaml
+@skill:breakpoint-display
+  type: decomposition
+  title: "VALIDATION DÉCOUPAGE"
+  data:
+    source_file: "{filename}"
+    analysis:
+      lines: {line_count}
+      total_effort: {total_days}
+      structure: "{phases} phases, {steps} étapes"
+    specs:
+      - {id: "S01", title: "{name_1}", effort: {d1}, priority: "-", deps: "-", status: "Pending"}
+      - {id: "S02", title: "{name_2}", effort: {d2}, priority: "-", deps: "S01", status: "Pending"}
+      # ... autres specs
+    parallelization: {parallel_count}
+    optimized_duration: {optimized_days}
+    sequential_duration: {sequential_days}
+    alerts: ["{alerts_or_none}"]
+    validator_verdict: "{@decompose-validator verdict}"
+  ask:
+    question: "Le découpage vous convient-il ?"
+    header: "📋 Découpage"
+    options:
+      - {label: "Valider (Recommended)", description: "Générer les fichiers"}
+      - {label: "Modifier", description: "Ajuster le découpage"}
+      - {label: "Annuler", description: "Abandonner décomposition"}
+```
+
+**Si choix "Modifier", afficher sous-menu via AskUserQuestion:**
+
+```yaml
+@skill:breakpoint-display (second-level)
+  type: decomposition-modify
+  title: "MODIFICATION DÉCOUPAGE"
+  ask:
+    question: "Que souhaitez-vous modifier ?"
+    header: "🔧 Modifier"
+    multiSelect: true
+    options:
+      - {label: "Fusionner specs", description: "Ex: Fusionner S04 et S05"}
+      - {label: "Découper spec", description: "Ex: Découper S07 en 2 parties"}
+      - {label: "Renommer", description: "Ex: S03 → Modèles Fondamentaux"}
+      - {label: "Changer dépendances", description: "Ex: S06 ne dépend plus de S03"}
+```
+
+### Phase 4: Generation (USE WRITE TOOL — MANDATORY)
+
+**MANDATORY:** Use the **Write tool** to create ALL output files.
+
+**Skills loaded:** `ralph-converter` (handles prd.json schema, stack detection, template generation)
+
+#### Step 4.1: Create output directory
+
+```bash
+mkdir -p {output_dir}
+```
+
+#### Step 4.2: Generate sub-spec files
+
+For each sub-spec identified:
+- **S01-{slug}.md** through **SNN-{slug}.md** — Individual sub-specs
+
+#### Step 4.3: Generate INDEX.md
+
+Overview with:
+- Summary table (ID, Title, Effort, Priority, Dependencies, Status)
+- Mermaid dependency graph
+- Mermaid Gantt planning
+
+#### Step 4.4: Generate backlog.md (MANDATORY)
+
+**Always generate** the backlog table with:
+- Vue d'ensemble — All stories in one table
+- Par Spec — Stories grouped by spec
+- Statistiques — Totals, parallelizable count, critical path
+- Par Priorite — P1/P2/P3 breakdown
+- Legende — Status symbols, complexity, types
+
+**Story attributes inferred:**
+- **Type**: Script/Logic/API/UI/Test/Task (from title keywords)
+- **Complexite**: S (<45min), M (45-90min), L (>90min)
+- **Priorite**: P1 (Must), P2 (Should), P3 (Could)
+
+See @references/decompose/templates.md for full template.
+
+#### Step 4.5: Generate prd.json v2 (MANDATORY)
+
+Convert specs to Ralph Wiggum format using **schema v2** for granular tracking.
+
+**Schema v2 structure:**
+
+```json
+{
+  "$schema": "https://epci.dev/schemas/prd-v2.json",
+  "version": "2.0",
+  "branchName": "feature/{slug}",
+  "projectName": "{Project Title}",
+  "generatedAt": "{ISO date}",
+  "generatedBy": "EPCI /decompose v5.2",
+  "config": {
+    "max_iterations": 50,
+    "test_command": "{detected}",
+    "lint_command": "{detected}",
+    "granularity": "{granularity}"
+  },
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "{title}",
+      "category": "{inferred: backend|frontend|fullstack|infra|test|docs}",
+      "type": "{inferred: Script|Logic|API|UI|Test|Task}",
+      "complexity": "{inferred: S|M|L}",
+      "priority": 1,
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {"id": "AC1", "description": "{from spec}", "done": false}
+      ],
+      "tasks": [
+        {"id": "T1", "description": "{from spec}", "done": false}
+      ],
+      "dependencies": {
+        "depends_on": [],
+        "blocks": []
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": null
+      },
+      "testing": {
+        "test_files": [],
+        "requires_e2e": false,
+        "coverage_target": null
+      },
+      "context": {
+        "parent_spec": "{SXX-name.md}",
+        "parent_brief": "{brief path}",
+        "estimated_minutes": 60
+      }
+    }
+  ]
+}
+```
+
+**Inference rules** (see `ralph-converter` skill for details):
+
+| Field | Inference source |
+|-------|------------------|
+| `category` | File patterns, title keywords |
+| `type` | Title keywords (script/entity/api/component/test) |
+| `complexity` | Estimated minutes or AC/task count |
+| `acceptanceCriteria[]` | `## Acceptance Criteria` section in spec |
+| `tasks[]` | `## Tasks` checklist in spec, or inferred from AC |
+| `dependencies` | INDEX.md Dependencies column + "depends on" patterns |
+
+**Granularity effects on story count:**
+
+| Granularity | Story Size | Stories/Day |
+|-------------|------------|-------------|
+| `micro`     | 15-30 min  | 8-12        |
+| `small`     | 30-60 min  | 4-8         |
+| `standard`  | 1-2 hours  | 2-4         |
+
+#### Step 4.6: Generate ralph.sh (MANDATORY)
+
+Executable loop script calling `/epci:ralph-exec` for each story.
+
+**Template:** See @references/decompose/ralph-template.md for the complete script.
+
+**Key design:**
+- Each `claude "/epci:ralph-exec"` call = fresh context (memory liberation)
+- No PROMPT.md needed — workflow is inline in /epci:ralph-exec
+- Simple promise tag detection for completion
+- **Autonomous mode**: `--dangerously-skip-permissions` enables overnight execution
+
+**Security considerations:**
+- The script uses `--dangerously-skip-permissions` for autonomous execution
+- **Recommended safeguards:**
+  - Run in Docker container without network access
+  - Use Git worktree to isolate changes
+  - Review changes before merging to main branch
+  - Never run on production branches directly
+
+#### Step 4.7: Create progress.txt (MANDATORY)
+
+Create empty progress.txt file for iteration logging:
+
+```bash
+touch {output_dir}/progress.txt
+```
+
+The `/epci:ralph-exec` command will append iteration logs to this file.
+
+#### Step 4.8: Create symlinks
+
+```bash
+ln -s ../../scripts/lib {output_dir}/lib
+```
+
+**Final output structure:**
+
+```
+{output_dir}/
+├── INDEX.md              # Overview with Mermaid diagrams
+├── backlog.md            # Backlog table view
+├── prd.json              # Ralph stories format
+├── ralph.sh              # Executable loop script (calls /epci:ralph-exec)
+├── progress.txt          # Empty logging file
+├── S01-{name}.md
+├── S02-{name}.md
+└── SNN-{name}.md
+```
+
+## Loaded Skills
+
+| Skill                   | Phase        | Purpose                            |
+| ----------------------- | ------------ | ---------------------------------- |
+| `project-memory`        | Pre-Workflow | Load context and conventions       |
+| `architecture-patterns` | Phase 2      | Identify decomposition patterns    |
+| `flags-system`          | All          | Handle --think levels              |
+| `complexity-calculator` | Phase 2      | Estimate effort per sub-spec       |
+| `breakpoint-display`    | Phase 3      | Interactive breakpoints            |
+| `ralph-converter`       | Phase 4      | Generate prd.json, ralph.sh, PROMPT.md |
+| `mcp`                   | Phase 2      | Context7 for architecture patterns |
+
+## Invoked Subagents
+
+| Subagent               | Condition | Role                               |
+| ---------------------- | --------- | ---------------------------------- |
+| `@decompose-validator` | Always    | Validate decomposition consistency |
+
+## Output
+
+**Complete templates:** See @references/decompose/templates.md for:
+- INDEX.md — Overview with Mermaid diagrams
+- backlog.md — Structured backlog table
+- SXX-{name}.md — Sub-spec template
+
+## Edge Cases
+
+**Detailed edge case handling:** See @references/decompose/edge-cases.md
+
+| Code | Situation | Action |
+|------|-----------|--------|
+| EC1 | PRD without clear structure | Propose structuring |
+| EC2 | PRD too small (<3 days) | Redirect to /brief |
+| EC3 | Sub-spec too large | Suggest split |
+| EC4 | Circular dependency | Blocking alert |
+| EC5 | Missing estimates | Default estimation |
+| EC6 | Brainstorm brief format | User Story mapping |
+
+## Examples
+
+**Usage examples:** See @references/decompose/examples.md
+
+Quick reference:
+
+```bash
+# Standard usage — generates all files including backlog.md and prd.json
+/decompose migration_architecture_gardel.md
+
+# With custom options
+/decompose mon-prd.md --output specs/alpha/ --min-days 2 --max-days 4
+
+# With fine granularity for more stories
+/decompose mon-prd.md --granularity micro
+```
+
+**Output:**
+```
+docs/specs/migration-gardel/
+├── INDEX.md
+├── backlog.md            ← Backlog table
+├── prd.json              ← Ralph stories
+├── ralph.sh              ← Executable script
+├── PROMPT.md             ← System prompt
+├── progress.txt
+├── S01-settings-splitting.md
+├── S02-app-datawarehouse.md
+└── ...
+
+→ Next: /ralph docs/specs/migration-gardel/
+```
+
+## Error Handling
+
+| Error                 | Cause                                  | Solution                                          |
+| --------------------- | -------------------------------------- | ------------------------------------------------- |
+| File not found        | Path incorrect or file missing         | Check path, use absolute path                     |
+| Not a .md file        | Wrong file type                        | Provide a Markdown file                           |
+| Circular dependency   | Document has conflicting prerequisites | Fix source document or ignore one direction       |
+| No structure detected | Document lacks headers/organization    | Accept proposed structure or restructure manually |
+
+## See Also
+
+- `/brief` — Entry point for individual sub-specs after decomposition
+- `/epci` — Complete workflow for STANDARD/LARGE features
+- `/quick` — Fast workflow for TINY/SMALL sub-specs
+- `/epci:ralph-exec` — Single story executor (called by ralph.sh)
+
+## Autonomous Execution
+
+After decomposition, run overnight execution directly from terminal:
+
+```bash
+cd {output_dir}
+./ralph.sh
+```
+
+**Key benefit:** Each `claude "/epci:ralph-exec"` call creates fresh context, enabling
+long-running sessions without memory issues.

@@ -19,7 +19,7 @@ Each example is annotated to highlight compliance with specific rules.
 
 ## Example 1: `/commit` — Modal Command Pattern
 
-**File**: `src/commands/commit.md`
+**File**: `commands/commit.md`
 **Score**: 95/100
 **Pattern**: Dual-mode (context-rich / degraded)
 
@@ -119,7 +119,7 @@ fi
 
 ## Example 2: `/rules` — Multi-Action Command Pattern
 
-**File**: `src/commands/rules.md`
+**File**: `commands/rules.md`
 **Score**: 92/100
 **Pattern**: Multiple actions (init, add, validate)
 
@@ -201,7 +201,7 @@ allowed-tools: [Read, Write, Glob, Grep, Bash, Task]     # ✅ FM-009: Valid too
 
 ## Example 3: `/brief` — Entry Point Command Pattern
 
-**File**: `src/commands/brief.md`
+**File**: `commands/brief.md`
 **Score**: 90/100
 **Pattern**: Complex multi-step with breakpoints
 

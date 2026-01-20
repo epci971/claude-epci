@@ -35,6 +35,21 @@ Format: `{type}({scope}): {description}`
 | `test` | Ajout/modification de tests |
 | `chore` | Maintenance, dependances |
 
+### Scopes EPCI
+
+| Scope | Usage | Fichiers concernés |
+|-------|-------|-------------------|
+| `(skills)` | Modification de skills | `src/skills/**` |
+| `(commands)` | Modification de commandes | `src/commands/**` |
+| `(agents)` | Modification de subagents | `src/agents/**` |
+| `(infra)` | Scripts, worktree, CI | `src/scripts/**`, `.github/**` |
+| `(ralph)` | Système Ralph Wiggum | `ralph.sh`, `/ralph-exec` |
+| `(decompose)` | Décomposition PRD | `/decompose`, `prd.json` |
+| `(hooks)` | Système hooks | `src/hooks/**` |
+| `(mcp)` | Intégration MCP | `src/mcp/**` |
+| `(validation)` | Scripts validation | `validate_*.py` |
+| `(memory)` | Project memory | `src/project-memory/**` |
+
 ### Exemples
 
 ```bash

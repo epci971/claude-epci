@@ -308,7 +308,7 @@ Input: Single task from plan
 Output: Implemented code following TDD cycle
 ```
 
-> Voir @src/skills/core/tdd-workflow/SKILL.md pour integration Ralph.
+> Voir documentation du skill `tdd-workflow` pour integration Ralph.
 
 ### Step C.2: Testing
 

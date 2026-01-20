@@ -297,7 +297,7 @@ IF @Explore fails or times out:
 **Execute `post-phase-3` hooks:**
 
 ```bash
-python3 src/hooks/runner.py post-phase-3 --context '{
+python3 hooks/runner.py post-phase-3 --context '{
   "phase": "phase-3",
   "feature_slug": "<slug>",
   "complexity": "<category>",
@@ -320,7 +320,7 @@ python3 src/hooks/runner.py post-phase-3 --context '{
 
 Run validation:
 ```bash
-python src/scripts/validate_command.py src/commands/my-command.md
+python scripts/validate_command.py commands/my-command.md
 ```
 ```
 

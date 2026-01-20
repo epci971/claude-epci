@@ -267,8 +267,8 @@ perplexity_research:
 
 - Triggers détaillés: @references/triggers.md
 - Prompt templates: @references/prompt-templates.md
-- Breakpoint integration: @src/skills/core/breakpoint-display/templates/research-prompt.md
+- Breakpoint integration: voir skill `breakpoint-display` (template research-prompt)
 - Commands using this skill:
-  - @src/commands/brief.md (Step 2.1)
-  - @src/commands/debug.md (Step 1.2)
-  - @src/commands/brainstorm.md (Phase 1 + 2)
+  - `/brief` (Step 2.1)
+  - `/debug` (Step 1.2)
+  - `/brainstorm` (Phase 1 + 2)

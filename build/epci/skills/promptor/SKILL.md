@@ -100,7 +100,7 @@ Read from `.claude/settings.local.json`:
 
 **Validation script :**
 ```bash
-python src/scripts/validate_notion_config.py
+python scripts/validate_notion_config.py
 ```
 
 ## Session Mode

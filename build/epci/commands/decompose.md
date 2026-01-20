@@ -140,7 +140,7 @@ Pour chaque bloc identifie, invoquer `@skill:complexity-calculator` pour:
       risks: ["{risques_identifies}"]
 ```
 
-> Voir @src/skills/core/complexity-calculator/SKILL.md pour mapping score → categorie → effort.
+> Voir documentation du skill `complexity-calculator` pour mapping score → categorie → effort.
 
 **Input format detection:**
 

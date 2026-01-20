@@ -93,7 +93,7 @@ When `--turbo` flag is active:
 | `--wave` | DAG-based parallel agent execution | complexity > 0.7 |
 | `--no-hooks` | Disable all hook execution | Never |
 
-**Full flag documentation:** `src/settings/flags.md`
+**Full flag documentation:** `settings/flags.md`
 
 ---
 
@@ -128,7 +128,7 @@ When `--turbo` flag is active:
 
 ## Hooks Integration
 
-Execute hooks at workflow points: `python3 src/hooks/runner.py <hook-type> --context '{...}'`
+Execute hooks at workflow points: `python3 hooks/runner.py <hook-type> --context '{...}'`
 
 **Available:** `pre-phase-1`, `post-phase-1`, `pre-phase-2`, `post-phase-2`, `post-phase-3`, `on-breakpoint`, `pre-agent`, `post-agent`
 
@@ -332,7 +332,7 @@ Utiliser le skill `breakpoint-display` avec type `plan-review` pour afficher le 
 
 Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
 
-> Référence: @src/skills/core/breakpoint-display/templates/plan-review.md
+> Référence: template `plan-review` du skill `breakpoint-display`
 
 **Attendre réponse utilisateur et traiter selon choix:**
 - **Continuer (Recommended)**: Passer à Phase 2
@@ -377,7 +377,7 @@ Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuest
        test_file: "{test_file}"
        stack: "{detected_stack}"
    ```
-   > Voir @src/skills/core/tdd-workflow/SKILL.md pour state machine complete.
+   > Voir documentation du skill `tdd-workflow` pour state machine complete.
 
 2. **Reviews** — @code-reviewer, @security-auditor*, @qa-reviewer*
 3. **Fix issues** — Address Critical/Important findings
@@ -454,7 +454,7 @@ Utiliser le skill `breakpoint-display` avec type `plan-review` pour afficher le 
 
 Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
 
-> Référence: @src/skills/core/breakpoint-display/templates/plan-review.md
+> Référence: template `plan-review` du skill `breakpoint-display`
 
 **Attendre réponse utilisateur et traiter selon choix:**
 - **Continuer (Recommended)**: Passer à Phase 3
@@ -494,7 +494,7 @@ Write `.epci-commit-context.json` to project root, then display suggestion to ru
 **CRITICAL:** Execute `post-phase-3` hook before displaying completion message.
 
 ```bash
-python3 src/hooks/runner.py post-phase-3 --context '{...}'
+python3 hooks/runner.py post-phase-3 --context '{...}'
 ```
 
 **Skip only IF** `--no-hooks` flag is active.

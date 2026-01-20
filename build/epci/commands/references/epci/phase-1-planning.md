@@ -68,7 +68,7 @@
 ## Post-Phase Hooks
 
 ```bash
-python3 src/hooks/runner.py post-phase-1 --context '{
+python3 hooks/runner.py post-phase-1 --context '{
   "phase": "phase-1",
   "feature_slug": "<slug>",
   "complexity": "<complexity>"

@@ -185,7 +185,7 @@ THEN:
 
 **Si résultats collés:** Intégrer dans le contexte pour enrichir les HMW et questions de cadrage.
 
-> Voir @src/skills/core/perplexity-research/SKILL.md pour détails complets.
+> Voir documentation du skill `perplexity-research` pour détails complets.
 
 ### Phase 2 — Iterations
 
@@ -299,7 +299,7 @@ Boucle jusqu'a `finish`:
    - Recherche déjà proposée pour cet axe dans cette session
    - Flag `--no-research` (si implémenté)
 
-   > Voir @src/skills/core/perplexity-research/SKILL.md pour détails complets.
+   > Voir documentation du skill `perplexity-research` pour détails complets.
 
 4. **Afficher breakpoint status** (via skill):
    ```yaml
@@ -419,14 +419,14 @@ Boucle jusqu'a `finish`:
 
 **MANDATORY: Use Write tool to create BOTH files using official templates.**
 
-**Templates obligatoires** (dans `src/skills/core/brainstormer/references/`):
+**Templates obligatoires** (dans `skills/core/brainstormer/references/`):
 - `brief-format.md` — Structure PRD v3.0 (Industry Standards Compliant)
 - Section Journal d'Exploration dans le meme fichier
 
 1. **@planner** (si pas preview fait OU EMS >= 70)
 2. **@security-auditor** (si patterns auth ET pas preview)
 3. Create directory: `mkdir -p ./docs/briefs/[slug]`
-4. **Lire template**: `Read src/skills/core/brainstormer/references/brief-format.md`
+4. **Lire template**: `Read skills/core/brainstormer/references/brief-format.md`
 5. **Section-by-section validation** (si pas --quick/--turbo)
 6. Write `brief-[slug]-[date].md` — **DOIT suivre la structure PRD v3.0**
 7. Write `journal-[slug]-[date].md` — **DOIT suivre le Template Journal d'Exploration**
@@ -573,7 +573,7 @@ Forcer manuellement: commande `energy`
 ## Skill Reference
 
 Pour les details complets (EMS system, personas, techniques, formats):
-- Skill: `brainstormer` (`src/skills/core/brainstormer/SKILL.md`)
+- Skill: `brainstormer`
 
 ## Output
 
@@ -655,7 +655,7 @@ Les breakpoints `ems-status`, `plan-review`, et `analysis` incluent un champ `su
 | `coverage-low` | Coverage < 40 | P2 |
 | `decisions-pending` | Decisions < 40 | P2 |
 
-Voir @src/skills/core/proactive-suggestions/SKILL.md pour le catalogue complet.
+Voir documentation du skill `proactive-suggestions` pour le catalogue complet.
 
 ### Learning
 

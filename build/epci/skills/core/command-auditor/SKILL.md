@@ -105,16 +105,16 @@ Generate structured Markdown report with:
 
 ```bash
 # Single command audit
-/audit-command @src/commands/brief.md
+/audit-command commands/brief.md
 
 # With specific mode
-/audit-command @src/commands/quick.md --lenient
+/audit-command commands/quick.md --lenient
 
 # Batch audit (all commands)
-/audit-command --dir src/commands/
+/audit-command --dir commands/
 
 # CI/CD integration
-/audit-command @src/commands/new-cmd.md --json --strict
+/audit-command commands/new-cmd.md --json --strict
 ```
 
 ## Severity Levels

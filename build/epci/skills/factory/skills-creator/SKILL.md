@@ -134,7 +134,7 @@ skills/<category>/<name>/
 Run validation script:
 
 ```bash
-python src/scripts/validate_skill.py src/skills/<category>/<name>/
+python scripts/validate_skill.py skills/<category>/<name>/
 ```
 
 **Quick Criteria (6 checks):**
@@ -153,7 +153,7 @@ python src/scripts/validate_skill.py src/skills/<category>/<name>/
 Test auto-invocation:
 
 ```bash
-python src/scripts/test_triggering.py src/skills/<category>/<name>/
+python scripts/test_triggering.py skills/<category>/<name>/
 ```
 
 **Automatic tests:**

@@ -186,7 +186,7 @@ def customize_template(template: str, context: dict) -> str:
 Invoke `validate_rules.py`:
 
 ```bash
-python src/scripts/validate_rules.py .claude/
+python scripts/validate_rules.py .claude/
 ```
 
 ---

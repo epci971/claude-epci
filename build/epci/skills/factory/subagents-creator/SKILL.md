@@ -104,7 +104,7 @@ allowed-tools: [Read, Grep]  # MINIMUM NECESSARY
 ### Phase 4: Validation
 
 ```bash
-python src/scripts/validate_subagent.py src/agents/[name].md
+python scripts/validate_subagent.py agents/[name].md
 ```
 
 **Criteria:**

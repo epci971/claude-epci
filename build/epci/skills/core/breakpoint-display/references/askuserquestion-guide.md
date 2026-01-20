@@ -4,7 +4,7 @@
 
 Guide complet pour utiliser `AskUserQuestion` avec le skill `breakpoint-display`.
 
-**Référence:** Implementation en production dans `/brainstorm` (@src/commands/brainstorm.md)
+**Référence:** Implementation en production dans `/brainstorm`
 
 ## Basic Usage
 
@@ -299,6 +299,6 @@ The skill will:
 
 ## References
 
-- Brainstorm Implementation: @src/commands/brainstorm.md
-- Breakpoint Display Skill: @src/skills/core/breakpoint-display/SKILL.md
-- Template Examples: @src/skills/core/breakpoint-display/templates/
+- Brainstorm Implementation: voir `/brainstorm`
+- Breakpoint Display Skill: voir skill `breakpoint-display`
+- Template Examples: @templates/

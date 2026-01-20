@@ -1,0 +1,242 @@
+# Notion Configuration
+
+> Configuration for Notion integration in Promptor
+
+---
+
+## Local Configuration
+
+Notion credentials in `.claude/settings.local.json`:
+
+```json
+{
+  "notion": {
+    "token": "ntn_YOUR_INTEGRATION_TOKEN",
+    "tasks_database_id": "YOUR_TASKS_DATABASE_ID",
+    "default_project_id": "YOUR_DEFAULT_PROJECT_PAGE_ID"
+  }
+}
+```
+
+### Fields
+
+| Field | Description | Required | Validation |
+|-------|-------------|----------|------------|
+| `token` | Notion integration token (ntn_xxx) | **MANDATORY** | Non vide, format ntn_* |
+| `tasks_database_id` | Database ID where tasks are created | **MANDATORY** | UUID 32 chars |
+| `default_project_id` | Project page ID for task association | **MANDATORY** | UUID 32 chars |
+
+### ⚠️ IMPORTANT: Validation Stricte
+
+> **Tous les champs sont OBLIGATOIRES**. L'export Notion est **BLOQUÉ** si un champ est manquant ou vide.
+
+```
+⛔ INTERDIT: Export sans default_project_id → crée des tâches orphelines
+✅ REQUIS: Configurer les 3 champs AVANT d'utiliser /promptor
+```
+
+**Vérifier la config :**
+```bash
+python src/scripts/validate_notion_config.py
+```
+
+### How to Get IDs
+
+1. **Token**: Create integration at https://www.notion.so/profile/integrations
+2. **Database ID**: Open database in Notion, copy from URL after workspace name
+3. **Project ID**: Open project page, copy from URL
+
+---
+
+## Schema Caching (Auto-Discovery)
+
+> **NEW**: Promptor auto-discovers database schema to use correct property formats.
+
+### How It Works
+
+1. **First call**: Fetch database schema from Notion API
+2. **Cache**: Store schema in `.project-memory/cache/notion-schema.json`
+3. **Use**: Apply correct property types (select vs multi_select, etc.)
+4. **Refresh**: Auto-refresh if cache > 24h or on API error
+
+### Cache Location
+
+```
+.project-memory/cache/notion-schema.json
+```
+
+### Manual Refresh
+
+Delete the cache file to force schema refresh:
+
+```bash
+rm .project-memory/cache/notion-schema.json
+```
+
+### Fetch Schema Command
+
+```bash
+curl -s -X GET "https://api.notion.com/v1/databases/${DATABASE_ID}" \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "Notion-Version: 2022-06-28" | jq '.properties | to_entries | map({key: .key, value: .value.type}) | from_entries'
+```
+
+→ See [Schema Cache Reference](../references/schema-cache.md) for full implementation.
+
+---
+
+## Properties Mapping
+
+### Properties Filled by Promptor
+
+| Property | Source | Default |
+|----------|--------|---------|
+| `Nom` | Brief title | - |
+| `Description` | Brief content (markdown) | - |
+| `Type` | Auto-detected | "Tache" |
+| `Temps estimé` | Complexity (1/4/8) | 4 |
+| `État` | Fixed | "En attente" |
+| `DAY` | Fixed | "BACKLOG" |
+| `Projet` | Config default | From settings |
+
+### Properties Left to Notion AI
+
+- Priorité
+- Difficulté
+- Module
+- Étiquettes
+
+---
+
+## Type Values
+
+| Type Notion | Detection Keywords |
+|-------------|-------------------|
+| Tache | (default) |
+| Evolution | créer, ajouter, feature |
+| Bloquant | bug, fixer, corriger |
+| Backend | API, service, BDD |
+| Frontend | UI, composant, React |
+| Réunion | réunion, meeting |
+| Formation | formation, training |
+| Support | support, assistance |
+
+---
+
+## État Values (Status)
+
+### To-do
+- `En attente` ← **default for new tasks**
+- `A planifier`
+- `À analyser`
+
+### In progress
+- `En cours`
+- `En pause`
+- `Attente élément`
+
+### Complete
+- `Terminé`
+- `Annulé`
+
+---
+
+## DAY Values
+
+```
+BACKLOG, LUNDI, MARDI, MERCREDI, JEUDI, VENDREDI, SAMEDI, DIMANCHE
+```
+
+Default: `BACKLOG`
+
+---
+
+## Notion API (Direct)
+
+> **Note**: Uses direct API via curl instead of MCP due to serialization bug in MCP Notion.
+
+### Create Task
+
+Using Bash tool with curl:
+
+```bash
+curl -s -X POST 'https://api.notion.com/v1/pages' \
+  -H 'Authorization: Bearer {token}' \
+  -H 'Content-Type: application/json' \
+  -H 'Notion-Version: 2022-06-28' \
+  -d '{
+    "parent": {"database_id": "{tasks_database_id}"},
+    "properties": {
+      "Nom": {"title": [{"text": {"content": "Task title"}}]},
+      "Type": {"multi_select": [{"name": "Evolution"}]},
+      "Temps estimé": {"number": 4},
+      "DAY": {"multi_select": [{"name": "BACKLOG"}]},
+      "Projet": {"relation": [{"id": "{default_project_id}"}]}
+    },
+    "children": [
+      {"type": "callout", "callout": {"icon": {"emoji": "📦"}, "rich_text": [{"text": {"content": "Standard | ⏱️ 4h"}}]}},
+      {"type": "heading_2", "heading_2": {"rich_text": [{"text": {"content": "Objectif"}}]}},
+      {"type": "paragraph", "paragraph": {"rich_text": [{"text": {"content": "Description here..."}}]}},
+      {"type": "heading_2", "heading_2": {"rich_text": [{"text": {"content": "Exigences fonctionnelles"}}]}},
+      {"type": "bulleted_list_item", "bulleted_list_item": {"rich_text": [{"text": {"content": "Requirement 1"}}]}},
+      {"type": "heading_2", "heading_2": {"rich_text": [{"text": {"content": "Notes"}}]}},
+      {"type": "paragraph", "paragraph": {"rich_text": [{"text": {"content": "Additional notes..."}}]}}
+    ]
+  }'
+```
+
+### Property Formats
+
+| Property | Format |
+|----------|--------|
+| `title` | `{"title": [{"text": {"content": "..."}}]}` |
+| `multi_select` | `{"multi_select": [{"name": "Value"}]}` |
+| `number` | `{"number": 4}` |
+| `relation` | `{"relation": [{"id": "page_id"}]}` |
+| `rich_text` | `{"rich_text": [{"text": {"content": "..."}}]}` |
+
+### Block Types for Children
+
+| Block | Format |
+|-------|--------|
+| `heading_2` | `{"type": "heading_2", "heading_2": {"rich_text": [{"text": {"content": "..."}}]}}` |
+| `paragraph` | `{"type": "paragraph", "paragraph": {"rich_text": [{"text": {"content": "..."}}]}}` |
+| `bulleted_list_item` | `{"type": "bulleted_list_item", "bulleted_list_item": {"rich_text": [{"text": {"content": "..."}}]}}` |
+| `callout` | `{"type": "callout", "callout": {"icon": {"emoji": "📦"}, "rich_text": [{"text": {"content": "..."}}]}}` |
+
+### Response Handling
+
+On success, extract from response:
+- `id`: Page ID (for URL construction)
+- `properties.Identifiant de la tâche.unique_id.number`: Task number (QDT-xxx)
+- `url`: Direct Notion URL
+
+### Error Handling
+
+```bash
+# Check response for error
+if echo "$response" | grep -q '"object":"error"'; then
+  # Display brief for manual copy
+  echo "⚠️ Erreur Notion — Copier manuellement"
+fi
+```
+
+---
+
+## Fallback Behavior
+
+### Config Manquante → ERREUR (pas de fallback)
+
+Si configuration Notion incomplète :
+1. **STOP** — Export bloqué
+2. Message explicite : "⛔ Config Notion incomplète - Configurer settings.local.json"
+3. Afficher les champs manquants
+4. Ne PAS afficher le brief (forcer la correction config)
+
+### Erreur API → Fallback texte
+
+Si config OK mais erreur API Notion :
+1. Display brief as formatted text
+2. Show message: "⚠️ Erreur API Notion — Brief affiché pour copie manuelle"
+3. Log l'erreur pour diagnostic
+4. Continue session normally

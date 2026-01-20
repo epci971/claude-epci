@@ -89,7 +89,7 @@ OK (47 tests, 156 assertions)
 ## Post-Phase Hooks
 
 ```bash
-python3 src/hooks/runner.py post-phase-2 --context '{
+python3 hooks/runner.py post-phase-2 --context '{
   "phase": "phase-2",
   "feature_slug": "<slug>",
   "files_modified": [...],
