@@ -65,8 +65,8 @@ Elle transforme un brief brut en brief structuré et route vers le workflow appr
 |-----------|--------|-------------|
 | TINY | Brief inline | Réponse directe (pas de fichier) |
 | SMALL | Brief inline | Réponse directe (pas de fichier) |
-| STANDARD | Feature Document | `docs/features/<slug>.md` |
-| LARGE | Feature Document | `docs/features/<slug>.md` |
+| STANDARD | Feature Document | `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` |
+| LARGE | Feature Document | `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` |
 
 **Après génération**: Route automatiquement vers `/quick` (TINY/SMALL) ou `/epci` (STANDARD/LARGE).
 
@@ -114,7 +114,7 @@ ELSE:
 | `/brainstorm` | `docs/briefs/<slug>/brief-*.md` | Lire fichier, extraire brief structuré |
 | Fichier externe | `*.md` ou `@filepath` | Lire fichier, utiliser comme brief brut |
 
-**IMPORTANT:** Même avec input fichier depuis `/brainstorm`, Step 5 DOIT créer un Feature Document dans `docs/features/<slug>.md`. Le output brainstorm dans `docs/briefs/` est une **source**, pas le Feature Document final.
+**IMPORTANT:** Même avec input fichier depuis `/brainstorm`, Step 5 DOIT créer un Feature Document dans `docs/features/<slug>-<YYYYMMDD-HHmmss>.md`. Le output brainstorm dans `docs/briefs/` est une **source**, pas le Feature Document final.
 
 ---
 
@@ -401,13 +401,13 @@ Le skill retourne:
 ║                                                                              ║
 ║ ❌ SI output_path contient ".claude/plans" OU "~/.claude/plans":             ║
 ║    → ERREUR: Mauvais chemin détecté                                          ║
-║    → STOP et utiliser docs/features/<slug>.md à la place                     ║
+║    → STOP et utiliser docs/features/<slug>-<YYYYMMDD-HHmmss>.md à la place   ║
 ║                                                                              ║
 ║ ❌ SI tu es tenté d'utiliser EnterPlanMode:                                  ║
 ║    → ERREUR: Mauvais outil                                                   ║
 ║    → STOP et utiliser Write tool à la place                                  ║
 ║                                                                              ║
-║ ✅ SEUL chemin autorisé: docs/features/<slug>.md                             ║
+║ ✅ SEUL chemin autorisé: docs/features/<slug>-<YYYYMMDD-HHmmss>.md           ║
 ║ ✅ SEUL outil autorisé: Write tool                                           ║
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
@@ -418,7 +418,7 @@ Le skill retourne:
 | Catégorie | Action | Output |
 |-----------|--------|--------|
 | TINY/SMALL | Générer brief inline | Réponse directe |
-| STANDARD/LARGE | Créer Feature Document avec **Write tool** | `docs/features/<slug>.md` |
+| STANDARD/LARGE | Créer Feature Document avec **Write tool** | `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` |
 
 **CRITIQUE:**
 - Utiliser **Write tool**, PAS EnterPlanMode

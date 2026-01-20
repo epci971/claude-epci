@@ -10,7 +10,7 @@
 
 ### Step 1: Read Feature Document
 
-- Read `docs/features/<slug>.md` (created by `/brief` or Step 0.5)
+- Read `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` (created by `/brief` or Step 0.5)
 - Verify §1 is complete (if incomplete → error, suggest `/brief` first)
 - Extract from §1: identified files, stack, constraints, acceptance criteria
 - **Check if native plan exists** in §2 under "Plan Original (Natif)" section
@@ -47,7 +47,7 @@
 
 **Use Edit tool** (NOT EnterPlanMode) to update Feature Document.
 
-**Path:** `docs/features/<slug>.md` — **NOT** `~/.claude/plans/`
+**Path:** `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` — **NOT** `~/.claude/plans/`
 
 **Two scenarios:**
 - **Scenario A** (Native plan): Update "Plan Raffiné & Validé" section with atomic tasks

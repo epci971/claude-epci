@@ -57,7 +57,7 @@ User feedback is recorded for learning (F08).
 
 **Use Edit tool** (NOT EnterPlanMode) to update Feature Document.
 
-**Path:** `docs/features/<slug>.md`
+**Path:** `docs/features/<slug>-<YYYYMMDD-HHmmss>.md`
 
 ```markdown
 ## §3 — Implementation & Finalization

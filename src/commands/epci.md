@@ -55,9 +55,9 @@ Three-phase workflow with mandatory breakpoints:
 
 | Phase | Output | Location |
 |-------|--------|----------|
-| Phase 1 | §2 Implementation Plan | `docs/features/<slug>.md` |
-| Phase 2 | §3 Part 1 (Implementation) | `docs/features/<slug>.md` |
-| Phase 3 | §3 Part 2 (Finalization) + Commit Context | `docs/features/<slug>.md` + `.epci-commit-context.json` |
+| Phase 1 | §2 Implementation Plan | `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` |
+| Phase 2 | §3 Part 1 (Implementation) | `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` |
+| Phase 3 | §3 Part 2 (Finalization) + Commit Context | `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` + `.epci-commit-context.json` |
 
 ---
 
@@ -99,7 +99,7 @@ When `--turbo` flag is active:
 
 ## Feature Document
 
-**Location:** `docs/features/<feature-slug>.md` (created by `/brief`)
+**Location:** `docs/features/<feature-slug>-<YYYYMMDD-HHmmss>.md` (created by `/brief`)
 
 **Structure:** §1 (Brief), §2 (Plan), §3 (Implementation)
 
@@ -122,7 +122,7 @@ When `--turbo` flag is active:
 - Write to `~/.claude/plans/`
 - Display content without writing to file
 
-**Required path:** `docs/features/<slug>.md` (in project, not in ~/.claude/)
+**Required path:** `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` (in project, not in ~/.claude/)
 
 ---
 
@@ -186,11 +186,11 @@ Import a native Claude Code plan as base for Phase 1. Native plan is copied to F
 ### Step 1: Verify Feature Document Exists
 
 ```
-IF NOT exists(docs/features/<slug>.md):
+IF NOT exists(docs/features/<slug>-*.md):
   +--------------------------------------------------------------+
   | ERROR: Feature Document Not Found                            |
   +--------------------------------------------------------------+
-  | Expected: docs/features/<slug>.md                            |
+  | Expected: docs/features/<slug>-<YYYYMMDD-HHmmss>.md           |
   | -> Run `/brief "<feature description>"` first                |
   +--------------------------------------------------------------+
   ABORT workflow
@@ -233,7 +233,7 @@ IF missing_required_fields:
 
 ```
 IF all_checks_pass:
-  Feature Document validated: docs/features/<slug>.md
+  Feature Document validated: docs/features/<slug>-<YYYYMMDD-HHmmss>.md
   §1 Brief Fonctionnel: Complete
   -> Proceeding to Phase 1: Planification
 ```
@@ -264,7 +264,7 @@ IF all_checks_pass:
 
 **MANDATORY:** Use **Edit tool** to update Feature Document with §2 content.
 
-**Path:** `docs/features/<slug>.md` — **NOT** `~/.claude/plans/`
+**Path:** `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` — **NOT** `~/.claude/plans/`
 
 **Templates:** See @references/epci/feature-document-templates.md
 
@@ -505,7 +505,7 @@ python3 hooks/runner.py post-phase-3 --context '{...}'
 ---
 FEATURE COMPLETE
 
-Feature Document finalized: docs/features/<slug>.md
+Feature Document finalized: docs/features/<slug>-<YYYYMMDD-HHmmss>.md
 - Phase 1: Plan validated
 - Phase 2: Code implemented and reviewed
 - Phase 3: Documentation and commit validation

@@ -14,7 +14,7 @@ feat(scope): short description
 - Detail 1
 - Detail 2
 
-Refs: docs/features/<slug>.md
+Refs: docs/features/<slug>-<YYYYMMDD-HHmmss>.md
 ```
 
 ### Step 2: Documentation (via @doc-generator)
@@ -42,7 +42,7 @@ Refs: docs/features/<slug>.md
 
 **Use Edit tool** to **append** finalization content to §3.
 
-**Path:** `docs/features/<slug>.md`
+**Path:** `docs/features/<slug>-<YYYYMMDD-HHmmss>.md`
 
 ```markdown
 ### Documentation
@@ -70,7 +70,7 @@ Write `.epci-commit-context.json` to project root:
   "scope": "<scope from feature>",
   "description": "<description from plan>",
   "files": ["<list of modified files>"],
-  "featureDoc": "docs/features/<slug>.md",
+  "featureDoc": "docs/features/<slug>-<YYYYMMDD-HHmmss>.md",
   "breaking": false,
   "ticket": null
 }
@@ -170,7 +170,7 @@ git rev-parse --git-dir 2>/dev/null | grep -q "worktrees"
 ---
 FEATURE COMPLETE
 
-Feature Document finalized: docs/features/<slug>.md
+Feature Document finalized: docs/features/<slug>-<YYYYMMDD-HHmmss>.md
 - Phase 1: Plan validated
 - Phase 2: Code implemented and reviewed
 - Phase 3: Documentation and commit validation

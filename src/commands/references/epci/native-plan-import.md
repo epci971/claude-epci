@@ -52,7 +52,7 @@ IF file not found OR unreadable:
 
 ```
 status = {
-  "doc_exists": exists(docs/features/<slug>.md),
+  "doc_exists": exists(docs/features/<slug>-*.md),
   "section1_exists": contains_section("## §1 — Brief Fonctionnel"),
   "section1_complete": has_required_fields(§1)
 }
@@ -105,7 +105,7 @@ Use the exploration results to create a complete §1 Brief Fonctionnel with:
 
 **Action:** Write or update Feature Document with §1 and §2 (native plan)
 
-**Use Write or Edit tool** to create/update `docs/features/<slug>.md`:
+**Use Write or Edit tool** to create/update `docs/features/<slug>-<YYYYMMDD-HHmmss>.md`:
 
 ```markdown
 # Feature Document — [Title from native plan]
@@ -178,7 +178,7 @@ _[À remplir par Phases 2-3]_
 ```
 ✅ Native plan imported successfully
 
-📄 Feature Document: docs/features/<slug>.md
+📄 Feature Document: docs/features/<slug>-<YYYYMMDD-HHmmss>.md
   ├─ §1 Brief Fonctionnel: [CREATED from @Explore | EXISTING]
   └─ §2 Plan Original (Natif): IMPORTED
 

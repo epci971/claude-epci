@@ -49,7 +49,7 @@ Générer un brief structuré directement dans la réponse (pas de fichier cré�
 
 ## STANDARD/LARGE: Feature Document
 
-**OBLIGATOIRE:** Utiliser le **Write tool** (PAS EnterPlanMode, PAS mode plan natif) pour créer `docs/features/<slug>.md`
+**OBLIGATOIRE:** Utiliser le **Write tool** (PAS EnterPlanMode, PAS mode plan natif) pour créer `docs/features/<slug>-<YYYYMMDD-HHmmss>.md`
 
 ```markdown
 # Feature Document — [Title]
@@ -134,7 +134,7 @@ Générer un brief structuré directement dans la réponse (pas de fichier cré�
 | ❌ INCORRECT | ✅ CORRECT |
 |--------------|-----------|
 | EnterPlanMode tool | Write tool |
-| `~/.claude/plans/` | `docs/features/<slug>.md` |
+| `~/.claude/plans/` | `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` |
 | Plan natif Claude Code | Feature Document EPCI |
 
 **Raison**: Les Feature Documents EPCI sont des fichiers persistants dans le repo git pour traçabilité, pas des plans temporaires Claude Code.
@@ -151,12 +151,13 @@ IF output_path contains ".claude/plans":
    ║ Feature Documents must be saved in docs/features/             ║
    ║ NOT in ~/.claude/plans/                                       ║
    ║                                                               ║
-   ║ → Use Write tool with path: docs/features/<slug>.md           ║
+   ║ → Use Write tool with path: docs/features/<slug>-<ts>.md      ║
    ╚══════════════════════════════════════════════════════════════╝
    RETRY with correct path
 ```
 
 **Exigences du path**:
-- Path DOIT être `docs/features/<slug>.md` (dans répertoire projet)
+- Path DOIT être `docs/features/<slug>-<YYYYMMDD-HHmmss>.md` (dans répertoire projet)
 - Path NE DOIT PAS être `~/.claude/plans/` ou `.claude/plans/`
 - Tool DOIT être Write, PAS EnterPlanMode
+- Le timestamp utilise le format ISO: année-mois-jour-heure-minute-seconde

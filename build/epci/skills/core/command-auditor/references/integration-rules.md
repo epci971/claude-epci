@@ -199,7 +199,7 @@ Score all 6 personas using algorithm:
 ```markdown
 **Output Paths:**
 - TINY/SMALL → Inline brief (no file created)
-- STANDARD/LARGE → `docs/features/<slug>.md`
+- STANDARD/LARGE → `docs/features/<slug>-<YYYYMMDD-HHmmss>.md`
 ```
 
 **Required Information**:

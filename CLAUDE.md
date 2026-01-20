@@ -452,6 +452,8 @@ cd docs/specs/migration/
 
 ### Feature Document (STD/LARGE)
 
+**Emplacement**: `docs/features/<slug>-<YYYYMMDD-HHmmss>.md`
+
 ```markdown
 # Feature Document — [Titre]
 
@@ -461,6 +463,8 @@ cd docs/specs/migration/
 
 ## §3 — Implementation ← /epci Phases 2-3
 ```
+
+> **Note**: Le format de nommage avec horodatage (`<YYYYMMDD-HHmmss>`) est cohérent avec `/save-plan` et évite les collisions de fichiers.
 
 ---
 

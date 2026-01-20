@@ -400,7 +400,7 @@ def main():
     Main hook entry point.
 
     Auto-extracts rich information from:
-    1. Feature Document (docs/features/<slug>.md)
+    1. Feature Document (docs/features/<slug>-<YYYYMMDD-HHmmss>.md)
     2. Git (commit, branch, LOC)
     3. Context passed via stdin (overrides auto-extracted)
     """
