@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "summary": {
-    "total_features": 17,
+    "total_features": 18,
     "avg_time_tiny": null,
     "avg_time_small": null,
     "avg_time_standard": null,
@@ -22,7 +22,7 @@
       "avg_loc": null
     },
     "STANDARD": {
-      "count": 5,
+      "count": 6,
       "avg_time": null,
       "avg_files": null,
       "avg_loc": null
@@ -36,12 +36,6 @@
   },
   "trend": {
     "last_5_features": [
-      {
-        "slug": "brainstorm-techniques-s02",
-        "complexity": "STANDARD",
-        "estimated": "2h20",
-        "actual": "~1h"
-      },
       {
         "slug": "brainstorm-v42-s03",
         "complexity": "STANDARD",
@@ -65,9 +59,15 @@
         "complexity": "LARGE",
         "estimated": "10h",
         "actual": "8h"
+      },
+      {
+        "slug": "perplexity-integration",
+        "complexity": "STANDARD",
+        "estimated": null,
+        "actual": "45min"
       }
     ],
     "velocity_trend": "stable"
   },
-  "updated_at": "2026-01-13T16:14:20.191023Z"
+  "updated_at": "2026-01-20T16:59:21.177299Z"
 }

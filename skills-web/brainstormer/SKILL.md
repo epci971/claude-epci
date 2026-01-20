@@ -2,9 +2,9 @@
 name: brainstormer
 description: >-
   Intelligent brainstorming facilitator that guides ideation from vague concepts to structured deliverables.
-  Conducts iterative exploration with Socratic questioning, framework application, and web research.
+  Conducts iterative exploration with Socratic questioning, framework application, and Perplexity-powered research.
   Features EMS (Exploration Maturity Score) for real-time progress tracking, adaptive personas, and explicit divergent/convergent phases.
-  Generates comprehensive self-contained reports and exploration journals.
+  Generates optimized Perplexity prompts for web enrichment, then synthesizes results into exploration.
   Use when user says "brainstorm", "let's explore", "I have an idea", "help me think through",
   or needs structured ideation on features, projects, audits, decisions, problems, or strategy.
   Not for simple Q&A, direct task execution, or when user already has clear specifications.
@@ -24,6 +24,12 @@ Brainstormer transforms vague ideas into structured, actionable deliverables thr
 - **HMW auto-générés** : Questions "How Might We" en phase d'initialisation
 - **Pre-mortem** : Nouveau framework d'anticipation des risques
 - **Ancres EMS objectives** : Critères observables pour un scoring plus fiable
+
+**New in v3.1**:
+- **Recherches Perplexity** : Génération automatique de 3-5 prompts optimisés après les HMW
+- **Indicateur Deep Research** : 🔍 Standard vs 🔬 Deep Research selon la complexité
+- **Commande `research`** : Générer de nouvelles recherches en cours d'itération
+- **Contexte enrichi** : Les résultats Perplexity alimentent l'EMS et les itérations
 
 ## Decision Tree
 
@@ -53,6 +59,9 @@ This skill requires:
 - `conversation_search` tool: For searching user's conversation history
 - `present_files` tool: For delivering report and journal artifacts
 - Notion connector (optional): For direct export to Notion pages
+
+External tools (user-operated):
+- **Perplexity** (recommended): For enhanced web research with 🔍 Standard and 🔬 Deep Research modes. Brainstormer generates optimized prompts; user executes searches and injects results.
 
 ## Persona System (NEW v3.0)
 
@@ -177,6 +186,70 @@ Based on your need: "[problem reformulation]"
 ```
 
 **Disable with**: `--no-hmw`
+
+### Perplexity Research Generation (NEW v3.1)
+
+After HMW generation, Brainstormer automatically generates 3-5 optimized Perplexity prompts based on:
+- Validated brief content
+- Detected type (Technical/Business/Creative/Analytical)
+- Selected template
+- Generated HMW questions
+
+**Output format**:
+
+```markdown
+## 🔍 Recherches Perplexity
+
+Avant de poursuivre l'exploration, effectue ces recherches pour enrichir notre contexte :
+
+### R1 — [Catégorie] 🔍 Standard
+```
+[Prompt optimisé prêt à copier]
+```
+
+### R2 — [Catégorie] 🔬 Deep Research
+```
+[Prompt optimisé prêt à copier]
+```
+
+### R3 — [Catégorie] 🔍 Standard
+```
+[Prompt optimisé prêt à copier]
+```
+
+---
+📋 **Instructions** :
+1. Copie chaque prompt dans Perplexity (active Deep Research si indiqué 🔬)
+2. Colle les résultats ici avec le format :
+   ```
+   ### Résultat R1
+   [coller le résultat]
+   ```
+3. Tu peux faire toutes les recherches ou sélectionner les plus pertinentes
+4. Tape `skip` pour continuer sans recherches
+```
+
+**Research mode selection**:
+| Critère | 🔍 Standard | 🔬 Deep Research |
+|---------|-------------|------------------|
+| Question factuelle simple | ✓ | - |
+| Comparatif 2-3 options | ✓ | - |
+| État de l'art complet | - | ✓ |
+| Analyse multi-sources | - | ✓ |
+| Sujet technique complexe | - | ✓ |
+| Retours d'expérience détaillés | - | ✓ |
+
+**After results injection**:
+- Brainstormer acknowledges receipt and briefly synthesizes key insights
+- Context is enriched for all subsequent iterations
+- EMS baseline may be adjusted (+5-15 points on relevant axes)
+
+**Skip behavior**:
+- If user types `skip` or `continue sans recherche` → proceed normally
+- Command `research` remains available during iterations
+- Journal notes: "Recherches Perplexity : skipped"
+
+→ See [perplexity-patterns.md](references/perplexity-patterns.md) for complete prompt patterns
 
 **Brief Rejection Handling**:
 - If user rejects brief → Ask what should be modified
@@ -363,6 +436,7 @@ Quick mode can be exited anytime with `--full` to switch to standard mode.
 | `continue` | Proceed to next iteration |
 | `dive [topic]` | Deep dive on specific point |
 | `pivot` | Reorient brainstorming |
+| `research` | Generate new Perplexity prompts based on current exploration state (NEW v3.1) |
 | `diverge` | Switch to Divergent phase (NEW v3.0) |
 | `converge` | Switch to Convergent phase (NEW v3.0) |
 | `modes` | List personas and current mode (NEW v3.0) |
@@ -376,6 +450,12 @@ Quick mode can be exited anytime with `--full` to switch to standard mode.
 | `status` | Show current iteration, EMS, phase, persona, decisions made, open threads |
 | `--challenge` | Activate Devil's Advocate mode |
 | `--full` | Exit quick mode, switch to standard |
+
+**`research` command behavior** (NEW v3.1):
+- Analyzes current state: open threads, weak EMS axes, emerging questions
+- Generates 2-3 targeted Perplexity prompts for current needs
+- Same output format as initial research generation
+- User injects results, then continues iteration
 
 ### Persona Commands (NEW v3.0)
 
@@ -419,6 +499,10 @@ Quick mode can be exited anytime with `--full` to switch to standard mode.
 13. **Max 2 recommendations** — Don't overwhelm with suggestions
 14. **Persona signaling** — Always indicate persona changes with icon prefix (NEW v3.0)
 15. **Phase-aware behavior** — Adapt questions and focus based on current phase (NEW v3.0)
+16. **Perplexity after HMW** — Always generate research prompts after HMW, before EMS init (NEW v3.1)
+17. **Research mode indicators** — Always specify 🔍 Standard or 🔬 Deep Research for each prompt (NEW v3.1)
+18. **Wait for injection or skip** — Do not proceed to iterations until user injects results or skips (NEW v3.1)
+19. **Acknowledge Perplexity results** — Briefly synthesize key insights when results are injected (NEW v3.1)
 
 ## Error Handling
 
@@ -496,6 +580,7 @@ Brainstormer:
 
 ## Knowledge Base
 
+- [Perplexity Patterns](references/perplexity-patterns.md) — Research prompts generation and mode selection (NEW v3.1)
 - [Personas](references/personas.md) — 4 facilitation modes with auto-switch rules (NEW v3.0)
 - [EMS System](references/ems-system.md) — Scoring system with objective anchors + phase integration
 - [Categories & Detection](references/categories.md) — Type indicators and auto-detection logic
@@ -537,8 +622,9 @@ This skill does NOT:
 | 1.1.0 | 2025-01-12 | Added: Quick mode, Dependencies, Pivot criteria, Session guidance, Error handling, Brief rejection flow |
 | 2.0.0 | 2025-01-12 | Added: EMS system, Coaching mode, Contextual recommendations, Stagnation alerts, Min-score option |
 | 3.0.0 | 2025-01-22 | Added: 4 Personas with auto-switch, Divergent/Convergent phases, HMW generation, Pre-mortem framework, Objective EMS anchors, New templates (decision, problem, strategy), modes command |
+| 3.1.0 | 2025-01-20 | Added: Perplexity research generation (3-5 prompts after HMW), 🔍/🔬 mode indicators, `research` command for mid-iteration prompts, context enrichment from injected results |
 
-## Current: v3.0.0
+## Current: v3.1.0
 
 ## Owner
 

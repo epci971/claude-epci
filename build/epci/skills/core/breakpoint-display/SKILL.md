@@ -48,7 +48,7 @@ Tu DOIS afficher une boîte ASCII avec bordures `┌───┐` `└───�
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-**Types supportés :** validation, analysis, plan-review, decomposition, ems-status, diagnostic, interactive-plan, lightweight, info-only.
+**Types supportés :** validation, analysis, plan-review, decomposition, ems-status, diagnostic, interactive-plan, research-prompt, lightweight, info-only.
 
 ### Étape 3 : INVOQUER AskUserQuestion (si `ask` présent)
 
@@ -81,6 +81,7 @@ Retourner le choix utilisateur au workflow appelant.
 | **decomposition** | Table specs + menu modifications | ✅ Oui (2-level) | @templates/decomposition.md |
 | **diagnostic** | Root cause + solutions ranked | ✅ Oui | @templates/diagnostic.md |
 | **interactive-plan** | DAG + reorder + skip options | ✅ Oui | @templates/interactive-plan.md |
+| **research-prompt** | Recherche Perplexity (human-in-the-loop) | ✅ Oui | @templates/research-prompt.md |
 | **lightweight** | Auto-continue avec timeout 3s | ⚠️ Optionnel | @templates/lightweight.md |
 | **info-only** | Display metrics sans interaction | ❌ Non | @templates/info-only.md |
 | **ems-status** | EMS 5 axes + progression brainstorm | ❌ Non | @templates/ems-status.md |
@@ -188,7 +189,7 @@ Métriques + validations agents + preview prochaine phase.
 
 ### Type: analysis
 
-Questions clarification + suggestions + évaluation.
+Questions clarification + suggestions + évaluation + personas + MCP.
 
 ```typescript
 @skill:breakpoint-display
@@ -212,14 +213,30 @@ Questions clarification + suggestions + évaluation.
       risks: "Tester rollback en cas d'échec OAuth",
       stack_specific: "Configurer security.yaml avec firewall OAuth"
     },
+    personas: {
+      active: [
+        {name: "backend", score: 0.72, source: "auto"},
+        {name: "security", score: 0.65, source: "auto"}
+      ],
+      suggested: [
+        {name: "qa", score: 0.48}
+      ]
+    },
+    mcp_servers: {
+      active: [
+        {server: "c7", source: "backend"},
+        {server: "seq", source: "security"}
+      ],
+      available: ["magic", "play"]
+    },
     evaluation: {
       category: "STANDARD",
       files: 8,
       loc_estimate: 450,
       risk: "MEDIUM",
-      flags: ["--think", "--uc"]
+      flags: ["--think", "--uc", "--persona-backend", "--persona-security", "--c7", "--seq"]
     },
-    recommended_command: "/epci --think --uc"
+    recommended_command: "/epci --think --uc --c7 --seq"
   }
   ask: {
     question: "Comment souhaitez-vous procéder avec cette analyse ?"

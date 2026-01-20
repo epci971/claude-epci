@@ -1,0 +1,44 @@
+{
+  "slug": "perplexity-integration",
+  "title": "Intégration Perplexity Research",
+  "created_at": "2026-01-20T16:59:21.135740Z",
+  "complexity": "STANDARD",
+  "completed_at": "2026-01-20T16:59:21.135740Z",
+  "complexity_score": 0.5,
+  "files_modified": [
+    "src/skills/core/perplexity-research/SKILL.md",
+    "src/skills/core/perplexity-research/references/triggers.md",
+    "src/skills/core/perplexity-research/references/prompt-templates.md",
+    "src/skills/core/breakpoint-display/templates/research-prompt.md",
+    "src/skills/core/breakpoint-display/SKILL.md",
+    "src/skills/core/breakpoint-display/references/execution-templates.md",
+    "src/commands/brief.md",
+    "src/commands/debug.md",
+    "src/commands/brainstorm.md",
+    "CLAUDE.md"
+  ],
+  "files_created": 0,
+  "files_updated": 10,
+  "loc_added": 1215,
+  "loc_removed": 91,
+  "tests_created": 7,
+  "test_coverage": null,
+  "estimated_time": null,
+  "actual_time": "45min",
+  "phases": {
+    "phase_1": "2026-01-20T16:59:21.135740Z",
+    "phase_2": "2026-01-20T16:59:21.135740Z",
+    "phase_3": "2026-01-20T16:59:21.135740Z"
+  },
+  "agents_used": [],
+  "issues_found": {
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "details": []
+  },
+  "related_features": [],
+  "feature_document": "/home/epci/apps/claude-epci/docs/features/perplexity-integration.md",
+  "commit_hash": "0d7da73",
+  "branch": "master"
+}

@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.3.11 | **Date** : Janvier 2025
+> **Version** : 5.4.0 | **Date** : Janvier 2025
 
 ---
 
@@ -17,7 +17,7 @@ EPCI (Explore → Plan → Code → Inspect) structure le développement en phas
 | **Traçabilité**     | Feature Document comme fil rouge                              |
 | **MCP Integration** | 5 serveurs externes (Context7, Sequential, Magic, Playwright, Notion) |
 
-### Nouveautés v5.3.11 (Perplexity Research Integration)
+### Nouveautés v5.4.0 (Perplexity Research Integration)
 
 - **Nouveau skill `perplexity-research`** : Recherche externe via Perplexity Pro (human-in-the-loop)
 - **Nouveau type breakpoint `research-prompt`** : Affiche prompt copyable avec mode Standard/Deep Research

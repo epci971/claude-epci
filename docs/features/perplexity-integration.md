@@ -232,10 +232,10 @@ brainstorm.md: PASSED (5/5 checks)
 4. **Integration points**: 3 commands support Perplexity research
 5. **Backward compatible**: Commands work without research (optional feature)
 
-### Commit Context
+### Commit
 
-Ready for commit with message:
 ```
+commit 0d7da73
 feat(skills): add perplexity-research skill for external research integration
 
 - Create perplexity-research skill with SKILL.md + references/
@@ -244,4 +244,27 @@ feat(skills): add perplexity-research skill for external research integration
 - Human-in-the-loop workflow: prompt generation, no API needed
 - Support Standard and Deep Research modes
 - Update CLAUDE.md to v5.3.11 (35 skills, 10 breakpoint types)
+
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 ```
+
+### Finalization
+
+| Metric | Value |
+|--------|-------|
+| **Files Changed** | 10 (4 created, 6 modified) |
+| **Lines Added** | ~1879 |
+| **Commit** | 0d7da73 |
+| **Version** | 5.3.11 |
+| **Skills** | 35 |
+| **Breakpoint Types** | 10 |
+
+### Acceptance Criteria Status
+
+- [x] Skill `perplexity-research` créé avec triggers détection (library, bug, architecture, best-practices, market)
+- [x] Nouveau type breakpoint `research-prompt` fonctionnel dans breakpoint-display
+- [x] `/brief` modifié — Step 2.1 research optionnel après @Explore
+- [x] `/debug` modifié — Step 1.2 étendu avec perplexity fallback
+- [x] `/brainstorm` modifié — Phase 1 (market) + Phase 2 (axes faibles)
+- [x] CLAUDE.md mis à jour (35 skills)
+- [x] Validation scripts passent (`validate_skill.py`, `validate_command.py`)
