@@ -158,8 +158,8 @@ Based on detection, select templates from skill stack folders:
 
 **Template paths (Read with Read tool):**
 ```
-src/skills/stack/<stack>/rules-templates/
-src/skills/core/rules-generator/templates/  (global templates)
+${CLAUDE_PLUGIN_ROOT}/skills/stack/<stack>/rules-templates/
+${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/templates/  (global templates)
 ```
 
 ---
@@ -176,7 +176,7 @@ mkdir -p .claude/rules
 
 #### 3.2 Generate CLAUDE.md
 
-Read template from `skills/core/rules-generator/templates/claude-md.md` using Read tool.
+Read template from `${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/templates/claude-md.md` using Read tool.
 
 **Variables to substitute:**
 - `{{project_name}}` → From `.project-memory/context.json` or directory name
@@ -209,7 +209,7 @@ Template: testing-pytest.md → Output: .claude/rules/testing-pytest.md
 
 #### 3.4 Generate Global Rules
 
-Read from `skills/core/rules-generator/templates/` using Read tool:
+Read from `${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/templates/` using Read tool:
 - `global-quality.md` → `.claude/rules/global-quality.md`
 - `global-git-workflow.md` → `.claude/rules/global-git-workflow.md`
 - `domain-glossary.md` → `.claude/rules/domain-glossary.md` (if domain terms detected)

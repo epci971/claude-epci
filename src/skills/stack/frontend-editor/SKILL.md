@@ -85,7 +85,7 @@ export default {
 | 6 | 24px | Card padding |
 | 8 | 32px | Layout gaps |
 
--> See `references/tailwind-conventions.md` for full token system
+-> See `${CLAUDE_PLUGIN_ROOT}/skills/stack/frontend-editor/references/tailwind-conventions.md` for full token system
 
 ## Component Variants
 
@@ -120,7 +120,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 ```
 
--> See `references/components-catalog.md` for implementation examples
+-> See `${CLAUDE_PLUGIN_ROOT}/skills/stack/frontend-editor/references/components-catalog.md` for implementation examples
 
 ## Accessibility (WCAG 2.1 AA)
 
@@ -155,7 +155,7 @@ focus:ring-primary-500
 <a href="#main" class="sr-only focus:not-sr-only">Skip to main</a>
 ```
 
--> See `references/accessibility.md` for complete WCAG checklist
+-> See `${CLAUDE_PLUGIN_ROOT}/skills/stack/frontend-editor/references/accessibility.md` for complete WCAG checklist
 
 ## Responsive Design
 

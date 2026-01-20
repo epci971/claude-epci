@@ -419,14 +419,14 @@ Boucle jusqu'a `finish`:
 
 **MANDATORY: Use Write tool to create BOTH files using official templates.**
 
-**Templates obligatoires** (dans `skills/core/brainstormer/references/`):
+**Templates obligatoires** (dans `${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/`):
 - `brief-format.md` — Structure PRD v3.0 (Industry Standards Compliant)
 - Section Journal d'Exploration dans le meme fichier
 
 1. **@planner** (si pas preview fait OU EMS >= 70)
 2. **@security-auditor** (si patterns auth ET pas preview)
 3. Create directory: `mkdir -p ./docs/briefs/[slug]`
-4. **Lire template**: `Read skills/core/brainstormer/references/brief-format.md`
+4. **Lire template**: `Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/brief-format.md`
 5. **Section-by-section validation** (si pas --quick/--turbo)
 6. Write `brief-[slug]-[date].md` — **DOIT suivre la structure PRD v3.0**
 7. Write `journal-[slug]-[date].md` — **DOIT suivre le Template Journal d'Exploration**

@@ -772,3 +772,26 @@ claude "/ralph-exec"
 | `(decompose)` | Décomposition PRD | `fix(decompose): backlog format` |
 | `(agents)` | Subagents | `feat(agents): add rule-clarifier` |
 | `(hooks)` | Système hooks | `fix(hooks): post-phase-3 memory` |
+
+### Convention `${CLAUDE_PLUGIN_ROOT}` pour chemins de fichiers
+
+**RÈGLE OBLIGATOIRE** : Toutes les instructions `Read` et références aux fichiers du plugin DOIVENT utiliser la variable `${CLAUDE_PLUGIN_ROOT}`.
+
+**Pourquoi ?** Le plugin est installé dans `~/.claude/plugins/cache/.../epci/` et les chemins relatifs ne fonctionnent pas depuis le projet utilisateur.
+
+**Documentation officielle Claude Code** :
+> `${CLAUDE_PLUGIN_ROOT}` contient le chemin absolu vers le répertoire du plugin. Utilisez cette variable dans les hooks, serveurs MCP et scripts pour garantir des chemins corrects **quel que soit le lieu d'installation**.
+
+**Syntaxe correcte** :
+
+| Type | ✅ Correct | ❌ Incorrect |
+|------|-----------|-------------|
+| Read CSV | `Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/techniques.csv` | `Read skills/core/.../techniques.csv` |
+| Read template | `Read ${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/templates/claude-md.md` | `Read templates/claude-md.md` |
+| See doc | `See ${CLAUDE_PLUGIN_ROOT}/skills/stack/python-django/references/architecture.md` | `See references/architecture.md` |
+
+**Rappel pour les développeurs** :
+Lors de la création de nouveaux skills/agents/commands, toujours utiliser :
+```
+${CLAUDE_PLUGIN_ROOT}/skills/<category>/<skill-name>/references/<file>.md
+```

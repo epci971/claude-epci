@@ -30,7 +30,7 @@ with delta since last evaluation.
 
 ## Process
 
-1. **Read** the EMS system definition from `skills/core/brainstormer/references/ems-system.md`
+1. **Read** the EMS system definition from `${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/ems-system.md`
 2. **Evaluate** each of the 5 axes (0-100 scale):
    - Clarte (25%) — Precision du besoin
    - Profondeur (20%) — Niveau de detail

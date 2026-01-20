@@ -37,7 +37,7 @@ Extraire : `type`, `title`, `data`, `ask` (optionnel).
 
 **⚠️ OBLIGATOIRE** : Tu DOIS lire le fichier template correspondant au type AVANT d'afficher.
 
-**Fichier template** : `references/execution-templates.md` (dans le même dossier que ce SKILL.md)
+**Fichier template** : `${CLAUDE_PLUGIN_ROOT}/skills/core/breakpoint-display/references/execution-templates.md`
 
 **Sections à trouver selon le type :**
 
@@ -56,15 +56,13 @@ Extraire : `type`, `title`, `data`, `ask` (optionnel).
 
 **INSTRUCTION CONCRÈTE :**
 ```
-1. Localiser ce skill (SKILL.md) dans le projet
-2. Lire le fichier references/execution-templates.md (même dossier)
-3. Trouver la section "Template: {type}"
-4. Afficher la boîte ASCII en substituant les variables {data.xxx} par les valeurs réelles
+1. Lire le fichier ${CLAUDE_PLUGIN_ROOT}/skills/core/breakpoint-display/references/execution-templates.md
+2. Trouver la section "Template: {type}"
+3. Afficher la boîte ASCII en substituant les variables {data.xxx} par les valeurs réelles
 ```
 
-**Chemins selon contexte :**
-- Repo dev : `src/skills/core/breakpoint-display/references/execution-templates.md`
-- Plugin installé : `skills/core/breakpoint-display/references/execution-templates.md`
+**Chemin :**
+`${CLAUDE_PLUGIN_ROOT}/skills/core/breakpoint-display/references/execution-templates.md`
 
 Tu DOIS afficher une boîte ASCII avec bordures `┌───┐` `└───┘` selon le template.
 
