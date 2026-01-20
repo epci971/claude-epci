@@ -332,7 +332,7 @@ Utiliser le skill `breakpoint-display` avec type `plan-review` pour afficher le 
 
 Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
 
-> Référence: @src/skills/core/breakpoint-display/templates/plan-review.md
+> Référence: template `plan-review` du skill `breakpoint-display`
 
 **Attendre réponse utilisateur et traiter selon choix:**
 - **Continuer (Recommended)**: Passer à Phase 2
@@ -377,7 +377,7 @@ Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuest
        test_file: "{test_file}"
        stack: "{detected_stack}"
    ```
-   > Voir @src/skills/core/tdd-workflow/SKILL.md pour state machine complete.
+   > Voir documentation du skill `tdd-workflow` pour state machine complete.
 
 2. **Reviews** — @code-reviewer, @security-auditor*, @qa-reviewer*
 3. **Fix issues** — Address Critical/Important findings
@@ -454,7 +454,7 @@ Utiliser le skill `breakpoint-display` avec type `plan-review` pour afficher le 
 
 Le skill affichera le breakpoint avec interface native Claude Code (AskUserQuestion).
 
-> Référence: @src/skills/core/breakpoint-display/templates/plan-review.md
+> Référence: template `plan-review` du skill `breakpoint-display`
 
 **Attendre réponse utilisateur et traiter selon choix:**
 - **Continuer (Recommended)**: Passer à Phase 3

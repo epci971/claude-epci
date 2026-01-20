@@ -192,7 +192,7 @@ THEN:
 
 **Si résultats collés:** Intégrer dans l'analyse pour améliorer le thought tree.
 
-> Voir @src/skills/core/perplexity-research/SKILL.md pour détails complets.
+> Voir documentation du skill `perplexity-research` pour détails complets.
 
 #### Step 1.3: Build Thought Tree
 

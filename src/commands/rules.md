@@ -156,7 +156,7 @@ Based on detection, select templates from skill stack folders:
 | Frontend (Tailwind)      | `frontend-editor/rules-templates/styling-tailwind.md`, etc. |
 | Monorepo (Django+React)  | Django templates + React templates + Frontend templates     |
 
-**Template paths:**
+**Template paths (Read with Read tool):**
 ```
 src/skills/stack/<stack>/rules-templates/
 src/skills/core/rules-generator/templates/  (global templates)
@@ -176,7 +176,7 @@ mkdir -p .claude/rules
 
 #### 3.2 Generate CLAUDE.md
 
-Use template from `src/skills/core/rules-generator/templates/claude-md.md`
+Read template from `src/skills/core/rules-generator/templates/claude-md.md` using Read tool.
 
 **Variables to substitute:**
 - `{{project_name}}` → From `.project-memory/context.json` or directory name
@@ -209,7 +209,7 @@ Template: testing-pytest.md → Output: .claude/rules/testing-pytest.md
 
 #### 3.4 Generate Global Rules
 
-From `src/skills/core/rules-generator/templates/`:
+Read from `src/skills/core/rules-generator/templates/` using Read tool:
 - `global-quality.md` → `.claude/rules/global-quality.md`
 - `global-git-workflow.md` → `.claude/rules/global-git-workflow.md`
 - `domain-glossary.md` → `.claude/rules/domain-glossary.md` (if domain terms detected)

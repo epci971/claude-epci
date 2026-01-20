@@ -232,8 +232,8 @@ Since the Feature Document was just created or updated, the prerequisite check s
 
 ## Related Documentation
 
-- **Main command**: `src/commands/epci.md`
-- **Brief workflow**: `src/commands/brief.md`
+- **Main command**: `/epci`
+- **Brief workflow**: `/brief`
 - **@Explore agent**: Native Claude Code agent
-- **@plan-validator**: `src/agents/plan-validator.md`
-- **Project memory**: `src/skills/core/project-memory/SKILL.md`
+- **@plan-validator**: subagent `plan-validator`
+- **Project memory**: skill `project-memory`

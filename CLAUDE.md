@@ -606,27 +606,50 @@ cd docs/specs/migration/
 | Skills    | dossier/SKILL.md | `php-symfony/SKILL.md` |
 | Scripts   | snake_case.py    | `validate_skill.py`    |
 
-### Références de fichiers
+### Références et invocations
 
-Pour référencer un fichier dans une commande ou un skill, utiliser la syntaxe `@` de Claude Code :
+#### Convention de référencement des Skills (v5.4.1)
+
+| Usage | Pattern | Exemple |
+|-------|---------|---------|
+| **Invoquer** un skill | `@skill:{name}` (YAML block) | `@skill:breakpoint-display` |
+| **Documenter** un skill | Mention textuelle | `Voir documentation du skill \`tdd-workflow\`` |
+| **Référencer** une doc locale | `@references/...` | `@references/brief/turbo-mode.md` |
+| **Lire** un template (Read tool) | Chemin complet | `Read src/skills/core/rules-generator/templates/...` |
+
+**Invocation skill (format YAML) :**
+```yaml
+@skill:breakpoint-display
+  type: validation
+  title: "..."
+  data: {...}
+  ask: {...}
+```
+
+**Référence documentaire (texte) :**
+```markdown
+> Voir documentation du skill `complexity-calculator` pour la formule complète.
+```
+
+**Anti-patterns à éviter :**
+
+| ❌ Incorrect | ✅ Correct |
+|--------------|------------|
+| `@src/skills/core/tdd-workflow/SKILL.md` | `skill \`tdd-workflow\`` |
+| `src/skills/mcp/SKILL.md` | `skill \`mcp\`` |
+| `Voir @src/skills/...` | `Voir documentation du skill \`...\`` |
+
+**Exception** : Les chemins physiques sont acceptés pour les instructions Read tool (templates à lire).
+
+#### Références de fichiers locaux
+
+Pour référencer un fichier de documentation locale (pas un skill) :
 
 | Correct | Incorrect |
 |---------|-----------|
-| `See @references/brainstorm/commands.md` | `` See `references/brainstorm/commands.md` `` |
-| `See @src/skills/core/epci-core/SKILL.md` | `See [SKILL.md](src/skills/core/epci-core/SKILL.md)` |
-| `Consulte @docs/architecture.md` | `` Consulte `docs/architecture.md` `` |
-
-**Exemples d'usage :**
-```markdown
-## Architecture
-Consulte notre architecture dans @docs/architecture.md
-
-## Patterns
-Les patterns à suivre sont définis dans @src/patterns/index.ts
-
-## Compare ces fichiers
-Compare @src/old-version.js avec @src/new-version.js
-```
+| `@references/brainstorm/commands.md` | `src/commands/references/brainstorm/commands.md` |
+| `@references/epci/phase-1-planning.md` | `@src/commands/references/epci/...` |
+| `@docs/architecture.md` | Chemin absolu avec src/ |
 
 ### Limites tokens
 

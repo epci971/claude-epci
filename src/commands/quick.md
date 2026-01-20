@@ -129,7 +129,7 @@ Collecte rapide du contexte et verification de la complexite via skill.
    - SI category == TINY/SMALL → Continuer workflow
 4. Stocker category pour resume final
 
-> Voir @src/skills/core/complexity-calculator/SKILL.md pour details.
+> Voir documentation du skill `complexity-calculator` pour details.
 
 ### [P] PLAN Phase (10-15s)
 
@@ -185,7 +185,7 @@ Execution des taches d'implementation.
   - REFACTOR: Skip (optionnel pour vitesse)
 - SI erreur: Reessayer (max 2x), activer recovery du skill
 
-> Voir @src/skills/core/tdd-workflow/SKILL.md pour integration /quick.
+> Voir documentation du skill `tdd-workflow` pour integration /quick.
 
 ### [T] TEST Phase (5-10s)
 
@@ -206,7 +206,7 @@ Verification de la correction de l'implementation.
 - Verification lint/format integree
 - SI echec tests: Activer recovery du skill (max 2 retries)
 
-> Voir @src/skills/core/tdd-workflow/SKILL.md pour error recovery.
+> Voir documentation du skill `tdd-workflow` pour error recovery.
 
 > Voir @references/quick/epct-workflow.md pour le detail complet de chaque phase.
 

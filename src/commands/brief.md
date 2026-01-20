@@ -57,7 +57,7 @@ Elle transforme un brief brut en brief structuré et route vers le workflow appr
 
 **Auto-activation**: Les flags MCP sont auto-activés selon les personas détectés (voir Step 3.5).
 
-> Voir @src/commands/references/brief/turbo-mode.md pour les instructions détaillées du mode --turbo.
+> Voir @references/brief/turbo-mode.md pour les instructions détaillées du mode --turbo.
 
 ## Output
 
@@ -70,7 +70,7 @@ Elle transforme un brief brut en brief structuré et route vers le workflow appr
 
 **Après génération**: Route automatiquement vers `/quick` (TINY/SMALL) ou `/epci` (STANDARD/LARGE).
 
-> Voir @src/commands/references/brief/output-templates.md pour les templates détaillés.
+> Voir @references/brief/output-templates.md pour les templates détaillés.
 
 ## Process
 
@@ -122,7 +122,7 @@ ELSE:
 
 **BREAKPOINT OBLIGATOIRE** — Toujours affiché pour valider le besoin AVANT exploration.
 
-> Voir @src/commands/references/brief/reformulation-process.md pour la logique détaillée de reformulation.
+> Voir @references/brief/reformulation-process.md pour la logique détaillée de reformulation.
 
 **Invoquer le skill breakpoint-display :**
 
@@ -227,7 +227,7 @@ THEN:
 
 **Si recherche proposée:** Le skill affiche un breakpoint `research-prompt`, l'utilisateur effectue la recherche dans Perplexity et colle les résultats, qui sont intégrés au contexte.
 
-> Voir @src/skills/core/perplexity-research/SKILL.md pour détails complets.
+> Voir documentation du skill `perplexity-research` pour détails complets.
 
 ---
 
@@ -262,7 +262,7 @@ Le skill retourne:
 - `flags_recommended`: [flags]
 - `warnings`: [warnings]
 
-> Voir @src/skills/core/complexity-calculator/SKILL.md pour la formule complète et les seuils.
+> Voir documentation du skill `complexity-calculator` pour la formule complète et les seuils.
 
 **Auto-Activation Flags** (basé sur le résultat du skill):
 
@@ -292,7 +292,7 @@ Le skill retourne:
 
 #### 3.4 Détection Persona (F09)
 
-- Scorer les 6 personas avec algorithme depuis `src/skills/personas/SKILL.md`
+- Scorer les 6 personas avec algorithme du skill `personas`
 - `Score = (keywords × 0.4) + (files × 0.4) + (stack × 0.2)`
 - Si score > 0.6: Auto-activer persona
 - Si score 0.4-0.6: Suggérer persona dans breakpoint
@@ -304,7 +304,7 @@ Le skill retourne:
 - Vérifier triggers keywords dans texte brief
 - Vérifier triggers patterns fichiers dans fichiers impactés
 - Vérifier triggers flags (`--c7`, `--seq`, `--magic`, `--play`, `--think-hard`)
-- Auto-activer MCPs selon matrice `src/skills/mcp/SKILL.md`
+- Auto-activer MCPs selon matrice du skill `mcp`
 - Inclure flags MCP actifs dans ligne FLAGS: `--c7 (auto: architect)`
 
 ---
@@ -390,7 +390,7 @@ Le skill retourne:
 
 **NE PAS IGNORER CETTE ÉTAPE** — OBLIGATOIRE de générer l'output approprié selon complexité.
 
-> Voir @src/commands/references/brief/output-templates.md pour les templates détaillés et instructions critiques.
+> Voir @references/brief/output-templates.md pour les templates détaillés et instructions critiques.
 
 ```
 ╔══════════════════════════════════════════════════════════════════════════════╗

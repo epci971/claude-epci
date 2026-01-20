@@ -185,7 +185,7 @@ THEN:
 
 **Si résultats collés:** Intégrer dans le contexte pour enrichir les HMW et questions de cadrage.
 
-> Voir @src/skills/core/perplexity-research/SKILL.md pour détails complets.
+> Voir documentation du skill `perplexity-research` pour détails complets.
 
 ### Phase 2 — Iterations
 
@@ -299,7 +299,7 @@ Boucle jusqu'a `finish`:
    - Recherche déjà proposée pour cet axe dans cette session
    - Flag `--no-research` (si implémenté)
 
-   > Voir @src/skills/core/perplexity-research/SKILL.md pour détails complets.
+   > Voir documentation du skill `perplexity-research` pour détails complets.
 
 4. **Afficher breakpoint status** (via skill):
    ```yaml
@@ -573,7 +573,7 @@ Forcer manuellement: commande `energy`
 ## Skill Reference
 
 Pour les details complets (EMS system, personas, techniques, formats):
-- Skill: `brainstormer` (`src/skills/core/brainstormer/SKILL.md`)
+- Skill: `brainstormer`
 
 ## Output
 
@@ -655,7 +655,7 @@ Les breakpoints `ems-status`, `plan-review`, et `analysis` incluent un champ `su
 | `coverage-low` | Coverage < 40 | P2 |
 | `decisions-pending` | Decisions < 40 | P2 |
 
-Voir @src/skills/core/proactive-suggestions/SKILL.md pour le catalogue complet.
+Voir documentation du skill `proactive-suggestions` pour le catalogue complet.
 
 ### Learning
 

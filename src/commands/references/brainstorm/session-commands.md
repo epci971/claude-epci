@@ -92,4 +92,4 @@ Les sessions sont stockees dans:
 .project-memory/brainstorm-sessions/[slug].yaml
 ```
 
-Format defini dans `src/skills/core/brainstormer/references/session-format.md`.
+Format defini dans le skill `brainstormer` (references/session-format.md).

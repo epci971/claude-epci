@@ -84,9 +84,9 @@ The `--large` flag is an alias for `--think-hard --wave`.
 
 ## See Also
 
-- Full flags: `src/settings/flags.md`
-- Breakpoint metrics: `src/skills/core/breakpoint-metrics/SKILL.md`
-- MCP servers: `src/skills/mcp/SKILL.md`
+- Full flags: @references/shared/flags.md
+- Breakpoint metrics: skill `breakpoint-metrics`
+- MCP servers: skill `mcp`
 - Feature templates: @references/epci/feature-document-templates.md
 
 ---
