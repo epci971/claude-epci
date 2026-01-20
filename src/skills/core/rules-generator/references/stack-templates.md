@@ -3,7 +3,7 @@
 ## Overview
 
 This document indexes all available rule templates organized by stack.
-Templates are located in `src/skills/stack/{stack}/rules-templates/`.
+Templates are located in `skills/stack/{stack}/rules-templates/`.
 
 ---
 

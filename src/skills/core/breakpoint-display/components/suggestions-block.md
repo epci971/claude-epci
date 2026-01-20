@@ -138,4 +138,4 @@ Used by breakpoint types:
 - `decomposition` (optional)
 - `diagnostic` (optional)
 
-See @src/skills/core/proactive-suggestions/SKILL.md for pattern catalog.
+See skill `proactive-suggestions` for pattern catalog.

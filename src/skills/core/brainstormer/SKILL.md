@@ -132,8 +132,8 @@ Toujours afficher le Finalization Checkpoint et attendre le choix explicite.
 **MANDATORY: Load techniques from CSV, not deprecated .md files.**
 
 ```
-Read src/skills/core/brainstormer/references/techniques.csv
-Read src/skills/core/brainstormer/references/technique-mapping.md
+Read skills/core/brainstormer/references/techniques.csv
+Read skills/core/brainstormer/references/technique-mapping.md
 ```
 
 **11 Categories (68 Techniques):**
@@ -327,7 +327,7 @@ Sections PRD avec exemples de questions :
 - Format cohérent avec /brief et /epci
 - UI native Claude Code avec boutons
 
-Voir `src/skills/core/breakpoint-display/templates/ems-status.md` pour détails du rendu.
+Voir template `ems-status.md` du skill `breakpoint-display` pour détails du rendu.
 
 ## Finalization Checkpoint (v5.3 — via @skill:breakpoint-display)
 
@@ -394,7 +394,7 @@ Output integre dans brief section "Security Considerations".
 
 **CRITICAL: Before generating, ALWAYS read the template:**
 ```
-Read src/skills/core/brainstormer/references/brief-format.md
+Read skills/core/brainstormer/references/brief-format.md
 ```
 
 1. Create directory: `mkdir -p ./docs/briefs/[slug]`

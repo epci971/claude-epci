@@ -5,7 +5,7 @@
 ## Hook Execution
 
 ```bash
-python3 src/hooks/runner.py <hook-type> --context '{...}'
+python3 hooks/runner.py <hook-type> --context '{...}'
 ```
 
 ## Available Hooks
@@ -46,7 +46,7 @@ python3 src/hooks/runner.py <hook-type> --context '{...}'
 **⚠️ CRITICAL:** Must execute after /epci and /quick to save history.
 
 ```bash
-python3 src/hooks/runner.py post-phase-3 --context '{
+python3 hooks/runner.py post-phase-3 --context '{
   "phase": "phase-3",
   "feature_slug": "<slug>",
   "complexity": "<complexity>",

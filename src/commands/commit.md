@@ -148,7 +148,7 @@ fi
 **🪝 Execute `pre-commit` hooks** (unless `--no-hooks`):
 
 ```bash
-python3 src/hooks/runner.py pre-commit --context '{
+python3 hooks/runner.py pre-commit --context '{
   "phase": "commit",
   "source": "<source>",
   "files_modified": [...],
@@ -237,7 +237,7 @@ python3 src/hooks/runner.py pre-commit --context '{
 **🪝 Execute `post-commit` hooks** (unless `--no-hooks`):
 
 ```bash
-python3 src/hooks/runner.py post-commit --context '{
+python3 hooks/runner.py post-commit --context '{
   "phase": "commit",
   "source": "<source>",
   "commit_hash": "<hash>",

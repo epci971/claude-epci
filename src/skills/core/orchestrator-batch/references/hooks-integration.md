@@ -73,7 +73,7 @@ custom automation, notifications, and integrations.
 Hooks are invoked using the standard hook runner:
 
 ```bash
-python3 src/hooks/runner.py post-spec --context '{
+python3 hooks/runner.py post-spec --context '{
   "hook_type": "post-spec",
   "spec_id": "S01",
   "status": "success",

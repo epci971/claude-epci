@@ -276,7 +276,7 @@ The strict flag enables strict mode.
 ## Invocation
 
 ```bash
-/audit-command @src/commands/brief.md --strict
+/audit-command commands/brief.md --strict
 ```
 ```
 

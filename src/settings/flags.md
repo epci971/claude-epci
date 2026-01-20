@@ -317,7 +317,7 @@ Thresholds:
 FLAGS: --think-hard (auto) | --persona-backend (auto: 0.72)
 ```
 
-→ See `src/skills/personas/SKILL.md` for full documentation.
+→ See skill `personas` for full documentation.
 
 ---
 
@@ -473,7 +473,7 @@ MCPs are auto-activated based on:
 /epci --persona-frontend   # Auto: Magic + Playwright
 ```
 
-→ See `src/skills/mcp/SKILL.md` for complete MCP documentation.
+→ See skill `mcp` for complete MCP documentation.
 
 ---
 
@@ -616,7 +616,7 @@ ELSE:
 /ralph docs/specs/my-feature/ --reset-circuit
 ```
 
-→ See `src/commands/ralph.md` for complete documentation.
+→ See `/ralph-exec` command for complete documentation.
 
 ---
 

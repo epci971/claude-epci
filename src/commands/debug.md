@@ -472,7 +472,7 @@ Next: Verify fix in production environment
 **Execute `post-debug-complete` hooks** for history tracking:
 
 ```bash
-python3 src/hooks/runner.py post-debug --context '{
+python3 hooks/runner.py post-debug --context '{
   "mode": "<Trivial|Quick|Complet>",
   "bug_slug": "<slug>",
   "root_cause": "<primary cause>",

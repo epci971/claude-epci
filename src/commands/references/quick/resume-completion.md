@@ -78,7 +78,7 @@
 Apres chaque completion reussie de `/quick`, vous DEVEZ executer le hook `post-phase-3` pour sauvegarder l'historique de la feature:
 
 ```bash
-python3 src/hooks/runner.py post-phase-3 --context '{
+python3 hooks/runner.py post-phase-3 --context '{
   "phase": "quick-complete",
   "feature_slug": "<brief-slug>",
   "complexity": "<TINY|SMALL>",

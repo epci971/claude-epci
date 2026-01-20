@@ -87,7 +87,7 @@ The --lenient flag disables strict mode.
 
 **Pass Example**:
 ```markdown
-Review the implementation in @src/utils/helpers.js
+Review the implementation in @utils/helpers.js
 ```
 
 **Fail Example**:
@@ -112,7 +112,7 @@ Review the implementation in [helpers.js](src/utils/helpers.js)
 
 **Pass Example**:
 ```markdown
-See @src/commands/brief.md
+See @commands/brief.md
 See [details](references/details.md)  # OK for skill refs
 ```
 

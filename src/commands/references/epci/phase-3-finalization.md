@@ -107,7 +107,7 @@ Write `.epci-commit-context.json` to project root:
 **CRITICAL: Execute this hook before displaying completion message.**
 
 ```bash
-python3 src/hooks/runner.py post-phase-3 --context '{
+python3 hooks/runner.py post-phase-3 --context '{
   "phase": "phase-3",
   "feature_slug": "<slug>",
   "complexity": "<complexity>",

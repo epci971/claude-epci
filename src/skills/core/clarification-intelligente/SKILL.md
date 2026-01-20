@@ -39,7 +39,7 @@ Il transforme les questions génériques en questions contextuelles basées sur:
 
 ### 1. Clarification Analyzer
 
-**Module**: `src/project-memory/clarification_analyzer.py`
+**Module**: `project-memory/clarification_analyzer.py`
 
 Analyse le brief pour extraire:
 
@@ -58,7 +58,7 @@ analysis = analyze_brief("Ajouter un système de notifications")
 
 ### 2. Similarity Matcher
 
-**Module**: `src/project-memory/similarity_matcher.py`
+**Module**: `project-memory/similarity_matcher.py`
 
 Trouve les features similaires par similarité Jaccard:
 
@@ -71,7 +71,7 @@ matches = find_similar_features(features, keywords, threshold=0.3)
 
 ### 3. Question Generator
 
-**Module**: `src/project-memory/question_generator.py`
+**Module**: `project-memory/question_generator.py`
 
 Génère max 3 questions intelligentes:
 
@@ -189,11 +189,11 @@ Quand le système de Personas sera implémenté:
 
 ```bash
 # Test analyzer
-python src/project-memory/clarification_analyzer.py "Add OAuth authentication"
+python project-memory/clarification_analyzer.py "Add OAuth authentication"
 
 # Test matcher
-python src/project-memory/similarity_matcher.py "notification email user"
+python project-memory/similarity_matcher.py "notification email user"
 
 # Test generator
-python src/project-memory/question_generator.py "Ajouter un système de notifications"
+python project-memory/question_generator.py "Ajouter un système de notifications"
 ```

@@ -19,7 +19,7 @@ assurant des perspectives diverses et un cross-talk productif.
 ## Reference
 
 ```
-Read src/skills/core/brainstormer/references/party-personas.md
+Read skills/core/brainstormer/references/party-personas.md
 ```
 
 ## 5 Personas EPCI

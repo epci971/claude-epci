@@ -80,7 +80,7 @@ allowed-tools: [Read, Write, Edit, Bash, Grep, Glob, Task]
 ### Phase 4: Validation
 
 ```bash
-python src/scripts/validate_command.py src/commands/[name].md
+python scripts/validate_command.py commands/[name].md
 ```
 
 **Criteria:**

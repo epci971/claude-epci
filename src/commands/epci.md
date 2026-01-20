@@ -93,7 +93,7 @@ When `--turbo` flag is active:
 | `--wave` | DAG-based parallel agent execution | complexity > 0.7 |
 | `--no-hooks` | Disable all hook execution | Never |
 
-**Full flag documentation:** `src/settings/flags.md`
+**Full flag documentation:** `settings/flags.md`
 
 ---
 
@@ -128,7 +128,7 @@ When `--turbo` flag is active:
 
 ## Hooks Integration
 
-Execute hooks at workflow points: `python3 src/hooks/runner.py <hook-type> --context '{...}'`
+Execute hooks at workflow points: `python3 hooks/runner.py <hook-type> --context '{...}'`
 
 **Available:** `pre-phase-1`, `post-phase-1`, `pre-phase-2`, `post-phase-2`, `post-phase-3`, `on-breakpoint`, `pre-agent`, `post-agent`
 
@@ -494,7 +494,7 @@ Write `.epci-commit-context.json` to project root, then display suggestion to ru
 **CRITICAL:** Execute `post-phase-3` hook before displaying completion message.
 
 ```bash
-python3 src/hooks/runner.py post-phase-3 --context '{...}'
+python3 hooks/runner.py post-phase-3 --context '{...}'
 ```
 
 **Skip only IF** `--no-hooks` flag is active.

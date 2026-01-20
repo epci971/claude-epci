@@ -37,7 +37,7 @@ Notion credentials in `.claude/settings.local.json`:
 
 **Vérifier la config :**
 ```bash
-python src/scripts/validate_notion_config.py
+python scripts/validate_notion_config.py
 ```
 
 ### How to Get IDs

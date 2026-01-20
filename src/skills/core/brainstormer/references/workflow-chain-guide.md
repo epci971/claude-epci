@@ -490,4 +490,4 @@ The workflow chain integrates with `.project-memory/` for learning:
 ---
 
 *This guide is part of the EPCI Plugin v4.9+ brainstormer skill.*
-*For technical details, see: `src/commands/brainstorm.md`, `src/commands/decompose.md`, `src/commands/orchestrate.md`*
+*For technical details, see: `/brainstorm`, `/decompose`, `/orchestrate` commands*

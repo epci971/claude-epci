@@ -449,7 +449,7 @@ ELSE:
 
 ### Integration with proactive-suggestions skill
 
-See @src/skills/core/proactive-suggestions/SKILL.md section "Discovery Mode" for:
+See skill `proactive-suggestions` section "Discovery Mode" for:
 - Pattern catalog
 - Priority levels
 - Learning integration
@@ -581,7 +581,7 @@ Voir @references/migration-guide.md pour guide détaillé commande par commande.
 
 - AskUserQuestion Guide: @references/askuserquestion-guide.md
 - Migration Guide: @references/migration-guide.md
-- Brainstorm Implementation: @src/commands/brainstorm.md (reference model)
+- Brainstorm Implementation: voir `/brainstorm` (reference model)
 - Component Templates: @components/
 - Type Templates: @templates/
 

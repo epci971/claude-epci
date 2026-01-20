@@ -24,8 +24,8 @@ Now powered by 66 techniques across 11 categories via CSV.
 **MANDATORY: Load techniques from CSV, not markdown files.**
 
 ```
-Read src/skills/core/brainstormer/references/techniques.csv
-Read src/skills/core/brainstormer/references/technique-mapping.md
+Read skills/core/brainstormer/references/techniques.csv
+Read skills/core/brainstormer/references/technique-mapping.md
 ```
 
 ### CSV Format
