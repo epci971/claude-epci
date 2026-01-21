@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code Development Assistant
 
-> **Version** : 5.6.0 | **Date** : Janvier 2025
+> **Version** : 5.6.3 | **Date** : Janvier 2025
 
 ---
 
