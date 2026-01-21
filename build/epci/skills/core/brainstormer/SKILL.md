@@ -132,8 +132,8 @@ Toujours afficher le Finalization Checkpoint et attendre le choix explicite.
 **MANDATORY: Load techniques from CSV, not deprecated .md files.**
 
 ```
-Read skills/core/brainstormer/references/techniques.csv
-Read skills/core/brainstormer/references/technique-mapping.md
+Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/techniques.csv
+Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/technique-mapping.md
 ```
 
 **11 Categories (68 Techniques):**
@@ -394,11 +394,11 @@ Output integre dans brief section "Security Considerations".
 
 **CRITICAL: Before generating, ALWAYS read the template:**
 ```
-Read skills/core/brainstormer/references/brief-format.md
+Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/brief-format.md
 ```
 
 1. Create directory: `mkdir -p ./docs/briefs/[slug]`
-2. **Read template** `references/brief-format.md` (MANDATORY)
+2. **Read template** `${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/brief-format.md` (MANDATORY)
 3. Section-by-section validation (si pas --quick/--turbo)
 4. Write `brief-[slug]-[date].md` — **Must include (v3.0 PRD Standard)**:
    - **Document Header** — PRD-YYYY-XXX, Version, Status, Change History

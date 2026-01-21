@@ -32,7 +32,7 @@ Django renders pages → React enhances interactive zones. **Not an SPA.**
 | No CORS issues | Same origin |
 | SEO-friendly | Server-rendered HTML |
 
-→ See `references/islands-architecture.md` for full patterns
+→ See `${CLAUDE_PLUGIN_ROOT}/skills/stack/javascript-react/references/islands-architecture.md` for full patterns
 
 ### Component Mounting
 
@@ -88,7 +88,7 @@ headers: {
 }
 ```
 
-→ See `references/state-data.md` for React Query integration
+→ See `${CLAUDE_PLUGIN_ROOT}/skills/stack/javascript-react/references/state-data.md` for React Query integration
 
 ## State Management
 
@@ -149,7 +149,7 @@ export function Button({ children, variant = 'primary', ...props }: ButtonProps)
 }
 ```
 
-→ See `references/components-ui.md` for Tailwind, shadcn, accessibility
+→ See `${CLAUDE_PLUGIN_ROOT}/skills/stack/javascript-react/references/components-ui.md` for Tailwind, shadcn, accessibility
 
 ## Testing
 
@@ -168,7 +168,7 @@ describe('Button', () => {
 });
 ```
 
-→ See `references/testing.md` for hooks, React Query, mocking
+→ See `${CLAUDE_PLUGIN_ROOT}/skills/stack/javascript-react/references/testing.md` for hooks, React Query, mocking
 
 ## Commands
 
@@ -242,4 +242,4 @@ npm run type-check  # TypeScript
 <div data-react-component="DataTable"></div>
 ```
 
-→ See `references/islands-architecture.md` for decision matrix
+→ See `${CLAUDE_PLUGIN_ROOT}/skills/stack/javascript-react/references/islands-architecture.md` for decision matrix

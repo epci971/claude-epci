@@ -42,7 +42,7 @@ backend/
 └── shared/
 ```
 
-→ See `references/architecture.md` for complete structure
+→ See `${CLAUDE_PLUGIN_ROOT}/skills/stack/python-django/references/architecture.md` for complete structure
 
 ### Service Layer Pattern
 
@@ -92,7 +92,7 @@ lots = Lot.objects.select_related('campagne', 'operateur')
 campagnes = Campagne.objects.prefetch_related('lots')
 ```
 
-→ See `references/models-orm.md` for QuerySets, bulk operations, constraints
+→ See `${CLAUDE_PLUGIN_ROOT}/skills/stack/python-django/references/models-orm.md` for QuerySets, bulk operations, constraints
 
 ## Django REST Framework
 
@@ -114,7 +114,7 @@ class LotViewSet(viewsets.ModelViewSet):
         return LotReadSerializer
 ```
 
-→ See `references/api-drf.md` for filters, permissions, authentication
+→ See `${CLAUDE_PLUGIN_ROOT}/skills/stack/python-django/references/api-drf.md` for filters, permissions, authentication
 
 ## Testing
 
@@ -127,7 +127,7 @@ class TestCloturerCampagne:
         assert result.campagne.status == 'TERMINE'
 ```
 
-→ See `references/testing.md` for fixtures, API tests, coverage
+→ See `${CLAUDE_PLUGIN_ROOT}/skills/stack/python-django/references/testing.md` for fixtures, API tests, coverage
 
 ## Commands
 
@@ -191,4 +191,4 @@ python manage.py collectstatic --noinput
 | No `related_name` | Unclear reverse relations | Always specify |
 | Test without `@pytest.mark.django_db` | No database | Add marker |
 
-→ See `references/production.md` for security, logging, deployment
+→ See `${CLAUDE_PLUGIN_ROOT}/skills/stack/python-django/references/production.md` for security, logging, deployment

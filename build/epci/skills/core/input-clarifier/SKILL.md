@@ -46,7 +46,7 @@ Input brut → [input-clarifier] → Input propre → [reformulation] → Brief 
 
 ### Step 1: Artifact Detection
 
-Scan input for voice artifacts using patterns from `references/artifact-patterns.md`.
+Scan input for voice artifacts using patterns from `${CLAUDE_PLUGIN_ROOT}/skills/core/input-clarifier/references/artifact-patterns.md`.
 
 **Categories detected:**
 - Hesitation markers: `euh`, `hum`, `hein`, `ben`, `bah`
@@ -235,7 +235,7 @@ Input: "euh j'ai une erreur là, TypeError quelque chose"
 
 ## References
 
-- `references/artifact-patterns.md` — Complete pattern list
+- `${CLAUDE_PLUGIN_ROOT}/skills/core/input-clarifier/references/artifact-patterns.md` — Complete pattern list
 
 ---
 

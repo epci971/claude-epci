@@ -75,7 +75,7 @@ def detect_stack(root: Path) -> dict:
     return stack
 ```
 
--> See `references/detection-levels.md` for complete logic
+-> See `${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/references/detection-levels.md` for complete logic
 
 ### Level 2 — Architecture Detection
 
@@ -162,7 +162,7 @@ def select_templates(stack: dict) -> list[str]:
     return templates
 ```
 
--> See `references/stack-templates.md` for template index
+-> See `${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/references/stack-templates.md` for template index
 
 ### Step 4: Customize Templates
 
@@ -260,7 +260,7 @@ Add a single rule incrementally. Auto-detected or forced with `--add`.
 - Keywords: "toujours", "jamais", "doit", "préférer", "éviter"
 - Structure: [contexte] + [action/contrainte]
 
--> See `references/rule-classifier.md` for classification logic
+-> See `${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/references/rule-classifier.md` for classification logic
 
 ### `validate`
 
@@ -353,10 +353,10 @@ Invoke @rules-validator with paths:
 
 ## References
 
-- `references/detection-levels.md` — Detection algorithm details
-- `references/rules-format.md` — File format specification
-- `references/stack-templates.md` — Template index
-- `references/rule-classifier.md` — Incremental add classification logic
+- `${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/references/detection-levels.md` — Detection algorithm details
+- `${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/references/rules-format.md` — File format specification
+- `${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/references/stack-templates.md` — Template index
+- `${CLAUDE_PLUGIN_ROOT}/skills/core/rules-generator/references/rule-classifier.md` — Incremental add classification logic
 
 ---
 

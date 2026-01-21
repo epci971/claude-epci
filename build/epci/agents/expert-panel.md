@@ -19,11 +19,11 @@ de leaders reconnus du developpement logiciel.
 ## References
 
 ```
-Read skills/core/brainstormer/references/experts/martin.md
-Read skills/core/brainstormer/references/experts/fowler.md
-Read skills/core/brainstormer/references/experts/newman.md
-Read skills/core/brainstormer/references/experts/gamma.md
-Read skills/core/brainstormer/references/experts/beck.md
+Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/experts/martin.md
+Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/experts/fowler.md
+Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/experts/newman.md
+Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/experts/gamma.md
+Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/experts/beck.md
 ```
 
 ## 5 Experts Dev
