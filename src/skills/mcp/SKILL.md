@@ -3,9 +3,8 @@ name: mcp
 description: >-
   MCP (Model Context Protocol) integration for EPCI v4.0. Manages 4 servers
   (Context7, Sequential, Magic, Playwright) with auto-activation based on
-  personas and context. Auto-invoke when: persona detected, MCP flags used,
-  trigger files/keywords present. Do NOT load for: simple tasks without
-  external context needs.
+  personas and context. Use when: persona detected activation, MCP flags used explicitly,
+  trigger files keywords present. Not for: standalone tasks without documentation needs.
 allowed-tools: [Read, Glob, Grep, WebFetch, WebSearch]
 ---
 

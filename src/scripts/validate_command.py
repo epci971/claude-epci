@@ -111,13 +111,25 @@ def validate_allowed_tools(frontmatter: dict, report: ValidationReport) -> bool:
     """Verifie allowed-tools."""
     tools = frontmatter.get('allowed-tools', [])
 
+    # All known Claude Code tools
     valid_tools = [
+        # Core file tools
         'Read', 'Write', 'Edit', 'Bash', 'Grep', 'Glob',
-        'Task', 'WebFetch', 'LS', 'MultiEdit'
+        # Agent and task tools
+        'Task', 'TodoWrite', 'TaskOutput', 'KillShell',
+        # Web tools
+        'WebFetch', 'WebSearch',
+        # UI tools
+        'AskUserQuestion',
+        # Other tools
+        'LS', 'MultiEdit', 'NotebookEdit',
     ]
 
     if tools:
         for tool in tools:
+            # Accept Bash restriction patterns like Bash(git:*), Bash(npm:*)
+            if tool.startswith('Bash(') and tool.endswith(')'):
+                continue  # Valid Bash restriction pattern
             if tool not in valid_tools:
                 report.add_warning(f"Unknown tool: {tool}")
 

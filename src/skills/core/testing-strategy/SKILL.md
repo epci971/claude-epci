@@ -2,8 +2,8 @@
 name: testing-strategy
 description: >-
   Testing strategies and patterns. Test pyramid, TDD, mocking, fixtures.
-  Use when: Phase 2 implementation, defining test strategy, QA review.
-  Not for: stack-specific tools (→ stack skills).
+  Use when: Phase implementation testing, defining test strategy, quality assurance review.
+  Not for: stack-specific testing tools.
 ---
 
 # Testing Strategy

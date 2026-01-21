@@ -4,8 +4,8 @@ description: >-
   Système unifié pour l'affichage de breakpoints interactifs avec validation
   utilisateur via AskUserQuestion. Centralise tous les formats de breakpoints
   EPCI pour cohérence, économie tokens (73% réduction), et maintenabilité.
-  Use when: Afficher un breakpoint dans une commande (/brief, /epci, /decompose, etc.).
-  Not for: Affichage simple sans interaction utilisateur (utiliser print direct).
+  Use when: display breakpoint interaction, brief validation breakpoint, decompose confirmation breakpoint.
+  Not for: simple output without interaction.
 applicable-to: ["ALL_COMMANDS_WITH_BREAKPOINTS"]
 integration: ["AskUserQuestion", "breakpoint-metrics"]
 ---

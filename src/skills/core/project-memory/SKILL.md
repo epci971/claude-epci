@@ -3,8 +3,8 @@ name: project-memory
 description: >-
   Comprehensive Project Memory management for EPCI workflows. Loads context
   at workflow start, persists feature history, and provides conventions/patterns
-  for consistent code generation. Auto-invoke at start of /brief, /epci,
-  /quick, /brainstorm, /decompose.
+  for consistent code generation. Use when: brief workflow initialization, epci workflow context, quick workflow patterns, decompose workflow start.
+  Not for: ephemeral tasks, one-off questions without project context.
 allowed-tools: [Read, Glob, Write]
 ---
 

@@ -6,8 +6,8 @@ description: >-
   auto-techniques via @technique-advisor (63 techniques CSV), Party Mode (5 personas),
   Expert Panel (5 dev leaders). Breakpoints via @skill:breakpoint-display (ems-status,
   plan-review, analysis, validation). Modes: standard | party | panel.
-  Use when: /brainstorm invoked, feature discovery needed.
-  Not for: implementation tasks, code generation, simple questions.
+  Use when: brainstorm command invoked, feature discovery exploration needed, ideation session.
+  Not for: direct implementation coding, simple factual questions.
 allowed-tools: [Read, Write, Glob, Grep, Task, AskUserQuestion]
 ---
 

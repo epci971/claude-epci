@@ -2,10 +2,8 @@
 name: breakpoint-metrics
 description: >-
   Calculates complexity metrics and generates enriched breakpoint displays for EPCI workflow.
-  Auto-invoke when: /epci reaches BP1 (post-Phase 1) or BP2 (post-Phase 2) breakpoints,
-  or when complexity scoring is needed for STANDARD/LARGE features.
-  Do NOT load for: /quick (no formal breakpoints), /brainstorm (different output),
-  or non-EPCI workflows. Use compact format when context >75%.
+  Use when: epci reaches phase validation, complexity scoring needed, standard large features.
+  Not for: quick condensed workflow, brainstorm sessions, non-epci contexts.
 ---
 
 # Breakpoint Metrics

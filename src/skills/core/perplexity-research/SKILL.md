@@ -4,8 +4,8 @@ description: >-
   Système de recherche externe via Perplexity Pro (human-in-the-loop).
   Détecte le besoin de recherche, génère des prompts optimisés,
   indique si Deep Research est recommandé.
-  Use when: /brief, /debug, /brainstorm need external research beyond Context7.
-  Not for: Internal codebase exploration, simple documentation lookup.
+  Use when: brief exploration needs external research, debug investigation needs external context, brainstorm discovery needs research.
+  Not for: internal codebase exploration, simple documentation lookup.
 applicable-to: ["/brief", "/debug", "/brainstorm"]
 integration: ["breakpoint-display"]
 allowed-tools: [Read, Glob, Grep]

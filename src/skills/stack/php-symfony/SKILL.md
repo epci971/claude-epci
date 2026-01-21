@@ -2,8 +2,8 @@
 name: php-symfony
 description: >-
   Patterns for PHP/Symfony with service layer architecture. Includes Doctrine
-  ORM, PHPUnit, Messenger, Voters. Use when: Symfony development, composer.json
-  with symfony detected. Not for: Laravel, plain PHP, WordPress, Drupal.
+  ORM, PHPUnit, Messenger, Voters. Use when: Symfony PHP development, composer json symfony detected, doctrine messenger integration.
+  Not for: Laravel framework, plain PHP scripts, WordPress plugins, Drupal modules.
 ---
 
 # PHP/Symfony Development Patterns

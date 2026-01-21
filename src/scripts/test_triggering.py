@@ -106,29 +106,104 @@ def extract_triggers(description: str) -> Tuple[List[str], List[str]]:
     return positive, negative
 
 
-def should_trigger(query: str, description: str) -> bool:
-    """Détermine si une requête devrait déclencher le skill."""
-    query_lower = query.lower()
-    desc_lower = description.lower()
+def extract_use_when_keywords(description: str) -> set:
+    """Extrait les mots-clés UNIQUEMENT de la section 'Use when:'.
 
-    # Extraire mots-clés significatifs de la description (4+ lettres)
-    keywords = set(re.findall(r'\b[a-z]{4,}\b', desc_lower))
-
-    # Filtrer les mots communs non-significatifs
+    Bug fix: Previously extracted from entire description including 'Not for:',
+    causing false positives when testing negative triggers.
+    """
+    # Stop words to filter out
     stop_words = {
         'when', 'with', 'that', 'this', 'from', 'have', 'been',
         'will', 'your', 'they', 'more', 'some', 'about', 'which',
         'their', 'would', 'make', 'like', 'just', 'into', 'over',
         'such', 'only', 'also', 'after', 'most', 'than', 'them',
-        'should', 'could', 'other', 'load', 'invoke', 'auto'
+        'should', 'could', 'other', 'load', 'invoke', 'auto',
+        'need', 'work', 'help', 'used', 'uses', 'using', 'called',
+        'invoked', 'needed', 'tasks', 'simple'
     }
-    keywords = keywords - stop_words
 
-    # Vérifier combien de mots-clés apparaissent dans la requête
+    # Try to find "Use when:" section (stop at "Not for:" or end of sentence)
+    use_when_match = re.search(
+        r'Use when[:\s]+(.+?)(?:\.\s*Not for:|Not for:|$)',
+        description,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    if use_when_match:
+        text = use_when_match.group(1).lower()
+    else:
+        # Fallback: use main description (before "Use when:" or "Not for:")
+        parts = re.split(r'Use when:|Not for:', description, flags=re.IGNORECASE)
+        text = parts[0].lower() if parts else description.lower()
+
+    # Extract significant keywords (4+ letters)
+    keywords = set(re.findall(r'\b[a-z]{4,}\b', text))
+    return keywords - stop_words
+
+
+def extract_not_for_phrases(description: str) -> List[str]:
+    """Extrait les phrases d'exclusion de 'Not for:'."""
+    not_for_match = re.search(
+        r'Not for[:\s]+([^.]+)',
+        description,
+        re.IGNORECASE
+    )
+    if not not_for_match:
+        return []
+
+    not_for_text = not_for_match.group(1)
+    # Split by comma and clean up
+    phrases = [p.strip().lower() for p in not_for_text.split(',')]
+    return [p for p in phrases if p]
+
+
+def should_trigger(query: str, description: str) -> bool:
+    """Détermine si une requête devrait déclencher le skill.
+
+    Only matches against 'Use when:' keywords, NOT 'Not for:' text.
+    """
+    query_lower = query.lower()
+
+    # Extract keywords ONLY from "Use when:" section
+    keywords = extract_use_when_keywords(description)
+
+    if not keywords:
+        return False
+
+    # Check how many keywords appear in the query
     matches = sum(1 for kw in keywords if kw in query_lower)
 
-    # Seuil: au moins 2 mots-clés correspondants
+    # Threshold: at least 2 matching keywords
     return matches >= 2
+
+
+def should_not_trigger(query: str, description: str) -> bool:
+    """Détermine si une requête NE devrait PAS déclencher le skill.
+
+    Returns True if the query correctly does NOT trigger (expected behavior).
+    Returns False if the query incorrectly triggers (test failure).
+    """
+    query_lower = query.lower()
+
+    # Extract exclusion phrases from "Not for:"
+    exclusions = extract_not_for_phrases(description)
+
+    if not exclusions:
+        # No exclusions defined - check that we don't positively match
+        return not should_trigger(query, description)
+
+    # Check if exclusion phrase keywords are in query
+    for phrase in exclusions:
+        phrase_words = set(re.findall(r'\b[a-z]{4,}\b', phrase))
+        if phrase_words:
+            matches = sum(1 for w in phrase_words if w in query_lower)
+            # If 50%+ of phrase words are present, it's an exclusion match
+            if matches >= max(1, len(phrase_words) // 2):
+                return True  # Correctly excluded (should NOT trigger)
+
+    # No exclusion matched - verify we don't trigger positively
+    return not should_trigger(query, description)
 
 
 def generate_test_queries(positive_triggers: List[str], negative_triggers: List[str]) -> Tuple[List[str], List[str]]:
@@ -193,7 +268,7 @@ def test_skill_triggering(skill_path_str: str) -> int:
     # Tests négatifs (ne doivent pas trigger)
     for i, query in enumerate(negative_queries):
         exclusion_text = negative_triggers[i] if i < len(negative_triggers) else query
-        result = not should_trigger(query, description)
+        result = should_not_trigger(query, description)
         report.negative_triggers.append((exclusion_text, result))
         if result:
             report.add_pass()

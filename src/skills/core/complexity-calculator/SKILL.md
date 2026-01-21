@@ -4,8 +4,8 @@ description: >-
   Centralized complexity calculation for EPCI workflows. Evaluates feature complexity
   based on files, LOC, dependencies, and risk factors. Returns categorization
   (TINY/SMALL/STANDARD/LARGE) with confidence score and recommended workflow.
-  Use when: /brief, /decompose, /quick, /debug, /ralph-exec need complexity evaluation.
-  Not for: Runtime performance analysis, code quality metrics.
+  Use when: brief routing needs complexity evaluation, decompose estimation calculation, quick workflow categorization.
+  Not for: runtime performance analysis, code quality metrics.
 allowed-tools: [Read, Glob, Grep]
 ---
 

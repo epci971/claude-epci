@@ -481,16 +481,16 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python validate_all.py              # Run all validations
-  python validate_all.py --verbose    # Show detailed output
+  python validate_all.py              # Run all validations (verbose by default)
+  python validate_all.py --quiet      # Hide detailed output
   python validate_all.py --fix        # Auto-fix fixable issues
   python validate_all.py --fast       # Skip slow checks (triggering, breakpoints, md refs)
         """
     )
     parser.add_argument(
-        '--verbose', '-v',
+        '--quiet', '-q',
         action='store_true',
-        help='Show detailed validation output'
+        help='Hide detailed validation output (verbose by default)'
     )
     parser.add_argument(
         '--fix',
@@ -505,7 +505,8 @@ Examples:
 
     args = parser.parse_args()
 
-    sys.exit(validate_all(verbose=args.verbose, fix=args.fix, fast=args.fast))
+    # Verbose is now the default, --quiet disables it
+    sys.exit(validate_all(verbose=not args.quiet, fix=args.fix, fast=args.fast))
 
 
 if __name__ == "__main__":

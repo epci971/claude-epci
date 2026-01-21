@@ -2,8 +2,8 @@
 name: debugging-strategy
 description: >-
   Structured debugging methodology with thought tree analysis, solution scoring,
-  and adaptive routing. Auto-invoke when: /debug called, error/bug mentioned,
-  stack trace provided. Do NOT load for: feature development, refactoring without bugs.
+  and adaptive routing. Use when: debug command called, error issue mentioned, stack trace provided.
+  Not for: new feature creation, code refactoring cleanup.
 allowed-tools: [Read, Glob, Grep, WebSearch, WebFetch]
 ---
 

@@ -3,8 +3,8 @@ name: tdd-workflow
 description: >-
   Standardized TDD (Test-Driven Development) workflow for EPCI implementations.
   Manages the RED-GREEN-REFACTOR-VERIFY cycle with state tracking and error recovery.
-  Use when: /epci Phase 2, /quick [C], @implementer, /ralph-exec need TDD guidance.
-  Not for: Exploratory testing, manual QA processes, non-code tasks.
+  Use when: epci phase implementation, quick code phase, implementer agent guidance, ralph execution testing.
+  Not for: exploratory manual testing, quality assurance processes.
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep]
 ---
 

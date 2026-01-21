@@ -2,8 +2,8 @@
 name: learning-optimizer
 description: >-
   Guides continuous learning concepts for EPCI workflows.
-  Auto-invoke when discussing estimation accuracy, calibration, suggestion scoring,
-  or learning preferences. Do NOT load for basic EPCI usage without learning context.
+  Use when: discussing estimation accuracy, calibration metrics, suggestion scoring preferences.
+  Not for: standard workflow execution, routine command usage.
 ---
 
 # EPCI Learning Optimizer Skill

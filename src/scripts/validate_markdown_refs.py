@@ -100,6 +100,37 @@ def get_project_root() -> Path:
     return Path(__file__).resolve().parent.parent.parent
 
 
+# Directories to ignore (external documentation, archives, imported content)
+IGNORE_DIRECTORIES = {
+    # External/imported documentation with their own link structures
+    'docs/librairies',
+    'docs/external',
+    # EPCI-generated content (dynamic, may have broken refs during generation)
+    'docs/migration',
+    'docs/briefs',
+    'docs/features',
+    'docs/specs',
+    'docs/plans',
+    'docs/audits',
+    # Archives
+    'archive',
+}
+
+
+def should_skip_file(path: Path, project_root: Path) -> bool:
+    """Skip files in documentation-only directories.
+
+    These directories may contain external/imported documentation
+    or generated content where broken links are acceptable.
+    """
+    try:
+        relative = path.relative_to(project_root)
+        path_str = str(relative)
+        return any(path_str.startswith(ignore_dir) for ignore_dir in IGNORE_DIRECTORIES)
+    except ValueError:
+        return False
+
+
 def extract_markdown_links(content: str) -> List[Tuple[int, str, str]]:
     """Extrait les liens markdown [text](path) du contenu."""
     links = []
@@ -248,12 +279,18 @@ def validate_markdown_refs(scan_path: Path = None) -> int:
             for md_file in target_dir.glob("**/*.md"):
                 validate_file_refs(md_file, project_root, report)
 
-    # Docs à la racine
+    # Docs à la racine (skip ignored directories)
     docs_dir = project_root / "docs"
+    skipped_count = 0
     if docs_dir.exists():
         for md_file in docs_dir.glob("**/*.md"):
+            if should_skip_file(md_file, project_root):
+                skipped_count += 1
+                continue
             validate_file_refs(md_file, project_root, report)
 
+    if skipped_count > 0:
+        print(f"  (skipped {skipped_count} files in ignored directories)")
     print(f"  [OK] Checked agents and docs")
     report.pass_check()
 

@@ -106,6 +106,18 @@ def get_project_root() -> Path:
     return Path(__file__).resolve().parent.parent.parent
 
 
+def resolve_plugin_path(path: str, project_root: Path) -> Path:
+    """Resolve ${CLAUDE_PLUGIN_ROOT} paths to actual filesystem paths.
+
+    In development context, CLAUDE_PLUGIN_ROOT = src/
+    """
+    if '${CLAUDE_PLUGIN_ROOT}' in path:
+        # Replace the variable with src/ (development context)
+        resolved = path.replace('${CLAUDE_PLUGIN_ROOT}/', '')
+        return project_root / 'src' / resolved
+    return project_root / path
+
+
 def get_available_skills(src_path: Path) -> Set[str]:
     """Récupère la liste des skills disponibles."""
     skills = set()
@@ -208,24 +220,41 @@ def extract_agent_refs(content: str) -> List[Tuple[int, str]]:
     return refs
 
 
-def extract_reference_paths(content: str, source_file: Path) -> List[Tuple[int, str]]:
-    """Extrait les références à des fichiers locaux (references/, @references/)."""
+def extract_reference_paths(content: str, source_file: Path) -> List[Tuple[int, str, bool]]:
+    """Extrait les références à des fichiers locaux (references/, @references/).
+
+    Returns list of (line_number, path, is_plugin_root_path).
+    """
     refs = []
 
     # Pattern: @references/path ou references/path.md
-    patterns = [
+    standard_patterns = [
         r'@references/([a-z0-9-/]+\.md)',
         r'references/([a-z0-9-/]+\.md)',
         r'See\s+`?([a-z0-9-/]+\.md)`?',
     ]
 
+    # Pattern for ${CLAUDE_PLUGIN_ROOT} paths
+    plugin_root_pattern = r'\$\{CLAUDE_PLUGIN_ROOT\}/([^\s\)]+\.(?:md|csv|json|yaml|yml))'
+
     lines = content.splitlines()
     for line_num, line in enumerate(lines, 1):
-        for pattern in patterns:
+        # FIRST check ${CLAUDE_PLUGIN_ROOT} patterns (takes precedence)
+        has_plugin_root = '${CLAUDE_PLUGIN_ROOT}' in line
+        if has_plugin_root:
+            matches = re.finditer(plugin_root_pattern, line)
+            for match in matches:
+                ref_path = '${CLAUDE_PLUGIN_ROOT}/' + match.group(1)
+                refs.append((line_num, ref_path, True))
+            # Skip standard patterns for this line (already handled by plugin_root)
+            continue
+
+        # Check standard patterns only if no ${CLAUDE_PLUGIN_ROOT}
+        for pattern in standard_patterns:
             matches = re.finditer(pattern, line, re.IGNORECASE)
             for match in matches:
                 ref_path = match.group(1)
-                refs.append((line_num, ref_path))
+                refs.append((line_num, ref_path, False))
 
     return refs
 
@@ -270,11 +299,27 @@ def validate_file_refs(
             ))
 
     # Vérifier les références aux fichiers locaux
+    project_root = src_path.parent
     ref_paths = extract_reference_paths(content, file_path)
-    for line_num, ref_path in ref_paths:
+    for line_num, ref_path, is_plugin_root in ref_paths:
         report.refs_checked += 1
 
-        # Résoudre le chemin relatif
+        # Handle ${CLAUDE_PLUGIN_ROOT} paths
+        if is_plugin_root:
+            full_path = resolve_plugin_path(ref_path, project_root)
+            if full_path.exists():
+                continue  # Valid reference
+            # Check if it's a reference file (could be in references/ subdirectory)
+            report.add_finding(CrossRefFinding(
+                source_file=file_path,
+                line_number=line_num,
+                ref_type="file",
+                ref_target=ref_path,
+                issue=f"Reference file may not exist: {ref_path}"
+            ))
+            continue
+
+        # Résoudre le chemin relatif (standard references/)
         if file_path.parent.name in ['commands', 'agents']:
             # Pour commands/ et agents/, references/ est dans le même dossier
             base_path = file_path.parent / "references"

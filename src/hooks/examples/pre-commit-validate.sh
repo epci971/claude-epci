@@ -51,10 +51,11 @@ echo ""
 
 # Run validation in fast mode (critical checks only)
 # Use --fast to skip slow validations (triggering, breakpoints, markdown refs)
+# Use --quiet to suppress detailed output (verbose is now default)
 echo -e "Running validations..."
 echo ""
 
-if python3 "$VALIDATE_SCRIPT" --fast; then
+if python3 "$VALIDATE_SCRIPT" --fast --quiet; then
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
     echo -e "${GREEN}  ✅ All validations passed!${NC}"
     echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

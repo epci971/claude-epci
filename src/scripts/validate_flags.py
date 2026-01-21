@@ -62,16 +62,87 @@ class ValidationReport:
 
 # Known flags for validation
 KNOWN_FLAGS = {
+    # ══════════════════════════════════════════════════════════════
+    # UNIVERSAL FLAGS (documented in flags.md)
+    # ══════════════════════════════════════════════════════════════
+
     # Thinking flags
     "--think", "--think-hard", "--ultrathink",
+
     # Compression flags
     "--uc", "--verbose",
+
+    # Reformulation flags
+    "--rephrase", "--no-rephrase",
+
     # Workflow flags
     "--safe", "--no-hooks",
+
+    # Speed flags
+    "--turbo",
+
+    # Quick workflow flags (F13)
+    "--autonomous", "--quick-turbo", "--no-bp",
+
+    # Ralph Wiggum flags (F14)
+    "--wiggum", "--granularity", "--mode", "--overnight",
+    "--safety-level", "--reset-circuit",
+
+    # Persona flags
+    "--persona-architect", "--persona-frontend", "--persona-backend",
+    "--persona-security", "--persona-qa", "--persona-doc",
+
+    # MCP flags
+    "--c7", "--seq", "--magic", "--play", "--no-mcp",
+
     # Wave flags
     "--wave", "--wave-strategy",
+
     # Legacy
-    "--large", "--continue"
+    "--large", "--continue",
+
+    # ══════════════════════════════════════════════════════════════
+    # COMMAND-SPECIFIC FLAGS
+    # ══════════════════════════════════════════════════════════════
+
+    # /brief
+    "--no-clarify",
+
+    # /commit
+    "--auto-commit", "--amend", "--dry-run", "--commit",
+    "--short", "--porcelain", "--context",
+
+    # /debug
+    "--full", "--no-report", "--force-clarify",
+
+    # /epci
+    "--sequential", "--parallel",
+
+    # /quick
+    "--confirm", "--bp",
+
+    # /rules
+    "--force", "--validate-only", "--no-validate",
+    "--stack", "--add",
+
+    # /orchestrate
+    "--max-retries", "--skip", "--only", "--no-commit",
+
+    # /decompose
+    "--output", "--min-days", "--max-days",
+    "--dangerously-skip-permissions",
+
+    # /save-plan
+    "--source", "--slug",
+
+    # /ralph-exec
+    "--prd", "--story", "--max-attempts",
+
+    # /brainstorm
+    "--template", "--quick", "--random", "--progressive",
+    "--no-technique", "--no-hmw", "--no-security",
+    "--party", "--panel", "--competitive",
+    "--suggest", "--no-suggest", "--no-research",
 }
 
 INCOMPATIBLE_PAIRS = [

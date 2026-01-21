@@ -3,9 +3,8 @@ name: frontend-editor
 description: >-
   Tailwind CSS patterns for presentation layer. Includes design tokens,
   component variants (primary, secondary, success, warning, danger, ghost, outline),
-  responsive utilities, WCAG 2.1 AA accessibility. Use when: HTML/CSS/Tailwind
-  development, tailwind.config detected, UI styling tasks. Not for: JavaScript
-  behavior (see javascript-react), Vue/Svelte, Bootstrap, backend code.
+  responsive utilities, WCAG 2.1 AA accessibility. Use when: Tailwind styling development, tailwind config detected, frontend presentation styling.
+  Not for: JavaScript behavior logic, Vue Svelte frameworks, Bootstrap styling, backend code.
 ---
 
 # Frontend Editor — Tailwind CSS & Presentation Layer

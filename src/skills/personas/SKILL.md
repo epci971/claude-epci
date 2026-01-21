@@ -3,8 +3,8 @@ name: personas
 description: >-
   Workflow-wide thinking modes for EPCI. 6 personas adapt Claude's behavior
   globally: questions asked, priorities, code patterns, MCP preferences.
-  Auto-invoke when: scoring algorithm detects domain match (keywords + files + stack).
-  Do NOT load for: simple questions, brainstorming (use brainstormer personas instead).
+  Use when: scoring algorithm detects domain match, keywords files stack detection.
+  Not for: trivial questions, ideation sessions (use brainstormer instead).
 allowed-tools: [Read, Glob, Grep]
 ---
 

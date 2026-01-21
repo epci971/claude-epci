@@ -4,9 +4,8 @@ description: >-
   Conditional input clarification for voice-dictated text. Detects confusion
   artifacts (hesitations, fillers, self-corrections) and proposes reformulation
   only when needed (clarity score < 0.6). Ultra-fast, non-blocking for clear inputs.
-  Use when: Any command receives free-form user input (brief, brainstorm, debug, promptor).
-  Not for: Structured inputs (flags, file paths, subcommands), iteration responses in brainstorm,
-  semantic clarification questions (use clarification-intelligente).
+  Use when: command receives freeform user input, brainstorm session input, debug description input.
+  Not for: structured flag inputs, file path inputs, semantic clarification questions.
 ---
 
 # Input Clarifier

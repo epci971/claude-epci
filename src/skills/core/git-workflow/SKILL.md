@@ -2,8 +2,8 @@
 name: git-workflow
 description: >-
   Git workflow and commit conventions. Branching strategy, Conventional
-  Commits, PR workflow. Use when: Phase 3 finalization, commit, PR preparation.
-  Not for: basic git commands.
+  Commits, PR workflow. Use when: Phase finalization commit, pull request preparation, branching strategy.
+  Not for: basic repository commands.
 ---
 
 # Git Workflow

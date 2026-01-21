@@ -2,8 +2,9 @@
 name: java-springboot
 description: >-
   Patterns and conventions for Java/Spring Boot. Includes Spring Data JPA,
-  Spring Security, JUnit 5, Lombok. Use when: Spring Boot development,
-  pom.xml or build.gradle with spring-boot detected. Not for: Jakarta EE, Quarkus.
+  Spring Security, JUnit 5, Lombok. Use when: Spring Boot Java development,
+  gradle maven build detected with spring dependencies.
+  Not for: Jakarta enterprise edition, Quarkus framework.
 ---
 
 # Java/Spring Boot Development Patterns

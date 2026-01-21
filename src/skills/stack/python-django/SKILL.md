@@ -2,9 +2,8 @@
 name: python-django
 description: >-
   Patterns for Python/Django with service layer architecture. Includes DRF,
-  pytest, Celery, HTMX/React integration. Use when: Django development,
-  requirements.txt or pyproject.toml with django detected. Not for: Flask,
-  FastAPI, plain Python scripts.
+  pytest, Celery, HTMX/React integration. Use when: Django Python development, pyproject toml django detected, requirements django dependency.
+  Not for: Flask applications, FastAPI projects, plain Python scripts.
 ---
 
 # Python/Django Development Patterns

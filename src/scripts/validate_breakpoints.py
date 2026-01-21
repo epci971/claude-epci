@@ -105,8 +105,13 @@ def get_project_root() -> Path:
 
 # Types de breakpoints valides
 VALID_BREAKPOINT_TYPES = {
+    # Core types
     'analysis', 'plan-review', 'implementation', 'validation',
-    'checkpoint', 'decision', 'error', 'warning', 'info'
+    'checkpoint', 'decision', 'error', 'warning', 'info',
+    # Extended types (from SKILL.md documentation)
+    'clarification-input', 'decomposition', 'diagnostic',
+    'ems-status', 'info-only', 'interactive-plan',
+    'lightweight', 'research-prompt'
 }
 
 # Champs obligatoires par type
@@ -124,20 +129,76 @@ REQUIRED_FIELDS = {
 
 
 def extract_breakpoint_blocks(content: str) -> List[Tuple[int, str]]:
-    """Extrait les blocs @skill:breakpoint-display du contenu."""
+    """Extrait les blocs @skill:breakpoint-display du contenu.
+
+    Exclut les blocs qui sont dans:
+    - Code fences markdown (``` ou ~~~) - documentation/exemples
+    - YAML frontmatter (entre --- délimiteurs) - métadonnées fichier
+    """
     blocks = []
+    lines = content.splitlines()
+    in_code_fence = False
+    in_frontmatter = False
+    frontmatter_line_count = 0
 
-    # Pattern multi-ligne pour capturer le bloc YAML après @skill:breakpoint-display
-    # Le bloc se termine par une ligne vide ou un autre pattern
-    pattern = r'@skill:breakpoint-display\n((?:[ \t]+[^\n]+\n)+)'
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
 
-    for match in re.finditer(pattern, content):
-        # Trouver le numéro de ligne
-        start_pos = match.start()
-        line_number = content[:start_pos].count('\n') + 1
+        # Track YAML frontmatter (only at start of file, between --- markers)
+        if stripped == '---':
+            if i == 0 or (in_frontmatter and frontmatter_line_count > 0):
+                in_frontmatter = not in_frontmatter
+                frontmatter_line_count = 0
+                i += 1
+                continue
+        if in_frontmatter:
+            frontmatter_line_count += 1
+            i += 1
+            continue
 
-        yaml_block = match.group(1)
-        blocks.append((line_number, yaml_block))
+        # Track code fence state (``` or ~~~)
+        if stripped.startswith('```') or stripped.startswith('~~~'):
+            in_code_fence = not in_code_fence
+            i += 1
+            continue
+
+        # Skip breakpoints inside code fences (documentation examples)
+        if in_code_fence:
+            i += 1
+            continue
+
+        # Detect breakpoint invocation
+        if '@skill:breakpoint-display' in line:
+            line_number = i + 1  # 1-indexed
+            yaml_lines = []
+            i += 1
+
+            # Capture indented YAML lines following the invocation
+            while i < len(lines):
+                next_line = lines[i]
+                # Check for code fence inside YAML block (shouldn't happen but safety)
+                if next_line.strip().startswith('```') or next_line.strip().startswith('~~~'):
+                    break
+                # YAML block continues while lines are indented
+                if next_line and (next_line[0] == ' ' or next_line[0] == '\t'):
+                    yaml_lines.append(next_line)
+                    i += 1
+                elif not next_line.strip():
+                    # Empty line might be part of YAML or end of block
+                    # Check if next non-empty line is still indented
+                    break
+                else:
+                    # Non-indented line = end of YAML block
+                    break
+
+            if yaml_lines:
+                yaml_block = '\n'.join(yaml_lines)
+                blocks.append((line_number, yaml_block))
+            continue
+
+        i += 1
 
     return blocks
 

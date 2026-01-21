@@ -2,10 +2,8 @@
 name: proactive-suggestions
 description: >-
   Generates and manages proactive suggestions during EPCI workflow.
-  Auto-invoke when: /epci reaches BP2 (post-Phase 2), code review findings
-  need transformation, or /brainstorm uses --suggest flag (Discovery Mode).
-  Do NOT load for: /quick (no formal breakpoints), or when suggestions
-  are explicitly disabled via learning preferences.
+  Use when: epci reaches phase completion, code review findings transformation, brainstorm suggest flag.
+  Not for: quick condensed workflow, disabled suggestion preferences.
 ---
 
 # Proactive Suggestions (F06)

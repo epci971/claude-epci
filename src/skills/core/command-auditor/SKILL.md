@@ -3,8 +3,8 @@ name: command-auditor
 description: >-
   Audits EPCI commands against official Anthropic best practices (95 rules).
   Generates structured report with score, Mermaid diagram, and remediation.
-  Use when: validating command quality, reviewing before merge, CI/CD checks.
-  Not for: skill validation (use validate_skill.py), runtime debugging.
+  Use when: validating command quality, reviewing commands before merge, continuous integration checks.
+  Not for: skill validation scripts, runtime debugging issues.
 ---
 
 # Command Auditor
