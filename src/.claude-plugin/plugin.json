@@ -1,6 +1,6 @@
 {
   "name": "epci",
-  "version": "5.6.2",
+  "version": "5.6.3",
   "description": "EPCI - Explore Plan Code Inspect workflow for structured AI-assisted development with full traceability, project memory, batch orchestration, and Perplexity research integration",
   "author": {
     "name": "EPCI Team"

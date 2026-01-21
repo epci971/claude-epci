@@ -27,10 +27,25 @@ Optimized for speed using Haiku model with one-at-a-time question pattern.
 ## Process
 
 1. **Analyze** the rule input (quick scan)
-2. **Detect** existing project structure (Glob .claude/rules/, src/)
+2. **Detect** existing project structure (Glob `.claude/rules/*.md`, `src/**/*`)
 3. **Identify** missing information (scope, severity, wording)
 4. **Generate** 1-3 targeted questions with smart defaults
 5. **Return** structured clarification
+
+## File Access Constraints
+
+**CRITICAL: Use Glob for directories, Read for files only.**
+
+Allowed operations:
+- `Glob .claude/rules/*.md` → returns file list
+- `Read` each file from the Glob result
+
+Forbidden operations:
+- `Read .claude/rules/` (this is a DIRECTORY)
+- `Read .claude/` (directory)
+- Any Read on a path without file extension
+
+Always Glob first, then Read individual files from the result.
 
 ## Question Priority
 

@@ -1,19 +1,15 @@
+---
+name: statusline-setup
+description: >-
+  Configure automatiquement la statusline Claude Code avec ccusage dans ~/.claude/settings.json.
+  Crée le fichier si nécessaire, préserve la configuration existante, et valide l'installation.
+  Use when: User wants to configure ccusage statusline.
+  Do NOT use for: Other configuration tasks.
+model: haiku
+allowed-tools: [Read, Write, Bash]
+---
+
 # @statusline-setup — Claude Code Status Line Configurator
-
-## Description
-
-Configure automatiquement la statusline Claude Code avec ccusage dans ~/.claude/settings.json.
-Crée le fichier si nécessaire, préserve la configuration existante, et valide l'installation.
-
-## Metadata
-
-| Field | Value |
-|-------|-------|
-| **Name** | statusline-setup |
-| **Model** | haiku |
-| **Type** | utility |
-| **Trigger** | Manual invocation |
-| **Output** | Configuration applied + validation |
 
 ## Input
 
