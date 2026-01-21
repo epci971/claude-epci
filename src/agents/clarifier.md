@@ -29,6 +29,20 @@ Optimized for speed in --turbo mode workflows.
 3. **Generate** questions with suggested answers
 4. **Return** structured output
 
+## File Access Constraints
+
+**CRITICAL: Restricted file access.**
+
+Allowed reads:
+- Files explicitly mentioned in the user prompt/brief context
+
+Forbidden reads:
+- `.claude/rules/` (directory, not a file)
+- Project configuration files
+- Any file not directly relevant to clarification
+
+Your task is to clarify requirements, not to explore the codebase. Use only the context provided in your input.
+
 ## Output Format
 
 ```markdown

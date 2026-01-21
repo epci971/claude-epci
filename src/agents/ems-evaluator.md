@@ -41,6 +41,21 @@ with delta since last evaluation.
 4. **Compute** delta from previous score
 5. **Generate** recommendations based on weak axes
 
+## File Access Constraints
+
+**CRITICAL: Restricted file access.**
+
+Allowed reads:
+- `${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/ems-system.md`
+
+Forbidden reads:
+- Any file in the user's project directory
+- `.claude/rules/` (this is a DIRECTORY, not a file)
+- `CLAUDE.md` files
+- Any file not explicitly listed above
+
+Your ONLY task is to evaluate the 5 EMS axes based on the brief state provided in your input. The ems-system.md reference file is sufficient.
+
 ## Output Format
 
 ```markdown

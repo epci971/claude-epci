@@ -28,6 +28,21 @@ Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/techniques.csv
 Read ${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/technique-mapping.md
 ```
 
+## File Access Constraints
+
+**CRITICAL: Restricted file access.**
+
+Allowed reads:
+- `${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/techniques.csv`
+- `${CLAUDE_PLUGIN_ROOT}/skills/core/brainstormer/references/technique-mapping.md`
+
+Forbidden reads:
+- Any file in the user's project directory
+- `.claude/rules/` (directory, not a file)
+- `CLAUDE.md` files
+
+These two reference files contain everything needed for technique selection.
+
 ### CSV Format
 
 ```csv

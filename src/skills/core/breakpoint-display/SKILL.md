@@ -43,6 +43,7 @@ Extraire : `type`, `title`, `data`, `ask` (optionnel).
 
 | Type | Section dans execution-templates.md |
 |------|-------------------------------------|
+| `clarification-input` | "Template: clarification-input" |
 | `validation` | "Template: validation" |
 | `analysis` | "Template: analysis" |
 | `plan-review` | "Template: plan-review" |
@@ -102,6 +103,7 @@ Retourner le choix utilisateur au workflow appelant.
 
 | Type | Usage | AskUserQuestion | Template |
 |------|-------|-----------------|----------|
+| **clarification-input** | Input clarification in /brainstorm Phase 0 | ✅ Oui | @templates/clarification-input.md |
 | **validation** | Choix simple (Valider/Modifier/Annuler) | ✅ Oui | @templates/validation.md |
 | **plan-review** | Métriques + validations agents + preview | ✅ Oui | @templates/plan-review.md |
 | **analysis** | Questions + suggestions + évaluation | ✅ Oui | @templates/analysis.md |

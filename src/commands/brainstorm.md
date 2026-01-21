@@ -83,7 +83,7 @@ ELSE:
 **Breakpoint (si clarification requise):**
 ```yaml
 @skill:breakpoint-display
-  type: validation
+  type: clarification-input
   title: "CLARIFICATION INPUT"
   data:
     original: "{input_brut}"
