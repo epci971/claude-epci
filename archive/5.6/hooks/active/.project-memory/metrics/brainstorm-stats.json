@@ -1,0 +1,33 @@
+{
+  "total_sessions": 1,
+  "by_template": {
+    "feature": 1
+  },
+  "by_ems_bucket": {
+    "low": 1,
+    "medium": 0,
+    "high": 0
+  },
+  "avg_iterations": 0,
+  "avg_duration_minutes": 0,
+  "personas_usage": {},
+  "techniques_usage": {},
+  "technique_categories_usage": {},
+  "technique_sources": {
+    "auto": 0,
+    "manual": 1,
+    "random": 0,
+    "progressive": 0
+  },
+  "by_mode": {
+    "standard": 1,
+    "party": 0,
+    "panel": 0
+  },
+  "party_sessions": 0,
+  "party_personas_usage": {},
+  "panel_sessions": 0,
+  "panel_experts_usage": {},
+  "panel_phases_usage": {},
+  "last_session": "2026-01-21T14:29:07.837662"
+}
