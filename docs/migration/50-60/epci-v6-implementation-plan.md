@@ -36,7 +36,7 @@ src/skills/core/
 > **Priorité**: CRITIQUE — Fondations pour tous les autres composants
 > **Parallélisable**: Oui (pas de dépendances inter-skills)
 
-### F01: state-manager
+### F01: state-manager => OK
 
 **État**: SKILL.md complet (86L), 1 reference créé
 

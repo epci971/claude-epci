@@ -1,91 +1,245 @@
 # State Manager — Usage Examples
 
-Practical examples of state-manager integration.
+Practical examples of state-manager integration for EPCI v6.0.
 
-## Basic Workflow
+## Basic Feature Workflow
 
-### Starting a New Feature
+### Starting a New Feature with /implement
 
 ```typescript
-// 1. Initialize state
-const state = state_manager.init("user-profile-edit");
+// 1. Create feature state with spec output
+const state = state_manager.createFeature("user-profile-edit", {
+  prd_json: "docs/specs/user-profile-edit.prd.json",
+  prd_md: "docs/specs/user-profile-edit.md",
+  complexity: "STANDARD",
+  total_tasks: 4,
+  estimated_minutes: 120
+});
 
-// 2. Update context with task list
-state.context.tasks = [
-  { id: "US-001", title: "Add edit button", status: "pending" },
-  { id: "US-002", title: "Create edit form", status: "pending" },
-  { id: "US-003", title: "Save changes API", status: "pending" }
-];
-state_manager.save(state);
+// State created at: .claude/state/features/user-profile-edit/state.json
+// Index updated at: .claude/state/features/index.json
 
-// 3. Begin implementation
-state_manager.update_phase("implementation");
+// 2. Begin implementation phase
+state_manager.updateFeature("user-profile-edit", {
+  lifecycle: {
+    current_phase: "code",
+    completed_phases: ["explore", "plan"],
+    last_updated_by: "/implement"
+  },
+  execution: {
+    tasks: {
+      completed: [],
+      current: "US-001",
+      pending: ["US-002", "US-003", "US-004"],
+      failed: []
+    }
+  }
+});
 ```
 
-### Tracking Progress
+### Tracking Task Progress
 
 ```typescript
-// Mark task as in progress
-state.context.current_task = "US-001";
-state.context.tasks[0].status = "in_progress";
-state_manager.save(state);
+// Load current state
+const state = state_manager.loadFeature("user-profile-edit");
 
-// After completing task
-state.context.tasks[0].status = "completed";
-state.files_modified.push("src/components/UserProfile.tsx");
-state_manager.save(state);
+// Mark task as completed
+state_manager.updateFeature("user-profile-edit", {
+  execution: {
+    tasks: {
+      completed: [...state.execution.tasks.completed, "US-001"],
+      current: "US-002",
+      pending: state.execution.tasks.pending.slice(1)
+    },
+    iterations: state.execution.iterations + 1
+  },
+  artifacts: {
+    modified_files: [
+      ...state.artifacts.modified_files,
+      "src/components/UserProfile.tsx"
+    ]
+  }
+});
+
+// Log to history
+state_manager.appendHistory("user-profile-edit", {
+  action: "task_completed",
+  task_id: "US-001",
+  timestamp: new Date().toISOString(),
+  details: { files_modified: ["src/components/UserProfile.tsx"] }
+});
 ```
 
-### Resuming Work
+### Completing a Feature
 
 ```typescript
-// Load existing state
-const state = state_manager.load("user-profile-edit");
+// Mark feature as completed
+state_manager.updateFeature("user-profile-edit", {
+  lifecycle: {
+    status: "completed",
+    current_phase: "inspect",
+    completed_phases: ["explore", "plan", "code", "inspect"],
+    last_updated_by: "/implement"
+  }
+});
 
-if (state) {
-  console.log(`Resuming: ${state.feature_slug}`);
-  console.log(`Phase: ${state.current_phase}`);
-  console.log(`Current task: ${state.context.current_task}`);
-
-  // Find remaining tasks
-  const remaining = state.context.tasks.filter(t => t.status !== "completed");
-  console.log(`Tasks remaining: ${remaining.length}`);
-}
+// Log completion
+state_manager.appendHistory("user-profile-edit", {
+  action: "feature_completed",
+  timestamp: new Date().toISOString(),
+  details: {
+    total_tasks: 4,
+    total_iterations: 18,
+    files_modified: state.artifacts.modified_files.length
+  }
+});
 ```
 
 ---
 
-## Checkpoint Usage
+## Checkpoint Management
 
 ### Creating Checkpoints
 
 ```typescript
-// Before a risky refactor
-const checkpointId = state_manager.create_checkpoint();
-console.log(`Checkpoint saved: ${checkpointId}`);
+// Before starting risky operation
+const checkpoint = state_manager.createCheckpoint("user-profile-edit", "code");
+console.log(`Checkpoint created: ${checkpoint.id}`);
+// Output: "code-20260122-143052"
 
-// Attempt risky operation
-try {
-  await performRiskyRefactor();
-  // Success - checkpoint can be deleted
-} catch (error) {
-  // Failure - restore checkpoint
-  state_manager.resume_checkpoint(checkpointId);
-  console.log("Restored to checkpoint");
+// Checkpoint saved to:
+// .claude/state/features/user-profile-edit/checkpoints/code-20260122-143052.json
+```
+
+### Listing and Restoring Checkpoints
+
+```typescript
+// List all checkpoints for a feature
+const checkpoints = state_manager.listCheckpoints("user-profile-edit");
+checkpoints.forEach(cp => {
+  console.log(`${cp.id} - Phase: ${cp.phase} - ${cp.timestamp}`);
+});
+
+// Restore from a checkpoint after failure
+if (error) {
+  const latestCheckpoint = checkpoints[checkpoints.length - 1];
+  const restoredState = state_manager.restoreCheckpoint(latestCheckpoint.id);
+  console.log(`Restored to phase: ${restoredState.lifecycle.current_phase}`);
 }
 ```
 
-### End of Session
+### End of Work Session
 
 ```typescript
-// User wants to pause
-state.status = "paused";
-state.context.pause_reason = "User requested";
-state.context.session_end = new Date().toISOString();
-state_manager.save(state);
-state_manager.create_checkpoint();
+// User wants to pause work
+state_manager.updateFeature("user-profile-edit", {
+  lifecycle: {
+    status: "paused",
+    last_updated_by: "/implement"
+  }
+});
 
-console.log("Session saved. Resume anytime with /implement --continue");
+// Create checkpoint for easy resume
+const checkpoint = state_manager.createCheckpoint("user-profile-edit", "code");
+
+// Log pause
+state_manager.appendHistory("user-profile-edit", {
+  action: "feature_paused",
+  timestamp: new Date().toISOString(),
+  details: {
+    checkpoint_id: checkpoint.id,
+    reason: "user_request"
+  }
+});
+
+console.log("Session saved. Resume with: /implement --continue user-profile-edit");
+```
+
+---
+
+## Session Management (Brainstorm/Debug)
+
+### Saving a Brainstorm Session
+
+```typescript
+// During /brainstorm workflow
+state_manager.saveSession("brainstorm-20260122-100000", {
+  type: "brainstorm",
+  started_at: "2026-01-22T10:00:00Z",
+  input: "I want to add OAuth authentication with Google and GitHub",
+
+  iterations: [
+    {
+      iteration: 1,
+      ems_score: 42,
+      weak_axes: ["feasibility", "clarity"],
+      hmw_questions: [
+        "How might we handle multiple OAuth providers?",
+        "How might we store tokens securely?"
+      ]
+    },
+    {
+      iteration: 2,
+      ems_score: 67,
+      weak_axes: ["feasibility"],
+      refinements: ["Added token refresh strategy"]
+    },
+    {
+      iteration: 3,
+      ems_score: 85,
+      weak_axes: [],
+      convergence: true
+    }
+  ],
+
+  output: {
+    cdc_path: "docs/specs/auth-oauth-cdc.md",
+    complexity: "STANDARD",
+    recommended_next: "/spec @docs/specs/auth-oauth-cdc.md"
+  }
+});
+```
+
+### Saving a Debug Session
+
+```typescript
+// During /debug workflow
+state_manager.saveSession("debug-20260122-143052", {
+  type: "debug",
+  started_at: "2026-01-22T14:30:52Z",
+  input: "Login fails with 'Invalid token' error",
+
+  investigation: {
+    symptoms: ["Login form submits but returns 401"],
+    hypotheses: [
+      { description: "Token expired", probability: 0.6, tested: true, result: false },
+      { description: "Token format wrong", probability: 0.3, tested: true, result: true }
+    ],
+    root_cause: "Base64 encoding missing in token generation"
+  },
+
+  output: {
+    fix_applied: true,
+    files_modified: ["src/auth/token.ts"],
+    test_added: "tests/unit/token.test.ts",
+    regression_passed: true
+  }
+});
+```
+
+### Loading and Cleaning Sessions
+
+```typescript
+// Resume a brainstorm session
+const session = state_manager.loadSession("brainstorm-20260122-100000");
+if (session) {
+  console.log(`Resuming brainstorm: ${session.iterations.length} iterations done`);
+  console.log(`Last EMS score: ${session.iterations.at(-1).ems_score}`);
+}
+
+// Cleanup old sessions (older than 24 hours)
+const deleted = state_manager.cleanupSessions(24 * 60 * 60 * 1000);
+console.log(`Cleaned up ${deleted} stale sessions`);
 ```
 
 ---
@@ -96,18 +250,27 @@ console.log("Session saved. Resume anytime with /implement --continue");
 
 ```typescript
 // At start of /implement
-function startImplement(slug: string) {
-  let state = state_manager.load(slug);
+async function startImplement(slug: string, continueFlag: boolean) {
+  let state = state_manager.loadFeature(slug);
+
+  if (continueFlag && state) {
+    // Resume existing feature
+    if (state.lifecycle.status === "paused") {
+      state_manager.updateFeature(slug, {
+        lifecycle: { status: "in_progress" }
+      });
+      state_manager.appendHistory(slug, {
+        action: "feature_resumed",
+        timestamp: new Date().toISOString()
+      });
+      console.log(`Resuming ${slug} at phase: ${state.lifecycle.current_phase}`);
+    }
+    return state;
+  }
 
   if (!state) {
-    // New feature
-    state = state_manager.init(slug);
-    state.context.started_by = "/implement";
-  } else if (state.status === "paused") {
-    // Resuming
-    state.status = "in_progress";
-    state_manager.save(state);
-    console.log("Resuming paused feature...");
+    // Create new feature - need spec first
+    throw new Error(`Run /spec first to create PRD for ${slug}`);
   }
 
   return state;
@@ -117,42 +280,78 @@ function startImplement(slug: string) {
 ### /quick Integration
 
 ```typescript
-// /quick uses lightweight state
-function startQuick(description: string) {
+// /quick uses minimal state (optional)
+async function startQuick(description: string) {
   const slug = generateSlug(description);
-  const state = state_manager.init(slug);
 
-  // Minimal context for quick tasks
-  state.context.quick_mode = true;
-  state.context.description = description;
+  // Check if it's really quick (TINY/SMALL)
+  const complexity = calculateComplexity(description);
+  if (complexity === "STANDARD" || complexity === "LARGE") {
+    console.log("Task too complex for /quick. Use /implement instead.");
+    return null;
+  }
 
-  // Skip planning phase for TINY
-  state.current_phase = "implementation";
+  // Create minimal state
+  const state = state_manager.createFeature(slug, {
+    prd_json: null, // No formal PRD for quick tasks
+    prd_md: null,
+    complexity: complexity,
+    total_tasks: 1,
+    estimated_minutes: complexity === "TINY" ? 15 : 45
+  });
 
-  return state_manager.save(state);
+  // Skip directly to code phase
+  state_manager.updateFeature(slug, {
+    lifecycle: {
+      current_phase: "code",
+      completed_phases: ["explore", "plan"], // Implicit for quick
+      created_by: "/quick"
+    }
+  });
+
+  return state;
 }
 ```
 
 ### /improve Integration
 
 ```typescript
-// /improve updates existing feature state
-function startImprove(existingSlug: string, improvement: string) {
-  const state = state_manager.load(existingSlug);
+// /improve updates existing feature
+async function startImprove(existingSlug: string, improvement: string) {
+  const state = state_manager.loadFeature(existingSlug);
 
   if (!state) {
     throw new Error(`Feature ${existingSlug} not found`);
   }
 
-  // Create improvement branch in context
-  state.context.improvements = state.context.improvements || [];
-  state.context.improvements.push({
-    description: improvement,
-    started: new Date().toISOString(),
-    status: "in_progress"
+  if (state.lifecycle.status !== "completed") {
+    throw new Error(`Feature must be completed before improvements`);
+  }
+
+  // Add improvement to state
+  state_manager.updateFeature(existingSlug, {
+    improvements: [
+      ...state.improvements,
+      {
+        description: improvement,
+        started_at: new Date().toISOString(),
+        completed_at: null,
+        status: "in_progress"
+      }
+    ],
+    lifecycle: {
+      status: "in_progress", // Reopen feature
+      last_updated_by: "/improve"
+    }
   });
 
-  return state_manager.save(state);
+  state_manager.appendHistory(existingSlug, {
+    action: "improvement_added",
+    timestamp: new Date().toISOString(),
+    details: { description: improvement }
+  });
+
+  return state_manager.loadFeature(existingSlug);
 }
 ```
 
@@ -160,80 +359,147 @@ function startImprove(existingSlug: string, improvement: string) {
 
 ## Error Handling
 
-### Detecting Stale State
+### Handling Corrupted State
 
 ```typescript
-const state = state_manager.load(slug);
-const staleThreshold = 7 * 24 * 60 * 60 * 1000; // 7 days
+try {
+  const state = state_manager.loadFeature("my-feature");
+} catch (error) {
+  if (error.code === "STATE_CORRUPTED") {
+    console.log("State file corrupted. Attempting recovery...");
 
-if (state) {
-  const lastUpdate = new Date(state.updated_at);
-  const isStale = Date.now() - lastUpdate.getTime() > staleThreshold;
-
-  if (isStale) {
-    console.log("Warning: Feature state is stale");
-    console.log("Options: resume, archive, or restart");
+    // Try to restore from latest checkpoint
+    const checkpoints = state_manager.listCheckpoints("my-feature");
+    if (checkpoints.length > 0) {
+      const latest = checkpoints[checkpoints.length - 1];
+      const recovered = state_manager.restoreCheckpoint(latest.id);
+      console.log(`Recovered from checkpoint: ${latest.id}`);
+    } else {
+      console.log("No checkpoints available. Manual intervention needed.");
+    }
   }
 }
 ```
 
-### Recovering from Failure
+### Handling Corrupted Index
 
 ```typescript
-const state = state_manager.load(slug);
-
-if (state?.status === "failed") {
-  console.log(`Feature failed: ${state.context.last_error}`);
-
-  // Option 1: Retry from last checkpoint
-  const checkpoints = listCheckpoints(slug);
-  if (checkpoints.length > 0) {
-    const latest = checkpoints[checkpoints.length - 1];
-    state_manager.resume_checkpoint(latest);
+try {
+  const features = state_manager.listFeatures();
+} catch (error) {
+  if (error.code === "INDEX_CORRUPTED") {
+    console.log("Index corrupted. Rebuilding from feature directories...");
+    state_manager.rebuildIndex();
+    const features = state_manager.listFeatures();
+    console.log(`Index rebuilt with ${features.length} features`);
   }
-
-  // Option 2: Reset to planning
-  state.status = "in_progress";
-  state.current_phase = "planning";
-  state.context.retry_count = (state.context.retry_count || 0) + 1;
-  state_manager.save(state);
 }
+```
+
+### Detecting Stale Features
+
+```typescript
+const features = state_manager.listFeatures({ status: "in_progress" });
+const staleThreshold = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+features.forEach(f => {
+  const lastUpdate = new Date(f.last_update);
+  const isStale = Date.now() - lastUpdate.getTime() > staleThreshold;
+
+  if (isStale) {
+    console.log(`Warning: ${f.id} is stale (last update: ${f.last_update})`);
+    console.log("Options: resume with /implement --continue or archive");
+  }
+});
 ```
 
 ---
 
 ## Multi-Feature Coordination
 
-### Listing Active Features
+### Listing All Features
 
 ```typescript
-const features = state_manager.list_features();
-
-console.log("Active features:");
-features.forEach(slug => {
-  const status = state_manager.get_status(slug);
-  console.log(`  - ${slug}: ${status}`);
+// All active features
+const active = state_manager.listFeatures({ status: "in_progress" });
+console.log("\nActive features:");
+active.forEach(f => {
+  console.log(`  ${f.id}: ${f.current_phase} (${f.complexity})`);
 });
+
+// All features by status
+const all = state_manager.listFeatures();
+const byStatus = {
+  in_progress: all.filter(f => f.status === "in_progress"),
+  paused: all.filter(f => f.status === "paused"),
+  completed: all.filter(f => f.status === "completed"),
+  failed: all.filter(f => f.status === "failed")
+};
+
+console.log(`\nFeature summary:`);
+console.log(`  Active: ${byStatus.in_progress.length}`);
+console.log(`  Paused: ${byStatus.paused.length}`);
+console.log(`  Completed: ${byStatus.completed.length}`);
+console.log(`  Failed: ${byStatus.failed.length}`);
 ```
 
-### Feature Dependencies
+### Feature Dashboard
 
 ```typescript
-// Feature B depends on Feature A
-function checkDependencies(state: State) {
-  const deps = state.context.dependencies || [];
+function showFeatureDashboard() {
+  const features = state_manager.listFeatures();
 
-  for (const depSlug of deps) {
-    const depStatus = state_manager.get_status(depSlug);
-    if (depStatus !== "completed") {
-      console.log(`Blocked: waiting for ${depSlug}`);
-      state.status = "paused";
-      state.context.blocked_by = depSlug;
-      state_manager.save(state);
-      return false;
-    }
-  }
+  console.log("\n┌─────────────────────────────────────────────────────────┐");
+  console.log("│                   FEATURE DASHBOARD                      │");
+  console.log("├─────────────────────────────────────────────────────────┤");
 
-  return true;
+  features.forEach(f => {
+    const statusIcon = {
+      in_progress: "🔄",
+      paused: "⏸️",
+      completed: "✅",
+      failed: "❌"
+    }[f.status];
+
+    const phaseProgress = ["explore", "plan", "code", "inspect"]
+      .map((p, i) => {
+        if (f.current_phase === p) return "●";
+        if (["explore", "plan", "code", "inspect"].indexOf(f.current_phase) > i) return "○";
+        return "·";
+      })
+      .join("");
+
+    console.log(`│ ${statusIcon} ${f.id.padEnd(25)} [${phaseProgress}] ${f.complexity.padEnd(8)} │`);
+  });
+
+  console.log("└─────────────────────────────────────────────────────────┘");
 }
+```
+
+---
+
+## Storage Layout Reference
+
+```
+.claude/state/
+├── config.json                              # Global EPCI config
+├── features/
+│   ├── index.json                           # Central registry
+│   │
+│   ├── auth-oauth-google/
+│   │   ├── state.json                       # Current state
+│   │   ├── history.json                     # Action log
+│   │   └── checkpoints/
+│   │       ├── plan-20260122-110000.json
+│   │       └── code-20260122-143052.json
+│   │
+│   └── user-profile-edit/
+│       ├── state.json
+│       ├── history.json
+│       └── checkpoints/
+│           └── plan-20260122-090000.json
+│
+└── sessions/
+    ├── brainstorm-20260122-100000.json      # Temporary session
+    └── debug-20260122-143052.json           # Temporary session
 ```

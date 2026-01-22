@@ -1,25 +1,10 @@
 {
   "name": "epci",
-  "version": "6.0.0",
-  "description": "EPCI v6 - Streamlined AI-assisted development workflow with 8 user skills and 6 core components for structured exploration, planning, implementation, and inspection",
+  "version": "6.0.1",
+  "description": "EPCI v6 - Streamlined AI-assisted development workflow",
   "author": {
     "name": "EPCI Team"
   },
   "license": "MIT",
-  "skills": [
-    "./skills/brainstorm/SKILL.md",
-    "./skills/spec/SKILL.md",
-    "./skills/implement/SKILL.md",
-    "./skills/quick/SKILL.md",
-    "./skills/debug/SKILL.md",
-    "./skills/improve/SKILL.md",
-    "./skills/refactor/SKILL.md",
-    "./skills/factory/SKILL.md",
-    "./skills/core/state-manager/SKILL.md",
-    "./skills/core/breakpoint-system/SKILL.md",
-    "./skills/core/complexity-calculator/SKILL.md",
-    "./skills/core/clarification-engine/SKILL.md",
-    "./skills/core/tdd-enforcer/SKILL.md",
-    "./skills/core/project-memory/SKILL.md"
-  ]
+  "keywords": ["epci", "workflow", "tdd", "planning"]
 }
