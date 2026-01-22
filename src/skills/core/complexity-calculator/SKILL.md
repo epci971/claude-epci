@@ -99,6 +99,29 @@ elif score < 75: STANDARD
 else: LARGE
 ```
 
+## Error Handling
+
+| Situation | Action |
+|-----------|--------|
+| Missing exploration data | Use file count only, set confidence = 0.5 |
+| Partial scan (timeout) | Mark as UNKNOWN, suggest `--think-hard` |
+| No files detected | Return TINY with warning |
+| All files high-risk | Cap at LARGE, add security warning |
+
+## Anti-patterns
+
+| Anti-pattern | Problem | Alternative |
+|--------------|---------|-------------|
+| Ignoring risk factors | Underestimation | Always include risk in calculation |
+| Hardcoding thresholds | No calibration | Use configurable thresholds |
+| Skipping for TINY | Hidden complexity | Always evaluate |
+| Manual override without logging | Lost calibration data | Log all overrides |
+
+## Reference Files
+
+- [scoring-details.md](references/scoring-details.md) — Formule complete avec exemples de calcul
+- [routing-table.md](references/routing-table.md) — Table de decision workflow
+
 ## Limitations
 
 This component does NOT:
