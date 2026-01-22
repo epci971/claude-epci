@@ -252,7 +252,7 @@ Returns list of users...
 
 ---
 
-## Phase 5: Validation (Dry-Run)
+## Phase 5: Validation (Dry-Run + Automated Script)
 
 ### 12-Point Checklist
 
@@ -275,12 +275,24 @@ Before generation, verify:
 
 See [references/checklist-validation.md](references/checklist-validation.md) for details.
 
+### Automated Validation
+
+Run the validation script on the preview structure:
+
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/skills/factory/scripts/validate_skill_output.py <skill_path>
+```
+
+Options:
+- Default mode: All checks are blocking
+- `--permissive`: Recommended checks become warnings only
+
 ### Preview
 
 Show user:
 1. File structure to create
 2. SKILL.md preview (first 50 lines)
-3. Checklist results
+3. **Automated validation report** (from script)
 
 ### BREAKPOINT
 
@@ -297,7 +309,7 @@ Show user:
 │ • skills/{path}/{name}/SKILL.md                                 │
 │ • skills/{path}/{name}/references/...                           │
 │                                                                  │
-│ Checklist: 12/12 passed                                         │
+│ Validation: ✅ PASS (12/12) or ❌ FAIL (N issues)               │
 │                                                                  │
 ├─────────────────────────────────────────────────────────────────┤
 │ [A] Generate  [B] Modify  [C] Cancel                            │
@@ -313,8 +325,17 @@ Show user:
 1. **Create directory structure**
 2. **Write SKILL.md** with full content
 3. **Write reference files** if needed
-4. **Update plugin.json** (add skill path)
-5. **Generate conformity report**
+4. **Create/update associated command** (if `user-invocable: true`)
+   - Use template from [references/command-template.md](references/command-template.md)
+   - Copy `argument-hint` from SKILL.md
+   - Copy `allowed-tools` from SKILL.md (if present)
+   - Shorten description to max 150 chars (remove "Trigger words:" suffix)
+5. **Update plugin.json** (add skill path)
+6. **Run post-generation validation**:
+   ```bash
+   python3 ${CLAUDE_PLUGIN_ROOT}/skills/factory/scripts/validate_skill_output.py <generated_skill_path>
+   ```
+7. **Generate conformity report**
 
 ### Conformity Report
 
@@ -323,7 +344,9 @@ Show user:
 
 ✅ Created: skills/{name}/SKILL.md
 ✅ Created: skills/{name}/references/checklist.md
+✅ Created/Updated: commands/{name}.md (if user-invocable)
 ✅ Updated: .claude-plugin/plugin.json
+✅ Validation: PASS (12/12 checks)
 
 ### Skill Summary
 - Name: {name}
@@ -343,6 +366,7 @@ Show user:
 
 - [best-practices-synthesis.md](references/best-practices-synthesis.md) — Core best practices
 - [checklist-validation.md](references/checklist-validation.md) — 12-point validation
+- [command-template.md](references/command-template.md) — Command generation template
 - [description-formulas.md](references/description-formulas.md) — Description patterns
 - [yaml-rules.md](references/yaml-rules.md) — Frontmatter syntax
 - [skill-templates.md](references/skill-templates.md) — User and core templates

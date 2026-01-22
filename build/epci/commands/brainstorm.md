@@ -1,5 +1,6 @@
 ---
 description: "Transform vague ideas into structured specifications through guided exploration. Use for idea exploration, requirement clarification."
+argument-hint: "<idea>"
 disable-model-invocation: true
 ---
 
