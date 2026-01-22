@@ -1,5 +1,6 @@
 ---
 description: "Structured debugging workflow with hypothesis-driven investigation. Use when fixing bugs or investigating errors."
+argument-hint: "<bug description or error>"
 disable-model-invocation: true
 ---
 

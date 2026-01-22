@@ -1,5 +1,6 @@
 ---
 description: "Enhance existing code for better performance, readability, or maintainability. Use for optimization tasks."
+argument-hint: "<target> [--focus <area>]"
 disable-model-invocation: true
 ---
 
