@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "feature-state-v1",
+  "title": "Feature State",
+  "description": "Schema for tracking feature implementation state",
+  "type": "object",
+  "required": ["feature_slug", "status", "created_at"],
+  "properties": {
+    "feature_slug": {
+      "type": "string",
+      "description": "Unique identifier for the feature"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["in_progress", "completed", "paused", "failed"],
+      "description": "Current status of the feature"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the feature was started"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "current_phase": {
+      "type": "string",
+      "enum": ["planning", "implementation", "finalization"],
+      "description": "Current workflow phase"
+    },
+    "files_modified": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of files modified during implementation"
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional context for resumption"
+    }
+  }
+}
