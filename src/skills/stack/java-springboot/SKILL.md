@@ -1,5 +1,5 @@
 ---
-name: java-springboot
+name: epci:java-springboot
 description: >-
   Patterns and conventions for Java/Spring Boot. Includes Spring Data JPA,
   Spring Security, JUnit 5, Lombok. Use when: Spring Boot Java development,

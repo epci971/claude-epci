@@ -45,7 +45,7 @@ IF --turbo flag:
     input: idea_raw, project_context
     output: questions[], suggestions[]
 ELSE:
-  @skill:clarification-engine
+  @skill:epci:clarification-engine
     input: idea_raw, project_context
     mode: brainstorm
     max_questions: 3
@@ -60,7 +60,7 @@ Question categories:
 ### 3. BREAKPOINT: Clarification
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Clarification"
   data: {
@@ -114,7 +114,7 @@ Synthesize into structured brief:
 ### 6. BREAKPOINT: Brief Validation
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Brief Validation"
   data: {

@@ -165,7 +165,7 @@ RETRY PROTOCOL:
 If still failing after 2 retries, invoke diagnostic breakpoint:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: diagnostic
   title: "TDD Failure"
   data: {

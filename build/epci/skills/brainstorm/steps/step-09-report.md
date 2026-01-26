@@ -24,7 +24,7 @@
 ### 1. Calculate Complexity Routing
 
 ```python
-@skill:complexity-calculator
+@skill:epci:complexity-calculator
   input: {
     brief: brief_final,
     ems: ems,
@@ -73,7 +73,7 @@ Bash("python src/hooks/runner.py post-brainstorm --context '{json}'")
 ### 3. Store Metrics in project-memory
 
 ```python
-@skill:project-memory
+@skill:epci:project-memory
   store_feature_metrics(
     slug=slug,
     ems_final=ems["global"],

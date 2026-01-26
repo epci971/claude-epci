@@ -101,7 +101,7 @@ IF trigger_security_audit:
 ### 5. BREAKPOINT: Preview Results (if preview requested)
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: plan-review
   title: "Implementation Preview"
   data: {

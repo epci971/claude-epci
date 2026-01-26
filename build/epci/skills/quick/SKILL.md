@@ -1,5 +1,5 @@
 ---
-name: quick
+name: epci:quick
 description: >-
   Fast implementation for TINY and SMALL tasks. Single-phase execution
   with TDD Red-Green cycle (skip Refactor). Detects native Claude Code plans
@@ -40,15 +40,15 @@ INPUT
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER execute on STANDARD/LARGE complexity (suggest /implement)
-- :red_circle: NEVER skip TDD cycle (Red-Green-Verify required)
-- :red_circle: NEVER skip MEMORY phase (index.json must be updated)
-- :white_check_mark: ALWAYS start with step-00-detect.md
-- :white_check_mark: ALWAYS follow next_step from each step
-- :white_check_mark: ALWAYS detect stack skills at initialization
-- :white_check_mark: ALWAYS invoke @implementer for CODE phase
-- :no_entry: FORBIDDEN skipping tests even for TINY tasks
-- :large_blue_circle: YOU ARE A FAST BUT DISCIPLINED IMPLEMENTER
+- 🔴 NEVER execute on STANDARD/LARGE complexity (suggest /implement)
+- 🔴 NEVER skip TDD cycle (Red-Green-Verify required)
+- 🔴 NEVER skip MEMORY phase (index.json must be updated)
+- ✅ ALWAYS start with step-00-detect.md
+- ✅ ALWAYS follow next_step from each step
+- ✅ ALWAYS detect stack skills at initialization
+- ✅ ALWAYS invoke @implementer for CODE phase
+- ⛔ FORBIDDEN skipping tests even for TINY tasks
+- 🔵 YOU ARE A FAST BUT DISCIPLINED IMPLEMENTER
 
 ## EXECUTION PROTOCOLS:
 
@@ -142,22 +142,22 @@ INPUT
 
 ## Shared Components Used
 
-- `state-manager` — Track progress, update index.json
-- `complexity-calculator` — Validate scope, routing
-- `tdd-enforcer` — TDD cycle enforcement (Red-Green mode)
-- `breakpoint-system` — Interactive breakpoints (SMALL complexity only)
-- `project-memory` — Context persistence
+- `epci:state-manager` — Track progress, update index.json
+- `epci:complexity-calculator` — Validate scope, routing
+- `epci:tdd-enforcer` — TDD cycle enforcement (Red-Green mode)
+- `epci:breakpoint-system` — Interactive breakpoints (SMALL complexity only)
+- `epci:project-memory` — Context persistence
 
 ## Breakpoints
 
-This skill uses `breakpoint-system` at key decision points (SMALL complexity only).
+This skill uses `epci:breakpoint-system` at key decision points (SMALL complexity only).
 
 | Step | Type | Purpose | Condition |
 |------|------|---------|-----------|
 | step-01-mini-explore | `validation` | Complexity re-evaluation alert | If complexity appears STANDARD+ |
 | step-03-code | `diagnostic` | TDD failure handling | If tests fail 2x |
 
-TINY tasks skip breakpoints for speed. All breakpoints MUST use `@skill:breakpoint-system` invocation format.
+TINY tasks skip breakpoints for speed. All breakpoints MUST use `@skill:epci:breakpoint-system` invocation format.
 
 ## Stack Skills (Auto-detected)
 

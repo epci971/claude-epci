@@ -1,5 +1,5 @@
 ---
-name: complexity-calculator
+name: epci:complexity-calculator
 description: >-
   Calculates task complexity (TINY/SMALL/STANDARD/LARGE) for workflow routing.
   Analyzes scope, files affected, and estimated effort.

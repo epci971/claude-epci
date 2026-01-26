@@ -9,12 +9,12 @@ next_step: steps/step-07-memory.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip final validation
-- :white_check_mark: ALWAYS verify all tests still passing
-- :white_check_mark: ALWAYS verify all outputs generated
-- :white_check_mark: ALWAYS present completion summary
-- :white_check_mark: ALWAYS suggest next steps
-- :thought_balloon: FOCUS on confirming successful completion
+- 🔴 NEVER skip final validation
+- ✅ ALWAYS verify all tests still passing
+- ✅ ALWAYS verify all outputs generated
+- ✅ ALWAYS present completion summary
+- ✅ ALWAYS suggest next steps
+- 💭 FOCUS on confirming successful completion
 
 ## EXECUTION PROTOCOLS:
 
@@ -56,16 +56,16 @@ next_step: steps/step-07-memory.md
 ## Implementation Complete
 
 ### Feature: {feature-slug}
-- Status: :white_check_mark: COMPLETED
+- Status: ✅ COMPLETED
 - Complexity: {STANDARD|LARGE}
 - Duration: {time}
 
 ### Deliverables
-:white_check_mark: Implementation code
-:white_check_mark: Unit tests ({coverage}%)
-:white_check_mark: Integration tests
-:white_check_mark: Feature Document
-:white_check_mark: Documentation updates
+✅ Implementation code
+✅ Unit tests ({coverage}%)
+✅ Integration tests
+✅ Feature Document
+✅ Documentation updates
 
 ### Files Summary
 | Action | Count | Files |
@@ -75,7 +75,7 @@ next_step: steps/step-07-memory.md
 
 ### Test Summary
 - Total tests: {N}
-- All passing: :white_check_mark:
+- All passing: ✅
 - Coverage: {%}
 
 ### Key Decisions
@@ -95,7 +95,7 @@ next_step: steps/step-07-memory.md
 ## COMPLETION SUMMARY:
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│ :white_check_mark: IMPLEMENTATION COMPLETE                                          │
+│ ✅ IMPLEMENTATION COMPLETE                                          │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Feature: {feature-slug}                                             │
 │                                                                     │
@@ -106,10 +106,10 @@ next_step: steps/step-07-memory.md
 │ • Documentation complete                                            │
 │                                                                     │
 │ EPCI Phases Completed:                                              │
-│ :white_check_mark: [E] Explore                                                      │
-│ :white_check_mark: [P] Plan                                                         │
-│ :white_check_mark: [C] Code                                                         │
-│ :white_check_mark: [I] Inspect                                                      │
+│ ✅ [E] Explore                                                      │
+│ ✅ [P] Plan                                                         │
+│ ✅ [C] Code                                                         │
+│ ✅ [I] Inspect                                                      │
 │                                                                     │
 │ Ready for commit and review.                                        │
 └─────────────────────────────────────────────────────────────────────┘

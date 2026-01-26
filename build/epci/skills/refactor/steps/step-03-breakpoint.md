@@ -21,7 +21,7 @@
 Present the complete plan using breakpoint-system:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: plan-review
   title: "Refactoring Plan Validation"
   data: {

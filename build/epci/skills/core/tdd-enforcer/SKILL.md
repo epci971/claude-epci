@@ -1,5 +1,5 @@
 ---
-name: tdd-enforcer
+name: epci:tdd-enforcer
 description: >-
   Enforces Test-Driven Development workflow (RED-GREEN-REFACTOR-VERIFY).
   Ensures tests are written before implementation code.

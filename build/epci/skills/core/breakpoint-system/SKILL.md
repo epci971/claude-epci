@@ -1,5 +1,5 @@
 ---
-name: breakpoint-system
+name: epci:breakpoint-system
 description: >-
   Displays standardized interactive breakpoints with AskUserQuestion integration
   for EPCI v6.0 workflows. Renders ASCII box UI with context, options, and
@@ -50,7 +50,7 @@ Centralizes all breakpoint display logic for consistency, token economy, and mai
 ## Invocation Pattern
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: {TYPE}
   title: "{TITLE}"
   data: { /* type-specific structure */ }

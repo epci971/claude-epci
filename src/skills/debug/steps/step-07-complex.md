@@ -51,7 +51,7 @@ See [references/solution-scoring.md](../references/solution-scoring.md) for form
 Use `breakpoint-system` with type "diagnostic":
 
 ```
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: diagnostic
   title: "Root Cause Analysis Complete"
   data: {

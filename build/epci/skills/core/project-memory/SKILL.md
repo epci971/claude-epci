@@ -1,5 +1,5 @@
 ---
-name: project-memory
+name: epci:project-memory
 description: >-
   Maintains project context, history, and learnings across sessions.
   Provides persistent memory for patterns, preferences, velocity metrics, and past decisions.

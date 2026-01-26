@@ -126,7 +126,7 @@ Ready for: Analysis & Decomposition
 ## BREAKPOINT (if clarification needed):
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Input Needs Clarification"
   data: {
@@ -152,7 +152,7 @@ Ready for: Analysis & Decomposition
 ## BREAKPOINT (if discovery mode and no brief found):
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Source Required"
   data: {

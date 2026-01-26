@@ -1,5 +1,5 @@
 ---
-name: implement
+name: epci:implement
 description: >-
   Full implementation workflow for STANDARD and LARGE features through multi-phase
   EPCI execution. Routes through Explore, Plan, Code, Inspect phases with TDD enforcement.
@@ -169,15 +169,15 @@ ELSE IF complexity == LARGE:
 
 ## Shared Components Used
 
-- `state-manager` — Track progress across sessions
-- `complexity-calculator` — Scope validation and routing
-- `tdd-enforcer` — Ensure TDD compliance
-- `breakpoint-system` — Phase checkpoints
-- `project-memory` — Context persistence
+- `epci:state-manager` — Track progress across sessions
+- `epci:complexity-calculator` — Scope validation and routing
+- `epci:tdd-enforcer` — Ensure TDD compliance
+- `epci:breakpoint-system` — Phase checkpoints
+- `epci:project-memory` — Context persistence
 
 ## Breakpoints
 
-This skill uses `breakpoint-system` at key workflow points.
+This skill uses `epci:breakpoint-system` at key workflow points.
 
 | Step | Type | Purpose |
 |------|------|---------|
@@ -188,7 +188,7 @@ This skill uses `breakpoint-system` at key workflow points.
 | step-04b-security | `validation` | Security review approval |
 | step-04c-qa | `validation` | QA validation approval |
 
-All breakpoints MUST use `@skill:breakpoint-system` invocation format.
+All breakpoints MUST use `@skill:epci:breakpoint-system` invocation format.
 
 ## Limitations
 

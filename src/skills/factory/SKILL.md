@@ -1,5 +1,5 @@
 ---
-name: factory
+name: epci:factory
 description: >-
   Creates production-ready Claude skills for EPCI v6.0 through guided 6-phase workflow.
   Generates complete skill packages: SKILL.md, steps/, references/.
@@ -137,10 +137,10 @@ Create production-ready skills for EPCI v6.0 following best practices.
 
 ## Shared Components Used
 
-- `breakpoint-system` — Validation approval (step-05)
-- `complexity-calculator` — Sizing determination
-- `clarification-engine` — Gap analysis on description (optional)
-- `project-memory` — Store generated skill metadata
+- `epci:breakpoint-system` — Validation approval (step-05)
+- `epci:complexity-calculator` — Sizing determination
+- `epci:clarification-engine` — Gap analysis on description (optional)
+- `epci:project-memory` — Store generated skill metadata
 
 ## Subagents
 

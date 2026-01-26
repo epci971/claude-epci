@@ -66,7 +66,7 @@ Routing: {next step path}
 ## BREAKPOINT (for STANDARD+ only):
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Complexity Assessment"
   data: {

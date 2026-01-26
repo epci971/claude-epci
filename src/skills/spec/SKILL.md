@@ -1,5 +1,5 @@
 ---
-name: spec
+name: epci:spec
 description: >-
   Create comprehensive technical specifications from CDC (Cahier des Charges) or brief output.
   Decomposes features into 1-2h atomic tasks with 15-30min steps. Generates Markdown specs
@@ -192,10 +192,10 @@ docs/specs/{feature-slug}/
 
 ## Shared Components Used
 
-- `complexity-calculator` — Scope estimation for routing
-- `project-memory` — Velocity calibration, conventions
-- `clarification-engine` — Input clarification if needed
-- `breakpoint-system` — Phase checkpoints
+- `epci:complexity-calculator` — Scope estimation for routing
+- `epci:project-memory` — Velocity calibration, conventions
+- `epci:clarification-engine` — Input clarification if needed
+- `epci:breakpoint-system` — Phase checkpoints
 - `@decompose-validator` — DAG validation
 
 ## Subagents

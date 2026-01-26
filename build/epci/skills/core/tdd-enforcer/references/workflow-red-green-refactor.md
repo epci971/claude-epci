@@ -23,11 +23,11 @@ RED → GREEN → REFACTOR → VERIFY
 
 | Icon | Rule |
 |------|------|
-| :no_entry: | NEVER skip writing the test first |
-| :no_entry: | NEVER write implementation before test |
-| :white_check_mark: | ALWAYS write one test at a time |
-| :white_check_mark: | ALWAYS verify test fails for the right reason |
-| :white_check_mark: | ALWAYS keep test focused on one behavior |
+| ⛔ | NEVER skip writing the test first |
+| ⛔ | NEVER write implementation before test |
+| ✅ | ALWAYS write one test at a time |
+| ✅ | ALWAYS verify test fails for the right reason |
+| ✅ | ALWAYS keep test focused on one behavior |
 
 ### Process
 
@@ -66,11 +66,11 @@ describe('UserService', () => {
 
 | Icon | Rule |
 |------|------|
-| :no_entry: | NEVER write more code than needed to pass |
-| :no_entry: | NEVER optimize during GREEN phase |
-| :white_check_mark: | ALWAYS write minimal implementation |
-| :white_check_mark: | ALWAYS run test after each change |
-| :white_check_mark: | ALWAYS verify no other tests broken |
+| ⛔ | NEVER write more code than needed to pass |
+| ⛔ | NEVER optimize during GREEN phase |
+| ✅ | ALWAYS write minimal implementation |
+| ✅ | ALWAYS run test after each change |
+| ✅ | ALWAYS verify no other tests broken |
 
 ### Process
 
@@ -108,11 +108,11 @@ class UserService {
 
 | Icon | Rule |
 |------|------|
-| :no_entry: | NEVER change behavior during refactor |
-| :no_entry: | NEVER skip running tests after refactor |
-| :white_check_mark: | ALWAYS keep tests green during refactor |
-| :white_check_mark: | ALWAYS improve one thing at a time |
-| :white_check_mark: | ALWAYS apply identified patterns |
+| ⛔ | NEVER change behavior during refactor |
+| ⛔ | NEVER skip running tests after refactor |
+| ✅ | ALWAYS keep tests green during refactor |
+| ✅ | ALWAYS improve one thing at a time |
+| ✅ | ALWAYS apply identified patterns |
 
 ### Process
 
@@ -145,11 +145,11 @@ class UserService {
 
 | Icon | Rule |
 |------|------|
-| :no_entry: | NEVER skip final verification |
-| :no_entry: | NEVER ignore coverage requirements |
-| :white_check_mark: | ALWAYS run full test suite |
-| :white_check_mark: | ALWAYS check coverage thresholds |
-| :white_check_mark: | ALWAYS verify integration points |
+| ⛔ | NEVER skip final verification |
+| ⛔ | NEVER ignore coverage requirements |
+| ✅ | ALWAYS run full test suite |
+| ✅ | ALWAYS check coverage thresholds |
+| ✅ | ALWAYS verify integration points |
 
 ### Process
 

@@ -69,7 +69,7 @@ IF ems.global < 60 AND NOT finish --force:
 ### 3. BREAKPOINT: Finish Validation
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: plan-review
   title: "Finish Exploration"
   data: {

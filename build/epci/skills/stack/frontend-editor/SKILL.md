@@ -1,5 +1,5 @@
 ---
-name: frontend-editor
+name: epci:frontend-editor
 description: >-
   Tailwind CSS patterns for presentation layer. Includes design tokens,
   component variants (primary, secondary, success, warning, danger, ghost, outline),

@@ -65,7 +65,7 @@ Location: `docs/debug/{slug}-{date}.md`
 
 ### Hypotheses Investigated
 
-#### H1: {title} [Confidence: {N}%] :star: CONFIRMED
+#### H1: {title} [Confidence: {N}%] ⭐ CONFIRMED
 - **Statement**: {hypothesis}
 - **Evidence**: {evidence list}
 - **Quick Check**: {what was done}

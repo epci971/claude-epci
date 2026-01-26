@@ -39,7 +39,7 @@ IF --continue <id> provided:
 ### 2. Load Project Context via project-memory
 
 ```python
-@skill:project-memory
+@skill:epci:project-memory
   init()
   patterns = get_patterns()
   preferences = get_preferences()

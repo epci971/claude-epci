@@ -111,7 +111,7 @@ next_step: steps/step-05-document.md
 ## BREAKPOINT:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "QA Review Complete"
   data: {

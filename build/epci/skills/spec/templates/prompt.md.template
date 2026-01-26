@@ -25,12 +25,12 @@
 
 ### MANDATORY
 
-- :red_circle: Follow TDD cycle: RED → GREEN → REFACTOR
-- :red_circle: Complete each task fully before moving to next
-- :red_circle: Run tests after each step completion
-- :red_circle: Update MEMORY.md after each task completion
-- :red_circle: Commit changes with conventional commit format
-- :red_circle: Never skip acceptance criteria validation
+- 🔴 Follow TDD cycle: RED → GREEN → REFACTOR
+- 🔴 Complete each task fully before moving to next
+- 🔴 Run tests after each step completion
+- 🔴 Update MEMORY.md after each task completion
+- 🔴 Commit changes with conventional commit format
+- 🔴 Never skip acceptance criteria validation
 
 ### WORKFLOW
 

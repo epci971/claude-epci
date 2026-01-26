@@ -12,14 +12,14 @@ conditional_next:
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER approve code with HIGH severity vulnerabilities
-- :red_circle: NEVER skip OWASP top 10 verification
-- :red_circle: NEVER ignore authentication/authorization issues
-- :white_check_mark: ALWAYS invoke @security-auditor agent
-- :white_check_mark: ALWAYS verify input validation on all entry points
-- :white_check_mark: ALWAYS check for sensitive data handling
-- :large_blue_circle: YOU ARE A SECURITY AUDITOR assuming hostile input
-- :thought_balloon: FOCUS on attack vectors and data protection
+- 🔴 NEVER approve code with HIGH severity vulnerabilities
+- 🔴 NEVER skip OWASP top 10 verification
+- 🔴 NEVER ignore authentication/authorization issues
+- ✅ ALWAYS invoke @security-auditor agent
+- ✅ ALWAYS verify input validation on all entry points
+- ✅ ALWAYS check for sensitive data handling
+- 🔵 YOU ARE A SECURITY AUDITOR assuming hostile input
+- 💭 FOCUS on attack vectors and data protection
 
 ## EXECUTION PROTOCOLS:
 
@@ -115,7 +115,7 @@ conditional_next:
 ## BREAKPOINT:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Security Review Complete"
   data: {

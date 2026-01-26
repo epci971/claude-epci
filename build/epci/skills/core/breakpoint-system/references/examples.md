@@ -7,7 +7,7 @@ Real-world usage examples for each EPCI skill that uses breakpoint-system.
 Display EMS progress during brainstorming iterations.
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: ems-status
   title: "BRAINSTORM STATUS"
   data: {
@@ -74,7 +74,7 @@ Display EMS progress during brainstorming iterations.
 Validate brief before proceeding.
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "VALIDATION DU BRIEF"
   data: {
@@ -126,7 +126,7 @@ Validate brief before proceeding.
 Review generated PRD before finalization.
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: plan-review
   title: "PRD REVIEW — auth-oauth-google"
   data: {
@@ -184,7 +184,7 @@ Review generated PRD before finalization.
 Transition between EPCI phases.
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: phase-transition
   title: "FIN PHASE EXPLORE"
   data: {
@@ -249,7 +249,7 @@ Transition between EPCI phases.
 Present root cause analysis and solution options.
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: diagnostic
   title: "DIAGNOSTIC — JWT Token Issue"
   data: {
@@ -325,7 +325,7 @@ Present root cause analysis and solution options.
 Review refactoring plan before execution.
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: plan-review
   title: "REFACTOR PLAN — src/services/"
   data: {
@@ -375,7 +375,7 @@ Review refactoring plan before execution.
 Validate skill before generation.
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "SKILL READY FOR GENERATION"
   data: {
@@ -405,7 +405,7 @@ Validate skill before generation.
 Simple validation before quick implementation.
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "QUICK VALIDATION"
   data: {

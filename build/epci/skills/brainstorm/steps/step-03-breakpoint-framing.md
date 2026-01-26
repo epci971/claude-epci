@@ -66,7 +66,7 @@ IF --quick mode:
 ### 3. BREAKPOINT: Framing Validation
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: plan-review
   title: "Framing Validation"
   data: {

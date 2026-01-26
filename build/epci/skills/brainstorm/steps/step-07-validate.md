@@ -69,7 +69,7 @@ Structure brief into validatable sections:
 For each major section (unless --quick):
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Validate: {section_name}"
   data: {

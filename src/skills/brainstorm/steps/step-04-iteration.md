@@ -109,7 +109,7 @@ IF iter >= 2 AND ems.global < 50 AND weak_axes:
 ### 6. BREAKPOINT: EMS Status
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: ems-status
   title: "Iteration {iteration} Status"
   data: {

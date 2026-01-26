@@ -1,5 +1,5 @@
 ---
-name: quick
+name: epci:quick
 description: >-
   Fast implementation for TINY and SMALL tasks. Single-phase execution
   with TDD Red-Green cycle (skip Refactor). Detects native Claude Code plans
@@ -142,22 +142,22 @@ INPUT
 
 ## Shared Components Used
 
-- `state-manager` — Track progress, update index.json
-- `complexity-calculator` — Validate scope, routing
-- `tdd-enforcer` — TDD cycle enforcement (Red-Green mode)
-- `breakpoint-system` — Interactive breakpoints (SMALL complexity only)
-- `project-memory` — Context persistence
+- `epci:state-manager` — Track progress, update index.json
+- `epci:complexity-calculator` — Validate scope, routing
+- `epci:tdd-enforcer` — TDD cycle enforcement (Red-Green mode)
+- `epci:breakpoint-system` — Interactive breakpoints (SMALL complexity only)
+- `epci:project-memory` — Context persistence
 
 ## Breakpoints
 
-This skill uses `breakpoint-system` at key decision points (SMALL complexity only).
+This skill uses `epci:breakpoint-system` at key decision points (SMALL complexity only).
 
 | Step | Type | Purpose | Condition |
 |------|------|---------|-----------|
 | step-01-mini-explore | `validation` | Complexity re-evaluation alert | If complexity appears STANDARD+ |
 | step-03-code | `diagnostic` | TDD failure handling | If tests fail 2x |
 
-TINY tasks skip breakpoints for speed. All breakpoints MUST use `@skill:breakpoint-system` invocation format.
+TINY tasks skip breakpoints for speed. All breakpoints MUST use `@skill:epci:breakpoint-system` invocation format.
 
 ## Stack Skills (Auto-detected)
 

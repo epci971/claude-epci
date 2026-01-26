@@ -9,13 +9,13 @@ next_step: steps/step-06-finish.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip Feature Document update
-- :red_circle: NEVER leave outdated documentation
-- :white_check_mark: ALWAYS complete Feature Document
-- :white_check_mark: ALWAYS update related docs if affected
-- :white_check_mark: ALWAYS document breaking changes
-- :large_blue_circle: YOU ARE A DOCUMENTOR ensuring future maintainability
-- :thought_balloon: FOCUS on what the next developer needs to know
+- 🔴 NEVER skip Feature Document update
+- 🔴 NEVER leave outdated documentation
+- ✅ ALWAYS complete Feature Document
+- ✅ ALWAYS update related docs if affected
+- ✅ ALWAYS document breaking changes
+- 🔵 YOU ARE A DOCUMENTOR ensuring future maintainability
+- 💭 FOCUS on what the next developer needs to know
 
 ## EXECUTION PROTOCOLS:
 

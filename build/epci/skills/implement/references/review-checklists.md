@@ -174,11 +174,11 @@ Reference checklists for code review in EPCI implementation workflow.
 
 | Level | Description | Action |
 |-------|-------------|--------|
-| :red_circle: CRITICAL | Security vulnerability, data loss risk | Must fix before merge |
-| :orange_circle: HIGH | Bug, significant issue | Must fix before merge |
-| :yellow_circle: MEDIUM | Code quality issue | Should fix |
-| :blue_circle: LOW | Style, minor improvement | Optional |
-| :white_circle: INFO | Suggestion, FYI | No action required |
+| 🔴 CRITICAL | Security vulnerability, data loss risk | Must fix before merge |
+| 🟠 HIGH | Bug, significant issue | Must fix before merge |
+| 🟡 MEDIUM | Code quality issue | Should fix |
+| 🔵 LOW | Style, minor improvement | Optional |
+| ⚪ INFO | Suggestion, FYI | No action required |
 
 ---
 

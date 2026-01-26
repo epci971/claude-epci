@@ -135,8 +135,8 @@ In generated skills, reference core skills:
 
 | Core Skill | Purpose in This Skill |
 |------------|----------------------|
-| `@skill:breakpoint-system` | Phase transitions |
-| `@skill:state-manager` | Progress tracking |
+| `@skill:epci:breakpoint-system` | Phase transitions |
+| `@skill:epci:state-manager` | Progress tracking |
 ```
 
 ---

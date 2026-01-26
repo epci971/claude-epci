@@ -93,7 +93,7 @@ Based on template and brief, generate research prompts:
 ### 5. BREAKPOINT: Perplexity Research
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: info-only
   title: "Research Prompts"
   data: {

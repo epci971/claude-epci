@@ -102,7 +102,7 @@ Stack Context: {stack skill loaded, if any}
 If exploration reveals more complexity than expected, invoke breakpoint:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Complexity Alert"
   data: {

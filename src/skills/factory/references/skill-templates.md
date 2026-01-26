@@ -594,7 +594,7 @@ Add this section to implementation skills:
 ```markdown
 ## TDD Integration
 
-This skill follows the TDD workflow via `@skill:tdd-enforcer`.
+This skill follows the TDD workflow via `@skill:epci:tdd-enforcer`.
 
 ### TDD Phases
 
@@ -637,9 +637,9 @@ After each phase, verify:
 
 | Core Skill | Purpose |
 |------------|---------|
-| `@skill:tdd-enforcer` | Enforce RED-GREEN-REFACTOR cycle |
-| `@skill:state-manager` | Track TDD phase progress |
-| `@skill:breakpoint-system` | Phase transition checkpoints |
+| `@skill:epci:tdd-enforcer` | Enforce RED-GREEN-REFACTOR cycle |
+| `@skill:epci:state-manager` | Track TDD phase progress |
+| `@skill:epci:breakpoint-system` | Phase transition checkpoints |
 ```
 
 ---

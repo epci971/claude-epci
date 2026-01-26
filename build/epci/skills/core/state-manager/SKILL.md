@@ -1,5 +1,5 @@
 ---
-name: state-manager
+name: epci:state-manager
 description: >-
   Manages feature state persistence across sessions for EPCI v6.0 workflows.
   Tracks implementation progress, phases, checkpoints, history, and resumption context.

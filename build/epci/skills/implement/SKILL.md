@@ -1,5 +1,5 @@
 ---
-name: implement
+name: epci:implement
 description: >-
   Full implementation workflow for STANDARD and LARGE features through multi-phase
   EPCI execution. Routes through Explore, Plan, Code, Inspect phases with TDD enforcement.
@@ -38,17 +38,17 @@ INPUT
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER execute steps out of order
-- :red_circle: NEVER skip the planning phase
-- :red_circle: NEVER modify files during exploration (Step 01)
-- :red_circle: NEVER skip TDD for STANDARD+ complexity
-- :white_check_mark: ALWAYS start with step-00-init.md
-- :white_check_mark: ALWAYS follow next_step from each step
-- :white_check_mark: ALWAYS present breakpoints at phase transitions
-- :white_check_mark: ALWAYS complete code review before documentation
-- :no_entry: FORBIDDEN skipping tests for STANDARD or LARGE features
-- :large_blue_circle: YOU ARE A METHODICAL IMPLEMENTER following EPCI discipline
-- :thought_balloon: FOCUS on one phase at a time, complete before proceeding
+- 🔴 NEVER execute steps out of order
+- 🔴 NEVER skip the planning phase
+- 🔴 NEVER modify files during exploration (Step 01)
+- 🔴 NEVER skip TDD for STANDARD+ complexity
+- ✅ ALWAYS start with step-00-init.md
+- ✅ ALWAYS follow next_step from each step
+- ✅ ALWAYS present breakpoints at phase transitions
+- ✅ ALWAYS complete code review before documentation
+- ⛔ FORBIDDEN skipping tests for STANDARD or LARGE features
+- 🔵 YOU ARE A METHODICAL IMPLEMENTER following EPCI discipline
+- 💭 FOCUS on one phase at a time, complete before proceeding
 
 ## EXECUTION PROTOCOLS:
 
@@ -169,15 +169,15 @@ ELSE IF complexity == LARGE:
 
 ## Shared Components Used
 
-- `state-manager` — Track progress across sessions
-- `complexity-calculator` — Scope validation and routing
-- `tdd-enforcer` — Ensure TDD compliance
-- `breakpoint-system` — Phase checkpoints
-- `project-memory` — Context persistence
+- `epci:state-manager` — Track progress across sessions
+- `epci:complexity-calculator` — Scope validation and routing
+- `epci:tdd-enforcer` — Ensure TDD compliance
+- `epci:breakpoint-system` — Phase checkpoints
+- `epci:project-memory` — Context persistence
 
 ## Breakpoints
 
-This skill uses `breakpoint-system` at key workflow points.
+This skill uses `epci:breakpoint-system` at key workflow points.
 
 | Step | Type | Purpose |
 |------|------|---------|
@@ -188,7 +188,7 @@ This skill uses `breakpoint-system` at key workflow points.
 | step-04b-security | `validation` | Security review approval |
 | step-04c-qa | `validation` | QA validation approval |
 
-All breakpoints MUST use `@skill:breakpoint-system` invocation format.
+All breakpoints MUST use `@skill:epci:breakpoint-system` invocation format.
 
 ## Limitations
 

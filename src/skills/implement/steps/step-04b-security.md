@@ -115,7 +115,7 @@ conditional_next:
 ## BREAKPOINT:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Security Review Complete"
   data: {

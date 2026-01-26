@@ -1,5 +1,5 @@
 ---
-name: debug
+name: epci:debug
 description: >-
   Structured debugging workflow with hypothesis-driven investigation using
   Tree of Thought (ToT) methodology. Generates ranked hypotheses with testable
@@ -173,11 +173,11 @@ Structured debugging with Tree of Thought (ToT) hypothesis-driven investigation.
 
 ## Shared Components Used
 
-- `clarification-engine` — Input cleanup (Step 0)
-- `complexity-calculator` — Routing evaluation (Step 4)
-- `breakpoint-system` — Type "diagnostic" for solution choice (Step 7)
-- `tdd-enforcer` — RED-GREEN-VERIFY cycle (Step 6, 7)
-- `project-memory` — Bug history recall and storage (Step 1, 8)
+- `epci:clarification-engine` — Input cleanup (Step 0)
+- `epci:complexity-calculator` — Routing evaluation (Step 4)
+- `epci:breakpoint-system` — Type "diagnostic" for solution choice (Step 7)
+- `epci:tdd-enforcer` — RED-GREEN-VERIFY cycle (Step 6, 7)
+- `epci:project-memory` — Bug history recall and storage (Step 1, 8)
 
 ## Subagents
 

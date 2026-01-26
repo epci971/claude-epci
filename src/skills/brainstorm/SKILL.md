@@ -1,5 +1,5 @@
 ---
-name: brainstorm
+name: epci:brainstorm
 description: >-
   Transform vague ideas into structured specifications (CDC) through guided exploration.
   Uses iterative refinement with EMS (Exploration Maturity Score) to progressively clarify requirements.
@@ -160,10 +160,10 @@ Transform vague ideas into actionable specifications through structured co-explo
 
 ## Shared Components Used
 
-- `project-memory` — Load context, patterns, preferences
-- `clarification-engine` — Smart clarification questions
-- `breakpoint-system` — All interactive breakpoints
-- `complexity-calculator` — Final routing to /spec or /quick
+- `epci:project-memory` — Load context, patterns, preferences
+- `epci:clarification-engine` — Smart clarification questions
+- `epci:breakpoint-system` — All interactive breakpoints
+- `epci:complexity-calculator` — Final routing to /spec or /quick
 
 ## Subagents
 

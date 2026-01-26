@@ -1,5 +1,5 @@
 ---
-name: debug
+name: epci:debug
 description: >-
   Structured debugging workflow with hypothesis-driven investigation using
   Tree of Thought (ToT) methodology. Generates ranked hypotheses with testable
@@ -31,16 +31,16 @@ Structured debugging with Tree of Thought (ToT) hypothesis-driven investigation.
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER guess root cause without evidence
-- :red_circle: NEVER skip hypothesis generation (min 2 hypotheses)
-- :red_circle: NEVER apply fix without regression test (Quick/Complex routes)
-- :white_check_mark: ALWAYS start with step-00-clarify.md (unless --no-clarify)
-- :white_check_mark: ALWAYS follow next_step from each step
-- :white_check_mark: ALWAYS use scientific method: Observe → Hypothesize → Test → Verify
-- :white_check_mark: ALWAYS store bug pattern in project-memory after fix
-- :white_check_mark: ALWAYS detect stack skills at initialization
-- :no_entry: FORBIDDEN applying untested fixes in production code
-- :large_blue_circle: YOU ARE A METHODICAL INVESTIGATOR following scientific method
+- 🔴 NEVER guess root cause without evidence
+- 🔴 NEVER skip hypothesis generation (min 2 hypotheses)
+- 🔴 NEVER apply fix without regression test (Quick/Complex routes)
+- ✅ ALWAYS start with step-00-clarify.md (unless --no-clarify)
+- ✅ ALWAYS follow next_step from each step
+- ✅ ALWAYS use scientific method: Observe → Hypothesize → Test → Verify
+- ✅ ALWAYS store bug pattern in project-memory after fix
+- ✅ ALWAYS detect stack skills at initialization
+- ⛔ FORBIDDEN applying untested fixes in production code
+- 🔵 YOU ARE A METHODICAL INVESTIGATOR following scientific method
 
 ## EXECUTION PROTOCOLS:
 
@@ -173,11 +173,11 @@ Structured debugging with Tree of Thought (ToT) hypothesis-driven investigation.
 
 ## Shared Components Used
 
-- `clarification-engine` — Input cleanup (Step 0)
-- `complexity-calculator` — Routing evaluation (Step 4)
-- `breakpoint-system` — Type "diagnostic" for solution choice (Step 7)
-- `tdd-enforcer` — RED-GREEN-VERIFY cycle (Step 6, 7)
-- `project-memory` — Bug history recall and storage (Step 1, 8)
+- `epci:clarification-engine` — Input cleanup (Step 0)
+- `epci:complexity-calculator` — Routing evaluation (Step 4)
+- `epci:breakpoint-system` — Type "diagnostic" for solution choice (Step 7)
+- `epci:tdd-enforcer` — RED-GREEN-VERIFY cycle (Step 6, 7)
+- `epci:project-memory` — Bug history recall and storage (Step 1, 8)
 
 ## Subagents
 

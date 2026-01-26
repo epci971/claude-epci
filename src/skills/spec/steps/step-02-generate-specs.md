@@ -315,7 +315,7 @@ Location: docs/specs/{feature-slug}/
 ## BREAKPOINT:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: plan-review
   title: "Specifications Generated"
   data: {

@@ -10,23 +10,23 @@
 
 | Icone | Keyword | Usage | Exemple |
 |-------|---------|-------|---------|
-| :red_circle: | NEVER | Action interdite critique | `:red_circle: NEVER modify files during exploration` |
-| :white_check_mark: | ALWAYS | Action obligatoire | `:white_check_mark: ALWAYS validate plan with user` |
-| :no_entry: | FORBIDDEN | Blocage dur (error si viole) | `:no_entry: FORBIDDEN skip TDD for STANDARD+ tasks` |
-| :large_blue_circle: | POSTURE | Mindset/attitude | `:large_blue_circle: YOU ARE A SKEPTICAL REVIEWER` |
-| :thought_balloon: | FOCUS | Concentration mentale | `:thought_balloon: FOCUS on test coverage first` |
-| :warning: | WARNING | Attention particuliere | `:warning: WARNING security implications` |
-| :pause_button: | BREAKPOINT | Point d'arret utilisateur | `:pause_button: BREAKPOINT — Plan Validation` |
+| 🔴 | NEVER | Action interdite critique | `🔴 NEVER modify files during exploration` |
+| ✅ | ALWAYS | Action obligatoire | `✅ ALWAYS validate plan with user` |
+| ⛔ | FORBIDDEN | Blocage dur (error si viole) | `⛔ FORBIDDEN skip TDD for STANDARD+ tasks` |
+| 🔵 | POSTURE | Mindset/attitude | `🔵 YOU ARE A SKEPTICAL REVIEWER` |
+| 💭 | FOCUS | Concentration mentale | `💭 FOCUS on test coverage first` |
+| ⚠️ | WARNING | Attention particuliere | `⚠️ WARNING security implications` |
+| ⏸️ | BREAKPOINT | Point d'arret utilisateur | `⏸️ BREAKPOINT — Plan Validation` |
 
 ### Regles d'Utilisation
 
-1. **:red_circle: NEVER** — Reserve aux interdictions critiques (max 5 par skill)
-2. **:white_check_mark: ALWAYS** — Reserve aux obligations fondamentales (max 5 par skill)
-3. **:no_entry: FORBIDDEN** — Violations qui doivent stopper l'execution
-4. **:large_blue_circle: POSTURE** — Pour les attitudes de travail
-5. **:thought_balloon: FOCUS** — Pour orienter l'attention
-6. **:warning: WARNING** — Pour les risques a considerer
-7. **:pause_button: BREAKPOINT** — Uniquement pour les points de decision utilisateur
+1. **🔴 NEVER** — Reserve aux interdictions critiques (max 5 par skill)
+2. **✅ ALWAYS** — Reserve aux obligations fondamentales (max 5 par skill)
+3. **⛔ FORBIDDEN** — Violations qui doivent stopper l'execution
+4. **🔵 POSTURE** — Pour les attitudes de travail
+5. **💭 FOCUS** — Pour orienter l'attention
+6. **⚠️ WARNING** — Pour les risques a considerer
+7. **⏸️ BREAKPOINT** — Uniquement pour les points de decision utilisateur
 
 ---
 
@@ -37,13 +37,13 @@
 ```markdown
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER [rule 1]
-- :red_circle: NEVER [rule 2]
-- :white_check_mark: ALWAYS [rule 3]
-- :white_check_mark: ALWAYS [rule 4]
-- :large_blue_circle: [posture]
-- :thought_balloon: [focus]
-- :no_entry: FORBIDDEN [hard block]
+- 🔴 NEVER [rule 1]
+- 🔴 NEVER [rule 2]
+- ✅ ALWAYS [rule 3]
+- ✅ ALWAYS [rule 4]
+- 🔵 [posture]
+- 💭 [focus]
+- ⛔ FORBIDDEN [hard block]
 
 ## EXECUTION PROTOCOLS:
 
@@ -73,7 +73,7 @@
 ## BREAKPOINT:
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│ :pause_button: BREAKPOINT — {Title}                                             │
+│ ⏸️ BREAKPOINT — {Title}                                             │
 ├─────────────────────────────────────────────────────────────────────┤
 │ {Context}                                                           │
 │ ┌─ Options ──────────────────────────────────────────────────────┐ │
@@ -108,10 +108,10 @@ patterns that should be followed.
 ```markdown
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER modify files during exploration
-- :red_circle: NEVER skip pattern identification
-- :white_check_mark: ALWAYS use read-only tools (Read, Glob, Grep)
-- :white_check_mark: ALWAYS document identified patterns
+- 🔴 NEVER modify files during exploration
+- 🔴 NEVER skip pattern identification
+- ✅ ALWAYS use read-only tools (Read, Glob, Grep)
+- ✅ ALWAYS document identified patterns
 
 ## EXECUTION PROTOCOLS:
 
@@ -135,12 +135,12 @@ Don't just approve without careful analysis.
 ```markdown
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER auto-approve without analysis
-- :red_circle: NEVER skip security check
-- :white_check_mark: ALWAYS verify test coverage
-- :white_check_mark: ALWAYS check for OWASP top 10
-- :large_blue_circle: YOU ARE A SKEPTICAL REVIEWER, not a defender
-- :thought_balloon: FOCUS on edge cases and failure modes
+- 🔴 NEVER auto-approve without analysis
+- 🔴 NEVER skip security check
+- ✅ ALWAYS verify test coverage
+- ✅ ALWAYS check for OWASP top 10
+- 🔵 YOU ARE A SKEPTICAL REVIEWER, not a defender
+- 💭 FOCUS on edge cases and failure modes
 
 ## EXECUTION PROTOCOLS:
 
@@ -160,8 +160,8 @@ Don't just approve without careful analysis.
 |--------------|----------|----------|
 | Longs paragraphes | Difficile a scanner | Convertir en listes |
 | Regles implicites | Facile a manquer | Expliciter avec icones |
-| Trop de :red_circle: | Dilue l'importance | Max 5 NEVER par skill |
-| :no_entry: pour tout | Trop restrictif | Reserve aux violations critiques |
+| Trop de 🔴 | Dilue l'importance | Max 5 NEVER par skill |
+| ⛔ pour tout | Trop restrictif | Reserve aux violations critiques |
 | Pas de CONTEXT BOUNDARIES | Scope ambigu | Toujours definir IN/OUT |
 | Prose dans PROTOCOLS | Verbeux | Actions numerotees courtes |
 
@@ -180,28 +180,28 @@ changing. Also, never forget to run the tests.
 ```markdown
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER modify files without reading first
-- :white_check_mark: ALWAYS run tests after changes
+- 🔴 NEVER modify files without reading first
+- ✅ ALWAYS run tests after changes
 ```
 
 **MAUVAIS — Trop de NEVER:**
 ```markdown
-- :red_circle: NEVER do X
-- :red_circle: NEVER do Y
-- :red_circle: NEVER do Z
-- :red_circle: NEVER do A
-- :red_circle: NEVER do B
-- :red_circle: NEVER do C
-- :red_circle: NEVER do D
-- :red_circle: NEVER do E
+- 🔴 NEVER do X
+- 🔴 NEVER do Y
+- 🔴 NEVER do Z
+- 🔴 NEVER do A
+- 🔴 NEVER do B
+- 🔴 NEVER do C
+- 🔴 NEVER do D
+- 🔴 NEVER do E
 ```
 
 **BON — Prioriser les critiques:**
 ```markdown
-- :red_circle: NEVER do X (security critical)
-- :red_circle: NEVER do Y (data integrity)
-- :warning: WARNING avoid Z when possible
-- :warning: WARNING consider alternatives to A
+- 🔴 NEVER do X (security critical)
+- 🔴 NEVER do Y (data integrity)
+- ⚠️ WARNING avoid Z when possible
+- ⚠️ WARNING consider alternatives to A
 ```
 
 ---
@@ -211,8 +211,8 @@ changing. Also, never forget to run the tests.
 ### Pour Skills Simples
 
 - [ ] `MANDATORY EXECUTION RULES` en premiere section
-- [ ] Max 5 `:red_circle: NEVER` rules
-- [ ] Max 5 `:white_check_mark: ALWAYS` rules
+- [ ] Max 5 `🔴 NEVER` rules
+- [ ] Max 5 `✅ ALWAYS` rules
 - [ ] `EXECUTION PROTOCOLS` avec actions numerotees
 - [ ] `CONTEXT BOUNDARIES` avec IN/OUT explicites
 - [ ] Pas de paragraphes > 3 lignes
@@ -235,8 +235,8 @@ changing. Also, never forget to run the tests.
 ```markdown
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER {critical prohibition}
-- :white_check_mark: ALWAYS {critical requirement}
+- 🔴 NEVER {critical prohibition}
+- ✅ ALWAYS {critical requirement}
 
 ## EXECUTION PROTOCOLS:
 
@@ -263,8 +263,8 @@ next_step: steps/step-XX-{next}.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER {rule}
-- :white_check_mark: ALWAYS {rule}
+- 🔴 NEVER {rule}
+- ✅ ALWAYS {rule}
 
 ## EXECUTION PROTOCOLS:
 

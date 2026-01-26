@@ -13,11 +13,11 @@ conditional_next:
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip if clarity_score < 0.6 (unless --no-clarify)
-- :white_check_mark: ALWAYS calculate clarity score first
-- :white_check_mark: ALWAYS use clarification-engine for questions
-- :white_check_mark: ALWAYS clean voice input artifacts
-- :thought_balloon: FOCUS on gathering just enough info to proceed
+- 🔴 NEVER skip if clarity_score < 0.6 (unless --no-clarify)
+- ✅ ALWAYS calculate clarity score first
+- ✅ ALWAYS use clarification-engine for questions
+- ✅ ALWAYS clean voice input artifacts
+- 💭 FOCUS on gathering just enough info to proceed
 
 ## EXECUTION PROTOCOLS:
 

@@ -160,7 +160,7 @@ allowed-tools: {tools}
 ### 5. BREAKPOINT: User Approval
 
 ```
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Skill Ready for Generation"
   data: {

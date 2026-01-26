@@ -16,12 +16,12 @@ conditional_next:
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER override routing without explicit --full flag
-- :red_circle: NEVER route COMPLEX bugs as TRIVIAL
-- :white_check_mark: ALWAYS use complexity-calculator
-- :white_check_mark: ALWAYS evaluate all routing criteria
-- :white_check_mark: ALWAYS apply >=2 COMPLEX criteria rule
-- :thought_balloon: FOCUS on accurate routing to optimize fix time
+- 🔴 NEVER override routing without explicit --full flag
+- 🔴 NEVER route COMPLEX bugs as TRIVIAL
+- ✅ ALWAYS use complexity-calculator
+- ✅ ALWAYS evaluate all routing criteria
+- ✅ ALWAYS apply >=2 COMPLEX criteria rule
+- 💭 FOCUS on accurate routing to optimize fix time
 
 ## EXECUTION PROTOCOLS:
 

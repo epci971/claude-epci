@@ -1,5 +1,5 @@
 ---
-name: refactor
+name: epci:refactor
 description: >-
   Restructure code architecture without changing external behavior.
   Supports 4 scopes: Single File, Module, Cross-Module, Architecture.
@@ -178,11 +178,11 @@ See [references/refactoring-patterns.md](references/refactoring-patterns.md) for
 
 ## Shared Components Used
 
-- `complexity-calculator` — Scope estimation
-- `tdd-enforcer` — TDD Red-Green-Refactor cycle
-- `breakpoint-system` — Plan validation (step-03)
-- `state-manager` — Track multi-session refactors
-- `project-memory` — Store refactoring patterns
+- `epci:complexity-calculator` — Scope estimation
+- `epci:tdd-enforcer` — TDD Red-Green-Refactor cycle
+- `epci:breakpoint-system` — Plan validation (step-03)
+- `epci:state-manager` — Track multi-session refactors
+- `epci:project-memory` — Store refactoring patterns
 
 ## Subagents
 

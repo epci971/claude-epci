@@ -1,5 +1,5 @@
 ---
-name: javascript-react
+name: epci:javascript-react
 description: >-
   Patterns for React islands in Django. Includes TypeScript, Vite, Zustand,
   React Query, Tailwind, accessibility. Use when: React TypeScript development, package json react detected, frontend react components.

@@ -47,12 +47,12 @@ Claude triggers these automatically based on context.
 
 | Core Skill | Purpose | Used By |
 |------------|---------|---------|
-| `state-manager` | Feature state persistence | implement, quick |
-| `breakpoint-system` | Interactive breakpoints | All skills |
-| `complexity-calculator` | Scope estimation & routing | brainstorm, spec, implement, quick |
-| `clarification-engine` | Smart clarification questions | brainstorm, spec, debug |
-| `tdd-enforcer` | TDD workflow enforcement | implement, quick, debug |
-| `project-memory` | Project context and history | All skills |
+| `epci:state-manager` | Feature state persistence | implement, quick |
+| `epci:breakpoint-system` | Interactive breakpoints | All skills |
+| `epci:complexity-calculator` | Scope estimation & routing | brainstorm, spec, implement, quick |
+| `epci:clarification-engine` | Smart clarification questions | brainstorm, spec, debug |
+| `epci:tdd-enforcer` | TDD workflow enforcement | implement, quick, debug |
+| `epci:project-memory` | Project context and history | All skills |
 
 ---
 
@@ -177,18 +177,18 @@ Bug report → /debug → Investigation → Fix → Done
 
 ### Breakpoint Usage (MANDATORY)
 
-All user-invocable skills MUST use `@skill:breakpoint-system` for interactive breakpoints.
+All user-invocable skills MUST use `@skill:epci:breakpoint-system` for interactive breakpoints.
 
 **Rules:**
 - NEVER create manual ASCII boxes for interactive breakpoints in step files
-- ALWAYS invoke `@skill:breakpoint-system` with appropriate type
+- ALWAYS invoke `@skill:epci:breakpoint-system` with appropriate type
 - ALWAYS document breakpoint types in SKILL.md "Breakpoints" section
 
 **Supported types:** `validation`, `analysis`, `plan-review`, `phase-transition`, `decomposition`, `diagnostic`, `ems-status`, `info-only`
 
 **Example invocation:**
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: plan-review
   title: "Plan Validation"
   data: { /* type-specific structure per breakpoint-system schema */ }
@@ -243,11 +243,11 @@ Technology-specific patterns and conventions. Located in `src/skills/stack/`.
 
 | Stack | Target | Auto-detect |
 |-------|--------|-------------|
-| `python-django` | Django/DRF backend | `manage.py`, django in requirements |
-| `javascript-react` | React islands/SPA | react in package.json, `.tsx` files |
-| `java-springboot` | Spring Boot backend | spring-boot in pom.xml/build.gradle |
-| `php-symfony` | Symfony 7/8 backend | symfony in composer.json, `bin/console` |
-| `frontend-editor` | Tailwind/a11y styling | `tailwind.config.*` |
+| `epci:python-django` | Django/DRF backend | `manage.py`, django in requirements |
+| `epci:javascript-react` | React islands/SPA | react in package.json, `.tsx` files |
+| `epci:java-springboot` | Spring Boot backend | spring-boot in pom.xml/build.gradle |
+| `epci:php-symfony` | Symfony 7/8 backend | symfony in composer.json, `bin/console` |
+| `epci:frontend-editor` | Tailwind/a11y styling | `tailwind.config.*` |
 
 Each stack skill provides:
 - `references/` — Architecture, testing, security patterns

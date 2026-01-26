@@ -80,7 +80,7 @@ next_step: steps/step-02-plan.md
 ## BREAKPOINT:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: phase-transition
   title: "Exploration Complete [E→P]"
   data: {

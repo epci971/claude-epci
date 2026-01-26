@@ -9,11 +9,11 @@ next_step: steps/step-02-mini-plan.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER modify any files during exploration
-- :red_circle: NEVER spend more than 10 seconds on exploration
-- :white_check_mark: ALWAYS identify target files for modification
-- :white_check_mark: ALWAYS note existing patterns to follow
-- :thought_balloon: FOCUS on speed - this is a quick scan, not deep analysis
+- 🔴 NEVER modify any files during exploration
+- 🔴 NEVER spend more than 10 seconds on exploration
+- ✅ ALWAYS identify target files for modification
+- ✅ ALWAYS note existing patterns to follow
+- 💭 FOCUS on speed - this is a quick scan, not deep analysis
 
 ## EXECUTION PROTOCOLS:
 
@@ -102,7 +102,7 @@ Stack Context: {stack skill loaded, if any}
 If exploration reveals more complexity than expected, invoke breakpoint:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Complexity Alert"
   data: {

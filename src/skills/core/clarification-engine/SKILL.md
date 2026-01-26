@@ -1,5 +1,5 @@
 ---
-name: clarification-engine
+name: epci:clarification-engine
 description: >-
   Generates smart clarification questions based on context and requirement gaps.
   Uses progressive disclosure to avoid overwhelming users.

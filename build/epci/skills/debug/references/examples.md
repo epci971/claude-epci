@@ -209,7 +209,7 @@ Time: 2.3s
 
 ```
 +---------------------------------------------------------------------+
-| :white_check_mark: DEBUG COMPLETE (Quick)                                              |
+| ✅ DEBUG COMPLETE (Quick)                                              |
 +---------------------------------------------------------------------+
 | Bug: Users can't login after password reset                          |
 | Root Cause: Session auth hash not updated after password change      |
@@ -342,7 +342,7 @@ Location: docs/debug/orders-500-load-2026-01-26.md
 
 ```
 +---------------------------------------------------------------------+
-| :white_check_mark: DEBUG COMPLETE (Complex)                                            |
+| ✅ DEBUG COMPLETE (Complex)                                            |
 +---------------------------------------------------------------------+
 | Bug: Intermittent 500 errors on /api/orders under load               |
 | Root Cause: DB connection exhaustion + race condition                |

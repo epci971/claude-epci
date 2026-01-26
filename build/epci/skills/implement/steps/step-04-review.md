@@ -14,15 +14,15 @@ conditional_next:
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER auto-approve without thorough analysis
-- :red_circle: NEVER skip security consideration
-- :red_circle: NEVER ignore edge cases
-- :white_check_mark: ALWAYS invoke @code-reviewer agent
-- :white_check_mark: ALWAYS check for OWASP top 10 vulnerabilities
-- :white_check_mark: ALWAYS verify test coverage meets target
-- :white_check_mark: ALWAYS verify code follows identified patterns
-- :large_blue_circle: YOU ARE A SKEPTICAL REVIEWER, not a defender
-- :thought_balloon: FOCUS on what could go wrong, not what went right
+- 🔴 NEVER auto-approve without thorough analysis
+- 🔴 NEVER skip security consideration
+- 🔴 NEVER ignore edge cases
+- ✅ ALWAYS invoke @code-reviewer agent
+- ✅ ALWAYS check for OWASP top 10 vulnerabilities
+- ✅ ALWAYS verify test coverage meets target
+- ✅ ALWAYS verify code follows identified patterns
+- 🔵 YOU ARE A SKEPTICAL REVIEWER, not a defender
+- 💭 FOCUS on what could go wrong, not what went right
 
 ## EXECUTION PROTOCOLS:
 
@@ -112,7 +112,7 @@ conditional_next:
 ## BREAKPOINT:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: phase-transition
   title: "Code Review Complete [C→I]"
   data: {

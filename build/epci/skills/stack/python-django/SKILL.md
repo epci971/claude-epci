@@ -1,5 +1,5 @@
 ---
-name: python-django
+name: epci:python-django
 description: >-
   Patterns for Python/Django with service layer architecture. Includes DRF,
   pytest, Celery, HTMX/React integration. Use when: Django Python development, pyproject toml django detected, requirements django dependency.

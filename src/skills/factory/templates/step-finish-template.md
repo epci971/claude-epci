@@ -64,7 +64,7 @@ ELSE:
 ### 3. Update Project Memory (Optional)
 
 ```python
-@skill:project-memory
+@skill:epci:project-memory
   store_artifact({
     type: "{{skill_name}}-output",
     data: session.outputs,

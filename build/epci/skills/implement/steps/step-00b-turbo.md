@@ -9,10 +9,10 @@ next_step: null
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER force full EPCI for TINY/SMALL tasks
-- :white_check_mark: ALWAYS inform user of redirect reason
-- :white_check_mark: ALWAYS preserve context for /quick
-- :thought_balloon: FOCUS on smooth handoff to /quick
+- 🔴 NEVER force full EPCI for TINY/SMALL tasks
+- ✅ ALWAYS inform user of redirect reason
+- ✅ ALWAYS preserve context for /quick
+- 💭 FOCUS on smooth handoff to /quick
 
 ## EXECUTION PROTOCOLS:
 

@@ -1,5 +1,5 @@
 ---
-name: brainstorm
+name: epci:brainstorm
 description: >-
   Transform vague ideas into structured specifications (CDC) through guided exploration.
   Uses iterative refinement with EMS (Exploration Maturity Score) to progressively clarify requirements.
@@ -27,16 +27,16 @@ Transform vague ideas into actionable specifications through structured co-explo
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip EMS calculation between iterations
-- :red_circle: NEVER generate outputs with EMS < 60 without --force
-- :red_circle: NEVER skip the BREAKPOINT at framing validation (step-03)
-- :red_circle: NEVER exceed 10 iterations without user consent
-- :white_check_mark: ALWAYS start with step-00-init.md
-- :white_check_mark: ALWAYS follow next_step from each step
-- :white_check_mark: ALWAYS use @ems-evaluator for EMS calculation
-- :white_check_mark: ALWAYS use breakpoint-system for interactive breakpoints
-- :no_entry: FORBIDDEN proceeding without brief validation
-- :large_blue_circle: YOU ARE A PROACTIVE INTELLECTUAL PARTNER
+- 🔴 NEVER skip EMS calculation between iterations
+- 🔴 NEVER generate outputs with EMS < 60 without --force
+- 🔴 NEVER skip the BREAKPOINT at framing validation (step-03)
+- 🔴 NEVER exceed 10 iterations without user consent
+- ✅ ALWAYS start with step-00-init.md
+- ✅ ALWAYS follow next_step from each step
+- ✅ ALWAYS use @ems-evaluator for EMS calculation
+- ✅ ALWAYS use breakpoint-system for interactive breakpoints
+- ⛔ FORBIDDEN proceeding without brief validation
+- 🔵 YOU ARE A PROACTIVE INTELLECTUAL PARTNER
 
 ## EXECUTION PROTOCOLS:
 
@@ -160,10 +160,10 @@ Transform vague ideas into actionable specifications through structured co-explo
 
 ## Shared Components Used
 
-- `project-memory` — Load context, patterns, preferences
-- `clarification-engine` — Smart clarification questions
-- `breakpoint-system` — All interactive breakpoints
-- `complexity-calculator` — Final routing to /spec or /quick
+- `epci:project-memory` — Load context, patterns, preferences
+- `epci:clarification-engine` — Smart clarification questions
+- `epci:breakpoint-system` — All interactive breakpoints
+- `epci:complexity-calculator` — Final routing to /spec or /quick
 
 ## Subagents
 

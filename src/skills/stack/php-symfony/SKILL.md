@@ -1,5 +1,5 @@
 ---
-name: php-symfony
+name: epci:php-symfony
 description: >-
   Patterns for PHP/Symfony with service layer architecture. Includes Doctrine
   ORM, PHPUnit, Messenger, Voters. Use when: Symfony PHP development, composer json symfony detected, doctrine messenger integration.

@@ -338,7 +338,7 @@ Location: .ralph/{feature-slug}/
 ## BREAKPOINT:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "Specification Complete"
   data: {

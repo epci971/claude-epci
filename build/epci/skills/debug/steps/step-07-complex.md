@@ -9,14 +9,14 @@ next_step: steps/step-08-post.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip solution scoring
-- :red_circle: NEVER skip diagnostic breakpoint (unless --turbo)
-- :red_circle: NEVER skip code review (@code-reviewer)
-- :white_check_mark: ALWAYS generate solution scoring matrix
-- :white_check_mark: ALWAYS present breakpoint for user choice
-- :white_check_mark: ALWAYS invoke relevant reviewers
-- :white_check_mark: ALWAYS generate Debug Report (unless --no-report)
-- :thought_balloon: FOCUS on systematic investigation, user validation
+- 🔴 NEVER skip solution scoring
+- 🔴 NEVER skip diagnostic breakpoint (unless --turbo)
+- 🔴 NEVER skip code review (@code-reviewer)
+- ✅ ALWAYS generate solution scoring matrix
+- ✅ ALWAYS present breakpoint for user choice
+- ✅ ALWAYS invoke relevant reviewers
+- ✅ ALWAYS generate Debug Report (unless --no-report)
+- 💭 FOCUS on systematic investigation, user validation
 
 ## EXECUTION PROTOCOLS:
 
@@ -51,7 +51,7 @@ See [references/solution-scoring.md](../references/solution-scoring.md) for form
 Use `breakpoint-system` with type "diagnostic":
 
 ```
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: diagnostic
   title: "Root Cause Analysis Complete"
   data: {
@@ -243,10 +243,10 @@ if all solutions exhausted:
 - **Score**: {N}/5.0
 
 ### TDD Cycle
-- **RED**: Regression test written :white_check_mark:
-- **GREEN**: Fix implemented :white_check_mark:
-- **REFACTOR**: Code cleaned up :white_check_mark:
-- **VERIFY**: All tests pass :white_check_mark:
+- **RED**: Regression test written ✅
+- **GREEN**: Fix implemented ✅
+- **REFACTOR**: Code cleaned up ✅
+- **VERIFY**: All tests pass ✅
 
 ### Files Modified
 | File | Changes | LOC |

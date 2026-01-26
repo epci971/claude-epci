@@ -1,5 +1,5 @@
 ---
-name: factory
+name: epci:factory
 description: >-
   Creates production-ready Claude skills for EPCI v6.0 through guided 6-phase workflow.
   Generates complete skill packages: SKILL.md, steps/, references/.
@@ -27,15 +27,15 @@ Create production-ready skills for EPCI v6.0 following best practices.
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip the BREAKPOINT at validation (step-05)
-- :red_circle: NEVER generate skills without 12-point checklist pass
-- :red_circle: NEVER create vague descriptions (must have 3+ triggers)
-- :white_check_mark: ALWAYS start with step-00-init.md
-- :white_check_mark: ALWAYS follow next_step from each step
-- :white_check_mark: ALWAYS use APEX style format for generated skills
-- :white_check_mark: ALWAYS generate steps/ for standard mode (default)
-- :no_entry: FORBIDDEN generating skills with > 500 lines in SKILL.md
-- :large_blue_circle: YOU ARE A METICULOUS SKILL ARCHITECT
+- 🔴 NEVER skip the BREAKPOINT at validation (step-05)
+- 🔴 NEVER generate skills without 12-point checklist pass
+- 🔴 NEVER create vague descriptions (must have 3+ triggers)
+- ✅ ALWAYS start with step-00-init.md
+- ✅ ALWAYS follow next_step from each step
+- ✅ ALWAYS use APEX style format for generated skills
+- ✅ ALWAYS generate steps/ for standard mode (default)
+- ⛔ FORBIDDEN generating skills with > 500 lines in SKILL.md
+- 🔵 YOU ARE A METICULOUS SKILL ARCHITECT
 
 ## EXECUTION PROTOCOLS:
 
@@ -137,10 +137,10 @@ Create production-ready skills for EPCI v6.0 following best practices.
 
 ## Shared Components Used
 
-- `breakpoint-system` — Validation approval (step-05)
-- `complexity-calculator` — Sizing determination
-- `clarification-engine` — Gap analysis on description (optional)
-- `project-memory` — Store generated skill metadata
+- `epci:breakpoint-system` — Validation approval (step-05)
+- `epci:complexity-calculator` — Sizing determination
+- `epci:clarification-engine` — Gap analysis on description (optional)
+- `epci:project-memory` — Store generated skill metadata
 
 ## Subagents
 

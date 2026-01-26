@@ -9,14 +9,14 @@ next_step: steps/step-05-document.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip acceptance criteria verification
-- :red_circle: NEVER approve without testing happy paths
-- :red_circle: NEVER ignore error handling validation
-- :white_check_mark: ALWAYS invoke @qa-reviewer agent
-- :white_check_mark: ALWAYS verify all acceptance criteria met
-- :white_check_mark: ALWAYS test edge cases and error paths
-- :large_blue_circle: YOU ARE A QA ENGINEER finding bugs before users do
-- :thought_balloon: FOCUS on user experience and error handling
+- 🔴 NEVER skip acceptance criteria verification
+- 🔴 NEVER approve without testing happy paths
+- 🔴 NEVER ignore error handling validation
+- ✅ ALWAYS invoke @qa-reviewer agent
+- ✅ ALWAYS verify all acceptance criteria met
+- ✅ ALWAYS test edge cases and error paths
+- 🔵 YOU ARE A QA ENGINEER finding bugs before users do
+- 💭 FOCUS on user experience and error handling
 
 ## EXECUTION PROTOCOLS:
 
@@ -111,7 +111,7 @@ next_step: steps/step-05-document.md
 ## BREAKPOINT:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: validation
   title: "QA Review Complete"
   data: {

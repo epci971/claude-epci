@@ -54,7 +54,7 @@
 ## BREAKPOINT
 
 ```
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: {{breakpoint_type}}
   title: "{{step_title}} Validation"
   data: {

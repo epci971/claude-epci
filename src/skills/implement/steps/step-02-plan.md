@@ -84,7 +84,7 @@ next_step: steps/step-03-code.md
 ## BREAKPOINT:
 
 ```typescript
-@skill:breakpoint-system
+@skill:epci:breakpoint-system
   type: plan-review
   title: "Plan Validation"
   data: {
