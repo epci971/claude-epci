@@ -114,25 +114,33 @@ conditional_next:
 
 ## BREAKPOINT:
 
-┌─────────────────────────────────────────────────────────────────────┐
-│ :pause_button: BREAKPOINT — Security Review Complete                            │
-├─────────────────────────────────────────────────────────────────────┤
-│ Feature: {feature-slug}                                             │
-│                                                                     │
-│ Security Summary:                                                   │
-│ • Vulnerabilities: {N total}                                        │
-│ • Critical/High: {N} (must fix)                                     │
-│ • Medium/Low: {N} (recommended fix)                                 │
-│                                                                     │
-│ Verdict: {PASS | FAIL}                                              │
-│                                                                     │
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  1. Proceed (if PASS)                                          │ │
-│ │  2. Fix critical issues first                                  │ │
-│ │  3. Request additional security review                         │ │
-│ │  4. Accept risk (document reason)                              │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: validation
+  title: "Security Review Complete"
+  data: {
+    context: "Security audit by @security-auditor complete",
+    item_to_validate: {
+      objectif: "Confirm security posture acceptable",
+      contexte: "Feature: {feature-slug}, Vulnerabilities: {N total}",
+      contraintes: "Critical/High: {N} must fix, Medium/Low: {N} recommended",
+      success_criteria: "No unresolved CRITICAL/HIGH vulnerabilities"
+    }
+  }
+  ask: {
+    question: "Accept security review outcome?",
+    header: "Security",
+    options: [
+      {label: "Proceed (Recommended)", description: "Security posture acceptable"},
+      {label: "Fix Critical Issues", description: "Address high-severity findings first"},
+      {label: "Accept Risk", description: "Document reason and proceed"}
+    ]
+  }
+  suggestions: [
+    {pattern: "owasp", text: "OWASP Top 10 verified", priority: "P1"},
+    {pattern: "findings", text: "Review {N} findings before proceeding", priority: "P2"}
+  ]
+```
 
 ## NEXT STEP TRIGGER:
 

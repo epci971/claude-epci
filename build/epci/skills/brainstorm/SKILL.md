@@ -16,45 +16,97 @@ allowed-tools: Read, Write, Glob, Grep, Task, AskUserQuestion
 
 Transform vague ideas into actionable specifications through structured co-exploration.
 
-## Overview
-
-Brainstorm acts as a proactive intellectual partner - questioning, challenging, enriching, and synthesizing - until the user has clarity and a comprehensive brief ready for `/spec`.
-
-**Core Philosophy**: Maximum proactivity, co-reflection posture, structured rigor, full adaptability.
-
-**Key Features (v6.0)**:
-- **Codebase Access**: Analyzes project via @Explore for context-aware exploration
-- **Persistent Storage**: Sessions saved in `.claude/state/sessions/`
-- **Skill Chaining**: Output flows to `/spec` then `/implement` or `/quick`
-- **Core Skills Integration**: Uses `project-memory`, `clarification-engine`, `breakpoint-system`
-- **4 Personas**: Adaptive facilitation with auto-switch
-- **EMS v3**: 5-axis scoring with objective anchors
-- **HMW Questions**: "How Might We" generation after brief validation
-- **Perplexity Prompts**: Research prompt generation for external enrichment
-
-## Decision Tree
+## Quick Start
 
 ```
-Brainstorm Request
-        |
-        +---> NEW SESSION (default)
-        |         |
-        |         v
-        |    Full workflow + EMS + Personas + Phases
-        |
-        +---> RESUME (--continue <id>)
-        |         |
-        |         v
-        |    Load session from .claude/state/sessions/
-        |    Restore EMS, phase, persona
-        |    Continue at iteration N+1
-        |
-        +---> QUICK MODE (--quick)
-                  |
-                  v
-             3 iterations max, EMS simplified
-             Single persona (Architecte)
-             Report only (no journal)
+/brainstorm "add OAuth login to the app"
+/brainstorm "improve search performance" --quick
+/brainstorm --continue auth-oauth-20260126
+/brainstorm "new microservice architecture" --template project
+```
+
+## MANDATORY EXECUTION RULES (READ FIRST):
+
+- :red_circle: NEVER skip EMS calculation between iterations
+- :red_circle: NEVER generate outputs with EMS < 60 without --force
+- :red_circle: NEVER skip the BREAKPOINT at framing validation (step-03)
+- :red_circle: NEVER exceed 10 iterations without user consent
+- :white_check_mark: ALWAYS start with step-00-init.md
+- :white_check_mark: ALWAYS follow next_step from each step
+- :white_check_mark: ALWAYS use @ems-evaluator for EMS calculation
+- :white_check_mark: ALWAYS use breakpoint-system for interactive breakpoints
+- :no_entry: FORBIDDEN proceeding without brief validation
+- :large_blue_circle: YOU ARE A PROACTIVE INTELLECTUAL PARTNER
+
+## EXECUTION PROTOCOLS:
+
+1. **Load** step-00-init.md
+2. **Execute** current step protocols completely
+3. **Present** breakpoints via breakpoint-system
+4. **Evaluate** next step trigger conditions
+5. **Proceed** to next_step or loop condition
+
+## CONTEXT BOUNDARIES:
+
+- IN scope: Ideation, exploration, requirement clarification, brief generation
+- OUT scope: Implementation (use /implement), debugging (use /debug), simple Q&A
+
+## Workflow Overview
+
+```
++---------------------------------------------------------------------+
+|                    BRAINSTORM WORKFLOW (EMS-driven)                 |
++---------------------------------------------------------------------+
+|                                                                     |
+|  Step 00: INIT                                                      |
+|  +- Parse input (idea, flags)                                       |
+|  +- Load project-memory context                                     |
+|  +- Launch @Explore in background                                   |
+|                                                                     |
+|  Step 01: CLARIFY                                                   |
+|  +- Assess input clarity (score 0-1)                                |
+|  +- Generate clarification questions (if needed)                    |
+|  +- BREAKPOINT: Brief validation                                    |
+|                                                                     |
+|  Step 02: FRAMING                                                   |
+|  +- Auto-detect template                                            |
+|  +- Generate HMW questions                                          |
+|  +- Generate Perplexity prompts                                     |
+|  +- Initialize EMS baseline                                         |
+|                                                                     |
+|  Step 03: BREAKPOINT-FRAMING                                        |
+|  +- BREAKPOINT: Validate framing before iterations                  |
+|                                                                     |
+|  Step 04: ITERATION (LOOP)  <---------------------------------+     |
+|  +- Integrate user responses                                  |     |
+|  +- Recalculate EMS via @ems-evaluator                        |     |
+|  +- Check persona auto-switch                                 |     |
+|  +- Check technique suggestion                                |     |
+|  +- BREAKPOINT: EMS status + questions                        |     |
+|  +- Check phase transition (EMS=50)                           |     |
+|  +- Check finalization (EMS>=70)                              |     |
+|  +- Loop until finish or max 10 iterations ------------------+      |
+|                                                                     |
+|  Step 05: BREAKPOINT-FINISH                                         |
+|  +- BREAKPOINT: Validate end of exploration                         |
+|                                                                     |
+|  Step 06: PREVIEW                                                   |
+|  +- @planner preview                                                |
+|  +- @security-auditor (if auth patterns)                            |
+|                                                                     |
+|  Step 07: VALIDATE (skip if --quick)                                |
+|  +- Section-by-section brief validation                             |
+|                                                                     |
+|  Step 08: GENERATE                                                  |
+|  +- Write brief-{slug}-{date}.md                                    |
+|  +- Write journal-{slug}-{date}.md (unless --quick)                 |
+|                                                                     |
+|  Step 09: REPORT                                                    |
+|  +- Calculate complexity routing                                    |
+|  +- Execute hook post-brainstorm                                    |
+|  +- Display completion summary                                      |
+|                                                                     |
++---------------------------------------------------------------------+
 ```
 
 ## Flags
@@ -66,150 +118,90 @@ Brainstorm Request
 | `--turbo` | off | Use @clarifier (Haiku) for faster responses |
 | `--party` | off | Multi-persona mode (5 voices) via @party-orchestrator |
 | `--panel` | off | Expert panel (5 dev experts) via @expert-panel |
-| `--competitive` | off | Competitive analysis focus |
-| `--challenge` | off | Devil's advocate from start |
 | `--no-hmw` | off | Skip HMW question generation |
 | `--no-security` | off | Skip @security-auditor |
 | `--no-clarify` | off | Skip input clarification |
 | `--continue [id]` | - | Resume existing session |
 
-## Workflow
+## Steps
 
-### Phase 1: Initialization
+| Step | Name | Description | Skippable |
+|------|------|-------------|-----------|
+| 00 | init | Parse input, load context, launch @Explore | No |
+| 01 | clarify | Clarification questions, brief validation | --no-clarify |
+| 02 | framing | Template, HMW, Perplexity, EMS baseline | No |
+| 03 | breakpoint-framing | Validate framing before iterations | No |
+| 04 | iteration | Main loop: EMS, personas, techniques | No |
+| 05 | breakpoint-finish | Validate end of exploration | No |
+| 06 | preview | @planner preview, @security-auditor | No |
+| 07 | validate | Section-by-section validation | --quick |
+| 08 | generate | Write brief and journal files | No |
+| 09 | report | Routing, hook, completion summary | No |
 
-```
-START
-  |
-  +-> 1. Load context via project-memory
-  |     - get_patterns(), get_preferences(), recall_features()
-  |
-  +-> 2. Parse arguments (flags, template)
-  |
-  +-> 3. Clarification input (if clarity_score < 0.6)
-  |     - Via clarification-engine
-  |     - BREAKPOINT: Reformulation proposed
-  |
-  +-> 4. Launch @Explore codebase (run_in_background: true)
-  |     - Stack detection, patterns, conventions
-  |
-  +-> 5. Reformulate user need
-  |     - BREAKPOINT: Brief validation
-  |     - If rejected -> iterate until validated
-  |
-  +-> 6. Auto-detect template
-  |     - feature|audit|project|research|decision|problem|strategy
-  |
-  +-> 7. Sync @Explore (wait if not completed)
-  |
-  +-> 8. Generate 3-5 HMW questions (based on codebase)
-  |     - "How Might We..." contextualized
-  |
-  +-> 9. Generate Perplexity prompts (3-5)
-  |     - Format: standard or deep research
-  |     - BREAKPOINT: Wait for injection or skip
-  |
-  +-> 10. Initialize EMS baseline
-  |      - Clarity: 40 (brief validated), others: 20
-  |      - Adjustments if sources analyzed
-  |
-  +-> 11. Set initial state
-  |      - Phase: DIVERGENT
-  |      - Persona: Architecte
-  |
-  +-> 12. BREAKPOINT: Framing questions (3 max)
-         - Target, constraints, timeline
-```
+## Step Files
 
-### Phase 2: Iterations
+- [steps/step-00-init.md](steps/step-00-init.md) — Initialization
+- [steps/step-01-clarify.md](steps/step-01-clarify.md) — Clarification
+- [steps/step-02-framing.md](steps/step-02-framing.md) — Framing
+- [steps/step-03-breakpoint-framing.md](steps/step-03-breakpoint-framing.md) — Framing validation
+- [steps/step-04-iteration.md](steps/step-04-iteration.md) — Iteration loop
+- [steps/step-05-breakpoint-finish.md](steps/step-05-breakpoint-finish.md) — Finish validation
+- [steps/step-06-preview.md](steps/step-06-preview.md) — Preview
+- [steps/step-07-validate.md](steps/step-07-validate.md) — Brief validation
+- [steps/step-08-generate.md](steps/step-08-generate.md) — File generation
+- [steps/step-09-report.md](steps/step-09-report.md) — Report
 
-```
-LOOP (until finish or max 10 iterations)
-  |
-  +-> 1. Integrate user responses
-  |
-  +-> 2. Recalculate EMS via @ems-evaluator
-  |     - Input: session state, responses
-  |     - Output: scores 5 axes, delta, weak_axes[]
-  |
-  +-> 3. Check auto-switch persona
-  |     - Unsubstantiated certainty -> Sparring
-  |     - EMS stagnation -> Pragmatique
-  |     - iter >= 6 without decisions -> Pragmatique
-  |     - Synthesis needed -> Architecte
-  |     - Open exploration -> Maieuticien
-  |
-  +-> 4. Check technique suggestion
-  |     - IF weak_axes[] not empty AND no recent technique
-  |     - Invoke @technique-advisor (Haiku)
-  |     - BREAKPOINT: Technique suggested
-  |
-  +-> 5. Check targeted Perplexity research
-  |     - IF iter >= 2 AND EMS < 50 AND weak axes
-  |     - Propose targeted prompts by axis
-  |
-  +-> 6. BREAKPOINT: EMS Status
-  |     - Display 5-axis radar
-  |     - Display phase + persona
-  |     - Display progression (Init->Current)
-  |     - Options: continue, dive, pivot, finish, checkpoint
-  |
-  +-> 7. Transition check (EMS = 50)
-  |     - BREAKPOINT: Suggest Convergent phase
-  |
-  +-> 8. Finalization check (EMS >= 70)
-  |     - BREAKPOINT: Propose finish
-  |     - Options: Continue, Preview (@planner), Finalize
-  |
-  +-> 9. Energy check
-  |     - IF stagnation (delta < 3 x 2 iter) OR iter >= 7
-  |     - BREAKPOINT: Energy checkpoint
-  |     - Options: continue, pause (save), accelerate, pivot
-  |
-  +-> 10. Generate iteration questions (3 max)
-         - BREAKPOINT: Categorized questions
-         - Tags: Critical, Important, Info
-```
+## Reference Files
 
-### Phase 3: Generation
+- [references/ems-system.md](references/ems-system.md) — EMS with objective anchors
+- [references/personas.md](references/personas.md) — 4 personas and auto-switch rules
+- [references/brief-format.md](references/brief-format.md) — PRD v3.0 output template
+- [references/journal-format.md](references/journal-format.md) — Exploration journal template
 
-```
-FINALIZE
-  |
-  +-> 1. @planner preview (if not already done)
-  |     - Generate convergent plan
-  |
-  +-> 2. @security-auditor (if auth patterns detected)
-  |     - Preventive security review
-  |
-  +-> 3. Section-by-section validation (unless --quick)
-  |     - BREAKPOINT per major section
-  |
-  +-> 4. Create output directory
-  |     - mkdir -p docs/briefs/{slug}/
-  |
-  +-> 5. Write brief-{slug}-{date}.md
-  |     - PRD v3.0 format
-  |     - See references/brief-format.md
-  |
-  +-> 6. Write journal-{slug}-{date}.md
-  |     - Complete exploration history
-  |     - EMS progression, decisions, pivots
-  |     - See references/journal-format.md
-  |
-  +-> 7. Calculate complexity routing
-  |     - Via complexity-calculator
-  |     - Output: TINY|SMALL|STANDARD|LARGE -> routing skill
-  |
-  +-> 8. Execute hook post-brainstorm
-  |     - Data: slug, ems_score, techniques, iterations, duration
-  |     - Store metrics in project-memory
-  |
-  +-> 9. Display completion summary
-         - Final EMS + radar
-         - Generated files
-         - Recommended next steps
-         - Routing: /spec -> /implement or /quick
-```
+## Shared Components Used
+
+- `project-memory` — Load context, patterns, preferences
+- `clarification-engine` — Smart clarification questions
+- `breakpoint-system` — All interactive breakpoints
+- `complexity-calculator` — Final routing to /spec or /quick
+
+## Subagents
+
+| Agent | Model | Trigger |
+|-------|-------|---------|
+| `@Explore` | - | Always at init (background) |
+| `@ems-evaluator` | Haiku | Each iteration |
+| `@technique-advisor` | Haiku | Weak axes detected |
+| `@clarifier` | Haiku | --turbo mode |
+| `@planner` | Sonnet | Preview at finalization |
+| `@security-auditor` | Opus | Auth patterns detected |
+| `@party-orchestrator` | Sonnet | --party mode |
+| `@expert-panel` | Sonnet | --panel mode |
+
+## EMS System (Summary)
+
+| Axis | Weight | Question |
+|------|--------|----------|
+| Clarity | 25% | Is the subject well defined? |
+| Depth | 25% | Have we dug deep enough? |
+| Coverage | 20% | Have we explored all angles? |
+| Decisions | 20% | Have we made progress? |
+| Actionability | 10% | Can we act concretely? |
+
+**Thresholds**: 0-29 Beginning | 30-59 Developing | 60-89 Mature | 90-100 Complete
+
+See [references/ems-system.md](references/ems-system.md) for objective anchors.
+
+## Personas (Summary)
+
+| Persona | Icon | When Activated |
+|---------|------|----------------|
+| Maieuticien | [?] | Exploration, unclear topics |
+| Sparring | [!] | Unsubstantiated claims |
+| Architecte | [#] | Complex topics, synthesis (DEFAULT) |
+| Pragmatique | [>] | Stagnation, decisions needed |
+
+See [references/personas.md](references/personas.md) for complete specifications.
 
 ## Session Commands
 
@@ -218,210 +210,44 @@ FINALIZE
 | `continue` | Next iteration |
 | `dive [topic]` | Deep dive on specific point |
 | `pivot` | Reorient toward emerging subject |
-| `converge` | Switch to Convergent phase |
-| `diverge` | Return to Divergent phase |
-| `modes` | Display available personas |
-| `mode [name]` | Switch persona (maieuticien, sparring, architecte, pragmatique, auto) |
-| `premortem` | Run failure anticipation exercise |
-| `research` | Generate new Perplexity prompts |
-| `checkpoint` | Save for later resumption |
 | `finish` | Generate outputs |
-| `finish --force` | Force even if EMS < threshold |
+| `checkpoint` | Save for later resumption |
 | `status` | Display complete state |
+| `mode [name]` | Switch persona |
 
-## Personas
+## Constraints
 
-4 adaptive facilitation modes with intelligent auto-switching.
+| Constraint | Value |
+|------------|-------|
+| Max iterations | 10 |
+| EMS minimum for finish | 60 (70 recommended) |
+| Questions per iteration | 3 max |
+| Techniques per session | 5 max |
 
-| Persona | Icon | Philosophy | When Activated |
-|---------|------|------------|----------------|
-| **Maieuticien** | [?] | Socratic, nurturing, draws out ideas | Exploration phase, unclear topics |
-| **Sparring** | [!] | Challenging, demands evidence | Unsubstantiated claims, stress-testing |
-| **Architecte** | [#] | Structuring, organizing (DEFAULT) | Complex topics, synthesis, frameworks |
-| **Pragmatique** | [>] | Action-oriented, cuts through noise | Stagnation, decisions needed |
+## Error Handling
 
-**Auto-Switch Rules**:
-- Session start, vague topic -> Maieuticien
-- Complex multi-dimensional topic -> Architecte
-- Framework application, synthesis -> Architecte
-- Words "obviously", "definitely" -> Sparring
-- Pre-mortem exercise -> Sparring
-- EMS stagnation (< 5 pts x 2 iter) -> Pragmatique
-- Iteration >= 6 without decisions -> Pragmatique
-- Convergent phase -> Architecte + Pragmatique mix
-
-**Signaling**: Prefix message when persona changes:
-```
-[#] [Structure] Let's organize what we've explored...
-[!] [Challenge] Wait - you just said "obviously"...
-[?] [Exploration] Interesting! Tell me more...
-[>] [Action] Enough analysis. What's the concrete next step?
-```
-
--> See [references/personas.md](references/personas.md) for complete specifications
-
-## EMS System
-
-The EMS (Exploration Maturity Score) tracks exploration progress through 5 weighted axes.
-
-| Axis | Weight | Question |
-|------|--------|----------|
-| **Clarity** | 25% | Is the subject well defined? |
-| **Depth** | 25% | Have we dug deep enough? |
-| **Coverage** | 20% | Have we explored all angles? |
-| **Decisions** | 20% | Have we made progress and decided? |
-| **Actionability** | 10% | Can we act concretely after this? |
-
-**Formula**:
-```
-EMS = (Clarity x 0.25) + (Depth x 0.25) + (Coverage x 0.20)
-    + (Decisions x 0.20) + (Actionability x 0.10)
-```
-
-**Thresholds**:
-| EMS | Status | Message |
-|-----|--------|---------|
-| 0-29 | Beginning | "Exploration starting - let's continue" |
-| 30-59 | Developing | "In development" |
-| 60-89 | Mature | "`finish` available" |
-| 90-100 | Complete | "`finish` recommended" |
-
--> See [references/ems-system.md](references/ems-system.md) for objective anchors
+| Error | Resolution |
+|-------|------------|
+| @Explore timeout | Continue with partial context |
+| @ems-evaluator failure | Manual estimation |
+| EMS stagnation | Propose pivot or technique |
+| Brief rejected x 3 | Reformulate topic |
 
 ## Storage
-
-### Session Storage
 
 ```
 .claude/state/sessions/
   brainstorm-{slug}-{timestamp}.json
-```
 
-Session schema includes: id, slug, status, template, flags, phase, persona, iteration, ems (global + 5 axes + history), context (brief, hmw_questions, codebase_analysis), decisions, open_threads, techniques_applied.
-
-### Output Files
-
-```
 docs/briefs/{slug}/
-  brief-{slug}-{date}.md    # PRD v3.0 format
-  journal-{slug}-{date}.md  # Exploration history
+  brief-{slug}-{date}.md
+  journal-{slug}-{date}.md
 ```
-
-## Subagents
-
-| Agent | Model | Usage |
-|-------|-------|-------|
-| @ems-evaluator | Haiku | EMS calculation each iteration |
-| @technique-advisor | Haiku | Technique suggestions for weak axes |
-| @planner | Sonnet | Convergent plan at session end |
-| @security-auditor | Opus | Audit if auth patterns detected |
-| @clarifier | Haiku | Turbo mode |
-| @party-orchestrator | Sonnet | --party mode |
-| @expert-panel | Sonnet | --panel mode |
-
-Native agent:
-| Agent | Usage |
-|-------|-------|
-| @Explore | Codebase analysis (stack, patterns, conventions) |
-
-## Core Skills Integration
-
-| Core Skill | Usage |
-|------------|-------|
-| `project-memory` | `init()`, `get_patterns()`, `get_preferences()`, `recall_features()` in Phase 1 |
-| `clarification-engine` | Voice input cleaning (Step 0 if score < 0.6) |
-| `breakpoint-system` | All interactive breakpoints (validation, EMS, finish) |
-| `complexity-calculator` | Final routing to `/spec` -> `/implement` or `/quick` |
-
-## Breakpoints
-
-This skill uses these breakpoint types:
-- **validation**: Brief validation, reformulation acceptance
-- **ems-status**: EMS display with radar and options
-- **plan-review**: Phase transition (Divergent->Convergent), finalization
-
-See `breakpoint-system` skill for implementation details.
-
-## Quick Mode
-
-For simple topics or time-constrained sessions.
-
-**Trigger**: `/brainstorm "idea" --quick`
-
-| Aspect | Standard | Quick |
-|--------|----------|-------|
-| Template selection | Full | Skipped |
-| Framing questions | 5-7 | 3 max |
-| HMW generation | 3-5 questions | Skipped |
-| Persona switching | Full auto | Fixed (Architecte) |
-| Phase tracking | Full | Simplified |
-| Suggested finish | After iteration 5 | After iteration 3 |
-| Output | Report + Journal | Report only |
-| EMS display | Full radar | Global score only |
-
-## Constraints
-
-| Constraint | Value | Rationale |
-|------------|-------|-----------|
-| Max iterations | 10 | Avoid excessively long sessions |
-| EMS minimum for finish | 70 | Guarantee brief quality |
-| Questions per iteration | 3 max | Avoid cognitive overload |
-| Techniques per session | 5 max | Focus on convergence |
-| Session timeout | 2h | Context preservation |
-| Bias alert max | 1 per type | Avoid spamming |
-
-## Error Handling
-
-| Error | Cause | Recovery |
-|-------|-------|----------|
-| @Explore timeout | Codebase too large | Continue with partial context |
-| @ems-evaluator failure | Parsing error | Manual estimation, continue |
-| @technique-advisor unavailable | Rate limit | Propose default technique (Six Hats) |
-| Session file corrupted | JSON error | Archive, start new |
-| EMS stagnation | 3 iter < 3 pts | Propose pivot or technique |
-| Brief rejected x 3 | Misunderstanding | Propose reformulating topic |
-
-## Hook: post-brainstorm
-
-Executed after successful completion:
-
-```json
-{
-  "hook": "post-brainstorm",
-  "timestamp": "ISO-8601",
-  "data": {
-    "feature_slug": "auth-oauth",
-    "ems_score": 78,
-    "ems_axes": { "clarity": 85, "depth": 72, "coverage": 80, "decisions": 75, "actionability": 68 },
-    "iterations": 5,
-    "duration_minutes": 35,
-    "phase_final": "convergent",
-    "techniques_applied": ["5-whys", "pre-mortem"],
-    "personas_used": ["architecte", "sparring"],
-    "template": "feature",
-    "output_files": [
-      "docs/briefs/auth-oauth/brief-auth-oauth-20260126.md",
-      "docs/briefs/auth-oauth/journal-auth-oauth-20260126.md"
-    ]
-  }
-}
-```
-
-## References
-
-- [ems-system.md](references/ems-system.md) - Complete EMS with objective anchors
-- [personas.md](references/personas.md) - 4 personas and auto-switch rules
-- [brief-format.md](references/brief-format.md) - PRD v3.0 output template
-- [journal-format.md](references/journal-format.md) - Exploration journal template
 
 ## Limitations
 
 This skill does NOT:
 - Execute tasks (it ideates about them)
 - Replace project management tools
-- Provide definitive answers on subjective topics
 - Generate code or technical implementations
-- Work without user engagement (requires dialogue)
-- Guarantee bias-free thinking (alerts are aids, not guarantees)
-- Guarantee consistent EMS scoring across sessions
-- Provide real-time collaboration (single user focus)
+- Work without user engagement

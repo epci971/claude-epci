@@ -1,107 +1,188 @@
 ---
 name: quick
-description: >
+description: >-
   Fast implementation for TINY and SMALL tasks. Single-phase execution
-  with optional TDD. Ideal for bug fixes, small features, and quick changes.
-  Supports plan-first workflow via @plan-path to skip E-P phases.
-  Trigger words: quick fix, small change, tiny feature, fast implementation.
+  with TDD Red-Green cycle (skip Refactor). Detects native Claude Code plans
+  from @plan-path to skip E-P phases. Auto-detects stack skills (Django, React,
+  Spring, Symfony, Tailwind) for context. Updates index.json with summary.
+  Use when: quick fix needed, small change, tiny feature, fast implementation.
+  Triggers: quick fix, small change, tiny feature, bug fix, rapid code.
+  Not for: STANDARD features (use /implement), debugging (use /debug).
 user-invocable: true
 argument-hint: "<task> | @<plan-path>"
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task, AskUserQuestion
 ---
 
 # Quick
 
-Fast implementation for TINY and SMALL tasks.
+Fast implementation for TINY and SMALL tasks with TDD Red-Green cycle.
 
-## Usage
+## Quick Start
 
 ```
-/epci:quick "fix the login button alignment"
-/epci:quick "add validation to email field"
-/epci:quick @.claude/plans/fix-auth.md
+/quick "fix the login button alignment"
+/quick "add validation to email field"
+/quick @.claude/plans/fix-auth.md
 ```
 
 ## Input Detection
 
 ```
 INPUT
-├── @plan-path provided → PLAN-FIRST workflow (skip E-P)
-│   └─ Load plan, extract objectives, files, criteria
-└── Text description → FULL workflow (E-P-C-T-M)
-    └─ Mini-Explore + Mini-Plan first
+├── @plan-path provided → PLAN-FIRST workflow
+│   ├─ .claude/plans/*.md → Native Claude Code plan
+│   ├─ docs/plans/*.md → Alternative plan location
+│   └─ Skip STEP-01 and STEP-02 → Go to STEP-03 (Code)
+│
+└── Text description → FULL workflow
+    └─ Execute STEP-01 (Mini-Explore) + STEP-02 (Mini-Plan)
 ```
 
-## Workflow
+## MANDATORY EXECUTION RULES (READ FIRST):
+
+- :red_circle: NEVER execute on STANDARD/LARGE complexity (suggest /implement)
+- :red_circle: NEVER skip TDD cycle (Red-Green-Verify required)
+- :red_circle: NEVER skip MEMORY phase (index.json must be updated)
+- :white_check_mark: ALWAYS start with step-00-detect.md
+- :white_check_mark: ALWAYS follow next_step from each step
+- :white_check_mark: ALWAYS detect stack skills at initialization
+- :white_check_mark: ALWAYS invoke @implementer for CODE phase
+- :no_entry: FORBIDDEN skipping tests even for TINY tasks
+- :large_blue_circle: YOU ARE A FAST BUT DISCIPLINED IMPLEMENTER
+
+## EXECUTION PROTOCOLS:
+
+1. **Load** step-00-detect.md
+2. **Execute** current step protocols completely
+3. **Proceed** to next_step or conditional_next
+4. **Complete** until step-05-memory.md
+
+## Workflow Overview
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│ 1. DETECT INPUT                                             │
-│    ├─ @path → Load plan, parse objectives/files/criteria    │
-│    └─ text → Mini-Explore + Mini-Plan                       │
-├─────────────────────────────────────────────────────────────┤
-│ 2. VALIDATE COMPLEXITY                                      │
-│    └─ Via complexity-calculator                             │
-│    └─ If STANDARD/LARGE → Suggest /implement                │
-├─────────────────────────────────────────────────────────────┤
-│ 3. PHASE [C+T]: CODE + TDD                                  │
-│    ┌──────────────────────────────────────────────────────┐ │
-│    │ RED    → Write failing test                          │ │
-│    │ GREEN  → Minimal code to pass                        │ │
-│    │ REFACTOR → Clean up (tests green)                    │ │
-│    │ VERIFY → Run full test suite                         │ │
-│    └──────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────┤
-│ 4. PHASE [M]: MEMORY                                        │
-│    └─ Generate summary (1-2 sentences)                      │
-│    └─ Collect modified_files list                           │
-│    └─ Count tests added                                     │
-│    └─ Append to .claude/state/features/index.json           │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                    QUICK WORKFLOW (TINY/SMALL)                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Step 00: DETECT                                                 │
+│  ├─ Parse input (plan vs text)                                   │
+│  ├─ Auto-detect stack skills                                     │
+│  └─ Validate complexity (TINY/SMALL only)                        │
+│     └─ If STANDARD+ → Suggest /implement                         │
+│                                                                  │
+│  Step 01: MINI-EXPLORE [E] (skip if @plan)                       │
+│  └─ Quick codebase scan (~5-10s)                                 │
+│                                                                  │
+│  Step 02: MINI-PLAN [P] (skip if @plan)                          │
+│  └─ Generate minimal implementation plan                         │
+│                                                                  │
+│  Step 03: CODE [C]                                               │
+│  ├─ Invoke @implementer (Sonnet model)                           │
+│  ├─ TDD: RED → GREEN → VERIFY                                    │
+│  └─ (REFACTOR: SKIP for speed)                                   │
+│                                                                  │
+│  Step 04: DOCUMENT [D] (conditional)                             │
+│  └─ Update CHANGELOG/README if visible feature                   │
+│                                                                  │
+│  Step 05: MEMORY [M]                                             │
+│  └─ Update index.json with summary                               │
+│     └─ BREAKPOINT: Completion summary                            │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Phases
+## Steps
 
-| Phase | Name | Description | Skippable |
-|-------|------|-------------|-----------|
-| E | Explore | Quick codebase scan | Yes (if @plan) |
-| P | Plan | Minimal planning | Yes (if @plan) |
-| C+T | Code+Test | TDD implementation | No |
-| M | Memory | Update index.json | No |
+| Step | Name | Phase | Description | Skippable |
+|------|------|-------|-------------|-----------|
+| 00 | detect | - | Parse input, detect stack, validate complexity | No |
+| 01 | mini-explore | [E] | Quick codebase scan | Yes (if @plan) |
+| 02 | mini-plan | [P] | Minimal planning | Yes (if @plan) |
+| 03 | code | [C] | TDD Red-Green via @implementer | No |
+| 04 | document | [D] | Update docs if needed | Conditional |
+| 05 | memory | [M] | Update index.json | No |
 
 ## Complexity Limits
 
-| Category | Files | LOC | Action |
-|----------|-------|-----|--------|
-| TINY | 1 | < 50 | Execute |
-| SMALL | 2-3 | < 200 | Execute |
-| STANDARD | 4+ | 200+ | → Suggest /implement |
-| LARGE | 5+ | 500+ | → Suggest /implement |
+| Category | Files | LOC | Duration | Action |
+|----------|-------|-----|----------|--------|
+| TINY | 1 | < 50 | < 30s | Execute |
+| SMALL | 2-3 | < 200 | < 90s | Execute |
+| STANDARD | 4+ | 200+ | - | Suggest /implement |
+| LARGE | 5+ | 500+ | - | Suggest /implement |
 
-## MEMORY Phase Details
+## Comparison: /quick vs /implement
 
-At completion, update `.claude/state/features/index.json`:
+| Aspect | /quick | /implement |
+|--------|--------|------------|
+| **Input** | @plan-path or text | feature-slug + @spec/@plan |
+| **Phases** | E-P (skippable) + C-T-D-M | E-P-C-I-M (full) |
+| **Breakpoints** | 1 (completion only) | 3+ (phase transitions) |
+| **Feature Doc** | No | Yes |
+| **Code Review** | Skip | Full @code-reviewer |
+| **Security Audit** | Skip | Conditional |
+| **Subagents** | @implementer only | @implementer + reviewers |
+| **Complexity** | TINY, SMALL | STANDARD, LARGE |
+| **TDD Mode** | Red-Green (skip Refactor) | Full Red-Green-Refactor |
 
-```json
-{
-  "id": "{feature-slug}",
-  "status": "completed",
-  "current_phase": "inspect",
-  "complexity": "SMALL",
-  "summary": "Fixed login button alignment using flexbox",
-  "modified_files": ["src/components/LoginButton.tsx"],
-  "test_count": 2,
-  "created_at": "...",
-  "last_update": "..."
-}
-```
+## Step Files
+
+- [steps/step-00-detect.md](steps/step-00-detect.md) — Input detection + stack
+- [steps/step-01-mini-explore.md](steps/step-01-mini-explore.md) — Mini exploration
+- [steps/step-02-mini-plan.md](steps/step-02-mini-plan.md) — Mini planning
+- [steps/step-03-code.md](steps/step-03-code.md) — TDD implementation
+- [steps/step-04-document.md](steps/step-04-document.md) — Documentation update
+- [steps/step-05-memory.md](steps/step-05-memory.md) — Memory update
+
+## Reference Files
+
+- [references/plan-structure.md](references/plan-structure.md) — Native plan format
+- [references/stack-detection.md](references/stack-detection.md) — Stack detection algorithm
+- [references/tdd-rules.md](references/tdd-rules.md) — TDD Red-Green cycle
 
 ## Shared Components Used
 
-- `state-manager` - Track progress, update index.json
-- `complexity-calculator` - Validate scope, routing
-- `tdd-enforcer` - TDD cycle enforcement
-- `project-memory` - Context persistence
+- `state-manager` — Track progress, update index.json
+- `complexity-calculator` — Validate scope, routing
+- `tdd-enforcer` — TDD cycle enforcement (Red-Green mode)
+- `breakpoint-system` — Interactive breakpoints (SMALL complexity only)
+- `project-memory` — Context persistence
 
-## References
+## Breakpoints
 
-See [references/](references/) for additional documentation.
+This skill uses `breakpoint-system` at key decision points (SMALL complexity only).
+
+| Step | Type | Purpose | Condition |
+|------|------|---------|-----------|
+| step-01-mini-explore | `validation` | Complexity re-evaluation alert | If complexity appears STANDARD+ |
+| step-03-code | `diagnostic` | TDD failure handling | If tests fail 2x |
+
+TINY tasks skip breakpoints for speed. All breakpoints MUST use `@skill:breakpoint-system` invocation format.
+
+## Stack Skills (Auto-detected)
+
+| Stack | Trigger Files | Provides |
+|-------|---------------|----------|
+| `python-django` | manage.py, django in deps | Django patterns, pytest |
+| `javascript-react` | react in package.json | React patterns, Jest |
+| `java-springboot` | spring-boot in pom/gradle | Spring patterns, JUnit |
+| `php-symfony` | symfony in composer.json | Symfony patterns, PHPUnit |
+| `frontend-editor` | tailwind.config.* | Tailwind patterns, a11y |
+
+## Error Handling
+
+| Error | Cause | Resolution |
+|-------|-------|------------|
+| Complexity > SMALL | Task too large | Suggest /implement |
+| Plan not found | @path invalid | Check file path |
+| TDD fails 2x | Code won't pass tests | Escalate or investigate |
+| Stack not detected | No signature match | Continue without stack skill |
+
+## Limitations
+
+This skill does NOT:
+- Handle STANDARD or LARGE features (use /implement)
+- Debug existing bugs (use /debug)
+- Perform code review (speed priority)
+- Create Feature Documents
+- Run security audits

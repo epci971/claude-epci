@@ -1,6 +1,6 @@
 {
   "name": "epci",
-  "version": "6.0.8",
+  "version": "6.1.1",
   "description": "EPCI v6 - Streamlined AI-assisted development workflow",
   "author": {
     "name": "EPCI Team"
@@ -12,7 +12,6 @@
     "./skills/debug/SKILL.md",
     "./skills/factory/SKILL.md",
     "./skills/implement/SKILL.md",
-    "./skills/improve/SKILL.md",
     "./skills/quick/SKILL.md",
     "./skills/refactor/SKILL.md",
     "./skills/spec/SKILL.md",

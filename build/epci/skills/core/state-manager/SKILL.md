@@ -154,7 +154,6 @@ Invoked automatically by skills:
 | `/implement` | Start new feature | `createFeature()` |
 | `/implement --continue` | Resume feature | `loadFeature()`, `restoreCheckpoint()` |
 | `/quick` | Optional lightweight tracking | `createFeature()` (minimal) |
-| `/improve` | Update existing feature | `loadFeature()`, `updateFeature()` |
 | `/brainstorm` | Save exploration session | `saveSession()` |
 | `/debug` | Save investigation session | `saveSession()` |
 

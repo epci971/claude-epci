@@ -65,20 +65,29 @@ Routing: {next step path}
 
 ## BREAKPOINT (for STANDARD+ only):
 
-┌─────────────────────────────────────────────────────────────────────┐
-│ :pause_button: BREAKPOINT — Complexity Assessment                               │
-├─────────────────────────────────────────────────────────────────────┤
-│ Feature: {feature-slug}                                             │
-│ Detected Complexity: {complexity}                                   │
-│ Estimated: ~{loc} LOC across {files} files                          │
-│                                                                     │
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  1. Proceed with full EPCI workflow (Recommended)              │ │
-│ │  2. Downgrade to /quick (simpler than estimated)               │ │
-│ │  3. Upgrade complexity (more complex than estimated)           │ │
-│ │  4. Abort and refine requirements                              │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: validation
+  title: "Complexity Assessment"
+  data: {
+    context: "Feature complexity detection complete",
+    item_to_validate: {
+      objectif: "Confirm complexity routing decision",
+      contexte: "Feature: {feature-slug}, Complexity: {complexity}",
+      contraintes: "~{loc} LOC across {files} files",
+      success_criteria: "User confirms appropriate workflow"
+    }
+  }
+  ask: {
+    question: "Proceed with detected complexity?",
+    header: "Complexity",
+    options: [
+      {label: "Proceed with EPCI (Recommended)", description: "Full workflow for STANDARD+ features"},
+      {label: "Downgrade to /quick", description: "Simpler than estimated, use quick workflow"},
+      {label: "Abort", description: "Refine requirements first"}
+    ]
+  }
+```
 
 ## NEXT STEP TRIGGER:
 

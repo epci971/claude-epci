@@ -17,14 +17,14 @@ EPCI v6 is a streamlined AI-assisted development workflow plugin for Claude Code
 
 | Layer | Components | Purpose |
 |-------|------------|---------|
-| User Skills (8) | User-facing commands | Direct user interaction |
+| User Skills (7) | User-facing commands | Direct user interaction |
 | Core Skills (6) | Internal components | Reusable logic, auto-triggered |
 | Schemas | JSON schemas | Data validation |
 | Scripts | Utilities | Validation, helpers |
 
 ---
 
-## 2. User Skills (8)
+## 2. User Skills (7)
 
 User-invocable commands via `/epci:<skill-name>`.
 
@@ -35,7 +35,6 @@ User-invocable commands via `/epci:<skill-name>`.
 | `/implement` | Full implementation workflow | build feature, implement |
 | `/quick` | Fast implementation for small tasks | quick fix, small change |
 | `/debug` | Structured debugging | fix bug, investigate error |
-| `/improve` | Enhance existing code | optimize, improve performance |
 | `/refactor` | Code restructuring | refactor, restructure |
 | `/factory` | Create new plugin components | create skill, create component |
 
@@ -48,7 +47,7 @@ Claude triggers these automatically based on context.
 
 | Core Skill | Purpose | Used By |
 |------------|---------|---------|
-| `state-manager` | Feature state persistence | implement, quick, improve |
+| `state-manager` | Feature state persistence | implement, quick |
 | `breakpoint-system` | Interactive breakpoints | All skills |
 | `complexity-calculator` | Scope estimation & routing | brainstorm, spec, implement, quick |
 | `clarification-engine` | Smart clarification questions | brainstorm, spec, debug |
@@ -78,8 +77,6 @@ src/
 │   ├── quick/
 │   │   └── SKILL.md
 │   ├── debug/
-│   │   └── SKILL.md
-│   ├── improve/
 │   │   └── SKILL.md
 │   ├── refactor/
 │   │   └── SKILL.md
@@ -177,6 +174,29 @@ Bug report → /debug → Investigation → Fix → Done
 |---------|-------|
 | SKILL.md body | < 500 lines |
 | Description | ≤ 1024 chars (50-150 words optimal) |
+
+### Breakpoint Usage (MANDATORY)
+
+All user-invocable skills MUST use `@skill:breakpoint-system` for interactive breakpoints.
+
+**Rules:**
+- NEVER create manual ASCII boxes for interactive breakpoints in step files
+- ALWAYS invoke `@skill:breakpoint-system` with appropriate type
+- ALWAYS document breakpoint types in SKILL.md "Breakpoints" section
+
+**Supported types:** `validation`, `analysis`, `plan-review`, `phase-transition`, `decomposition`, `diagnostic`, `ems-status`, `info-only`
+
+**Example invocation:**
+```typescript
+@skill:breakpoint-system
+  type: plan-review
+  title: "Plan Validation"
+  data: { /* type-specific structure per breakpoint-system schema */ }
+  ask: { question, header, options }
+  suggestions: [ /* P1/P2/P3 proactive suggestions */ ]
+```
+
+**Note:** ASCII boxes for informative displays (summaries, TDD cycle status) that don't require user input remain in manual format.
 
 ### Validation
 

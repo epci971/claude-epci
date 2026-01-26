@@ -370,11 +370,10 @@ SUGGESTIONS handling:
 | Skill | Breakpoint Types Used |
 |-------|----------------------|
 | `/brainstorm` | ems-status, validation |
-| `/spec` | plan-review |
-| `/implement` | phase-transition |
-| `/quick` | validation (SMALL only) |
+| `/spec` | validation, plan-review |
+| `/implement` | validation, phase-transition, plan-review |
+| `/quick` | validation, diagnostic (SMALL only) |
 | `/debug` | diagnostic |
-| `/improve` | validation |
 | `/refactor` | plan-review |
 | `/factory` | validation |
 
