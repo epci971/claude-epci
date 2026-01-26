@@ -1,0 +1,500 @@
+{
+  "title": "Skill /implement v6 Refonte",
+  "version": "2.0",
+  "slug": "skill-implement",
+  "generated_at": "2026-01-26T20:00:00Z",
+  "source": "docs/briefs/skill-implement/brief-skill-implement-20260126.md",
+  "complexity": "STANDARD",
+  "metrics": {
+    "total_tasks": 6,
+    "total_steps": 22,
+    "estimated_hours": 8.5,
+    "critical_path": ["task-001", "task-002", "task-006"],
+    "optimized_hours": 4.5
+  },
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Update SKILL.md Structure",
+      "slug": "skill-md-structure",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": [],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Frontmatter Updated",
+          "given": "The existing SKILL.md frontmatter",
+          "when": "The task is complete",
+          "then": "Description mentions stack skills, core skills integration, and plan-first workflow clearly"
+        },
+        {
+          "id": "AC2",
+          "title": "Mandatory Rules Enhanced",
+          "given": "The MANDATORY EXECUTION RULES section",
+          "when": "Updated with stack skills rules",
+          "then": "At least 2 new rules explicitly mention stack skills loading and core skills invocation"
+        },
+        {
+          "id": "AC3",
+          "title": "Workflow Overview Updated",
+          "given": "The current workflow ASCII diagram",
+          "when": "Enhanced with breakpoint markers",
+          "then": "Shows 4 breakpoints clearly marked (E, P, C*, I) with LARGE annotation for C"
+        },
+        {
+          "id": "AC4",
+          "title": "Section Placeholder Added",
+          "given": "Current section order in SKILL.md",
+          "when": "Placeholder added",
+          "then": "Stack & Core Skills Integration section appears after Workflow Overview"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Analyze Current Structure",
+          "duration_minutes": 15,
+          "input": "Current SKILL.md content",
+          "output": "Analysis notes for modification plan",
+          "validation": "Clear understanding of current structure"
+        },
+        {
+          "id": "step-2",
+          "title": "Update Frontmatter Description",
+          "duration_minutes": 20,
+          "input": "Analysis notes, brief decisions",
+          "output": "Updated frontmatter",
+          "validation": "Description accurately reflects v6 capabilities"
+        },
+        {
+          "id": "step-3",
+          "title": "Enhance Mandatory Rules",
+          "duration_minutes": 25,
+          "input": "Current mandatory rules, decisions D1, D3, D11",
+          "output": "Enhanced mandatory rules section",
+          "validation": "3 new rules added, formatting consistent"
+        },
+        {
+          "id": "step-4",
+          "title": "Update Workflow Overview",
+          "duration_minutes": 20,
+          "input": "Current workflow ASCII, decision D5",
+          "output": "Updated workflow ASCII diagram",
+          "validation": "4 breakpoints visible, LARGE annotation present"
+        },
+        {
+          "id": "step-5",
+          "title": "Add Section Placeholder",
+          "duration_minutes": 10,
+          "input": "Updated SKILL.md",
+          "output": "SKILL.md with placeholder section",
+          "validation": "Section exists, structure coherent"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/implement/SKILL.md", "action": "modify", "description": "Main skill file structure update"}
+      ],
+      "test_approach": "Manual"
+    },
+    {
+      "id": "task-002",
+      "title": "Add Stack & Core Skills Section",
+      "slug": "stack-core-section",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-001"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Stack Skills Table Present",
+          "given": "The new section in SKILL.md",
+          "when": "Stack skills table is added",
+          "then": "Table contains all 5 stack skills with detection patterns, rules injected, and phase usage"
+        },
+        {
+          "id": "AC2",
+          "title": "Core Skills Table Present",
+          "given": "The new section in SKILL.md",
+          "when": "Core skills table is added",
+          "then": "Table contains all 6 core skills with trigger conditions, phases, and purposes"
+        },
+        {
+          "id": "AC3",
+          "title": "Mermaid Diagram Renders",
+          "given": "The Mermaid code block in the section",
+          "when": "Viewed in GitHub/IDE with Mermaid support",
+          "then": "Diagram shows complete flow from INIT through MEMORY with all skill invocations"
+        },
+        {
+          "id": "AC4",
+          "title": "Injection Protocol Documented",
+          "given": "The Stack Skills subsection",
+          "when": "Reading the protocol",
+          "then": "4-step injection process is clearly documented"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Create Stack Skills Subsection",
+          "duration_minutes": 25,
+          "input": "Brief section 4.1, stack skills from src/skills/stack/",
+          "output": "Complete Stack Skills subsection",
+          "validation": "All 5 stacks documented with accurate detection patterns"
+        },
+        {
+          "id": "step-2",
+          "title": "Create Core Skills Subsection",
+          "duration_minutes": 25,
+          "input": "Brief section 4.2, core skills from src/skills/core/",
+          "output": "Complete Core Skills subsection",
+          "validation": "All 6 core skills documented with correct triggers"
+        },
+        {
+          "id": "step-3",
+          "title": "Create Mermaid Integration Diagram",
+          "duration_minutes": 25,
+          "input": "Brief section 4.3, architecture diagram",
+          "output": "Complete Mermaid diagram",
+          "validation": "Diagram renders correctly, shows all integration points"
+        },
+        {
+          "id": "step-4",
+          "title": "Add Integration Notes",
+          "duration_minutes": 15,
+          "input": "Brief decisions D1, D12",
+          "output": "Integration notes subsection",
+          "validation": "Clear explanation of how integration works"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/implement/SKILL.md", "action": "modify", "description": "Add complete Stack & Core Skills Integration section"}
+      ],
+      "test_approach": "Manual"
+    },
+    {
+      "id": "task-003",
+      "title": "Update step-00-init.md",
+      "slug": "step-00-init",
+      "complexity": "M",
+      "estimated_minutes": 75,
+      "dependencies": ["task-001"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Stack Detection Protocol",
+          "given": "The INIT step execution",
+          "when": "Project files are analyzed",
+          "then": "Stack is detected using patterns from stack skills, and rules-templates are loaded"
+        },
+        {
+          "id": "AC2",
+          "title": "Clarification Engine Integration",
+          "given": "An input with clarity score < 60%",
+          "when": "INIT step processes input",
+          "then": "clarification-engine is invoked for 2-3 targeted questions"
+        },
+        {
+          "id": "AC3",
+          "title": "State Manager Invocation",
+          "given": "INIT step starts",
+          "when": "Feature slug is known",
+          "then": "state-manager.loadFeature() or createFeature() is called"
+        },
+        {
+          "id": "AC4",
+          "title": "Complexity Routing",
+          "given": "Complexity is calculated",
+          "when": "Result is TINY or SMALL",
+          "then": "User is prompted to use /quick instead, with option to continue"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Add Stack Detection Protocol",
+          "duration_minutes": 25,
+          "input": "Stack skills detection patterns from SKILL.md",
+          "output": "Stack detection section in step-00-init.md",
+          "validation": "All 5 stacks have detection patterns documented"
+        },
+        {
+          "id": "step-2",
+          "title": "Add Clarification Engine Protocol",
+          "duration_minutes": 20,
+          "input": "Decision D2, clarification-engine skill",
+          "output": "Clarity check and clarification protocol",
+          "validation": "Protocol clearly triggers clarification for vague inputs"
+        },
+        {
+          "id": "step-3",
+          "title": "Add State Manager Invocation",
+          "duration_minutes": 15,
+          "input": "state-manager skill documentation",
+          "output": "State initialization protocol",
+          "validation": "Both load and create scenarios covered"
+        },
+        {
+          "id": "step-4",
+          "title": "Update Complexity Routing",
+          "duration_minutes": 15,
+          "input": "Current routing logic, decision D9",
+          "output": "Updated complexity routing with user choice",
+          "validation": "User can override routing suggestion"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/implement/steps/step-00-init.md", "action": "modify", "description": "Add stack detection, clarification, state protocols"}
+      ],
+      "test_approach": "Manual"
+    },
+    {
+      "id": "task-004",
+      "title": "Update step-03-code.md",
+      "slug": "step-03-code",
+      "complexity": "M",
+      "estimated_minutes": 75,
+      "dependencies": ["task-001"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Pre-Code TDD Check",
+          "given": "A task ready for implementation",
+          "when": "CODE step starts for that task",
+          "then": "Check verifies failing test exists, generates test skeleton if not"
+        },
+        {
+          "id": "AC2",
+          "title": "TDD Enforcer Integration",
+          "given": "Each phase of TDD cycle (RED, GREEN, REFACTOR, VERIFY)",
+          "when": "Phase completes",
+          "then": "tdd-enforcer validates compliance before proceeding"
+        },
+        {
+          "id": "AC3",
+          "title": "Stack Conventions Applied",
+          "given": "GREEN phase implementation",
+          "when": "Code is written",
+          "then": "Stack-specific patterns from rules-templates are applied"
+        },
+        {
+          "id": "AC4",
+          "title": "Coverage Verification",
+          "given": "VERIFY phase",
+          "when": "Full test suite runs",
+          "then": "Coverage is checked against 80% target, warning if below"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Add Pre-Code TDD Check Protocol",
+          "duration_minutes": 20,
+          "input": "Decision D11, tdd-enforcer skill",
+          "output": "Pre-code TDD check protocol",
+          "validation": "Protocol prevents implementation without failing tests"
+        },
+        {
+          "id": "step-2",
+          "title": "Enhance TDD Cycle with tdd-enforcer",
+          "duration_minutes": 25,
+          "input": "Current TDD cycle, tdd-enforcer skill",
+          "output": "Enhanced TDD cycle with enforcer calls",
+          "validation": "Each phase has explicit enforcer validation"
+        },
+        {
+          "id": "step-3",
+          "title": "Add Stack Conventions Application",
+          "duration_minutes": 15,
+          "input": "Stack skills rules-templates, context variable from INIT",
+          "output": "Stack conventions application protocol",
+          "validation": "Clear instructions for applying stack patterns"
+        },
+        {
+          "id": "step-4",
+          "title": "Add Coverage Verification",
+          "duration_minutes": 15,
+          "input": "Decision D3 (80% coverage), testing frameworks",
+          "output": "Coverage verification protocol",
+          "validation": "Coverage check runs for all supported stacks"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/implement/steps/step-03-code.md", "action": "modify", "description": "Add pre-code check, enhanced TDD, stack conventions"}
+      ],
+      "test_approach": "Manual"
+    },
+    {
+      "id": "task-005",
+      "title": "Update step-04-review.md",
+      "slug": "step-04-review",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-001"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Parallel Fan-Out Implementation",
+          "given": "CODE phase complete",
+          "when": "INSPECT step starts",
+          "then": "Multiple review agents are invoked in parallel"
+        },
+        {
+          "id": "AC2",
+          "title": "Conditional Agent Triggers",
+          "given": "Codebase characteristics",
+          "when": "Determining which agents to invoke",
+          "then": "@security-auditor triggers if auth patterns detected, @qa-reviewer triggers if >5 tests or LARGE"
+        },
+        {
+          "id": "AC3",
+          "title": "Critic Synthesis",
+          "given": "All review agents have returned",
+          "when": "Synthesis runs",
+          "then": "Findings are merged, deduplicated, and classified as Critical/Important/Minor"
+        },
+        {
+          "id": "AC4",
+          "title": "Auto-Fix Protocol",
+          "given": "Findings with Minor severity",
+          "when": "Auto-fix is enabled",
+          "then": "Minor issues are fixed automatically, Important require confirmation, Critical require human decision"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Document Conditional Agent Triggers",
+          "duration_minutes": 20,
+          "input": "Decision D7, file patterns from brief",
+          "output": "Agent selection protocol with triggers",
+          "validation": "All conditional triggers documented with patterns"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement Parallel Fan-Out",
+          "duration_minutes": 25,
+          "input": "Multi-agent patterns from Perplexity research",
+          "output": "Parallel fan-out execution protocol",
+          "validation": "Single Task call launches multiple agents"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement Critic Synthesis",
+          "duration_minutes": 25,
+          "input": "Synthesis rules from brief, aggregation pattern",
+          "output": "Critic synthesis protocol",
+          "validation": "Clear deduplication and classification rules"
+        },
+        {
+          "id": "step-4",
+          "title": "Implement Auto-Fix Protocol",
+          "duration_minutes": 20,
+          "input": "Decision D10, severity classifications",
+          "output": "Auto-fix protocol with severity handling",
+          "validation": "Each severity level has clear handling rules"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/implement/steps/step-04-review.md", "action": "modify", "description": "Complete restructure for parallel fan-out and critic synthesis"}
+      ],
+      "test_approach": "Manual"
+    },
+    {
+      "id": "task-006",
+      "title": "Create New References",
+      "slug": "new-references",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-002", "task-003", "task-004", "task-005"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "stack-integration.md Complete",
+          "given": "The new references/ directory",
+          "when": "stack-integration.md is created",
+          "then": "Contains detection patterns, rules-templates mapping, injection protocol, and agent transmission details"
+        },
+        {
+          "id": "AC2",
+          "title": "multi-agent-review.md Complete",
+          "given": "The new references/ directory",
+          "when": "multi-agent-review.md is created",
+          "then": "Contains parallel execution pattern, agent selection matrix, synthesis algorithm, and severity handling"
+        },
+        {
+          "id": "AC3",
+          "title": "turbo-mode.md Complete",
+          "given": "The new references/ directory",
+          "when": "turbo-mode.md is created",
+          "then": "Contains flag documentation, workflow differences table, skipped steps, and use cases"
+        },
+        {
+          "id": "AC4",
+          "title": "Cross-References Added",
+          "given": "All three reference files",
+          "when": "Reviewed for completeness",
+          "then": "Files reference each other and link back to SKILL.md sections"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Create stack-integration.md",
+          "duration_minutes": 30,
+          "input": "Brief section 4, stack skills SKILL.md files",
+          "output": "Complete stack-integration.md",
+          "validation": "All 5 stacks fully documented with detection and rules"
+        },
+        {
+          "id": "step-2",
+          "title": "Create multi-agent-review.md",
+          "duration_minutes": 30,
+          "input": "Brief section 5, Perplexity research on multi-agent patterns",
+          "output": "Complete multi-agent-review.md",
+          "validation": "Parallel pattern and synthesis clearly documented"
+        },
+        {
+          "id": "step-3",
+          "title": "Create turbo-mode.md",
+          "duration_minutes": 20,
+          "input": "Brief section 8, decision D9",
+          "output": "Complete turbo-mode.md",
+          "validation": "Clear comparison table and use cases documented"
+        },
+        {
+          "id": "step-4",
+          "title": "Add Cross-References",
+          "duration_minutes": 10,
+          "input": "All three new reference files, SKILL.md, step files",
+          "output": "Cross-referenced documentation",
+          "validation": "All links work, documentation is connected"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/implement/references/stack-integration.md", "action": "create", "description": "Stack detection and injection details"},
+        {"path": "src/skills/implement/references/multi-agent-review.md", "action": "create", "description": "Parallel review architecture details"},
+        {"path": "src/skills/implement/references/turbo-mode.md", "action": "create", "description": "Turbo mode workflow documentation"}
+      ],
+      "test_approach": "Manual"
+    }
+  ],
+  "dependencies_graph": {
+    "nodes": ["task-001", "task-002", "task-003", "task-004", "task-005", "task-006"],
+    "edges": [
+      {"from": "task-001", "to": "task-002"},
+      {"from": "task-001", "to": "task-003"},
+      {"from": "task-001", "to": "task-004"},
+      {"from": "task-001", "to": "task-005"},
+      {"from": "task-002", "to": "task-006"},
+      {"from": "task-003", "to": "task-006"},
+      {"from": "task-004", "to": "task-006"},
+      {"from": "task-005", "to": "task-006"}
+    ]
+  },
+  "routing": {
+    "recommended_skill": "/implement",
+    "reason": "STANDARD complexity with 6 interdependent tasks requiring full EPCI workflow"
+  }
+}
