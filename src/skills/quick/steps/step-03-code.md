@@ -162,20 +162,35 @@ RETRY PROTOCOL:
 
 **Max retries: 2**
 
-If still failing after 2 retries:
+If still failing after 2 retries, invoke diagnostic breakpoint:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ [TDD FAILURE] Tests Not Passing                                  │
-├─────────────────────────────────────────────────────────────────┤
-│ Attempts: 2/2                                                    │
-│ Last Error: {error message}                                      │
-│                                                                  │
-│ Options:                                                         │
-│ 1. Continue investigation (may take longer)                      │
-│ 2. Use /debug to investigate                                     │
-│ 3. Abort and fix manually                                        │
-└─────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: diagnostic
+  title: "TDD Failure"
+  data: {
+    root_cause: "{identified cause or 'Unknown - needs investigation'}",
+    confidence: 0.5,
+    decision_tree: "RED failed → GREEN attempt 1 failed → GREEN attempt 2 failed",
+    solutions: [
+      {id: "S1", title: "Continue Investigation", effort: "5-10 min", risk: "Medium"},
+      {id: "S2", title: "Use /debug Workflow", effort: "15-30 min", risk: "Low"},
+      {id: "S3", title: "Abort and Fix Manually", effort: "Variable", risk: "Low"}
+    ]
+  }
+  ask: {
+    question: "Tests failing after 2 attempts. How to proceed?",
+    header: "TDD Failure",
+    options: [
+      {label: "Continue Investigation", description: "May take longer but stays in /quick"},
+      {label: "Use /debug (Recommended)", description: "Structured debugging workflow"},
+      {label: "Abort", description: "Fix manually outside workflow"}
+    ]
+  }
+  suggestions: [
+    {pattern: "error", text: "Last error: {error message}", priority: "P1"},
+    {pattern: "debug", text: "/debug provides hypothesis-driven investigation", priority: "P2"}
+  ]
 ```
 
 ## OUTPUT FORMAT:

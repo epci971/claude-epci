@@ -175,6 +175,29 @@ Bug report → /debug → Investigation → Fix → Done
 | SKILL.md body | < 500 lines |
 | Description | ≤ 1024 chars (50-150 words optimal) |
 
+### Breakpoint Usage (MANDATORY)
+
+All user-invocable skills MUST use `@skill:breakpoint-system` for interactive breakpoints.
+
+**Rules:**
+- NEVER create manual ASCII boxes for interactive breakpoints in step files
+- ALWAYS invoke `@skill:breakpoint-system` with appropriate type
+- ALWAYS document breakpoint types in SKILL.md "Breakpoints" section
+
+**Supported types:** `validation`, `analysis`, `plan-review`, `phase-transition`, `decomposition`, `diagnostic`, `ems-status`, `info-only`
+
+**Example invocation:**
+```typescript
+@skill:breakpoint-system
+  type: plan-review
+  title: "Plan Validation"
+  data: { /* type-specific structure per breakpoint-system schema */ }
+  ask: { question, header, options }
+  suggestions: [ /* P1/P2/P3 proactive suggestions */ ]
+```
+
+**Note:** ASCII boxes for informative displays (summaries, TDD cycle status) that don't require user input remain in manual format.
+
 ### Validation
 
 ```bash

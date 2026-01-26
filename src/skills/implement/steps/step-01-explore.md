@@ -79,24 +79,38 @@ next_step: steps/step-02-plan.md
 
 ## BREAKPOINT:
 
-┌─────────────────────────────────────────────────────────────────────┐
-│ :pause_button: BREAKPOINT — Exploration Complete                                │
-├─────────────────────────────────────────────────────────────────────┤
-│ Feature: {feature-slug}                                             │
-│                                                                     │
-│ Findings Summary:                                                   │
-│ • {N} relevant files identified                                     │
-│ • {N} files to modify                                               │
-│ • {N} files to create                                               │
-│ • Key patterns: {patterns}                                          │
-│                                                                     │
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  1. Proceed to Planning (Recommended)                          │ │
-│ │  2. Explore more (specific area)                               │ │
-│ │  3. Revise scope based on findings                             │ │
-│ │  4. Abort (scope too large)                                    │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: phase-transition
+  title: "Exploration Complete [E→P]"
+  data: {
+    phase_completed: "explore",
+    phase_next: "plan",
+    summary: {
+      duration: "{duration}",
+      tasks_completed: 1,
+      files_modified: [],
+      tests_status: "N/A"
+    },
+    checkpoint_created: {
+      id: "{feature_id}-checkpoint-explore",
+      resumable: true
+    }
+  }
+  ask: {
+    question: "Proceed to Planning phase?",
+    header: "Phase E→P",
+    options: [
+      {label: "Continue to Plan (Recommended)", description: "Proceed with implementation planning"},
+      {label: "Extend Exploration", description: "Explore more files before planning"},
+      {label: "Abort", description: "Scope too large, cancel implementation"}
+    ]
+  }
+  suggestions: [
+    {pattern: "findings", text: "Review {N} files to modify before planning", priority: "P1"},
+    {pattern: "patterns", text: "Follow identified patterns: {patterns}", priority: "P2"}
+  ]
+```
 
 ## NEXT STEP TRIGGER:
 

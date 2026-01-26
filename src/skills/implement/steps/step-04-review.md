@@ -111,25 +111,39 @@ conditional_next:
 
 ## BREAKPOINT:
 
-┌─────────────────────────────────────────────────────────────────────┐
-│ :pause_button: BREAKPOINT — Code Review Complete                                │
-├─────────────────────────────────────────────────────────────────────┤
-│ Feature: {feature-slug}                                             │
-│                                                                     │
-│ Review Summary:                                                     │
-│ • Issues: {N} ({severity breakdown})                                │
-│ • Coverage: {%}                                                     │
-│ • Security: {status}                                                │
-│                                                                     │
-│ Verdict: {APPROVED | CHANGES_REQUIRED}                              │
-│                                                                     │
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  1. Accept and proceed to documentation (Recommended if PASS)  │ │
-│ │  2. Request security review                                    │ │
-│ │  3. Request QA validation                                      │ │
-│ │  4. Address findings first                                     │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: phase-transition
+  title: "Code Review Complete [C→I]"
+  data: {
+    phase_completed: "code",
+    phase_next: "inspect",
+    summary: {
+      duration: "{duration}",
+      tasks_completed: {N},
+      files_modified: ["{files}"],
+      tests_status: "{passing}/{total} passing"
+    },
+    checkpoint_created: {
+      id: "{feature_id}-checkpoint-code",
+      resumable: true
+    }
+  }
+  ask: {
+    question: "Proceed with review outcome?",
+    header: "Phase C→I",
+    options: [
+      {label: "Accept and Document (Recommended)", description: "Proceed to documentation phase"},
+      {label: "Request Security Review", description: "Deep security audit needed"},
+      {label: "Request QA Validation", description: "Additional QA testing needed"},
+      {label: "Address Findings", description: "Fix issues before proceeding"}
+    ]
+  }
+  suggestions: [
+    {pattern: "coverage", text: "Coverage: {%}% achieved", priority: "P1"},
+    {pattern: "issues", text: "{N} issues found ({severity})", priority: "P2"}
+  ]
+```
 
 ## NEXT STEP TRIGGER:
 

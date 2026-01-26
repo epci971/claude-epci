@@ -125,40 +125,55 @@ Ready for: Analysis & Decomposition
 
 ## BREAKPOINT (if clarification needed):
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ [CLARIFICATION] Input Needs Refinement                               │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│ Feature: {feature-slug}                                              │
-│ Source type: {text|discovery}                                        │
-│                                                                      │
-│ The provided description needs clarification:                        │
-│ {clarification questions from clarification-engine}                  │
-│                                                                      │
-├─────────────────────────────────────────────────────────────────────┤
-│ [A] Answer questions  [B] Provide brief file  [C] Cancel             │
-└─────────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: validation
+  title: "Input Needs Clarification"
+  data: {
+    context: "Provided description requires refinement",
+    item_to_validate: {
+      objectif: "Clarify requirements before proceeding",
+      contexte: "Feature: {feature-slug}, Source: {text|discovery}",
+      contraintes: "{clarification questions from clarification-engine}",
+      success_criteria: "Clear requirements for spec generation"
+    }
+  }
+  ask: {
+    question: "How would you like to clarify?",
+    header: "Clarify",
+    options: [
+      {label: "Answer Questions (Recommended)", description: "Provide clarifications inline"},
+      {label: "Provide Brief File", description: "Supply a structured brief document"},
+      {label: "Cancel", description: "Abort and refine requirements"}
+    ]
+  }
 ```
 
 ## BREAKPOINT (if discovery mode and no brief found):
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ [INPUT] Source Required                                              │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│ Feature: {feature-slug}                                              │
-│ No existing brief found in docs/briefs/{slug}/                       │
-│                                                                      │
-│ Please provide a source:                                             │
-│                                                                      │
-├─────────────────────────────────────────────────────────────────────┤
-│ [A] Path to brief file                                               │
-│ [B] Text description                                                 │
-│ [C] Run /brainstorm first                                            │
-│ [D] Cancel                                                           │
-└─────────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: validation
+  title: "Source Required"
+  data: {
+    context: "No existing brief found for feature",
+    item_to_validate: {
+      objectif: "Provide source for spec generation",
+      contexte: "Feature: {feature-slug}, Searched: docs/briefs/{slug}/",
+      contraintes: "Need brief file, text description, or brainstorm first",
+      success_criteria: "Valid source provided"
+    }
+  }
+  ask: {
+    question: "How would you like to provide source?",
+    header: "Source",
+    options: [
+      {label: "Provide Brief Path", description: "Path to existing brief file"},
+      {label: "Text Description", description: "Describe requirements inline"},
+      {label: "Run /brainstorm First (Recommended)", description: "Explore idea before specifying"},
+      {label: "Cancel", description: "Abort workflow"}
+    ]
+  }
 ```
 
 ## NEXT STEP TRIGGER:

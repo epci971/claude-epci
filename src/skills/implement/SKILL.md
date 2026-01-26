@@ -175,6 +175,21 @@ ELSE IF complexity == LARGE:
 - `breakpoint-system` — Phase checkpoints
 - `project-memory` — Context persistence
 
+## Breakpoints
+
+This skill uses `breakpoint-system` at key workflow points.
+
+| Step | Type | Purpose |
+|------|------|---------|
+| step-00-init | `validation` | Complexity assessment confirmation |
+| step-01-explore | `phase-transition` | Exploration [E] → Planning [P] |
+| step-02-plan | `plan-review` | Plan validation before coding |
+| step-04-review | `phase-transition` | Coding [C] → Inspection [I] |
+| step-04b-security | `validation` | Security review approval |
+| step-04c-qa | `validation` | QA validation approval |
+
+All breakpoints MUST use `@skill:breakpoint-system` invocation format.
+
 ## Limitations
 
 This skill does NOT:

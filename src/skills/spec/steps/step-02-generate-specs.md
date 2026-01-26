@@ -314,37 +314,53 @@ Location: docs/specs/{feature-slug}/
 
 ## BREAKPOINT:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ [PLAN-REVIEW] Specifications Generated                               │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│ Feature: {feature-slug}                                              │
-│ Location: docs/specs/{feature-slug}/                                 │
-│                                                                      │
-│ ┌─ Files ───────────────────────────────────────────────────────┐   │
-│ │ [x] index.md          ({lines} lines)                         │   │
-│ │ [x] task-001-{slug}.md ({lines} lines)                        │   │
-│ │ [x] task-002-{slug}.md ({lines} lines)                        │   │
-│ │ [x] ...                                                        │   │
-│ │ [x] {feature}.prd.json ({size} KB)                            │   │
-│ └────────────────────────────────────────────────────────────────┘   │
-│                                                                      │
-│ ┌─ Preview: index.md ───────────────────────────────────────────┐   │
-│ │ # {Feature Title}                                              │   │
-│ │ > Technical Specification | {date} | {tasks} tasks             │   │
-│ │ ...                                                            │   │
-│ └────────────────────────────────────────────────────────────────┘   │
-│                                                                      │
-│ :bulb: P1: Review acceptance criteria for completeness                      │
-│ :bulb: P2: Consider adding edge case tests                                  │
-│                                                                      │
-├─────────────────────────────────────────────────────────────────────┤
-│ [A] Continue to Ralph generation (Recommended)                       │
-│ [B] Skip Ralph (specs only)                                          │
-│ [C] Edit task files                                                  │
-│ [D] Regenerate with changes                                          │
-└─────────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: plan-review
+  title: "Specifications Generated"
+  data: {
+    metrics: {
+      complexity: "{complexity}",
+      complexity_score: {score},
+      files_impacted: {task_count},
+      time_estimate: "{total_hours}h",
+      risk_level: "LOW",
+      risk_description: "Spec generation only, no code changes"
+    },
+    validations: {
+      plan_validator: {
+        verdict: "APPROVED",
+        completeness: "{task_count} tasks with {step_count} steps",
+        consistency: "All dependencies mapped in DAG",
+        feasibility: "Effort estimates calibrated",
+        quality: "Acceptance criteria defined per task"
+      }
+    },
+    skills_loaded: ["project-memory", "decompose-validator"],
+    preview_next: {
+      tasks: [
+        {title: "index.md ({lines} lines)", time: "-"},
+        {title: "task-001-{slug}.md", time: "{estimate}"},
+        {title: "{feature}.prd.json ({size} KB)", time: "-"}
+      ],
+      remaining_tasks: {task_count}
+    },
+    feature_doc_path: "docs/specs/{feature-slug}/"
+  }
+  ask: {
+    question: "Proceed with specifications?",
+    header: "Specs Review",
+    options: [
+      {label: "Continue to Ralph (Recommended)", description: "Generate execution artifacts"},
+      {label: "Skip Ralph", description: "Specs only, no execution artifacts"},
+      {label: "Edit Tasks", description: "Modify generated task files"},
+      {label: "Regenerate", description: "Regenerate with changes"}
+    ]
+  }
+  suggestions: [
+    {pattern: "review-ac", text: "Review acceptance criteria for completeness", priority: "P1"},
+    {pattern: "edge-cases", text: "Consider adding edge case tests", priority: "P2"}
+  ]
 ```
 
 ## NEXT STEP TRIGGER:

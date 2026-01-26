@@ -145,7 +145,19 @@ INPUT
 - `state-manager` — Track progress, update index.json
 - `complexity-calculator` — Validate scope, routing
 - `tdd-enforcer` — TDD cycle enforcement (Red-Green mode)
+- `breakpoint-system` — Interactive breakpoints (SMALL complexity only)
 - `project-memory` — Context persistence
+
+## Breakpoints
+
+This skill uses `breakpoint-system` at key decision points (SMALL complexity only).
+
+| Step | Type | Purpose | Condition |
+|------|------|---------|-----------|
+| step-01-mini-explore | `validation` | Complexity re-evaluation alert | If complexity appears STANDARD+ |
+| step-03-code | `diagnostic` | TDD failure handling | If tests fail 2x |
+
+TINY tasks skip breakpoints for speed. All breakpoints MUST use `@skill:breakpoint-system` invocation format.
 
 ## Stack Skills (Auto-detected)
 

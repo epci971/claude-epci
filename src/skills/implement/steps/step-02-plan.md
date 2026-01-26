@@ -83,29 +83,53 @@ next_step: steps/step-03-code.md
 
 ## BREAKPOINT:
 
-┌─────────────────────────────────────────────────────────────────────┐
-│ :pause_button: BREAKPOINT — Plan Validation                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ Feature: {feature-slug}                                             │
-│                                                                     │
-│ Implementation Plan:                                                │
-│ • {N} phases, {N} components                                        │
-│ • Estimated: ~{loc} LOC                                             │
-│ • Test coverage target: {%}                                         │
-│                                                                     │
-│ ┌─ Plan Summary ─────────────────────────────────────────────────┐ │
-│ │ 1. {Phase 1 summary}                                           │ │
-│ │ 2. {Phase 2 summary}                                           │ │
-│ │ 3. {Phase 3 summary}                                           │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  1. Approve and proceed to coding (Recommended)                │ │
-│ │  2. Modify plan (specify changes)                              │ │
-│ │  3. Request more detail on specific phase                      │ │
-│ │  4. Abort and revise requirements                              │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: plan-review
+  title: "Plan Validation"
+  data: {
+    metrics: {
+      complexity: "{complexity}",
+      complexity_score: {score},
+      files_impacted: {N},
+      time_estimate: "{hours}h",
+      risk_level: "{LOW|MEDIUM|HIGH}",
+      risk_description: "{risk notes}"
+    },
+    validations: {
+      plan_validator: {
+        verdict: "APPROVED",
+        completeness: "{phases} phases defined",
+        consistency: "Dependencies mapped",
+        feasibility: "Within scope",
+        quality: "TDD strategy defined"
+      }
+    },
+    skills_loaded: ["tdd-enforcer", "state-manager"],
+    preview_next: {
+      tasks: [
+        {title: "{Phase 1 summary}", time: "{estimate}"},
+        {title: "{Phase 2 summary}", time: "{estimate}"},
+        {title: "{Phase 3 summary}", time: "{estimate}"}
+      ],
+      remaining_tasks: {N}
+    },
+    feature_doc_path: ".epci/features/{feature-slug}/FEATURE.md"
+  }
+  ask: {
+    question: "Approve implementation plan?",
+    header: "Plan Review",
+    options: [
+      {label: "Approve and Code (Recommended)", description: "Proceed to TDD implementation"},
+      {label: "Modify Plan", description: "Adjust phases or approach"},
+      {label: "Abort", description: "Revise requirements first"}
+    ]
+  }
+  suggestions: [
+    {pattern: "tdd", text: "TDD cycle enforced: RED → GREEN → REFACTOR", priority: "P1"},
+    {pattern: "coverage", text: "Coverage target: {%}%", priority: "P2"}
+  ]
+```
 
 ## NEXT STEP TRIGGER:
 

@@ -337,52 +337,33 @@ Location: .ralph/{feature-slug}/
 
 ## BREAKPOINT:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ [VALIDATION] Specification Complete                                  │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│ Feature: {feature-slug}                                              │
-│ Complexity: {TINY|SMALL|STANDARD|LARGE}                              │
-│                                                                      │
-│ ┌─ Generated Files ─────────────────────────────────────────────┐   │
-│ │                                                                │   │
-│ │ Specifications:                                                │   │
-│ │ • docs/specs/{slug}/index.md                                   │   │
-│ │ • docs/specs/{slug}/task-001-{task}.md                         │   │
-│ │ • docs/specs/{slug}/task-002-{task}.md                         │   │
-│ │ • ...                                                          │   │
-│ │ • docs/specs/{slug}/{feature}.prd.json                         │   │
-│ │                                                                │   │
-│ │ Ralph Artifacts:                                               │   │
-│ │ • .ralph/{slug}/PROMPT.md                                      │   │
-│ │ • .ralph/{slug}/MEMORY.md                                      │   │
-│ │ • .ralph/{slug}/ralph.sh                                       │   │
-│ │                                                                │   │
-│ └────────────────────────────────────────────────────────────────┘   │
-│                                                                      │
-│ ┌─ Recommended Next Step ───────────────────────────────────────┐   │
-│ │                                                                │   │
-│ │ Complexity: {level}                                            │   │
-│ │ Recommended: {/quick or /implement}                            │   │
-│ │                                                                │   │
-│ │ Command:                                                       │   │
-│ │   /{skill} {slug} @docs/specs/{slug}/                          │   │
-│ │                                                                │   │
-│ │ Or run Ralph batch:                                            │   │
-│ │   ./.ralph/{slug}/ralph.sh                                     │   │
-│ │                                                                │   │
-│ └────────────────────────────────────────────────────────────────┘   │
-│                                                                      │
-│ :bulb: P1: Review PROMPT.md for stack-specific adjustments                  │
-│ :bulb: P2: Consider parallel task execution for optimization                │
-│                                                                      │
-├─────────────────────────────────────────────────────────────────────┤
-│ [A] Launch {/quick or /implement}                                    │
-│ [B] Run Ralph batch                                                  │
-│ [C] Review generated files                                           │
-│ [D] Done (end workflow)                                              │
-└─────────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: validation
+  title: "Specification Complete"
+  data: {
+    context: "All specification and Ralph artifacts generated",
+    item_to_validate: {
+      objectif: "Choose next action for feature implementation",
+      contexte: "Feature: {feature-slug}, Complexity: {TINY|SMALL|STANDARD|LARGE}",
+      contraintes: "Specs: docs/specs/{slug}/, Ralph: .ralph/{slug}/",
+      success_criteria: "User selects implementation path"
+    }
+  }
+  ask: {
+    question: "How would you like to proceed?",
+    header: "Next Step",
+    options: [
+      {label: "Launch {/quick or /implement} (Recommended)", description: "Start implementation workflow"},
+      {label: "Run Ralph Batch", description: "Execute ./.ralph/{slug}/ralph.sh"},
+      {label: "Review Files", description: "Inspect generated artifacts"},
+      {label: "Done", description: "End workflow, implement later"}
+    ]
+  }
+  suggestions: [
+    {pattern: "stack", text: "Review PROMPT.md for stack-specific adjustments", priority: "P1"},
+    {pattern: "parallel", text: "Consider parallel task execution for optimization", priority: "P2"}
+  ]
 ```
 
 ## COMPLETION:

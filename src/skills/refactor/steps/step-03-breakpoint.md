@@ -16,84 +16,65 @@
 
 ## Protocol
 
-### 1. Display Plan Summary
+### 1. Display Plan Summary and Request Approval
 
-Present the complete plan with all transformations:
+Present the complete plan using breakpoint-system:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ [PLAN-REVIEW] Refactoring Plan Validation                       │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│ Target: src/services/auth.py                                    │
-│ Scope: module                                                   │
-│ Transformations: 4                                              │
-│                                                                  │
-│ ## Transformation Order                                         │
-│                                                                  │
-│ 1. T1: Extract validate_credentials() [Low Risk]                │
-│ 2. T2: Extract TokenValidator class [Medium Risk]               │
-│ 3. T3: Move user lookups [Low Risk]                             │
-│ 4. T4: Inline dead refresh code [Low Risk]                      │
-│                                                                  │
-│ ## Expected Metrics Delta                                       │
-│ - LOC: 450 → ~400 (-11%)                                        │
-│ - CC: 25 → ~12 (-52%)                                           │
-│ - MI: 45 → ~65 (+44%)                                           │
-│                                                                  │
-│ ## Files Affected                                               │
-│ - Modified: auth.py, user.py, test_auth.py                      │
-│ - Created: validators/token_validator.py, test_token_validator.py│
-│                                                                  │
-│ ## TDD Strategy                                                 │
-│ Each transformation will follow RED-GREEN-REFACTOR:             │
-│ - Verify existing tests pass (GREEN)                            │
-│ - Apply transformation                                          │
-│ - Verify tests still pass (GREEN)                               │
-│ - Revert if any test fails                                      │
-│                                                                  │
-├─────────────────────────────────────────────────────────────────┤
-│ [A] Execute  [B] Modify Plan  [C] Cancel                        │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### 2. Present Options
-
-Use `AskUserQuestion` with breakpoint-system:
-
-```json
-{
-  "type": "plan-review",
-  "context": {
-    "target": "auth.py",
-    "scope": "module",
-    "transformations_count": 4,
-    "estimated_risk": "medium"
-  },
-  "options": [
-    {
-      "label": "Execute (Recommended)",
-      "description": "Proceed with TDD-enforced transformations",
-      "action": "step-04-execute"
+```typescript
+@skill:breakpoint-system
+  type: plan-review
+  title: "Refactoring Plan Validation"
+  data: {
+    metrics: {
+      complexity: "{scope}",
+      complexity_score: {transformations_count},
+      files_impacted: {files_count},
+      time_estimate: "{estimate}",
+      risk_level: "{LOW|MEDIUM|HIGH}",
+      risk_description: "{highest risk transformation}"
     },
-    {
-      "label": "Modify Plan",
-      "description": "Adjust transformations or order",
-      "action": "revise-plan"
+    validations: {
+      plan_validator: {
+        verdict: "APPROVED",
+        completeness: "{transformations_count} transformations defined",
+        consistency: "Dependency order validated",
+        feasibility: "All transformations atomic",
+        quality: "TDD strategy per transformation"
+      }
     },
-    {
-      "label": "Cancel",
-      "description": "Abort refactoring",
-      "action": "abort"
-    }
-  ],
-  "proactive_suggestions": [
-    "P1: Consider running tests first to ensure baseline is green",
-    "P2: T2 (Medium Risk) could be split into smaller steps",
-    "P3: Use --atomic flag for easier rollback if needed"
+    skills_loaded: ["tdd-enforcer"],
+    preview_next: {
+      tasks: [
+        {title: "T1: {transformation_1_title}", time: "{estimate}"},
+        {title: "T2: {transformation_2_title}", time: "{estimate}"},
+        {title: "T3: {transformation_3_title}", time: "{estimate}"}
+      ],
+      remaining_tasks: {transformations_count}
+    },
+    feature_doc_path: "{target_file}"
+  }
+  ask: {
+    question: "Proceed with refactoring plan?",
+    header: "Plan Review",
+    options: [
+      {label: "Execute (Recommended)", description: "Proceed with TDD-enforced transformations"},
+      {label: "Modify Plan", description: "Adjust transformations or order"},
+      {label: "Cancel", description: "Abort refactoring"}
+    ]
+  }
+  suggestions: [
+    {pattern: "baseline", text: "Run tests first to ensure baseline is green", priority: "P1"},
+    {pattern: "risk", text: "{highest_risk_transformation} could be split into smaller steps", priority: "P2"},
+    {pattern: "atomic", text: "Use --atomic flag for easier rollback", priority: "P3"}
   ]
-}
 ```
+
+### 2. Expected Metrics Delta (displayed in breakpoint)
+
+Include in the plan-review data:
+- LOC: {before} → {after} ({delta}%)
+- CC (Cyclomatic Complexity): {before} → {after} ({delta}%)
+- MI (Maintainability Index): {before} → {after} ({delta}%)
 
 ### 3. Handle Response
 

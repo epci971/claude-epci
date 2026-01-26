@@ -110,25 +110,33 @@ next_step: steps/step-05-document.md
 
 ## BREAKPOINT:
 
-┌─────────────────────────────────────────────────────────────────────┐
-│ :pause_button: BREAKPOINT — QA Review Complete                                  │
-├─────────────────────────────────────────────────────────────────────┤
-│ Feature: {feature-slug}                                             │
-│                                                                     │
-│ QA Summary:                                                         │
-│ • Acceptance Criteria: {N}/{N} met                                  │
-│ • Test Pass Rate: {%}                                               │
-│ • Defects: {N} ({severity breakdown})                               │
-│                                                                     │
-│ Verdict: {PASS | FAIL}                                              │
-│                                                                     │
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  1. Proceed (if PASS)                                          │ │
-│ │  2. Fix defects first                                          │ │
-│ │  3. Request additional testing                                 │ │
-│ │  4. Accept known issues (document)                             │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
+```typescript
+@skill:breakpoint-system
+  type: validation
+  title: "QA Review Complete"
+  data: {
+    context: "QA validation by @qa-reviewer complete",
+    item_to_validate: {
+      objectif: "Confirm feature meets acceptance criteria",
+      contexte: "Feature: {feature-slug}, AC met: {N}/{N}",
+      contraintes: "Test pass rate: {%}%, Defects: {N}",
+      success_criteria: "All acceptance criteria met, no blocking defects"
+    }
+  }
+  ask: {
+    question: "Accept QA validation outcome?",
+    header: "QA Review",
+    options: [
+      {label: "Proceed (Recommended)", description: "QA validation passed"},
+      {label: "Fix Defects First", description: "Address found issues"},
+      {label: "Accept Known Issues", description: "Document and proceed"}
+    ]
+  }
+  suggestions: [
+    {pattern: "ac", text: "{N}/{N} acceptance criteria met", priority: "P1"},
+    {pattern: "defects", text: "Review {N} defects found", priority: "P2"}
+  ]
+```
 
 ## NEXT STEP TRIGGER:
 

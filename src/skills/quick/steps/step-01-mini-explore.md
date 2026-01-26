@@ -99,19 +99,33 @@ Stack Context: {stack skill loaded, if any}
 
 ## COMPLEXITY RE-EVALUATION:
 
-If exploration reveals more complexity than expected:
+If exploration reveals more complexity than expected, invoke breakpoint:
 
-```
-⚠️ COMPLEXITY ALERT
-
-Initial estimate: {TINY|SMALL}
-After exploration: Appears {STANDARD}
-
-Reason: {explanation}
-
-Options:
-1. Continue with /quick (may take longer)
-2. Abort and use /implement instead
+```typescript
+@skill:breakpoint-system
+  type: validation
+  title: "Complexity Alert"
+  data: {
+    context: "Exploration reveals higher complexity than estimated",
+    item_to_validate: {
+      objectif: "Decide whether to continue with /quick or escalate",
+      contexte: "Initial: {TINY|SMALL}, After exploration: Appears {STANDARD}",
+      contraintes: "{explanation of why complexity seems higher}",
+      success_criteria: "User confirms appropriate workflow"
+    }
+  }
+  ask: {
+    question: "How to proceed with higher complexity?",
+    header: "Complexity",
+    options: [
+      {label: "Continue with /quick", description: "Proceed despite higher complexity (may take longer)"},
+      {label: "Use /implement (Recommended)", description: "Escalate to full EPCI workflow"},
+      {label: "Abort", description: "Cancel and reassess requirements"}
+    ]
+  }
+  suggestions: [
+    {pattern: "escalate", text: "STANDARD+ tasks benefit from full EPCI workflow", priority: "P1"}
+  ]
 ```
 
 ## NEXT STEP TRIGGER:
