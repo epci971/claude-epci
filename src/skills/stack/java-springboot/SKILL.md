@@ -5,6 +5,7 @@ description: >-
   Spring Security, JUnit 5, Lombok. Use when: Spring Boot Java development,
   gradle maven build detected with spring dependencies.
   Not for: Jakarta enterprise edition, Quarkus framework.
+user-invocable: false
 ---
 
 # Java/Spring Boot Development Patterns

@@ -5,6 +5,7 @@ description: >-
   component variants (primary, secondary, success, warning, danger, ghost, outline),
   responsive utilities, WCAG 2.1 AA accessibility. Use when: Tailwind styling development, tailwind config detected, frontend presentation styling.
   Not for: JavaScript behavior logic, Vue Svelte frameworks, Bootstrap styling, backend code.
+user-invocable: false
 ---
 
 # Frontend Editor — Tailwind CSS & Presentation Layer

@@ -4,6 +4,7 @@ description: >-
   Patterns for React islands in Django. Includes TypeScript, Vite, Zustand,
   React Query, Tailwind, accessibility. Use when: React TypeScript development, package json react detected, frontend react components.
   Not for: Vue framework, Angular projects, backend Node development.
+user-invocable: false
 ---
 
 # JavaScript/React Development Patterns

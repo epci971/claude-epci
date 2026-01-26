@@ -557,6 +557,76 @@ skills/core/{name}/
 
 ---
 
+## TDD Integration Template
+
+For implementation skills (implement, quick), include this TDD integration section.
+
+### When to Include TDD
+
+| Skill Type | TDD Required | Notes |
+|------------|--------------|-------|
+| `/implement` | Yes | Full RED-GREEN-REFACTOR cycle |
+| `/quick` | Optional | For STANDARD+ complexity only |
+| `/debug` | Optional | When adding regression tests |
+| `/improve`, `/refactor` | No | Behavior preservation, existing tests |
+
+### TDD Section Template
+
+Add this section to implementation skills:
+
+```markdown
+## TDD Integration
+
+This skill follows the TDD workflow via `@skill:tdd-enforcer`.
+
+### TDD Phases
+
+| Phase | Action | Validation |
+|-------|--------|------------|
+| RED | Write failing test first | Test must fail with expected error |
+| GREEN | Implement minimal code | Test passes, nothing more |
+| REFACTOR | Clean up code | All tests still pass |
+
+### TDD Rules
+
+- :red_circle: NEVER write implementation before test
+- :red_circle: NEVER skip the RED phase
+- :white_check_mark: ALWAYS run test after each phase
+- :white_check_mark: ALWAYS commit after GREEN and REFACTOR
+
+### TDD Breakpoint
+
+After each phase, verify:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ :pause_button: TDD CHECKPOINT — {Phase} Complete                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│ Phase: {RED|GREEN|REFACTOR}                                         │
+│ Test status: {FAIL (expected) | PASS}                               │
+│ Next: {Proceed to next phase | Repeat current phase}                │
+│                                                                     │
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  1. Proceed to {next phase}                                    │ │
+│ │  2. Review current implementation                              │ │
+│ │  3. Adjust test/code                                           │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Core Skill Reference
+
+```markdown
+## Core Skills Integration
+
+| Core Skill | Purpose |
+|------------|---------|
+| `@skill:tdd-enforcer` | Enforce RED-GREEN-REFACTOR cycle |
+| `@skill:state-manager` | Track TDD phase progress |
+| `@skill:breakpoint-system` | Phase transition checkpoints |
+```
+
+---
+
 ## Checklist Before Using Template
 
 - [ ] Choose appropriate template for skill type
@@ -570,3 +640,4 @@ skills/core/{name}/
 - [ ] Add specific examples
 - [ ] Define clear limitations
 - [ ] Remove unused sections
+- [ ] Include TDD section if implementation skill

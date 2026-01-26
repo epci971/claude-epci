@@ -547,6 +547,47 @@ Show user:
 
 ---
 
+## Integration Core Skills
+
+Factory integrates with EPCI v6 core skills for modular, composable skill generation.
+
+### Core Skills Usage in Factory
+
+| Phase | Core Skill | Usage |
+|-------|------------|-------|
+| 1 | `@skill:clarification-engine` | Gap analysis on skill description (optional, enhances discovery) |
+| 2 | `@skill:complexity-calculator` | Sizing determination: Simple/Standard/Advanced |
+| 5 | `@skill:breakpoint-system` | Validation approval breakpoint (type: validation) |
+| 6 | `@skill:project-memory` | Store generated skill metadata as project artifact |
+
+### Generated Skills: Core Skill Dependencies
+
+When Factory generates user skills, it documents which core skills those skills should use:
+
+| Skill Type | Required Core Skills | Optional Core Skills |
+|------------|---------------------|---------------------|
+| **Exploration** (brainstorm, debug) | breakpoint-system, clarification-engine | project-memory |
+| **Specification** (spec) | breakpoint-system, complexity-calculator | clarification-engine, project-memory |
+| **Implementation** (implement, quick) | breakpoint-system, state-manager, tdd-enforcer | complexity-calculator, project-memory |
+| **Transformation** (improve, refactor) | breakpoint-system, state-manager | project-memory |
+
+### How to Reference Core Skills in Generated Skills
+
+In generated SKILL.md files, document core skill integration:
+
+```markdown
+## Core Skills Integration
+
+This skill uses the following internal components:
+
+| Core Skill | Purpose |
+|------------|---------|
+| `@skill:breakpoint-system` | {How this skill uses breakpoints} |
+| `@skill:state-manager` | {How this skill tracks state} |
+```
+
+---
+
 ## Anti-Patterns
 
 | Anti-Pattern | Problem | Solution |

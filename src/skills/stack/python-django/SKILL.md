@@ -4,6 +4,7 @@ description: >-
   Patterns for Python/Django with service layer architecture. Includes DRF,
   pytest, Celery, HTMX/React integration. Use when: Django Python development, pyproject toml django detected, requirements django dependency.
   Not for: Flask applications, FastAPI projects, plain Python scripts.
+user-invocable: false
 ---
 
 # Python/Django Development Patterns

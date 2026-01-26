@@ -4,6 +4,7 @@ description: >-
   Patterns for PHP/Symfony with service layer architecture. Includes Doctrine
   ORM, PHPUnit, Messenger, Voters. Use when: Symfony PHP development, composer json symfony detected, doctrine messenger integration.
   Not for: Laravel framework, plain PHP scripts, WordPress plugins, Drupal modules.
+user-invocable: false
 ---
 
 # PHP/Symfony Development Patterns
