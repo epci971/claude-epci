@@ -24,10 +24,10 @@ Le plugin EPCI v5 avait divergé entre la vision (7 skills, ~3000 LOC) et la ré
 
 | Décision | Choix retenu | Justification |
 |----------|--------------|---------------|
-| Nombre de skills | **8 skills** | Consolidation vs 23 en v5 |
+| Nombre de skills | **7 skills** | Consolidation vs 23 en v5 |
 | State management | **JSON file-based** | Pas de dépendance externe (Redis/DB) |
 | Ralph | **Système auto-généré** | `/spec` produit automatiquement les artifacts |
-| Feature Tracking | **`/implement` crée, `/improve` MAJ** | Responsabilité claire |
+| Feature Tracking | **`/implement` crée et MAJ** | Responsabilité claire |
 | `/quick` vs `/implement` | **Skills séparés** | UX différente, pas de flag |
 | `/refactor` | **Skill dédié** | Cross-module, métriques complètes |
 | Audit | **Hook CI, pas skill** | Pas d'usage interactif |
@@ -35,7 +35,7 @@ Le plugin EPCI v5 avait divergé entre la vision (7 skills, ~3000 LOC) et la ré
 
 ### Livrables Attendus
 
-1. **8 user skills** : `/brainstorm`, `/spec`, `/implement`, `/quick`, `/debug`, `/improve`, `/refactor`, `/factory`
+1. **7 user skills** : `/brainstorm`, `/spec`, `/implement`, `/quick`, `/debug`, `/refactor`, `/factory`
 2. **6 core skills (internal)** : state-manager, breakpoint-system, complexity-calculator, clarification-engine, tdd-enforcer, project-memory
 3. **Système Ralph** : Artifacts auto-générés (PROMPT.md, MEMORY.md, ralph.sh)
 4. **Schemas JSON** : feature-state, prd-v2, ralph-index, ralph-iterations
@@ -68,9 +68,9 @@ Le plugin EPCI v5 avait divergé entre la vision (7 skills, ~3000 LOC) et la ré
 │  │             │  │             │  │             │  │             ││
 │  │ /brainstorm │  │ /spec       │  │ /implement  │  │ /debug      ││
 │  │ (EMS+HMW)   │  │ (PRD+Ralph) │  │ (STANDARD+) │  │             ││
-│  │             │  │             │  │             │  │ /improve    ││
+│  │             │  │             │  │             │  │ /refactor   ││
 │  │             │  │             │  │ /quick      │  │             ││
-│  │             │  │             │  │ (TINY/SMALL)│  │ /refactor   ││
+│  │             │  │             │  │ (TINY/SMALL)│  │             ││
 │  │             │  │             │  │             │  │             ││
 │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘│
 │                                                                     │
@@ -225,25 +225,7 @@ Le plugin EPCI v5 avait divergé entre la vision (7 skills, ~3000 LOC) et la ré
 
 ---
 
-### 3.6 `/improve`
-
-**Rôle** : Amélioration feature existante avec contexte
-
-**Workflow** :
-1. Load Feature State existant
-2. Load Feature Doc (contexte complet)
-3. Analyse demande amélioration
-4. Mini-spec (delta, pas full PRD)
-5. Implement improvement
-6. Update Feature State + Doc
-
-**Input** : Feature ID + demande d'amélioration
-**Output** : Updated code + Updated Feature Doc
-**State** : **MAJ** feature state (ajoute à `improvements[]`)
-
----
-
-### 3.7 `/refactor`
+### 3.6 `/refactor`
 
 **Rôle** : Optimisation / simplification code sans changer le comportement
 
@@ -273,7 +255,7 @@ Le plugin EPCI v5 avait divergé entre la vision (7 skills, ~3000 LOC) et la ré
 
 ---
 
-### 3.8 `/factory`
+### 3.7 `/factory`
 
 **Rôle** : Création skills et agents conformes aux standards
 
@@ -704,7 +686,7 @@ Post-exec (tests, lint, report)
 
 ## 8. Récapitulatif Composants
 
-### Skills (8)
+### Skills (7)
 
 | Skill | Rôle | State |
 |-------|------|-------|
@@ -713,7 +695,6 @@ Post-exec (tests, lint, report)
 | `/implement` | Exécution STANDARD/LARGE | **Crée** |
 | `/quick` | Exécution TINY/SMALL | Non |
 | `/debug` | Fix bugs | Session temp |
-| `/improve` | Amélioration feature | **MAJ** |
 | `/refactor` | Optimisation code | Non |
 | `/factory` | Création skills/agents | Non |
 
@@ -757,7 +738,7 @@ Post-exec (tests, lint, report)
 
 | Critère | Cible | Mesure |
 |---------|-------|--------|
-| Nombre skills | ≤10 | 8 ✓ |
+| Nombre skills | ≤10 | 7 ✓ |
 | State layer | Fonctionnel | Checkpoint/resume testable |
 | Ralph auto-généré | `/spec` produit tout | Artifacts complets |
 | Task granularity | 15-30 min | Moyenne temps exécution |
@@ -773,7 +754,7 @@ Post-exec (tests, lint, report)
 | Complexité state-manager | Medium | Commencer simple, itérer |
 | Ralph drift avec Claude Code updates | Medium | Versionner PROMPT.md template |
 | Overhead `/implement` vs `/quick` | Low | UX tests avec vrais use cases |
-| 8 skills encore trop ? | Low | Principe "un rôle = un skill" validé |
+| 7 skills suffisants | Low | Principe "un rôle = un skill" validé |
 
 ---
 

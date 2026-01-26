@@ -568,7 +568,7 @@ For implementation skills (implement, quick), include this TDD integration secti
 | `/implement` | Yes | Full RED-GREEN-REFACTOR cycle |
 | `/quick` | Optional | For STANDARD+ complexity only |
 | `/debug` | Optional | When adding regression tests |
-| `/improve`, `/refactor` | No | Behavior preservation, existing tests |
+| `/refactor` | No | Behavior preservation, existing tests |
 
 ### TDD Section Template
 

@@ -313,48 +313,6 @@ async function startQuick(description: string) {
 }
 ```
 
-### /improve Integration
-
-```typescript
-// /improve updates existing feature
-async function startImprove(existingSlug: string, improvement: string) {
-  const state = state_manager.loadFeature(existingSlug);
-
-  if (!state) {
-    throw new Error(`Feature ${existingSlug} not found`);
-  }
-
-  if (state.lifecycle.status !== "completed") {
-    throw new Error(`Feature must be completed before improvements`);
-  }
-
-  // Add improvement to state
-  state_manager.updateFeature(existingSlug, {
-    improvements: [
-      ...state.improvements,
-      {
-        description: improvement,
-        started_at: new Date().toISOString(),
-        completed_at: null,
-        status: "in_progress"
-      }
-    ],
-    lifecycle: {
-      status: "in_progress", // Reopen feature
-      last_updated_by: "/improve"
-    }
-  });
-
-  state_manager.appendHistory(existingSlug, {
-    action: "improvement_added",
-    timestamp: new Date().toISOString(),
-    details: { description: improvement }
-  });
-
-  return state_manager.loadFeature(existingSlug);
-}
-```
-
 ---
 
 ## Error Handling

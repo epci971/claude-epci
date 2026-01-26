@@ -2,7 +2,7 @@
 
 > **Date**: 2026-01-22
 > **Objectif**: Implémenter le plugin EPCI v6 complet
-> **Scope**: Phases 1-4 = 30 features
+> **Scope**: Phases 1-4 = 29 features
 > **Sources**: v6-brainstorm-report.md + v5-brainstorm-report.md
 
 ---
@@ -224,11 +224,11 @@ git commit -m "feat(skills): complete Phase 1 core skills references"
 
 ---
 
-## Phase 2 — User Skills (F07-F14)
+## Phase 2 — User Skills (F07-F13)
 
 > **Priorité**: HAUTE — Interface utilisateur
 > **Dépendances**: Phase 1 (core skills)
-> **Ordre recommandé**: factory → brainstorm → spec → implement → quick → debug → improve → refactor
+> **Ordre recommandé**: factory → brainstorm → spec → implement → quick → debug → refactor
 
 ### F07: brainstorm
 
@@ -321,20 +321,7 @@ PHASES: [E] → [P] → [C+T] → [M]
 
 ---
 
-### F12: improve
-
-**État**: SKILL.md minimal (53L), references/ vide
-
-**Tâches**:
-- [ ] Enrichir SKILL.md avec impact analysis
-- [ ] Créer `references/impact-analysis.md` — Analyse d'impact
-- [ ] Créer `references/minimal-plan.md` — Planification minimale
-
-**Output**: Updated code + Updated Feature Doc
-
----
-
-### F13: refactor
+### F12: refactor
 
 **État**: SKILL.md minimal (54L), references/ vide
 
@@ -347,7 +334,7 @@ PHASES: [E] → [P] → [C+T] → [M]
 
 ---
 
-### F14: factory
+### F13: factory
 
 **État**: SKILL.md complet (369L), 5 références existantes
 
@@ -496,7 +483,7 @@ git commit -m "feat(ralph): complete Phase 4 Ralph system"
 | Phase | Features | Fichiers créés | Fichiers modifiés |
 |-------|----------|----------------|-------------------|
 | 1 | F01-F06 | ~12 références | 0 |
-| 2 | F07-F14 | ~16 références + templates | 8 SKILL.md enrichis |
+| 2 | F07-F13 | ~14 références + templates | 7 SKILL.md enrichis |
 | 3 | F15-F28 | 13 agents + 1 référence | factory/SKILL.md |
 | 4 | F29-F30 | 3 templates | 2 schemas (si nécessaire) |
 

@@ -374,7 +374,6 @@ SUGGESTIONS handling:
 | `/implement` | phase-transition |
 | `/quick` | validation (SMALL only) |
 | `/debug` | diagnostic |
-| `/improve` | validation |
 | `/refactor` | plan-review |
 | `/factory` | validation |
 
