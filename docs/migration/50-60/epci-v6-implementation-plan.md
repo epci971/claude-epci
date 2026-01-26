@@ -38,11 +38,12 @@ src/skills/core/
 
 ### F01: state-manager => OK
 
-**État**: SKILL.md complet (86L), 1 reference créé
+**État**: SKILL.md complet (86L), références créées
 
-**Tâches restantes**:
-- [ ] Valider que `examples.md` est suffisant
-- [ ] Ajouter `state-schema.md` si nécessaire (schéma JSON détaillé)
+**Tâches complétées**:
+- [x] Valider que `examples.md` est suffisant
+- [x] Ajouter `state-schema.md` avec schéma JSON détaillé
+- [x] Enrichir Index Schema avec `summary`, `modified_files`, `test_count` (v6.0.4)
 
 **Fichiers à créer/modifier**:
 ```
@@ -50,8 +51,15 @@ src/skills/core/state-manager/
 ├── SKILL.md              [existant, OK]
 └── references/
     ├── examples.md       [créé]
-    └── state-schema.md   [optionnel]
+    └── state-schema.md   [créé, enrichi v6.0.4]
 ```
+
+**Nouveaux champs Index Schema**:
+| Champ | Type | Description |
+|-------|------|-------------|
+| summary | string (max 200) | Résumé 1-2 phrases |
+| modified_files | array[string] | Fichiers modifiés |
+| test_count | integer | Nombre de tests ajoutés |
 
 ---
 
@@ -252,27 +260,51 @@ git commit -m "feat(skills): complete Phase 1 core skills references"
 
 ### F09: implement
 
-**État**: SKILL.md minimal (54L), references/ vide
+**État**: SKILL.md enrichi, steps/ créés, references/ complétées
 
-**Tâches**:
-- [ ] Enrichir SKILL.md avec phases EPCI détaillées
-- [ ] Créer `references/phase-workflow.md` — Détail de chaque phase
-- [ ] Créer `templates/feature-doc.md` — Template Feature Document
+**Tâches complétées**:
+- [x] Enrichir SKILL.md avec phases EPCI détaillées
+- [x] Créer steps/ avec workflow step-by-step (00-06)
+- [x] Ajouter step-07-memory.md pour phase MEMORY (v6.0.4)
+- [x] Ajouter support @plan-path pour plan-first workflow (v6.0.4)
+- [x] Créer `references/tdd-rules.md` + `references/review-checklists.md`
 
-**Output**: Code + Tests + Feature Doc
+**Plan-first workflow (v6.0.4)**:
+```
+INPUT
+├── @.claude/plans/*.md → Skip E-P, go directly to CODE
+├── @docs/specs/*.md → Skip E, minimal planning then CODE
+└── feature-slug only → Full E-P-C-I-M workflow
+```
+
+**Output**: Code + Tests + Feature Doc + index.json update
 
 ---
 
 ### F10: quick
 
-**État**: SKILL.md minimal (51L), references/ vide
+**État**: SKILL.md enrichi avec plan-first workflow (v6.0.4)
 
-**Tâches**:
-- [ ] Enrichir SKILL.md avec workflow TINY vs SMALL
+**Tâches complétées**:
+- [x] Enrichir SKILL.md avec workflow TINY vs SMALL
+- [x] Ajouter support @plan-path pour plan-first workflow (v6.0.4)
+- [x] Ajouter phase MEMORY pour mise à jour index.json (v6.0.4)
+
+**Plan-first workflow (v6.0.4)**:
+```
+INPUT
+├── @plan-path → Skip E-P, go directly to CODE+TEST
+└── text description → Mini-Explore + Mini-Plan first
+
+PHASES: [E] → [P] → [C+T] → [M]
+        (skippable)   (always)
+```
+
+**Tâches restantes**:
 - [ ] Créer `references/tiny-workflow.md` — Workflow < 50 LOC
 - [ ] Créer `references/small-workflow.md` — Workflow < 200 LOC
 
-**Output**: Code + Tests
+**Output**: Code + Tests + index.json update
 
 ---
 
@@ -527,3 +559,68 @@ docs/migration/50-60/apex-style-integration.md
 ### Reference
 
 See [apex-style-integration.md](apex-style-integration.md) for complete documentation.
+
+---
+
+## Addendum: Lightweight Memory Integration (v6.0.4)
+
+> **Date**: 2026-01-26
+> **Status**: Implemented
+
+### Overview
+
+Integration de la memoire legere dans le workflow EPCI v6 pour enrichir index.json avec resume, fichiers modifies et nombre de tests.
+
+### Design Decision
+
+**Choix**: Enrichir `index.json` plutot que creer un fichier MEMORY.md separe.
+- Avantage: Pas de fichier supplementaire a maintenir
+- Avantage: Donnees structurees JSON facilement parsables
+- Avantage: Compatible avec le state-manager existant
+
+### Changes Implemented
+
+| Component | Change | Files |
+|-----------|--------|-------|
+| state-manager | Nouveaux champs Index Schema | `references/state-schema.md` |
+| `/quick` | Plan-first workflow + phase MEMORY | `SKILL.md` |
+| `/implement` | Plan-first workflow + step-07-memory | `SKILL.md`, `steps/step-07-memory.md` |
+| Documentation | MAJ brainstorm-report + implementation-plan | `docs/migration/50-60/*.md` |
+
+### New Index Schema Fields
+
+```json
+{
+  "summary": "string (max 200) - Resume 1-2 phrases",
+  "modified_files": "array[string] - Fichiers modifies",
+  "test_count": "integer - Nombre de tests ajoutes"
+}
+```
+
+### New Files Created
+
+```
+src/skills/implement/steps/step-07-memory.md
+```
+
+### Files Modified
+
+```
+src/skills/core/state-manager/references/state-schema.md
+src/skills/quick/SKILL.md
+src/skills/implement/SKILL.md
+src/skills/implement/steps/step-06-finish.md
+docs/migration/50-60/epci-v6-brainstorm-report.md
+docs/migration/50-60/epci-v6-implementation-plan.md
+```
+
+### Plan-First Workflow
+
+Les skills `/quick` et `/implement` supportent maintenant le workflow plan-first:
+
+```
+/quick @.claude/plans/fix-auth.md
+/implement feature-slug @.claude/plans/feature-plan.md
+```
+
+Quand un plan natif Claude Code est fourni via `@path`, les phases Explore et Plan sont sautees.

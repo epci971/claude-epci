@@ -2,7 +2,7 @@
 name: step-06-finish
 description: Finalize implementation and generate summary
 prev_step: steps/step-05-document.md
-next_step: null
+next_step: steps/step-07-memory.md
 ---
 
 # Step 06: Finish
@@ -116,9 +116,4 @@ next_step: null
 
 ## NEXT STEP TRIGGER:
 
-Workflow complete. No next step.
-
-User may proceed with:
-- `git commit` to commit changes
-- `/commit` to use commit skill
-- Create PR for review
+Proceed to **step-07-memory** to update index.json with feature summary.

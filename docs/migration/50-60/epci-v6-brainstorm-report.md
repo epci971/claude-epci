@@ -319,15 +319,24 @@ Le plugin EPCI v5 avait divergé entre la vision (7 skills, ~3000 LOC) et la ré
   "features": [
     {
       "id": "auth-oauth-google",
-      "status": "in_progress",
-      "current_phase": "code",
+      "status": "completed",
+      "current_phase": "inspect",
       "complexity": "STANDARD",
       "branch": "feature/auth-oauth-google",
-      "created_at": "2026-01-20T10:00:00Z"
+      "created_at": "2026-01-20T10:00:00Z",
+      "last_update": "2026-01-22T14:30:00Z",
+      "summary": "OAuth2 Google authentication with refresh token support",
+      "modified_files": ["src/auth/oauth.ts", "src/auth/types.ts"],
+      "test_count": 5
     }
   ]
 }
 ```
+
+**New fields (v6.0.4)**:
+- `summary`: Short description (1-2 sentences, max 200 chars) of what was done
+- `modified_files`: List of files modified (copied from artifacts.modified_files)
+- `test_count`: Number of tests added
 
 ### 4.3 Schema `state.json`
 

@@ -169,7 +169,21 @@ Central feature registry at `.claude/state/features/index.json`.
           },
           "branch": { "type": "string" },
           "created_at": { "type": "string", "format": "date-time" },
-          "last_update": { "type": "string", "format": "date-time" }
+          "last_update": { "type": "string", "format": "date-time" },
+          "summary": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Short summary (1-2 sentences) of what was done"
+          },
+          "modified_files": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "List of files modified (copy from artifacts.modified_files)"
+          },
+          "test_count": {
+            "type": "integer",
+            "description": "Number of tests added"
+          }
         }
       }
     }
@@ -466,7 +480,10 @@ explore ──▶ plan ──▶ code ──▶ inspect ──▶ (done)
       "complexity": "STANDARD",
       "branch": "feature/auth-oauth-google",
       "created_at": "2026-01-20T10:00:00Z",
-      "last_update": "2026-01-22T14:30:00Z"
+      "last_update": "2026-01-22T14:30:00Z",
+      "summary": "OAuth2 Google authentication with refresh token support",
+      "modified_files": ["src/auth/oauth.ts", "src/auth/types.ts"],
+      "test_count": 5
     },
     {
       "id": "user-profile-edit",
@@ -475,7 +492,10 @@ explore ──▶ plan ──▶ code ──▶ inspect ──▶ (done)
       "complexity": "SMALL",
       "branch": "feature/user-profile-edit",
       "created_at": "2026-01-15T09:00:00Z",
-      "last_update": "2026-01-16T16:00:00Z"
+      "last_update": "2026-01-16T16:00:00Z",
+      "summary": "Added user profile editing with avatar upload",
+      "modified_files": ["src/user/profile.ts"],
+      "test_count": 3
     }
   ]
 }

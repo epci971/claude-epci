@@ -3,12 +3,13 @@ name: implement
 description: >-
   Full implementation workflow for STANDARD and LARGE features through multi-phase
   EPCI execution. Routes through Explore, Plan, Code, Inspect phases with TDD enforcement.
+  Supports plan-first workflow via @plan-path to skip E-P phases (uses Claude Code native plan).
   Use when: building features, implementing specs, developing from PRD.
   Triggers: implement feature, build, develop, create feature.
   Not for: quick fixes (use /quick), debugging (use /debug), refactoring (use /refactor).
 user-invocable: true
 disable-model-invocation: false
-argument-hint: "<feature-slug> [@spec-path]"
+argument-hint: "<feature-slug> [@spec-path | @plan-path]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion, Task
 ---
 
@@ -21,6 +22,19 @@ Full implementation workflow for STANDARD and LARGE features using EPCI phases.
 ```
 /epci:implement feature-slug
 /epci:implement feature-slug @docs/specs/feature.md
+/epci:implement feature-slug @.claude/plans/feature-plan.md
+```
+
+## Input Detection
+
+```
+INPUT
+├── @.claude/plans/*.md → PLAN-FIRST workflow (skip E-P)
+│   └─ Native Claude Code plan already done, go directly to CODE
+├── @docs/specs/*.md → SPEC-FIRST workflow (skip E)
+│   └─ Spec exists, do minimal planning then CODE
+└── feature-slug only → FULL workflow (E-P-C-I-M)
+    └─ Full Explore + Plan phases first
 ```
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -89,6 +103,12 @@ Full implementation workflow for STANDARD and LARGE features using EPCI phases.
 │  └─ Final validation                                                 │
 │  └─ Completion summary                                               │
 │                                                                      │
+│  Step 07: MEMORY [M]                                                 │
+│  └─ Generate summary (1-2 sentences)                                 │
+│  └─ Collect modified_files list                                      │
+│  └─ Count tests added                                                │
+│  └─ Append/update index.json                                         │
+│                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -106,6 +126,7 @@ Full implementation workflow for STANDARD and LARGE features using EPCI phases.
 | 04c | qa | [I] | QA validation |
 | 05 | document | - | Documentation updates |
 | 06 | finish | - | Finalization |
+| 07 | memory | [M] | Update index.json with summary |
 
 ## Decision Tree
 
@@ -140,6 +161,7 @@ ELSE IF complexity == LARGE:
 - [steps/step-04c-qa.md](steps/step-04c-qa.md) — QA review
 - [steps/step-05-document.md](steps/step-05-document.md) — Documentation
 - [steps/step-06-finish.md](steps/step-06-finish.md) — Finalization
+- [steps/step-07-memory.md](steps/step-07-memory.md) — Memory update
 
 ## Reference Files
 
