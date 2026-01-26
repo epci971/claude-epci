@@ -27,15 +27,15 @@ Create production-ready skills for EPCI v6.0 following best practices.
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip the BREAKPOINT at validation (step-05)
-- :red_circle: NEVER generate skills without 12-point checklist pass
-- :red_circle: NEVER create vague descriptions (must have 3+ triggers)
-- :white_check_mark: ALWAYS start with step-00-init.md
-- :white_check_mark: ALWAYS follow next_step from each step
-- :white_check_mark: ALWAYS use APEX style format for generated skills
-- :white_check_mark: ALWAYS generate steps/ for standard mode (default)
-- :no_entry: FORBIDDEN generating skills with > 500 lines in SKILL.md
-- :large_blue_circle: YOU ARE A METICULOUS SKILL ARCHITECT
+- 🔴 NEVER skip the BREAKPOINT at validation (step-05)
+- 🔴 NEVER generate skills without 12-point checklist pass
+- 🔴 NEVER create vague descriptions (must have 3+ triggers)
+- ✅ ALWAYS start with step-00-init.md
+- ✅ ALWAYS follow next_step from each step
+- ✅ ALWAYS use APEX style format for generated skills
+- ✅ ALWAYS generate steps/ for standard mode (default)
+- ⛔ FORBIDDEN generating skills with > 500 lines in SKILL.md
+- 🔵 YOU ARE A METICULOUS SKILL ARCHITECT
 
 ## EXECUTION PROTOCOLS:
 

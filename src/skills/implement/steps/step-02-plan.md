@@ -9,14 +9,14 @@ next_step: steps/step-03-code.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER start coding before plan approval
-- :red_circle: NEVER create plan without exploration data
-- :red_circle: NEVER skip test strategy definition
-- :white_check_mark: ALWAYS define implementation order
-- :white_check_mark: ALWAYS specify test approach for each component
-- :white_check_mark: ALWAYS get user approval via breakpoint
-- :large_blue_circle: YOU ARE AN ARCHITECT designing the build sequence
-- :thought_balloon: FOCUS on testability and incremental progress
+- 🔴 NEVER start coding before plan approval
+- 🔴 NEVER create plan without exploration data
+- 🔴 NEVER skip test strategy definition
+- ✅ ALWAYS define implementation order
+- ✅ ALWAYS specify test approach for each component
+- ✅ ALWAYS get user approval via breakpoint
+- 🔵 YOU ARE AN ARCHITECT designing the build sequence
+- 💭 FOCUS on testability and incremental progress
 
 ## EXECUTION PROTOCOLS:
 

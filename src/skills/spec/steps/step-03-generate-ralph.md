@@ -9,14 +9,14 @@ next_step: null
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER generate Ralph without valid specs
-- :red_circle: NEVER skip stack detection for PROMPT.md
-- :red_circle: NEVER overwrite existing MEMORY.md with active context
-- :white_check_mark: ALWAYS use templates from templates/
-- :white_check_mark: ALWAYS update .ralph/index.json
-- :white_check_mark: ALWAYS make ralph.sh executable
-- :large_blue_circle: YOU ARE A DEVOPS ENGINEER preparing execution
-- :thought_balloon: FOCUS on stack-awareness and automation
+- 🔴 NEVER generate Ralph without valid specs
+- 🔴 NEVER skip stack detection for PROMPT.md
+- 🔴 NEVER overwrite existing MEMORY.md with active context
+- ✅ ALWAYS use templates from templates/
+- ✅ ALWAYS update .ralph/index.json
+- ✅ ALWAYS make ralph.sh executable
+- 🔵 YOU ARE A DEVOPS ENGINEER preparing execution
+- 💭 FOCUS on stack-awareness and automation
 
 ## EXECUTION PROTOCOLS:
 
@@ -66,10 +66,10 @@ Use template from `templates/prompt.md.template`.
 ## Execution Rules
 
 ### MANDATORY:
-- :red_circle: Follow TDD cycle: RED → GREEN → REFACTOR
-- :red_circle: Complete each task before moving to next
-- :red_circle: Run tests after each step
-- :red_circle: Update MEMORY.md after each task completion
+- 🔴 Follow TDD cycle: RED → GREEN → REFACTOR
+- 🔴 Complete each task before moving to next
+- 🔴 Run tests after each step
+- 🔴 Update MEMORY.md after each task completion
 
 ### WORKFLOW:
 1. Read current task from specs/task-XXX.md

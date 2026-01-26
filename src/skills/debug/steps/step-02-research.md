@@ -9,12 +9,12 @@ next_step: steps/step-03-thought-tree.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip research for COMPLEX-looking bugs
-- :red_circle: NEVER rely on single source
-- :white_check_mark: ALWAYS try Context7 MCP first if framework detected
-- :white_check_mark: ALWAYS follow cascade pattern with fallbacks
-- :white_check_mark: ALWAYS note research findings for hypothesis generation
-- :thought_balloon: FOCUS on finding similar issues and proven solutions
+- 🔴 NEVER skip research for COMPLEX-looking bugs
+- 🔴 NEVER rely on single source
+- ✅ ALWAYS try Context7 MCP first if framework detected
+- ✅ ALWAYS follow cascade pattern with fallbacks
+- ✅ ALWAYS note research findings for hypothesis generation
+- 💭 FOCUS on finding similar issues and proven solutions
 
 ## EXECUTION PROTOCOLS:
 

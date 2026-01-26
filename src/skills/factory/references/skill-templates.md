@@ -37,12 +37,12 @@ allowed-tools: {TOOLS}
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER {critical prohibition 1}
-- :red_circle: NEVER {critical prohibition 2}
-- :white_check_mark: ALWAYS {critical requirement 1}
-- :white_check_mark: ALWAYS {critical requirement 2}
-- :large_blue_circle: {posture directive}
-- :thought_balloon: {focus directive}
+- 🔴 NEVER {critical prohibition 1}
+- 🔴 NEVER {critical prohibition 2}
+- ✅ ALWAYS {critical requirement 1}
+- ✅ ALWAYS {critical requirement 2}
+- 🔵 {posture directive}
+- 💭 {focus directive}
 
 ## EXECUTION PROTOCOLS:
 
@@ -63,7 +63,7 @@ allowed-tools: {TOOLS}
 ## BREAKPOINT (if user decision needed):
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│ :pause_button: BREAKPOINT — {Title}                                             │
+│ ⏸️ BREAKPOINT — {Title}                                             │
 ├─────────────────────────────────────────────────────────────────────┤
 │ {Context summary}                                                   │
 │ ┌─ Options ──────────────────────────────────────────────────────┐ │
@@ -120,13 +120,13 @@ allowed-tools: {TOOLS}
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER {critical prohibition 1}
-- :red_circle: NEVER {critical prohibition 2}
-- :white_check_mark: ALWAYS {critical requirement 1}
-- :white_check_mark: ALWAYS {critical requirement 2}
-- :no_entry: FORBIDDEN {hard block}
-- :large_blue_circle: {posture directive}
-- :thought_balloon: {focus directive}
+- 🔴 NEVER {critical prohibition 1}
+- 🔴 NEVER {critical prohibition 2}
+- ✅ ALWAYS {critical requirement 1}
+- ✅ ALWAYS {critical requirement 2}
+- ⛔ FORBIDDEN {hard block}
+- 🔵 {posture directive}
+- 💭 {focus directive}
 
 ## EXECUTION PROTOCOLS:
 
@@ -230,11 +230,11 @@ allowed-tools: {TOOLS}
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER execute steps out of order
-- :red_circle: NEVER skip breakpoints
-- :white_check_mark: ALWAYS start with step-00-init.md
-- :white_check_mark: ALWAYS follow next_step from each step
-- :white_check_mark: ALWAYS complete current step before proceeding
+- 🔴 NEVER execute steps out of order
+- 🔴 NEVER skip breakpoints
+- ✅ ALWAYS start with step-00-init.md
+- ✅ ALWAYS follow next_step from each step
+- ✅ ALWAYS complete current step before proceeding
 
 ## EXECUTION PROTOCOLS:
 
@@ -317,10 +317,10 @@ conditional_next:
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER {critical prohibition for this step}
-- :white_check_mark: ALWAYS {critical requirement for this step}
-- :large_blue_circle: {posture for this step}
-- :thought_balloon: {focus for this step}
+- 🔴 NEVER {critical prohibition for this step}
+- ✅ ALWAYS {critical requirement for this step}
+- 🔵 {posture for this step}
+- 💭 {focus for this step}
 
 ## EXECUTION PROTOCOLS:
 
@@ -340,7 +340,7 @@ conditional_next:
 ## BREAKPOINT (if applicable):
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│ :pause_button: BREAKPOINT — {Title}                                             │
+│ ⏸️ BREAKPOINT — {Title}                                             │
 ├─────────────────────────────────────────────────────────────────────┤
 │ {Context summary from this step}                                    │
 │                                                                     │
@@ -378,10 +378,10 @@ conditional_next:
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip context detection
-- :red_circle: NEVER proceed without valid input
-- :white_check_mark: ALWAYS validate input parameters
-- :white_check_mark: ALWAYS detect complexity level
+- 🔴 NEVER skip context detection
+- 🔴 NEVER proceed without valid input
+- ✅ ALWAYS validate input parameters
+- ✅ ALWAYS detect complexity level
 
 ## EXECUTION PROTOCOLS:
 
@@ -427,9 +427,9 @@ next_step: null
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip final validation
-- :white_check_mark: ALWAYS verify all outputs generated
-- :white_check_mark: ALWAYS present completion summary
+- 🔴 NEVER skip final validation
+- ✅ ALWAYS verify all outputs generated
+- ✅ ALWAYS present completion summary
 
 ## EXECUTION PROTOCOLS:
 
@@ -448,9 +448,9 @@ next_step: null
 ```
 ## Workflow Complete
 
-:white_check_mark: {Output 1 description}
-:white_check_mark: {Output 2 description}
-:white_check_mark: {Output 3 description}
+✅ {Output 1 description}
+✅ {Output 2 description}
+✅ {Output 3 description}
 
 ### Summary
 - {Key result 1}
@@ -492,9 +492,9 @@ Internal component for {purpose}.
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER expose internal state to user
-- :white_check_mark: ALWAYS validate inputs
-- :white_check_mark: ALWAYS return structured output
+- 🔴 NEVER expose internal state to user
+- ✅ ALWAYS validate inputs
+- ✅ ALWAYS return structured output
 
 ## API
 
@@ -606,17 +606,17 @@ This skill follows the TDD workflow via `@skill:tdd-enforcer`.
 
 ### TDD Rules
 
-- :red_circle: NEVER write implementation before test
-- :red_circle: NEVER skip the RED phase
-- :white_check_mark: ALWAYS run test after each phase
-- :white_check_mark: ALWAYS commit after GREEN and REFACTOR
+- 🔴 NEVER write implementation before test
+- 🔴 NEVER skip the RED phase
+- ✅ ALWAYS run test after each phase
+- ✅ ALWAYS commit after GREEN and REFACTOR
 
 ### TDD Breakpoint
 
 After each phase, verify:
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│ :pause_button: TDD CHECKPOINT — {Phase} Complete                                   │
+│ ⏸️ TDD CHECKPOINT — {Phase} Complete                                   │
 ├─────────────────────────────────────────────────────────────────────┤
 │ Phase: {RED|GREEN|REFACTOR}                                         │
 │ Test status: {FAIL (expected) | PASS}                               │
@@ -651,8 +651,8 @@ After each phase, verify:
 - [ ] Verify MANDATORY EXECUTION RULES section present
 - [ ] Verify EXECUTION PROTOCOLS are numbered
 - [ ] Verify CONTEXT BOUNDARIES defined
-- [ ] Max 5 :red_circle: NEVER rules
-- [ ] Max 5 :white_check_mark: ALWAYS rules
+- [ ] Max 5 🔴 NEVER rules
+- [ ] Max 5 ✅ ALWAYS rules
 - [ ] Description follows formula (< 1024 chars)
 - [ ] Add specific examples
 - [ ] Define clear limitations

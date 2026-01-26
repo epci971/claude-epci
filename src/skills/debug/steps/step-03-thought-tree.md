@@ -9,13 +9,13 @@ next_step: steps/step-04-routing.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER generate fewer than 2 hypotheses
-- :red_circle: NEVER generate more than 4 hypotheses
-- :red_circle: NEVER skip testable_prediction or quick_check
-- :white_check_mark: ALWAYS use hypothesis schema from references
-- :white_check_mark: ALWAYS rank by pairwise comparison (not absolute scoring)
-- :white_check_mark: ALWAYS link evidence to each hypothesis
-- :thought_balloon: FOCUS on testable, falsifiable hypotheses
+- 🔴 NEVER generate fewer than 2 hypotheses
+- 🔴 NEVER generate more than 4 hypotheses
+- 🔴 NEVER skip testable_prediction or quick_check
+- ✅ ALWAYS use hypothesis schema from references
+- ✅ ALWAYS rank by pairwise comparison (not absolute scoring)
+- ✅ ALWAYS link evidence to each hypothesis
+- 💭 FOCUS on testable, falsifiable hypotheses
 
 ## EXECUTION PROTOCOLS:
 
@@ -159,7 +159,7 @@ ROOT: {error_description}
 
 ### Hypotheses (Ranked)
 
-#### H1: {title} [Confidence: XX%] :star: BEST
+#### H1: {title} [Confidence: XX%] ⭐ BEST
 **Hypothesis**: {full hypothesis statement}
 **Rationale**: {why this is likely}
 **Evidence**:
@@ -202,7 +202,7 @@ Ready for routing evaluation.
 
 ### Top 2 Hypotheses
 
-#### H1: {title} [Confidence: XX%] :zap: AUTO-SELECT
+#### H1: {title} [Confidence: XX%] ⚡ AUTO-SELECT
 **Quick Check**: {action}
 **Files**: `{path1}`, `{path2}`
 

@@ -9,17 +9,17 @@ next_step: steps/step-04-review.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER write implementation before test
-- :red_circle: NEVER skip the RED phase (failing test first)
-- :red_circle: NEVER commit code with failing tests
-- :red_circle: NEVER over-engineer beyond requirements
-- :white_check_mark: ALWAYS follow TDD cycle: RED → GREEN → REFACTOR
-- :white_check_mark: ALWAYS write minimal code to pass test
-- :white_check_mark: ALWAYS run tests after each change
-- :white_check_mark: ALWAYS follow identified patterns from exploration
-- :no_entry: FORBIDDEN skipping tests for any component
-- :large_blue_circle: YOU ARE A DISCIPLINED TDD PRACTITIONER
-- :thought_balloon: FOCUS on one test at a time, complete cycle before next
+- 🔴 NEVER write implementation before test
+- 🔴 NEVER skip the RED phase (failing test first)
+- 🔴 NEVER commit code with failing tests
+- 🔴 NEVER over-engineer beyond requirements
+- ✅ ALWAYS follow TDD cycle: RED → GREEN → REFACTOR
+- ✅ ALWAYS write minimal code to pass test
+- ✅ ALWAYS run tests after each change
+- ✅ ALWAYS follow identified patterns from exploration
+- ⛔ FORBIDDEN skipping tests for any component
+- 🔵 YOU ARE A DISCIPLINED TDD PRACTITIONER
+- 💭 FOCUS on one test at a time, complete cycle before next
 
 ## EXECUTION PROTOCOLS:
 
@@ -75,7 +75,7 @@ describe('{component}', () => {
 });
 ```
 
-### Run test: FAIL :red_circle:
+### Run test: FAIL 🔴
 {test output showing failure}
 
 ### GREEN: Implement
@@ -84,13 +84,13 @@ describe('{component}', () => {
 {minimal implementation}
 ```
 
-### Run test: PASS :white_check_mark:
+### Run test: PASS ✅
 {test output showing pass}
 
 ### REFACTOR: Improve
 {refactoring notes if any}
 
-### Run test: PASS :white_check_mark:
+### Run test: PASS ✅
 {confirm tests still pass}
 ```
 
@@ -100,11 +100,11 @@ describe('{component}', () => {
 ## Coding Progress
 
 ### Completed Components
-- :white_check_mark: {Component 1} — {N} tests passing
-- :white_check_mark: {Component 2} — {N} tests passing
+- ✅ {Component 1} — {N} tests passing
+- ✅ {Component 2} — {N} tests passing
 
 ### In Progress
-- :hourglass: {Component 3} — RED phase
+- ⏳ {Component 3} — RED phase
 
 ### Test Coverage
 - Current: {%}

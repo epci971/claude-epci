@@ -9,12 +9,12 @@ next_step: steps/step-08-post.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER use this route if uncertainty > 5%
-- :red_circle: NEVER modify more than 1 file
-- :red_circle: NEVER write more than 10 LOC
-- :white_check_mark: ALWAYS verify fix compiles/parses
-- :white_check_mark: ALWAYS provide inline summary
-- :thought_balloon: FOCUS on minimal, precise fix
+- 🔴 NEVER use this route if uncertainty > 5%
+- 🔴 NEVER modify more than 1 file
+- 🔴 NEVER write more than 10 LOC
+- ✅ ALWAYS verify fix compiles/parses
+- ✅ ALWAYS provide inline summary
+- 💭 FOCUS on minimal, precise fix
 
 ## EXECUTION PROTOCOLS:
 
@@ -119,7 +119,7 @@ Output concise fix summary:
 ```
 
 ### Verification
-- Syntax check: :white_check_mark: Passed
+- Syntax check: ✅ Passed
 
 ### Summary
 +-- BUG FIXED (Trivial) -------------------------+

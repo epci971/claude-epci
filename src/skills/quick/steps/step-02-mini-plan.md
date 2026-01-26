@@ -9,11 +9,11 @@ next_step: steps/step-03-code.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER create a plan longer than necessary
-- :red_circle: NEVER skip test strategy definition
-- :white_check_mark: ALWAYS follow plan structure from references
-- :white_check_mark: ALWAYS define completion criteria
-- :thought_balloon: FOCUS on minimal viable plan - just enough to guide implementation
+- 🔴 NEVER create a plan longer than necessary
+- 🔴 NEVER skip test strategy definition
+- ✅ ALWAYS follow plan structure from references
+- ✅ ALWAYS define completion criteria
+- 💭 FOCUS on minimal viable plan - just enough to guide implementation
 
 ## EXECUTION PROTOCOLS:
 

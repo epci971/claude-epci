@@ -9,11 +9,11 @@ next_step: steps/step-05-memory.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER create Feature Documents (that's /implement's job)
-- :red_circle: NEVER over-document small changes
-- :white_check_mark: ALWAYS evaluate if documentation update is needed
-- :white_check_mark: ALWAYS follow existing doc conventions
-- :thought_balloon: FOCUS on minimal documentation - only if truly needed
+- 🔴 NEVER create Feature Documents (that's /implement's job)
+- 🔴 NEVER over-document small changes
+- ✅ ALWAYS evaluate if documentation update is needed
+- ✅ ALWAYS follow existing doc conventions
+- 💭 FOCUS on minimal documentation - only if truly needed
 
 ## EXECUTION PROTOCOLS:
 

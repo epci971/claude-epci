@@ -9,15 +9,15 @@ next_step: steps/step-02-plan.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER modify any files during exploration
-- :red_circle: NEVER write code during exploration
-- :red_circle: NEVER skip pattern identification
-- :white_check_mark: ALWAYS use read-only tools (Read, Glob, Grep)
-- :white_check_mark: ALWAYS identify existing patterns before planning
-- :white_check_mark: ALWAYS document dependencies found
-- :white_check_mark: ALWAYS use @Explore agent for comprehensive search
-- :large_blue_circle: YOU ARE AN INVESTIGATOR, not an implementer yet
-- :thought_balloon: FOCUS on understanding before acting
+- 🔴 NEVER modify any files during exploration
+- 🔴 NEVER write code during exploration
+- 🔴 NEVER skip pattern identification
+- ✅ ALWAYS use read-only tools (Read, Glob, Grep)
+- ✅ ALWAYS identify existing patterns before planning
+- ✅ ALWAYS document dependencies found
+- ✅ ALWAYS use @Explore agent for comprehensive search
+- 🔵 YOU ARE AN INVESTIGATOR, not an implementer yet
+- 💭 FOCUS on understanding before acting
 
 ## EXECUTION PROTOCOLS:
 

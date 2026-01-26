@@ -9,12 +9,12 @@ next_step: steps/step-08-post.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip regression test
-- :red_circle: NEVER skip VERIFY phase
-- :white_check_mark: ALWAYS follow TDD Red-Green-Verify cycle
-- :white_check_mark: ALWAYS invoke @implementer for fix
-- :white_check_mark: ALWAYS use tdd-enforcer
-- :thought_balloon: FOCUS on proving hypothesis via failing test
+- 🔴 NEVER skip regression test
+- 🔴 NEVER skip VERIFY phase
+- ✅ ALWAYS follow TDD Red-Green-Verify cycle
+- ✅ ALWAYS invoke @implementer for fix
+- ✅ ALWAYS use tdd-enforcer
+- 💭 FOCUS on proving hypothesis via failing test
 
 ## EXECUTION PROTOCOLS:
 
@@ -25,7 +25,7 @@ Show top 2 hypotheses:
 ```
 ## Investigation Plan
 
-### H1: {title} [Confidence: XX%] :arrow_left: Starting here
+### H1: {title} [Confidence: XX%] ⬅️ Starting here
 - Quick Check: {action}
 - Files: {list}
 
@@ -178,9 +178,9 @@ If refactoring needed, suggest /refactor after fix.
 - **Result**: CONFIRMED
 
 ### TDD Cycle
-- **RED**: Test written, failing :white_check_mark:
-- **GREEN**: Fix implemented, passing :white_check_mark:
-- **VERIFY**: All tests pass :white_check_mark:
+- **RED**: Test written, failing ✅
+- **GREEN**: Fix implemented, passing ✅
+- **VERIFY**: All tests pass ✅
 
 ### Root Cause
 {detailed explanation of actual root cause}

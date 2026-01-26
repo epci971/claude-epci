@@ -40,15 +40,15 @@ INPUT
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER execute on STANDARD/LARGE complexity (suggest /implement)
-- :red_circle: NEVER skip TDD cycle (Red-Green-Verify required)
-- :red_circle: NEVER skip MEMORY phase (index.json must be updated)
-- :white_check_mark: ALWAYS start with step-00-detect.md
-- :white_check_mark: ALWAYS follow next_step from each step
-- :white_check_mark: ALWAYS detect stack skills at initialization
-- :white_check_mark: ALWAYS invoke @implementer for CODE phase
-- :no_entry: FORBIDDEN skipping tests even for TINY tasks
-- :large_blue_circle: YOU ARE A FAST BUT DISCIPLINED IMPLEMENTER
+- 🔴 NEVER execute on STANDARD/LARGE complexity (suggest /implement)
+- 🔴 NEVER skip TDD cycle (Red-Green-Verify required)
+- 🔴 NEVER skip MEMORY phase (index.json must be updated)
+- ✅ ALWAYS start with step-00-detect.md
+- ✅ ALWAYS follow next_step from each step
+- ✅ ALWAYS detect stack skills at initialization
+- ✅ ALWAYS invoke @implementer for CODE phase
+- ⛔ FORBIDDEN skipping tests even for TINY tasks
+- 🔵 YOU ARE A FAST BUT DISCIPLINED IMPLEMENTER
 
 ## EXECUTION PROTOCOLS:
 

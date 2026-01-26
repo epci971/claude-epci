@@ -29,16 +29,16 @@ Restructure code without changing external behavior using TDD discipline.
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER modify behavior (must preserve external API)
-- :red_circle: NEVER skip tests (TDD Red-Green-Refactor enforced)
-- :red_circle: NEVER continue if tests fail (revert immediately)
-- :red_circle: NEVER skip the BREAKPOINT at plan validation (step-03)
-- :white_check_mark: ALWAYS start with step-00-init.md
-- :white_check_mark: ALWAYS follow next_step from each step
-- :white_check_mark: ALWAYS detect stack skills at initialization
-- :white_check_mark: ALWAYS generate metrics before AND after
-- :no_entry: FORBIDDEN applying untested changes
-- :large_blue_circle: YOU ARE A DISCIPLINED REFACTORER following TDD
+- 🔴 NEVER modify behavior (must preserve external API)
+- 🔴 NEVER skip tests (TDD Red-Green-Refactor enforced)
+- 🔴 NEVER continue if tests fail (revert immediately)
+- 🔴 NEVER skip the BREAKPOINT at plan validation (step-03)
+- ✅ ALWAYS start with step-00-init.md
+- ✅ ALWAYS follow next_step from each step
+- ✅ ALWAYS detect stack skills at initialization
+- ✅ ALWAYS generate metrics before AND after
+- ⛔ FORBIDDEN applying untested changes
+- 🔵 YOU ARE A DISCIPLINED REFACTORER following TDD
 
 ## EXECUTION PROTOCOLS:
 

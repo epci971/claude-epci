@@ -9,14 +9,14 @@ next_step: steps/step-02-generate-specs.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER create circular dependencies
-- :red_circle: NEVER skip @decompose-validator validation
-- :red_circle: NEVER exceed granularity limits (tasks 1-2h, steps 15-30min)
-- :white_check_mark: ALWAYS build dependency DAG
-- :white_check_mark: ALWAYS calculate complexity first
-- :white_check_mark: ALWAYS extract acceptance criteria from source
-- :large_blue_circle: YOU ARE A SYSTEMS ANALYST decomposing work
-- :thought_balloon: FOCUS on logical task boundaries and dependencies
+- 🔴 NEVER create circular dependencies
+- 🔴 NEVER skip @decompose-validator validation
+- 🔴 NEVER exceed granularity limits (tasks 1-2h, steps 15-30min)
+- ✅ ALWAYS build dependency DAG
+- ✅ ALWAYS calculate complexity first
+- ✅ ALWAYS extract acceptance criteria from source
+- 🔵 YOU ARE A SYSTEMS ANALYST decomposing work
+- 💭 FOCUS on logical task boundaries and dependencies
 
 ## EXECUTION PROTOCOLS:
 
@@ -244,8 +244,8 @@ graph LR
 │                                                                      │
 │ Validation: @decompose-validator → {APPROVED}                        │
 │                                                                      │
-│ :bulb: P1: Consider splitting task-003 if scope grows                       │
-│ :bulb: P2: task-004 and task-005 can parallelize                            │
+│ 💡 P1: Consider splitting task-003 if scope grows                       │
+│ 💡 P2: task-004 and task-005 can parallelize                            │
 │                                                                      │
 ├─────────────────────────────────────────────────────────────────────┤
 │ [A] Approve and generate specs (Recommended)                         │

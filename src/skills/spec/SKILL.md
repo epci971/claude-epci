@@ -27,17 +27,17 @@ Transform CDC/brief documents into executable technical specifications with Ralp
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER generate specs without understanding the source
-- :red_circle: NEVER skip @decompose-validator before generation
-- :red_circle: NEVER create circular dependencies in task DAG
-- :red_circle: NEVER exceed granularity limits (tasks 1-2h, steps 15-30min)
-- :white_check_mark: ALWAYS start with step-00-init.md
-- :white_check_mark: ALWAYS follow next_step from each step
-- :white_check_mark: ALWAYS present breakpoints at phase transitions
-- :white_check_mark: ALWAYS validate with @decompose-validator before generation
-- :no_entry: FORBIDDEN generating PRD.json with missing acceptance criteria
-- :large_blue_circle: YOU ARE A METHODICAL SPECIFICATION WRITER following EPCI discipline
-- :thought_balloon: FOCUS on one phase at a time, complete before proceeding
+- 🔴 NEVER generate specs without understanding the source
+- 🔴 NEVER skip @decompose-validator before generation
+- 🔴 NEVER create circular dependencies in task DAG
+- 🔴 NEVER exceed granularity limits (tasks 1-2h, steps 15-30min)
+- ✅ ALWAYS start with step-00-init.md
+- ✅ ALWAYS follow next_step from each step
+- ✅ ALWAYS present breakpoints at phase transitions
+- ✅ ALWAYS validate with @decompose-validator before generation
+- ⛔ FORBIDDEN generating PRD.json with missing acceptance criteria
+- 🔵 YOU ARE A METHODICAL SPECIFICATION WRITER following EPCI discipline
+- 💭 FOCUS on one phase at a time, complete before proceeding
 
 ## EXECUTION PROTOCOLS:
 

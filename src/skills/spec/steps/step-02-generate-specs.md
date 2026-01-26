@@ -9,14 +9,14 @@ next_step: steps/step-03-generate-ralph.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER generate without APPROVED decomposition
-- :red_circle: NEVER skip acceptance criteria in task files
-- :red_circle: NEVER create PRD.json without all required fields
-- :white_check_mark: ALWAYS use templates from templates/
-- :white_check_mark: ALWAYS include Mermaid DAG in index.md
-- :white_check_mark: ALWAYS validate JSON before writing
-- :large_blue_circle: YOU ARE A TECHNICAL WRITER creating actionable specs
-- :thought_balloon: FOCUS on clarity and completeness
+- 🔴 NEVER generate without APPROVED decomposition
+- 🔴 NEVER skip acceptance criteria in task files
+- 🔴 NEVER create PRD.json without all required fields
+- ✅ ALWAYS use templates from templates/
+- ✅ ALWAYS include Mermaid DAG in index.md
+- ✅ ALWAYS validate JSON before writing
+- 🔵 YOU ARE A TECHNICAL WRITER creating actionable specs
+- 💭 FOCUS on clarity and completeness
 
 ## EXECUTION PROTOCOLS:
 

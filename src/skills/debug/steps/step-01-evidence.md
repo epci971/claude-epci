@@ -9,12 +9,12 @@ next_step: steps/step-02-research.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER proceed without at least error message OR reproduction steps
-- :red_circle: NEVER skip project-memory recall
-- :white_check_mark: ALWAYS detect and load stack skill
-- :white_check_mark: ALWAYS check recent git commits
-- :white_check_mark: ALWAYS search for similar past bugs
-- :thought_balloon: FOCUS on gathering observable facts, not assumptions
+- 🔴 NEVER proceed without at least error message OR reproduction steps
+- 🔴 NEVER skip project-memory recall
+- ✅ ALWAYS detect and load stack skill
+- ✅ ALWAYS check recent git commits
+- ✅ ALWAYS search for similar past bugs
+- 💭 FOCUS on gathering observable facts, not assumptions
 
 ## EXECUTION PROTOCOLS:
 

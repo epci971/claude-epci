@@ -9,11 +9,11 @@ next_step: null
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip index.json update
-- :white_check_mark: ALWAYS generate a concise summary (1-2 sentences)
-- :white_check_mark: ALWAYS collect all modified files
-- :white_check_mark: ALWAYS count tests added
-- :thought_balloon: FOCUS on persistence for future sessions
+- 🔴 NEVER skip index.json update
+- ✅ ALWAYS generate a concise summary (1-2 sentences)
+- ✅ ALWAYS collect all modified files
+- ✅ ALWAYS count tests added
+- 💭 FOCUS on persistence for future sessions
 
 ## EXECUTION PROTOCOLS:
 

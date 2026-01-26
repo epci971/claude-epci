@@ -9,12 +9,12 @@ next_step: steps/step-04-document.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip TDD cycle (Red-Green-Verify required)
-- :red_circle: NEVER write implementation before test
-- :red_circle: NEVER skip VERIFY phase
-- :white_check_mark: ALWAYS invoke @implementer (Sonnet model)
-- :white_check_mark: ALWAYS follow Red-Green cycle (skip Refactor for speed)
-- :thought_balloon: FOCUS on minimal code that passes tests
+- 🔴 NEVER skip TDD cycle (Red-Green-Verify required)
+- 🔴 NEVER write implementation before test
+- 🔴 NEVER skip VERIFY phase
+- ✅ ALWAYS invoke @implementer (Sonnet model)
+- ✅ ALWAYS follow Red-Green cycle (skip Refactor for speed)
+- 💭 FOCUS on minimal code that passes tests
 
 ## EXECUTION PROTOCOLS:
 

@@ -60,10 +60,10 @@ allowed-tools: {tools}
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER execute steps out of order
-- :red_circle: NEVER skip breakpoints
-- :white_check_mark: ALWAYS start with step-00-init.md
-- :white_check_mark: ALWAYS follow next_step from each step
+- 🔴 NEVER execute steps out of order
+- 🔴 NEVER skip breakpoints
+- ✅ ALWAYS start with step-00-init.md
+- ✅ ALWAYS follow next_step from each step
 
 ## EXECUTION PROTOCOLS:
 

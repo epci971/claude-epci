@@ -9,11 +9,11 @@ next_step: null
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip project-memory storage
-- :white_check_mark: ALWAYS store bug pattern for future reference
-- :white_check_mark: ALWAYS execute post-debug hook if configured
-- :white_check_mark: ALWAYS suggest /commit if --commit flag
-- :thought_balloon: FOCUS on capitalizing learnings for future debugging
+- 🔴 NEVER skip project-memory storage
+- ✅ ALWAYS store bug pattern for future reference
+- ✅ ALWAYS execute post-debug hook if configured
+- ✅ ALWAYS suggest /commit if --commit flag
+- 💭 FOCUS on capitalizing learnings for future debugging
 
 ## EXECUTION PROTOCOLS:
 
@@ -118,7 +118,7 @@ Final summary based on route:
 #### TRIVIAL Summary
 ```
 +---------------------------------------------------------------------+
-| :white_check_mark: DEBUG COMPLETE (Trivial)                                            |
+| ✅ DEBUG COMPLETE (Trivial)                                            |
 +---------------------------------------------------------------------+
 | Bug: {short description}                                             |
 | Cause: {root cause}                                                  |
@@ -130,7 +130,7 @@ Final summary based on route:
 #### QUICK Summary
 ```
 +---------------------------------------------------------------------+
-| :white_check_mark: DEBUG COMPLETE (Quick)                                              |
+| ✅ DEBUG COMPLETE (Quick)                                              |
 +---------------------------------------------------------------------+
 | Bug: {short description}                                             |
 | Root Cause: {cause}                                                  |
@@ -145,7 +145,7 @@ Final summary based on route:
 #### COMPLEX Summary
 ```
 +---------------------------------------------------------------------+
-| :white_check_mark: DEBUG COMPLETE (Complex)                                            |
+| ✅ DEBUG COMPLETE (Complex)                                            |
 +---------------------------------------------------------------------+
 | Bug: {short description}                                             |
 | Root Cause: {cause}                                                  |

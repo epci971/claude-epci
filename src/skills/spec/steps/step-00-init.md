@@ -9,12 +9,12 @@ next_step: steps/step-01-analyze.md
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER proceed without valid input source
-- :red_circle: NEVER skip project context loading
-- :white_check_mark: ALWAYS parse input arguments first
-- :white_check_mark: ALWAYS load project-memory context
-- :white_check_mark: ALWAYS validate source exists if path provided
-- :thought_balloon: FOCUS on understanding input before proceeding
+- 🔴 NEVER proceed without valid input source
+- 🔴 NEVER skip project context loading
+- ✅ ALWAYS parse input arguments first
+- ✅ ALWAYS load project-memory context
+- ✅ ALWAYS validate source exists if path provided
+- 💭 FOCUS on understanding input before proceeding
 
 ## EXECUTION PROTOCOLS:
 

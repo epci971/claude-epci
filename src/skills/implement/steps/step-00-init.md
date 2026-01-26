@@ -12,12 +12,12 @@ conditional_next:
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER skip complexity detection
-- :red_circle: NEVER proceed without valid feature-slug
-- :white_check_mark: ALWAYS parse input arguments first
-- :white_check_mark: ALWAYS invoke complexity-calculator
-- :white_check_mark: ALWAYS create Feature Document skeleton if STANDARD+
-- :thought_balloon: FOCUS on correct routing based on complexity
+- 🔴 NEVER skip complexity detection
+- 🔴 NEVER proceed without valid feature-slug
+- ✅ ALWAYS parse input arguments first
+- ✅ ALWAYS invoke complexity-calculator
+- ✅ ALWAYS create Feature Document skeleton if STANDARD+
+- 💭 FOCUS on correct routing based on complexity
 
 ## EXECUTION PROTOCOLS:
 

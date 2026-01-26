@@ -15,12 +15,12 @@ conditional_next:
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER proceed if complexity > SMALL
-- :red_circle: NEVER skip stack detection
-- :white_check_mark: ALWAYS parse input first (@ prefix = plan path)
-- :white_check_mark: ALWAYS validate plan file exists if @path provided
-- :white_check_mark: ALWAYS invoke complexity-calculator
-- :thought_balloon: FOCUS on correct routing: plan-first vs full workflow
+- 🔴 NEVER proceed if complexity > SMALL
+- 🔴 NEVER skip stack detection
+- ✅ ALWAYS parse input first (@ prefix = plan path)
+- ✅ ALWAYS validate plan file exists if @path provided
+- ✅ ALWAYS invoke complexity-calculator
+- 💭 FOCUS on correct routing: plan-first vs full workflow
 
 ## EXECUTION PROTOCOLS:
 
