@@ -325,17 +325,12 @@ Show user:
 1. **Create directory structure**
 2. **Write SKILL.md** with full content
 3. **Write reference files** if needed
-4. **Create/update associated command** (if `user-invocable: true`)
-   - Use template from [references/command-template.md](references/command-template.md)
-   - Copy `argument-hint` from SKILL.md
-   - Copy `allowed-tools` from SKILL.md (if present)
-   - Shorten description to max 150 chars (remove "Trigger words:" suffix)
-5. **Update plugin.json** (add skill path)
-6. **Run post-generation validation**:
+4. **Update plugin.json** (add skill path)
+5. **Run post-generation validation**:
    ```bash
    python3 ${CLAUDE_PLUGIN_ROOT}/skills/factory/scripts/validate_skill_output.py <generated_skill_path>
    ```
-7. **Generate conformity report**
+6. **Generate conformity report**
 
 ### Conformity Report
 
@@ -344,7 +339,6 @@ Show user:
 
 ✅ Created: skills/{name}/SKILL.md
 ✅ Created: skills/{name}/references/checklist.md
-✅ Created/Updated: commands/{name}.md (if user-invocable)
 ✅ Updated: .claude-plugin/plugin.json
 ✅ Validation: PASS (12/12 checks)
 
@@ -366,7 +360,6 @@ Show user:
 
 - [best-practices-synthesis.md](references/best-practices-synthesis.md) — Core best practices
 - [checklist-validation.md](references/checklist-validation.md) — 12-point validation
-- [command-template.md](references/command-template.md) — Command generation template
 - [description-formulas.md](references/description-formulas.md) — Description patterns
 - [yaml-rules.md](references/yaml-rules.md) — Frontmatter syntax
 - [skill-templates.md](references/skill-templates.md) — User and core templates

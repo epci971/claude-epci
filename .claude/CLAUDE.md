@@ -3,21 +3,21 @@
 ## Description
 
 Plugin Claude Code implementant le workflow EPCI (Explore, Plan, Code, Inspect).
-Systeme de gestion du developpement avec commandes, skills, subagents et hooks.
+Systeme de gestion du developpement avec skills, subagents et hooks.
 
 ## Architecture
 
 - **Pattern**: Plugin modulaire
 - **Structure**: Monorepo avec src/ organise par fonction
 - **Backend**: Python 3 (scripts, orchestration, hooks)
-- **Content**: Markdown (commandes, skills, agents)
+- **Content**: Markdown (skills, agents)
 
 ## Stack Technique
 
 | Couche | Technologie | Notes |
 |--------|-------------|-------|
 | Scripts | Python 3 | validation, orchestration, hooks |
-| Content | Markdown | commandes, skills, agents |
+| Content | Markdown | skills, agents |
 | Config | JSON/YAML | settings, plugin manifest |
 | Tests | pytest | src/scripts/, src/project-memory/tests/ |
 
@@ -26,7 +26,6 @@ Systeme de gestion du developpement avec commandes, skills, subagents et hooks.
 ```
 src/
 ├── agents/           # 15 subagents (validateurs, reviewers, turbo, brainstorm)
-├── commands/         # 14 commandes EPCI
 ├── hooks/            # Systeme hooks (runner.py)
 ├── mcp/              # MCP Integration (config, activation)
 ├── orchestration/    # Wave orchestration
@@ -50,7 +49,6 @@ python src/scripts/validate_all.py
 
 # Validation par type
 python src/scripts/validate_skill.py src/skills/core/epci-core/
-python src/scripts/validate_command.py src/commands/brief.md
 python src/scripts/validate_subagent.py src/agents/code-reviewer.md
 
 # Tests orchestration

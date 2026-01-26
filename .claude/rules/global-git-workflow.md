@@ -28,7 +28,7 @@ Format: `{type}({scope}): {description}`
 
 | Type | Usage |
 |------|-------|
-| `feat` | Nouvelle commande, skill, agent |
+| `feat` | Nouveau skill, agent |
 | `fix` | Correction de bug |
 | `refactor` | Refactoring sans changement fonctionnel |
 | `docs` | Documentation |
@@ -40,7 +40,6 @@ Format: `{type}({scope}): {description}`
 | Scope | Usage | Fichiers concernés |
 |-------|-------|-------------------|
 | `(skills)` | Modification de skills | `src/skills/**` |
-| `(commands)` | Modification de commandes | `src/commands/**` |
 | `(agents)` | Modification de subagents | `src/agents/**` |
 | `(infra)` | Scripts, worktree, CI | `src/scripts/**`, `.github/**` |
 | `(ralph)` | Système Ralph Wiggum | `ralph.sh`, `/ralph-exec` |
@@ -54,7 +53,7 @@ Format: `{type}({scope}): {description}`
 
 ```bash
 # Correct
-feat(commands): add /rules command for project conventions
+feat(skills): add rules-generator skill for project conventions
 fix(validation): handle missing frontmatter in skills
 refactor(orchestration): extract wave planner logic
 docs(readme): update installation instructions

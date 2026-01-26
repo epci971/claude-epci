@@ -1,8 +1,8 @@
 # EPCI Plugin — Claude Code
 
-> **Version** : 5.1.0
+> **Version** : 6.0.0
 > **License** : MIT
-> **Last Audit** : 2025-01-13 (Score: 85/100)
+> **Last Audit** : 2025-01-26 (Score: 85/100)
 
 EPCI (Explore → Plan → Code → Inspect) est un plugin Claude Code qui structure le développement logiciel en phases distinctes avec validation à chaque étape.
 
@@ -64,29 +64,30 @@ Chaque phase se termine par un breakpoint. Tapez `Continuer` pour avancer ou dem
 
 Cela active l'apprentissage continu, détecte votre stack et vos conventions.
 
-## Commandes Principales
+## Skills Principaux
 
-| Commande       | Description                                                        |
+Depuis Claude Code 2.1.19, les skills sont auto-invocables via `/skill-name`.
+
+| Skill          | Description                                                        |
 | -------------- | ------------------------------------------------------------------ |
-| `/epci:brief`  | Point d'entrée — Exploration, clarification, évaluation complexité |
-| `/epci:epci`   | Workflow complet 3 phases pour features STANDARD/LARGE             |
-| `/epci:quick`  | Workflow EPCT condensé pour features TINY/SMALL                    |
-| `/epci:ralph`  | **NEW** Exécution autonome overnight avec circuit breaker          |
-| `/epci:commit` | Finalisation git avec contexte EPCI                                |
-| `/epci:create` | Component Factory — Créer skills, commands, subagents              |
+| `/brainstorm`  | Découverte de feature avec personas adaptatifs + spike intégré     |
+| `/spec`        | Création de spécifications (PRD/CDC)                               |
+| `/implement`   | Workflow complet 3 phases pour features STANDARD/LARGE             |
+| `/quick`       | Workflow condensé pour features TINY/SMALL                         |
+| `/debug`       | Diagnostic structuré de bugs avec thought tree                     |
+| `/improve`     | Amélioration de code existant                                      |
+| `/refactor`    | Restructuration de code                                            |
+| `/factory`     | Component Factory — Créer skills et subagents                      |
 
-### Commandes Additionnelles
+### Skills Additionnels
 
-| Commande              | Description                                    |
+| Skill                 | Description                                    |
 | --------------------- | ---------------------------------------------- |
-| `/epci:cancel-ralph`  | **NEW** Annuler une session Ralph en cours     |
-| `/epci:brainstorm`    | Découverte de feature avec personas adaptatifs + spike intégré |
-| `/epci:debug`         | Diagnostic structuré de bugs avec thought tree |
-| `/epci:decompose`     | Décomposition de PRD/CDC en sous-specs         |
-| `/epci:orchestrate`   | Exécution batch specs (deprecated, voir /ralph)|
-| `/epci:memory`        | Gestion de la mémoire projet + learning        |
-| `/epci:rules`         | Génération .claude/rules/ conventions projet   |
-| `/epci:promptor`      | Voice-to-brief + export Notion                 |
+| `/ralph`              | Exécution autonome overnight avec circuit breaker |
+| `/decompose`          | Décomposition de PRD/CDC en sous-specs         |
+| `/memory`             | Gestion de la mémoire projet + learning        |
+| `/rules`              | Génération .claude/rules/ conventions projet   |
+| `/promptor`           | Voice-to-brief + export Notion                 |
 
 ## Workflow
 
@@ -95,15 +96,20 @@ Brief utilisateur
        │
        ▼
 ┌──────────────┐
-│ /epci:brief  │  ← Point d'entrée unique
+│ /brainstorm  │  ← Exploration optionnelle
 └──────┬───────┘
        │
-       ├─► TINY/SMALL ──► /epci:quick ──┐
-       │                                 │
-       ├─► STANDARD ────► /epci:epci ───┼──► /epci:commit
-       │                                 │
-       └─► LARGE ───────► /epci:epci ───┘
-                          --large
+       ▼
+┌──────────────┐
+│   /spec      │  ← Création spécifications
+└──────┬───────┘
+       │
+       ├─► TINY/SMALL ──► /quick ──────┐
+       │                                │
+       └─► STANDARD ────► /implement ──┘
+                                        │
+                                        ▼
+                                   Code + Tests
 ```
 
 ### Workflow Complet (STANDARD/LARGE)
@@ -112,43 +118,42 @@ Brief utilisateur
 /brainstorm (optionnel)
        │
        ▼
-/brief → Feature Document §1
+/spec → PRD/CDC créé
        │
        ▼
-/epci Phase 1 → §2 (Plan validé par @plan-validator)
+/implement Phase 1 → Plan validé par @plan-validator
        │
        ▼
-/epci Phase 2 → §3 (Code reviewé par @code-reviewer)
+/implement Phase 2 → Code reviewé par @code-reviewer
        │
        ▼
-/epci Phase 3 → Documentation + contexte commit
+/implement Phase 3 → Documentation + Tests
        │
        ▼
-/commit → Git commit + PR ready
+Git commit + PR ready
 ```
 
-## Features v5.1.0
+## Features v6.0.0
 
-### Nouveautés v5.1.0 — Ralph Wiggum Integration
+### Nouveautés v6.0.0 — Skills Auto-Invocables
 
-- **`/ralph` command** : Exécution autonome overnight avec boucle itérative
-- **`/cancel-ralph` command** : Annulation d'une session Ralph en cours
+- **Suppression des commandes** : Les skills sont maintenant directement invocables via `/skill-name`
+- **Architecture simplifiée** : Plus de couche de redirection commands → skills
+- **Factory amélioré** : Ne génère plus de fichiers de commandes
+- **Validation allégée** : Script de validation simplifié (3 étapes au lieu de 4)
+
+### Ralph Wiggum Integration (v5.1)
+
+- **`/ralph` skill** : Exécution autonome overnight avec boucle itérative
 - **Circuit Breaker** : Pattern 3 états pour détection automatique des boucles bloquées
 - **RALPH_STATUS Block** : Format structuré de communication avec double condition de sortie
 - **Deux modes** : Hook (même session, <2h) et Script (contexte frais, overnight)
-- **16 subagents** : +1 `@ralph-executor` pour exécution stories
-- **30 skills** : +2 `ralph-analyzer`, `ralph-converter`
-- **14 commandes** : +2 `/ralph`, `/cancel-ralph`
 
-### Sécurité v5.1.0
+### Sécurité
 
 - **Input validation** : Protection injection dans response_analyzer.sh
 - **File locking** : flock pour opérations atomiques dans circuit_breaker.sh
 - **Rate limiting** : 100 appels/heure configurable
-
-### Commandes simplifiées (v4.2+)
-
-Les commandes utilisent le format simplifié : `/epci:brief`, `/epci:quick`, etc.
 
 ### Personas (F09)
 
@@ -218,7 +223,6 @@ Mémoire persistante par projet :
 
 ```
 src/
-├── commands/          # 14 commandes
 ├── agents/            # 16 subagents (7 core + 3 turbo + 5 brainstorm + 1 ralph)
 ├── skills/            # 30 skills
 │   ├── core/         # 18 skills fondamentaux
@@ -227,7 +231,7 @@ src/
 │   ├── mcp/          # 1 skill MCP Integration
 │   ├── personas/     # 1 skill Système de personas
 │   └── promptor/     # 1 skill Voice-to-brief
-├── scripts/          # Scripts bash Ralph (circuit_breaker, response_analyzer)
+├── scripts/          # Scripts Python et bash
 ├── hooks/            # Système de hooks
 ├── mcp/              # Module MCP Python
 ├── orchestration/    # Wave orchestration
@@ -282,15 +286,21 @@ python3 src/scripts/validate_all.py
 
 ## Changelog
 
-### v5.1.0 (2025-01) — Current
+### v6.0.0 (2025-01) — Current
+
+- **Suppression des commandes** : Skills auto-invocables via Claude Code 2.1.19
+- **Architecture simplifiée** : Plus de couche commands/
+- **Factory allégé** : Ne génère plus de commandes
+- **Validation simplifiée** : 3 étapes au lieu de 4
+- **Totaux** : 16 agents, 30 skills
+
+### v5.1.0 (2025-01)
 
 - **Ralph Wiggum Integration** : Exécution autonome overnight
-- **Nouvelles commandes** : `/ralph`, `/cancel-ralph`
-- **Nouvel agent** : `@ralph-executor`
 - **Nouveaux skills** : `ralph-analyzer`, `ralph-converter`
+- **Nouvel agent** : `@ralph-executor`
 - **Circuit Breaker** : Pattern robustesse pour détection stagnation
 - **Sécurité** : Input validation, file locking avec flock
-- **Totaux** : 14 commandes, 16 agents, 30 skills
 
 ### v5.0.0 (2025-01)
 

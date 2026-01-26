@@ -18,7 +18,7 @@ paths: []
 - Coverage minimum: 70% sur le code Python
 - Un commit = une modification logique
 - Messages de commit en anglais (conventional commits)
-- Limites tokens: commands < 5000, skills < 5000, agents < 2000
+- Limites tokens: skills < 5000, agents < 2000
 
 ## 🟢 PREFERENCES
 
@@ -31,7 +31,6 @@ paths: []
 | Metrique | Cible |
 |----------|-------|
 | Coverage tests | > 70% Python |
-| Tokens commande | < 5000 |
 | Tokens skill | < 5000 |
 | Tokens agent | < 2000 |
 | Description | <= 1024 chars |
@@ -41,7 +40,7 @@ paths: []
 - [ ] Tests passent (`python src/scripts/validate_all.py`)
 - [ ] Naming coherent avec conventions EPCI
 - [ ] Pas de duplication evitable
-- [ ] Documentation mise a jour si nouvelle commande/skill
+- [ ] Documentation mise a jour si nouveau skill
 - [ ] Pas de print/console.log de debug
 
 ## Anti-patterns

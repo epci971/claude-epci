@@ -1,6 +1,5 @@
 ---
 paths:
-  - src/commands/**/*.md
   - src/agents/**/*.md
   - src/skills/**/*.md
   - "!src/**/references/**"
@@ -9,7 +8,7 @@ paths:
 
 # Plugin Content Conventions
 
-> Conventions pour le contenu Markdown du plugin (commandes, skills, agents).
+> Conventions pour le contenu Markdown du plugin (skills, agents).
 
 ## 🔴 CRITICAL
 
@@ -24,21 +23,10 @@ paths:
 
 | Type | Convention | Exemple |
 |------|------------|---------|
-| Commandes | `kebab-case.md` | `brief.md`, `rules.md` |
 | Agents | `kebab-case.md` | `code-reviewer.md` |
 | Skills | `dossier/SKILL.md` | `epci-core/SKILL.md` |
 
 ### Frontmatter par type
-
-**Commande:**
-```yaml
----
-name: brief
-description: >-
-  Point d'entree unique du workflow EPCI. Analyse briefs utilisateur,
-  determine complexite, route vers /quick ou /epci.
----
-```
 
 **Skill:**
 ```yaml
@@ -68,7 +56,6 @@ allowed-tools: [Read, Grep, Glob]
 
 | Type | Limite | Raison |
 |------|--------|--------|
-| Commandes | < 5000 | Performance |
 | Skills | < 5000 | Performance |
 | Agents | < 2000 | Focus |
 | Descriptions | <= 1024 chars | Claude Code limit |
