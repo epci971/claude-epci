@@ -1,0 +1,103 @@
+---
+name: step-01-explore
+description: Read-only codebase exploration phase [E]
+prev_step: steps/step-00-init.md
+next_step: steps/step-02-plan.md
+---
+
+# Step 01: Explore [E]
+
+## MANDATORY EXECUTION RULES (READ FIRST):
+
+- :red_circle: NEVER modify any files during exploration
+- :red_circle: NEVER write code during exploration
+- :red_circle: NEVER skip pattern identification
+- :white_check_mark: ALWAYS use read-only tools (Read, Glob, Grep)
+- :white_check_mark: ALWAYS identify existing patterns before planning
+- :white_check_mark: ALWAYS document dependencies found
+- :white_check_mark: ALWAYS use @Explore agent for comprehensive search
+- :large_blue_circle: YOU ARE AN INVESTIGATOR, not an implementer yet
+- :thought_balloon: FOCUS on understanding before acting
+
+## EXECUTION PROTOCOLS:
+
+1. **Analyze** requirements
+   - Parse spec/requirements into discrete components
+   - Identify functional requirements
+   - Identify non-functional requirements (performance, security)
+
+2. **Search** codebase for relevant code
+   - Use Glob to find files by pattern
+   - Use Grep to search for related functionality
+   - Use @Explore agent for comprehensive analysis
+
+3. **Identify** existing patterns
+   - Architecture patterns in use
+   - Coding conventions
+   - Testing patterns
+   - Error handling patterns
+
+4. **Map** dependencies
+   - Internal dependencies (other modules)
+   - External dependencies (libraries, APIs)
+   - Data flow dependencies
+
+5. **Document** findings
+   - Update Feature Document with exploration results
+   - List files that will need modification
+   - Note patterns to follow
+
+## CONTEXT BOUNDARIES:
+
+- This step expects: Validated STANDARD+ complexity, feature requirements
+- This step produces: Exploration findings, pattern documentation, dependency map
+
+## OUTPUT FORMAT:
+
+```
+## Exploration Findings
+
+### Relevant Files
+- `path/to/file1.ts` — {purpose}
+- `path/to/file2.ts` — {purpose}
+
+### Existing Patterns
+- Pattern 1: {description}
+- Pattern 2: {description}
+
+### Dependencies
+- Internal: {list}
+- External: {list}
+
+### Files to Modify
+- `path/to/modify1.ts` — {change type}
+- `path/to/modify2.ts` — {change type}
+
+### Files to Create
+- `path/to/new1.ts` — {purpose}
+```
+
+## BREAKPOINT:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ :pause_button: BREAKPOINT — Exploration Complete                                │
+├─────────────────────────────────────────────────────────────────────┤
+│ Feature: {feature-slug}                                             │
+│                                                                     │
+│ Findings Summary:                                                   │
+│ • {N} relevant files identified                                     │
+│ • {N} files to modify                                               │
+│ • {N} files to create                                               │
+│ • Key patterns: {patterns}                                          │
+│                                                                     │
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  1. Proceed to Planning (Recommended)                          │ │
+│ │  2. Explore more (specific area)                               │ │
+│ │  3. Revise scope based on findings                             │ │
+│ │  4. Abort (scope too large)                                    │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+
+## NEXT STEP TRIGGER:
+
+When exploration is complete and user approves findings, proceed to `step-02-plan.md`.

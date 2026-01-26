@@ -7,7 +7,7 @@ description: >-
   Use when creating new skill, migrating prompts, improving existing skills, or generating core components.
   Not for one-time prompts, volatile procedures, or runtime configuration.
 user-invocable: true
-argument-hint: "[skill-name] [--core]"
+argument-hint: "[skill-name] [--core] [--workflow]"
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 ---
 
@@ -20,7 +20,62 @@ Create production-ready skills for EPCI v6.0 following best practices.
 ```
 /factory auth-handler              # Create user skill
 /factory state-manager --core      # Create internal core skill
+/factory implement-v2 --workflow   # Create skill with steps/ structure
 ```
+
+---
+
+## MANDATORY WRITING RULES — Style APEX
+
+### Format Obligatoire
+
+Tous les skills generes DOIVENT utiliser le format APEX :
+
+- :red_circle: NEVER ecrire de longs paragraphes explicatifs
+- :red_circle: NEVER melanger regles et workflow dans une meme section
+- :white_check_mark: ALWAYS commencer par "MANDATORY EXECUTION RULES (READ FIRST):"
+- :white_check_mark: ALWAYS utiliser les icones standardisees
+- :white_check_mark: ALWAYS separer RULES → PROTOCOLS → BOUNDARIES
+- :no_entry: FORBIDDEN prose documentaire (style ancien)
+
+### Structure Obligatoire de Chaque Skill/Step
+
+1. **MANDATORY EXECUTION RULES (READ FIRST):**
+   - :red_circle: NEVER rules (max 5)
+   - :white_check_mark: ALWAYS rules (max 5)
+   - :no_entry: FORBIDDEN rules (if applicable)
+   - :large_blue_circle: POSTURE rules (if applicable)
+   - :thought_balloon: FOCUS rules (if applicable)
+
+2. **EXECUTION PROTOCOLS:**
+   - Liste numerotee des actions
+   - Format: `1. **{Verb}** {description}`
+
+3. **CONTEXT BOUNDARIES:**
+   - IN scope: ce qui est inclus
+   - OUT scope: ce qui est exclu
+
+4. **OUTPUT FORMAT:** (si applicable)
+
+5. **BREAKPOINT:** (si applicable)
+
+6. **NEXT STEP TRIGGER:** (si workflow avec steps)
+
+### Table des Icones
+
+| Icone | Keyword | Usage |
+|-------|---------|-------|
+| :red_circle: | NEVER | Actions interdites critiques |
+| :white_check_mark: | ALWAYS | Actions obligatoires |
+| :no_entry: | FORBIDDEN | Blocage dur |
+| :large_blue_circle: | POSTURE | Mindset/attitude |
+| :thought_balloon: | FOCUS | Concentration mentale |
+| :warning: | WARNING | Attention particuliere |
+| :pause_button: | BREAKPOINT | Point d'arret utilisateur |
+
+See [references/apex-style-guide.md](references/apex-style-guide.md) for complete style guide.
+
+---
 
 ## Modes
 
@@ -28,6 +83,90 @@ Create production-ready skills for EPCI v6.0 following best practices.
 |------|------|-----------------|----------------|
 | (none) | User skill | `skills/{name}/SKILL.md` | `true` |
 | `--core` | Core skill | `skills/core/{name}/SKILL.md` | `false` |
+| `--workflow` | Skill with steps | `skills/{name}/` + `steps/` | `true` |
+
+---
+
+## Mode Workflow (--workflow)
+
+Genere une structure avec steps separes pour les skills multi-phases.
+
+### Quand Utiliser
+
+- :white_check_mark: Workflows avec 3+ phases distinctes
+- :white_check_mark: Besoin de branches conditionnelles
+- :white_check_mark: Breakpoints a chaque phase
+- :red_circle: NEVER pour skills simples (< 3 phases)
+
+### Structure Generee
+
+```
+skills/{name}/
+├── SKILL.md                    # Router vers steps/
+├── steps/
+│   ├── step-00-init.md         # Initialisation
+│   ├── step-01-{phase1}.md     # Phase 1
+│   ├── step-02-{phase2}.md     # Phase 2
+│   ├── step-0Xb-{variant}.md   # Branche conditionnelle (optionnel)
+│   └── step-99-finish.md       # Finalisation
+└── references/
+    └── {domain}.md
+```
+
+### SKILL.md Router Template
+
+Le SKILL.md principal agit comme router :
+
+```markdown
+## MANDATORY EXECUTION RULES (READ FIRST):
+
+- :red_circle: NEVER execute steps out of order
+- :white_check_mark: ALWAYS start with step-00-init.md
+- :white_check_mark: ALWAYS follow next_step from each step
+
+## EXECUTION PROTOCOLS:
+
+1. **Load** step-00-init.md
+2. **Execute** current step protocols
+3. **Evaluate** next step trigger
+4. **Proceed** to next_step or conditional_next
+
+## CONTEXT BOUNDARIES:
+
+- IN scope: {skill scope}
+- OUT scope: {exclusions}
+```
+
+### Step Template
+
+Chaque step suit ce format :
+
+```markdown
+---
+name: step-XX-{name}
+description: {short description}
+prev_step: steps/step-XX-{prev}.md
+next_step: steps/step-XX-{next}.md
+conditional_next:
+  - condition: "{expression}"
+    step: steps/step-XXb-{variant}.md
+---
+
+# Step XX: {Name}
+
+## MANDATORY EXECUTION RULES (READ FIRST):
+
+- :red_circle: NEVER {rule}
+- :white_check_mark: ALWAYS {rule}
+
+## EXECUTION PROTOCOLS:
+
+1. **{Verb}** {action}
+
+## NEXT STEP TRIGGER:
+
+When {condition}, proceed to `next_step`.
+```
 
 ---
 
@@ -358,11 +497,12 @@ Show user:
 
 ## Reference Files
 
+- [apex-style-guide.md](references/apex-style-guide.md) — APEX style formatting rules
 - [best-practices-synthesis.md](references/best-practices-synthesis.md) — Core best practices
 - [checklist-validation.md](references/checklist-validation.md) — 12-point validation
 - [description-formulas.md](references/description-formulas.md) — Description patterns
 - [yaml-rules.md](references/yaml-rules.md) — Frontmatter syntax
-- [skill-templates.md](references/skill-templates.md) — User and core templates
+- [skill-templates.md](references/skill-templates.md) — User, core, and workflow templates
 
 ---
 

@@ -1,10 +1,12 @@
 # Skill Templates
 
-Ready-to-use templates for creating user and core skills.
+Ready-to-use templates for creating user, core, and workflow skills in APEX style.
 
-## User Skill Templates
+---
 
-### Template: Simple User Skill
+## APEX Style Templates
+
+### Template: Simple User Skill (APEX)
 
 For single-purpose skills under 200 lines.
 
@@ -33,23 +35,43 @@ allowed-tools: {TOOLS}
 /{skill-name} {example-arg}
 ```
 
-## Workflow
+## MANDATORY EXECUTION RULES (READ FIRST):
 
-1. **{Step 1 verb}** {description}
-2. **{Step 2 verb}** {description}
-3. **{Step 3 verb}** {description}
+- :red_circle: NEVER {critical prohibition 1}
+- :red_circle: NEVER {critical prohibition 2}
+- :white_check_mark: ALWAYS {critical requirement 1}
+- :white_check_mark: ALWAYS {critical requirement 2}
+- :large_blue_circle: {posture directive}
+- :thought_balloon: {focus directive}
 
-## Examples
+## EXECUTION PROTOCOLS:
 
-### Input
-```
-/{skill-name} {example}
-```
+1. **{Verb 1}** {description}
+2. **{Verb 2}** {description}
+3. **{Verb 3}** {description}
+4. **{Verb 4}** {description}
 
-### Output
-```
-{Expected output format}
-```
+## CONTEXT BOUNDARIES:
+
+- IN scope: {what's included}
+- OUT scope: {what's excluded}
+
+## OUTPUT FORMAT:
+
+{Expected output specification}
+
+## BREAKPOINT (if user decision needed):
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ :pause_button: BREAKPOINT — {Title}                                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ {Context summary}                                                   │
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  1. {Option 1} (Recommended)                                   │ │
+│ │  2. {Option 2}                                                 │ │
+│ │  3. {Option 3}                                                 │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
 
 ## Limitations
 
@@ -60,9 +82,9 @@ This skill does NOT:
 
 ---
 
-### Template: Standard User Skill
+### Template: Standard User Skill (APEX)
 
-For multi-step skills with references.
+For multi-step skills with references and phases.
 
 ```yaml
 ---
@@ -96,17 +118,32 @@ allowed-tools: {TOOLS}
 | Default | {default behavior} | - |
 | {Mode 2} | {description} | `--{flag}` |
 
-## Workflow
+## MANDATORY EXECUTION RULES (READ FIRST):
+
+- :red_circle: NEVER {critical prohibition 1}
+- :red_circle: NEVER {critical prohibition 2}
+- :white_check_mark: ALWAYS {critical requirement 1}
+- :white_check_mark: ALWAYS {critical requirement 2}
+- :no_entry: FORBIDDEN {hard block}
+- :large_blue_circle: {posture directive}
+- :thought_balloon: {focus directive}
+
+## EXECUTION PROTOCOLS:
 
 ### Phase 1: {Phase Name}
 
-1. **{Step}** {description}
-2. **{Step}** {description}
+1. **{Verb}** {description}
+2. **{Verb}** {description}
 
 ### Phase 2: {Phase Name}
 
-1. **{Step}** {description}
-2. **{Step}** {description}
+1. **{Verb}** {description}
+2. **{Verb}** {description}
+
+## CONTEXT BOUNDARIES:
+
+- IN scope: {what's included}
+- OUT scope: {what's excluded}
 
 ## Decision Tree
 
@@ -119,19 +156,9 @@ ELSE:
   → {default action}
 ```
 
-## Examples
+## OUTPUT FORMAT:
 
-### Example 1: {Scenario}
-
-**Input:**
-```
-/{skill-name} {args}
-```
-
-**Output:**
-```
-{result}
-```
+{Expected output specification}
 
 ## Reference Files
 
@@ -155,74 +182,280 @@ This skill does NOT:
 
 ---
 
-### Template: Interactive User Skill
+## Workflow Templates (--workflow)
 
-For skills with user prompts.
+### Template: Workflow SKILL.md (Router)
+
+Entry point for workflow skills that routes to steps.
 
 ```yaml
 ---
 name: {skill-name}
 description: >-
-  {INTERACTIVE DESCRIPTION}.
-  Guides through {PROCESS} with questions.
-  Use when: {SCENARIO}.
-  Triggers: {KEYWORDS}.
+  {ACTION VERB}s {OBJECT} through multi-phase workflow.
+  {ADDITIONAL CAPABILITY}.
+  Use when: {SCENARIO 1}, {SCENARIO 2}.
+  Triggers: {KEYWORD 1}, {KEYWORD 2}, {KEYWORD 3}.
+  Not for: {EXCLUSION}.
 user-invocable: true
-allowed-tools: Read, Write, AskUserQuestion
+disable-model-invocation: false
+argument-hint: "[{param}]"
+allowed-tools: {TOOLS}
 ---
 
 # {Skill Name}
 
-Interactive skill that guides you through {process}.
+{One-line description.}
 
-## Workflow
-
-### Step 1: Gather Information
-
-Ask user:
-1. {Question 1}
-2. {Question 2}
-
-### Step 2: Process
-
-Based on answers:
-- If {condition} → {action}
-- If {condition} → {action}
-
-### Step 3: Generate Output
-
-Create {output} based on collected information.
-
-## Breakpoints
+## Quick Start
 
 ```
-┌─────────────────────────────────────────┐
-│ [{TYPE}] {Title}                        │
-├─────────────────────────────────────────┤
-│ {Content}                               │
-├─────────────────────────────────────────┤
-│ [A] {Option 1}  [B] {Option 2}          │
-└─────────────────────────────────────────┘
+/{skill-name} {example}
 ```
 
-## Example Session
+## MANDATORY EXECUTION RULES (READ FIRST):
 
-**User:** `/{skill-name}`
+- :red_circle: NEVER execute steps out of order
+- :red_circle: NEVER skip breakpoints
+- :white_check_mark: ALWAYS start with step-00-init.md
+- :white_check_mark: ALWAYS follow next_step from each step
+- :white_check_mark: ALWAYS complete current step before proceeding
 
-**Skill:** "What is your target?"
-- [A] Option 1
-- [B] Option 2
+## EXECUTION PROTOCOLS:
 
-**User selects:** A
+1. **Load** step-00-init.md
+2. **Execute** current step protocols completely
+3. **Present** breakpoint if specified in step
+4. **Evaluate** next step trigger conditions
+5. **Proceed** to next_step or conditional_next
 
-**Skill:** Generates output...
+## CONTEXT BOUNDARIES:
+
+- IN scope: {what's included}
+- OUT scope: {what's excluded}
+
+## Workflow Overview
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    {SKILL NAME} WORKFLOW                          │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  Step 00: INIT                                                    │
+│  └─ {init description}                                            │
+│     └─ Conditional: {condition} → step-00b                        │
+│                                                                   │
+│  Step 01: {PHASE 1}                                               │
+│  └─ {phase 1 description}                                         │
+│                                                                   │
+│  Step 02: {PHASE 2}                                               │
+│  └─ {phase 2 description}                                         │
+│                                                                   │
+│  Step 99: FINISH                                                  │
+│  └─ {finalization}                                                │
+│                                                                   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+## Steps
+
+| Step | Name | Description |
+|------|------|-------------|
+| 00 | init | {description} |
+| 00b | {variant} | {conditional description} |
+| 01 | {phase1} | {description} |
+| 02 | {phase2} | {description} |
+| 99 | finish | {description} |
+
+## Reference Files
+
+- [steps/step-00-init.md](steps/step-00-init.md) — Initialization
+- [steps/step-01-{phase1}.md](steps/step-01-{phase1}.md) — Phase 1
+- [steps/step-02-{phase2}.md](steps/step-02-{phase2}.md) — Phase 2
+- [steps/step-99-finish.md](steps/step-99-finish.md) — Finalization
+
+## Limitations
+
+This skill does NOT:
+- {Limitation 1}
+- {Limitation 2}
+```
+
+---
+
+### Template: Step File
+
+Individual step file for workflow skills.
+
+```yaml
+---
+name: step-XX-{name}
+description: {short description}
+prev_step: steps/step-XX-{prev}.md
+next_step: steps/step-XX-{next}.md
+conditional_next:
+  - condition: "{expression}"
+    step: steps/step-XXb-{variant}.md
+---
+
+# Step XX: {Name}
+
+## MANDATORY EXECUTION RULES (READ FIRST):
+
+- :red_circle: NEVER {critical prohibition for this step}
+- :white_check_mark: ALWAYS {critical requirement for this step}
+- :large_blue_circle: {posture for this step}
+- :thought_balloon: {focus for this step}
+
+## EXECUTION PROTOCOLS:
+
+1. **{Verb}** {action description}
+2. **{Verb}** {action description}
+3. **{Verb}** {action description}
+
+## CONTEXT BOUNDARIES:
+
+- This step expects: {input requirements}
+- This step produces: {output}
+
+## OUTPUT FORMAT:
+
+{Expected output from this step}
+
+## BREAKPOINT (if applicable):
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ :pause_button: BREAKPOINT — {Title}                                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ {Context summary from this step}                                    │
+│                                                                     │
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  1. {Option 1} (Recommended)                                   │ │
+│ │  2. {Option 2}                                                 │ │
+│ │  3. {Option 3}                                                 │ │
+│ │  4. [Free response]                                            │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+
+## NEXT STEP TRIGGER:
+
+When {condition is met}, proceed to `next_step`.
+
+If {alternative condition}, proceed to `conditional_next[0].step`.
+```
+
+---
+
+### Template: Init Step (step-00-init.md)
+
+```yaml
+---
+name: step-00-init
+description: Initialize workflow and detect context
+prev_step: null
+next_step: steps/step-01-{phase1}.md
+conditional_next:
+  - condition: "complexity == TINY or complexity == SMALL"
+    step: steps/step-00b-{quick-path}.md
+---
+
+# Step 00: Initialization
+
+## MANDATORY EXECUTION RULES (READ FIRST):
+
+- :red_circle: NEVER skip context detection
+- :red_circle: NEVER proceed without valid input
+- :white_check_mark: ALWAYS validate input parameters
+- :white_check_mark: ALWAYS detect complexity level
+
+## EXECUTION PROTOCOLS:
+
+1. **Parse** input arguments
+2. **Validate** required parameters present
+3. **Detect** complexity/context
+4. **Route** to appropriate next step
+
+## CONTEXT BOUNDARIES:
+
+- This step expects: User input, arguments
+- This step produces: Validated context, complexity level
+
+## OUTPUT FORMAT:
+
+```
+Context:
+- Input: {parsed input}
+- Complexity: {TINY|SMALL|STANDARD|LARGE}
+- Route: {next step path}
+```
+
+## NEXT STEP TRIGGER:
+
+When context is validated, proceed to `next_step`.
+
+If complexity is TINY or SMALL, proceed to quick path.
+```
+
+---
+
+### Template: Finish Step (step-99-finish.md)
+
+```yaml
+---
+name: step-99-finish
+description: Finalize workflow and generate summary
+prev_step: steps/step-XX-{last-phase}.md
+next_step: null
+---
+
+# Step 99: Finish
+
+## MANDATORY EXECUTION RULES (READ FIRST):
+
+- :red_circle: NEVER skip final validation
+- :white_check_mark: ALWAYS verify all outputs generated
+- :white_check_mark: ALWAYS present completion summary
+
+## EXECUTION PROTOCOLS:
+
+1. **Verify** all expected outputs exist
+2. **Validate** output quality/completeness
+3. **Generate** completion summary
+4. **Present** next steps (if any)
+
+## CONTEXT BOUNDARIES:
+
+- This step expects: All previous step outputs
+- This step produces: Final summary, completion status
+
+## OUTPUT FORMAT:
+
+```
+## Workflow Complete
+
+:white_check_mark: {Output 1 description}
+:white_check_mark: {Output 2 description}
+:white_check_mark: {Output 3 description}
+
+### Summary
+- {Key result 1}
+- {Key result 2}
+
+### Next Steps
+1. {Recommended action}
+2. {Optional action}
+```
+
+## NEXT STEP TRIGGER:
+
+Workflow complete. No next step.
 ```
 
 ---
 
 ## Core Skill Templates
 
-### Template: Core Component
+### Template: Core Component (APEX)
 
 For internal skills (user-invocable: false).
 
@@ -242,9 +475,11 @@ allowed-tools: {TOOLS}
 
 Internal component for {purpose}.
 
-## Overview
+## MANDATORY EXECUTION RULES (READ FIRST):
 
-{2-3 sentences explaining the component's role}
+- :red_circle: NEVER expose internal state to user
+- :white_check_mark: ALWAYS validate inputs
+- :white_check_mark: ALWAYS return structured output
 
 ## API
 
@@ -252,34 +487,26 @@ Internal component for {purpose}.
 |----------|-------------|-------|--------|
 | `{function1}()` | {description} | {input} | {output} |
 | `{function2}()` | {description} | {input} | {output} |
-| `{function3}()` | {description} | {input} | {output} |
 
-## Usage
+## EXECUTION PROTOCOLS:
 
-Invoked automatically by skills when {conditions}:
+1. **Receive** input from calling skill
+2. **Validate** input structure
+3. **Process** according to function
+4. **Return** structured output
 
-```
-# Example invocation
-{component}.{function}({params})
-# Returns: {result}
-```
+## CONTEXT BOUNDARIES:
+
+- IN scope: {component responsibilities}
+- OUT scope: {what it doesn't handle}
 
 ## Data Schema
 
 ```json
 {
   "field1": "type",
-  "field2": "type",
-  "field3": {
-    "nested": "type"
-  }
+  "field2": "type"
 }
-```
-
-## Implementation
-
-```
-{Step-by-step behavior description}
 ```
 
 ## Limitations
@@ -287,66 +514,6 @@ Invoked automatically by skills when {conditions}:
 This component does NOT:
 - {Limitation 1}
 - {Limitation 2}
-```
-
----
-
-### Template: State Component
-
-For components managing persistent state.
-
-```yaml
----
-name: {state-component}
-description: >-
-  Manages {STATE TYPE} across sessions for EPCI workflows.
-  Use when: {state operations needed}.
-  Internal component for EPCI v6.0.
-user-invocable: false
-disable-model-invocation: false
-allowed-tools: Read, Write, Glob
----
-
-# {State Component}
-
-Manages {state type} persistence.
-
-## Storage Location
-
-```
-.epci/{location}/
-├── {file1}.json
-└── {file2}.json
-```
-
-## API
-
-| Function | Description | Returns |
-|----------|-------------|---------|
-| `init()` | Initialize state | State object |
-| `load(id)` | Load existing | State or null |
-| `save(state)` | Persist | Boolean |
-| `update(partial)` | Partial update | Updated state |
-
-## Schema
-
-```json
-{
-  "$schema": "...",
-  "id": "string",
-  "created_at": "ISO8601",
-  "updated_at": "ISO8601",
-  "data": {}
-}
-```
-
-## Usage
-
-```
-state = component.init()
-state = component.load("id")
-component.save(state)
-```
 ```
 
 ---
@@ -368,18 +535,18 @@ skills/{name}/
     └── examples.md
 ```
 
-### Advanced Structure
+### Workflow Structure
 ```
 skills/{name}/
-├── SKILL.md
-├── references/
-│   ├── detailed-guide.md
-│   ├── checklist.md
-│   └── examples.md
-├── templates/
-│   └── output.md
-└── scripts/
-    └── helper.py
+├── SKILL.md                    # Router
+├── steps/
+│   ├── step-00-init.md
+│   ├── step-00b-quick.md       # Optional conditional
+│   ├── step-01-{phase1}.md
+│   ├── step-02-{phase2}.md
+│   └── step-99-finish.md
+└── references/
+    └── {domain}.md
 ```
 
 ### Core Structure
@@ -394,7 +561,12 @@ skills/core/{name}/
 
 - [ ] Choose appropriate template for skill type
 - [ ] Replace all `{placeholders}`
-- [ ] Verify description follows formula
+- [ ] Verify MANDATORY EXECUTION RULES section present
+- [ ] Verify EXECUTION PROTOCOLS are numbered
+- [ ] Verify CONTEXT BOUNDARIES defined
+- [ ] Max 5 :red_circle: NEVER rules
+- [ ] Max 5 :white_check_mark: ALWAYS rules
+- [ ] Description follows formula (< 1024 chars)
 - [ ] Add specific examples
 - [ ] Define clear limitations
 - [ ] Remove unused sections

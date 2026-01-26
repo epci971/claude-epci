@@ -485,3 +485,45 @@ feat(ralph): complete Phase 4 Ralph system
 2. **Git tracking**: Commiter les 4 skills non trackés en Phase 1
 3. **Tests manuels**: Tester chaque skill après complétion
 4. **Documentation**: Mettre à jour CLAUDE.md si API change
+
+---
+
+## Addendum: APEX Style Integration (v6.0.3)
+
+> **Date**: 2026-01-26
+> **Status**: Implemented
+
+### Overview
+
+Le style APEX a ete integre dans EPCI v6 pour un format plus directif et scannable.
+
+### Changes Implemented
+
+| Component | Change | Files |
+|-----------|--------|-------|
+| `/factory` | Ajout flag `--workflow`, regles APEX | `SKILL.md`, `references/apex-style-guide.md`, `references/skill-templates.md` |
+| `/implement` | Refonte avec structure steps | `SKILL.md`, `steps/*.md`, `references/*.md` |
+| Documentation | Guide migration APEX | `docs/migration/50-60/apex-style-integration.md` |
+
+### New Files Created
+
+```
+src/skills/factory/references/apex-style-guide.md
+src/skills/implement/steps/step-00-init.md
+src/skills/implement/steps/step-00b-turbo.md
+src/skills/implement/steps/step-01-explore.md
+src/skills/implement/steps/step-02-plan.md
+src/skills/implement/steps/step-03-code.md
+src/skills/implement/steps/step-04-review.md
+src/skills/implement/steps/step-04b-security.md
+src/skills/implement/steps/step-04c-qa.md
+src/skills/implement/steps/step-05-document.md
+src/skills/implement/steps/step-06-finish.md
+src/skills/implement/references/tdd-rules.md
+src/skills/implement/references/review-checklists.md
+docs/migration/50-60/apex-style-integration.md
+```
+
+### Reference
+
+See [apex-style-integration.md](apex-style-integration.md) for complete documentation.
