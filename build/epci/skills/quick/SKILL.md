@@ -6,7 +6,6 @@ description: >
   Supports plan-first workflow via @plan-path to skip E-P phases.
   Trigger words: quick fix, small change, tiny feature, fast implementation.
 user-invocable: true
-disable-model-invocation: false
 argument-hint: "<task> | @<plan-path>"
 ---
 

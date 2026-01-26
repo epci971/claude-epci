@@ -8,7 +8,6 @@ description: >-
   Triggers: implement feature, build, develop, create feature.
   Not for: quick fixes (use /quick), debugging (use /debug), refactoring (use /refactor).
 user-invocable: true
-disable-model-invocation: false
 argument-hint: "<feature-slug> [@spec-path | @plan-path]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion, Task
 ---

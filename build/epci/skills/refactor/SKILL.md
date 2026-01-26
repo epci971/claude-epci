@@ -5,7 +5,6 @@ description: >
   Supports pattern application, module extraction, and architectural changes.
   Trigger words: refactor, restructure, extract, reorganize code.
 user-invocable: true
-disable-model-invocation: false
 argument-hint: "<target> [--pattern <pattern>]"
 ---
 

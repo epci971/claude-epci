@@ -8,7 +8,6 @@ description: >-
   Trigger words: brainstorm, explore idea, clarify requirements, vague concept, help me think through.
   Not for: simple Q&A, direct task execution, clear specifications.
 user-invocable: true
-disable-model-invocation: false
 argument-hint: "<idea> [--quick|--continue <id>|--template <type>]"
 allowed-tools: Read, Write, Glob, Grep, Task, AskUserQuestion
 ---

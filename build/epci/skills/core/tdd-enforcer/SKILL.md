@@ -7,7 +7,6 @@ description: >-
   validating TDD compliance, or running test verification cycles.
   Internal component for EPCI v6.0.
 user-invocable: false
-disable-model-invocation: false
 allowed-tools: Bash, Read
 ---
 

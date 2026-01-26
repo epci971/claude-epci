@@ -5,7 +5,6 @@ description: >
   Routes to appropriate complexity level (trivial, quick, complex).
   Trigger words: debug, fix bug, investigate error, troubleshoot.
 user-invocable: true
-disable-model-invocation: false
 argument-hint: "<bug description or error>"
 ---
 

@@ -5,7 +5,6 @@ description: >
   Generates Ralph-compatible task breakdowns for automated execution.
   Trigger words: write spec, create PRD, document feature, specification.
 user-invocable: true
-disable-model-invocation: false
 argument-hint: "<requirement or @brief-path>"
 ---
 

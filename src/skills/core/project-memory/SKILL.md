@@ -7,7 +7,6 @@ description: >-
   calibrating estimates, detecting code patterns, or accessing user preferences.
   Internal component for EPCI v6.0.
 user-invocable: false
-disable-model-invocation: false
 allowed-tools: Read, Write, Glob
 ---
 

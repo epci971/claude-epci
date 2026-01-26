@@ -7,7 +7,6 @@ description: >-
   estimating effort, or validating task scope.
   Internal component for EPCI v6.0.
 user-invocable: false
-disable-model-invocation: false
 allowed-tools: Read, Glob, Grep
 ---
 

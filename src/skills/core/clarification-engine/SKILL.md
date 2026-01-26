@@ -7,7 +7,6 @@ description: >-
   generating targeted questions, or cleaning up voice input.
   Internal component for EPCI v6.0.
 user-invocable: false
-disable-model-invocation: false
 allowed-tools: AskUserQuestion
 ---
 

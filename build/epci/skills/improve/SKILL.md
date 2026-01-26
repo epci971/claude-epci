@@ -5,7 +5,6 @@ description: >
   Focuses on optimization without changing functionality.
   Trigger words: improve, optimize, enhance performance, better code.
 user-invocable: true
-disable-model-invocation: false
 argument-hint: "<target> [--focus <area>]"
 ---
 

@@ -9,7 +9,6 @@ description: >-
   diagnostic choices, presenting EMS status. Internal component for EPCI skills.
   Not for: direct user invocation, simple text output without interaction.
 user-invocable: false
-disable-model-invocation: false
 allowed-tools: Read, AskUserQuestion
 ---
 

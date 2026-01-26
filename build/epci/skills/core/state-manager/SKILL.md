@@ -8,7 +8,6 @@ description: >-
   tracking multi-session implementations, or managing brainstorm/debug sessions.
   Internal component for EPCI v6.0.
 user-invocable: false
-disable-model-invocation: false
 allowed-tools: Read, Write, Glob
 ---
 
