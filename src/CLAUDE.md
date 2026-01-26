@@ -62,7 +62,7 @@ Claude triggers these automatically based on context.
 ```
 src/
 ├── .claude-plugin/
-│   └── plugin.json              # Manifest with 14 skills (8 user + 6 core)
+│   └── plugin.json              # Manifest with 19 skills (8 user + 6 core + 5 stack)
 ├── CLAUDE.md                    # This file
 │
 ├── skills/                      # All skills
@@ -87,19 +87,41 @@ src/
 │   │   ├── SKILL.md
 │   │   └── references/
 │   │
-│   └── core/                    # Internal core skills
-│       ├── state-manager/
-│       │   └── SKILL.md
-│       ├── breakpoint-system/
-│       │   └── SKILL.md
-│       ├── complexity-calculator/
-│       │   └── SKILL.md
-│       ├── clarification-engine/
-│       │   └── SKILL.md
-│       ├── tdd-enforcer/
-│       │   └── SKILL.md
-│       └── project-memory/
-│           └── SKILL.md
+│   ├── core/                    # Internal core skills
+│   │   ├── state-manager/
+│   │   ├── breakpoint-system/
+│   │   ├── complexity-calculator/
+│   │   ├── clarification-engine/
+│   │   ├── tdd-enforcer/
+│   │   └── project-memory/
+│   │
+│   └── stack/                   # Technology-specific skills
+│       ├── python-django/
+│       │   ├── SKILL.md
+│       │   ├── references/
+│       │   └── rules-templates/
+│       ├── javascript-react/
+│       ├── java-springboot/
+│       ├── php-symfony/
+│       └── frontend-editor/
+│
+├── agents/                      # Specialized subagents (16)
+│   ├── plan-validator.md
+│   ├── code-reviewer.md
+│   ├── security-auditor.md
+│   ├── qa-reviewer.md
+│   ├── decompose-validator.md
+│   ├── doc-generator.md
+│   ├── implementer.md
+│   ├── planner.md
+│   ├── expert-panel.md
+│   ├── party-orchestrator.md
+│   ├── ems-evaluator.md
+│   ├── technique-advisor.md
+│   ├── clarifier.md
+│   ├── rules-validator.md
+│   ├── rule-clarifier.md
+│   └── statusline-setup.md
 │
 ├── schemas/                     # JSON schemas
 │   ├── prd-v2.json
@@ -192,3 +214,43 @@ v5 content archived in `archive/v5/`. Key changes:
 - Shared components → Core skills (skills/core/)
 
 See `docs/migration/` for detailed migration guides.
+
+---
+
+## 9. Stack Skills (5)
+
+Technology-specific patterns and conventions. Located in `src/skills/stack/`.
+
+| Stack | Target | Auto-detect |
+|-------|--------|-------------|
+| `python-django` | Django/DRF backend | `manage.py`, django in requirements |
+| `javascript-react` | React islands/SPA | react in package.json, `.tsx` files |
+| `java-springboot` | Spring Boot backend | spring-boot in pom.xml/build.gradle |
+| `php-symfony` | Symfony 7/8 backend | symfony in composer.json, `bin/console` |
+| `frontend-editor` | Tailwind/a11y styling | `tailwind.config.*` |
+
+Each stack skill provides:
+- `references/` — Architecture, testing, security patterns
+- `rules-templates/` — Pre-built .claude/rules/ templates
+
+---
+
+## 10. Agents (16)
+
+Specialized subagents for specific tasks. Located in `src/agents/`.
+
+| Category | Agents | Purpose |
+|----------|--------|---------|
+| **Validators** | plan-validator, code-reviewer, rules-validator, decompose-validator | Quality gates |
+| **Reviewers** | security-auditor, qa-reviewer | Specialized review |
+| **Executors** | implementer, planner, doc-generator | Task execution |
+| **Brainstorm** | expert-panel, party-orchestrator, ems-evaluator, technique-advisor, clarifier | Exploration |
+| **Utilities** | rule-clarifier, statusline-setup | Support |
+
+### Agent Model Mapping
+
+| Model | Agents |
+|-------|--------|
+| **Opus** | plan-validator, code-reviewer, security-auditor, decompose-validator, rules-validator |
+| **Sonnet** | qa-reviewer, doc-generator, implementer, planner, expert-panel, party-orchestrator |
+| **Haiku** | ems-evaluator, technique-advisor, clarifier, rule-clarifier, statusline-setup |

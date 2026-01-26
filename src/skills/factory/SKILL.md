@@ -288,6 +288,45 @@ Choose allowed-tools based on skill needs:
 | Command execution | `Bash` |
 | Exploration | `Read, Glob, Grep` + `agent: Explore` |
 
+### Recommendations (Auto-detected)
+
+Factory analyzes project context to recommend relevant components:
+
+1. **Stack Skills** — Based on detected config files (package.json, composer.json, etc.)
+2. **Agents** — Based on skill type and domain keywords
+
+#### Detection Process
+
+```
+1. SCAN project root for config files
+2. IDENTIFY stack(s) from detection rules
+3. ANALYZE skill purpose for domain keywords
+4. RECOMMEND relevant agents and stacks
+```
+
+#### Output Block
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ [RECOMMENDATIONS] Context-Aware Suggestions                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│ DETECTED STACK:                                                  │
+│ • php-symfony (composer.json + symfony/*)                        │
+│ • frontend-editor (tailwind.config.ts)                           │
+│                                                                  │
+│ SUGGESTED AGENTS for this skill type:                            │
+│ • code-reviewer (skill generates code)                           │
+│ • security-auditor (auth domain detected)                        │
+│                                                                  │
+│ These components will be documented in the generated skill.      │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+See [references/stacks-catalog.md](references/stacks-catalog.md) for stack detection rules.
+See [references/agents-catalog.md](references/agents-catalog.md) for agent recommendation logic.
+
 ---
 
 ## Phase 3: Description Engineering
@@ -503,6 +542,8 @@ Show user:
 - [description-formulas.md](references/description-formulas.md) — Description patterns
 - [yaml-rules.md](references/yaml-rules.md) — Frontmatter syntax
 - [skill-templates.md](references/skill-templates.md) — User, core, and workflow templates
+- [agents-catalog.md](references/agents-catalog.md) — Agent recommendation logic
+- [stacks-catalog.md](references/stacks-catalog.md) — Stack auto-detection rules
 
 ---
 
