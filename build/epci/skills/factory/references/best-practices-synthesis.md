@@ -102,7 +102,46 @@ description: >-
 | No examples | User confusion | Add input/output |
 | Generic names | Collisions | Use specific names |
 
-## 8. Quality Checklist (Quick)
+## 8. Core Skills Integration
+
+EPCI v6 provides 6 core skills for composable functionality. Document usage in generated skills.
+
+### Core Skills Catalog
+
+| Core Skill | Purpose | API Functions |
+|------------|---------|---------------|
+| `breakpoint-system` | Interactive decision points | `present()`, `wait_approval()` |
+| `complexity-calculator` | Scope estimation | `calculate()`, `route()` |
+| `clarification-engine` | Smart questions | `analyze_gaps()`, `generate_questions()` |
+| `state-manager` | Feature state tracking | `init()`, `update()`, `get()` |
+| `tdd-enforcer` | TDD workflow | `start_cycle()`, `validate_phase()` |
+| `project-memory` | Project context | `recall()`, `store_feature()` |
+
+### When to Use Core Skills
+
+| Skill Type | Required | Recommended | Optional |
+|------------|----------|-------------|----------|
+| Exploration | breakpoint | clarification | memory |
+| Specification | breakpoint, complexity | clarification | memory |
+| Implementation | breakpoint, state, tdd | complexity | memory |
+| Transformation | breakpoint, state | — | memory |
+
+### Reference Syntax
+
+In generated skills, reference core skills:
+
+```markdown
+## Core Skills Integration
+
+| Core Skill | Purpose in This Skill |
+|------------|----------------------|
+| `@skill:breakpoint-system` | Phase transitions |
+| `@skill:state-manager` | Progress tracking |
+```
+
+---
+
+## 9. Quality Checklist (Quick)
 
 Before committing:
 - [ ] Name unique and kebab-case
@@ -110,4 +149,5 @@ Before committing:
 - [ ] SKILL.md < 500 lines
 - [ ] All references linked
 - [ ] Examples included
+- [ ] Core skills documented (if used)
 - [ ] Tested with `/skill-name`
