@@ -9,7 +9,7 @@ description: >-
   Triggers: create skill, new skill, factory, generate component.
   Not for: one-time prompts, volatile procedures, runtime configuration.
 user-invocable: true
-argument-hint: "[skill-name] [--core] [--simple]"
+argument-hint: "[skill-name] [--core] [--simple] [--audit]"
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 ---
 
@@ -23,6 +23,7 @@ Create production-ready skills for EPCI v6.0 following best practices.
 /factory auth-handler              # User skill with steps (default)
 /factory state-manager --core      # Internal core skill (no steps)
 /factory tiny-helper --simple      # Simple skill (no steps)
+/factory brainstorm --audit        # Audit existing skill for EPCI compliance
 ```
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -87,6 +88,7 @@ Create production-ready skills for EPCI v6.0 following best practices.
 |------|---------|-------------|
 | `--core` | off | Core skill (user-invocable: false, no steps) |
 | `--simple` | off | Simple skill (no steps/, for < 3 phases) |
+| `--audit` | off | Audit existing skill for EPCI compliance |
 
 **Behavior by Mode:**
 
@@ -95,6 +97,14 @@ Create production-ready skills for EPCI v6.0 following best practices.
 | Default | Yes | `skills/{name}/` | true |
 | `--simple` | No | `skills/{name}/` | true |
 | `--core` | No | `skills/core/{name}/` | false |
+| `--audit` | N/A | Validates existing skill | N/A |
+
+**Audit Mode** validates an existing skill against EPCI best practices:
+- Phase 1: Structure (12-point checklist)
+- Phase 2: Breakpoint compliance
+- Phase 3: Core skills usage
+- Phase 4: Stack skills detection
+- Phase 5: Step chain validation
 
 ## Steps
 

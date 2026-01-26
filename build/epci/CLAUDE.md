@@ -1,6 +1,6 @@
-# EPCI Plugin v6.0
+# EPCI Plugin v6.2.1
 
-> **Version**: 6.0.0 | **Date**: January 2026
+> **Version**: 6.2.1 | **Date**: January 2026
 
 ---
 
