@@ -2,12 +2,14 @@
 name: factory
 description: >-
   Creates production-ready Claude skills for EPCI v6.0 through guided 6-phase workflow.
-  Generates complete skill packages: SKILL.md, references/, templates/.
+  Generates complete skill packages: SKILL.md, steps/, references/.
   Supports user skills (user-invocable: true) and internal core skills (user-invocable: false).
-  Use when creating new skill, migrating prompts, improving existing skills, or generating core components.
-  Not for one-time prompts, volatile procedures, or runtime configuration.
+  Default: generates skills with steps/ for multi-phase workflows.
+  Use when: creating new skill, migrating prompts, improving existing skills, generating core components.
+  Triggers: create skill, new skill, factory, generate component.
+  Not for: one-time prompts, volatile procedures, runtime configuration.
 user-invocable: true
-argument-hint: "[skill-name] [--core] [--workflow]"
+argument-hint: "[skill-name] [--core] [--simple]"
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 ---
 
@@ -18,157 +20,35 @@ Create production-ready skills for EPCI v6.0 following best practices.
 ## Quick Start
 
 ```
-/factory auth-handler              # Create user skill
-/factory state-manager --core      # Create internal core skill
-/factory implement-v2 --workflow   # Create skill with steps/ structure
+/factory auth-handler              # User skill with steps (default)
+/factory state-manager --core      # Internal core skill (no steps)
+/factory tiny-helper --simple      # Simple skill (no steps)
 ```
 
----
-
-## MANDATORY WRITING RULES — Style APEX
-
-### Format Obligatoire
-
-Tous les skills generes DOIVENT utiliser le format APEX :
-
-- :red_circle: NEVER ecrire de longs paragraphes explicatifs
-- :red_circle: NEVER melanger regles et workflow dans une meme section
-- :white_check_mark: ALWAYS commencer par "MANDATORY EXECUTION RULES (READ FIRST):"
-- :white_check_mark: ALWAYS utiliser les icones standardisees
-- :white_check_mark: ALWAYS separer RULES → PROTOCOLS → BOUNDARIES
-- :no_entry: FORBIDDEN prose documentaire (style ancien)
-
-### Structure Obligatoire de Chaque Skill/Step
-
-1. **MANDATORY EXECUTION RULES (READ FIRST):**
-   - :red_circle: NEVER rules (max 5)
-   - :white_check_mark: ALWAYS rules (max 5)
-   - :no_entry: FORBIDDEN rules (if applicable)
-   - :large_blue_circle: POSTURE rules (if applicable)
-   - :thought_balloon: FOCUS rules (if applicable)
-
-2. **EXECUTION PROTOCOLS:**
-   - Liste numerotee des actions
-   - Format: `1. **{Verb}** {description}`
-
-3. **CONTEXT BOUNDARIES:**
-   - IN scope: ce qui est inclus
-   - OUT scope: ce qui est exclu
-
-4. **OUTPUT FORMAT:** (si applicable)
-
-5. **BREAKPOINT:** (si applicable)
-
-6. **NEXT STEP TRIGGER:** (si workflow avec steps)
-
-### Table des Icones
-
-| Icone | Keyword | Usage |
-|-------|---------|-------|
-| :red_circle: | NEVER | Actions interdites critiques |
-| :white_check_mark: | ALWAYS | Actions obligatoires |
-| :no_entry: | FORBIDDEN | Blocage dur |
-| :large_blue_circle: | POSTURE | Mindset/attitude |
-| :thought_balloon: | FOCUS | Concentration mentale |
-| :warning: | WARNING | Attention particuliere |
-| :pause_button: | BREAKPOINT | Point d'arret utilisateur |
-
-See [references/apex-style-guide.md](references/apex-style-guide.md) for complete style guide.
-
----
-
-## Modes
-
-| Flag | Mode | Output Location | user-invocable |
-|------|------|-----------------|----------------|
-| (none) | User skill | `skills/{name}/SKILL.md` | `true` |
-| `--core` | Core skill | `skills/core/{name}/SKILL.md` | `false` |
-| `--workflow` | Skill with steps | `skills/{name}/` + `steps/` | `true` |
-
----
-
-## Mode Workflow (--workflow)
-
-Genere une structure avec steps separes pour les skills multi-phases.
-
-### Quand Utiliser
-
-- :white_check_mark: Workflows avec 3+ phases distinctes
-- :white_check_mark: Besoin de branches conditionnelles
-- :white_check_mark: Breakpoints a chaque phase
-- :red_circle: NEVER pour skills simples (< 3 phases)
-
-### Structure Generee
-
-```
-skills/{name}/
-├── SKILL.md                    # Router vers steps/
-├── steps/
-│   ├── step-00-init.md         # Initialisation
-│   ├── step-01-{phase1}.md     # Phase 1
-│   ├── step-02-{phase2}.md     # Phase 2
-│   ├── step-0Xb-{variant}.md   # Branche conditionnelle (optionnel)
-│   └── step-99-finish.md       # Finalisation
-└── references/
-    └── {domain}.md
-```
-
-### SKILL.md Router Template
-
-Le SKILL.md principal agit comme router :
-
-```markdown
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
-- :red_circle: NEVER execute steps out of order
+- :red_circle: NEVER skip the BREAKPOINT at validation (step-05)
+- :red_circle: NEVER generate skills without 12-point checklist pass
+- :red_circle: NEVER create vague descriptions (must have 3+ triggers)
 - :white_check_mark: ALWAYS start with step-00-init.md
 - :white_check_mark: ALWAYS follow next_step from each step
+- :white_check_mark: ALWAYS use APEX style format for generated skills
+- :white_check_mark: ALWAYS generate steps/ for standard mode (default)
+- :no_entry: FORBIDDEN generating skills with > 500 lines in SKILL.md
+- :large_blue_circle: YOU ARE A METICULOUS SKILL ARCHITECT
 
 ## EXECUTION PROTOCOLS:
 
 1. **Load** step-00-init.md
-2. **Execute** current step protocols
-3. **Evaluate** next step trigger
-4. **Proceed** to next_step or conditional_next
+2. **Execute** current step protocols completely
+3. **Present** breakpoints via breakpoint-system
+4. **Evaluate** next step trigger conditions
+5. **Proceed** to next_step
 
 ## CONTEXT BOUNDARIES:
 
-- IN scope: {skill scope}
-- OUT scope: {exclusions}
-```
-
-### Step Template
-
-Chaque step suit ce format :
-
-```markdown
----
-name: step-XX-{name}
-description: {short description}
-prev_step: steps/step-XX-{prev}.md
-next_step: steps/step-XX-{next}.md
-conditional_next:
-  - condition: "{expression}"
-    step: steps/step-XXb-{variant}.md
----
-
-# Step XX: {Name}
-
-## MANDATORY EXECUTION RULES (READ FIRST):
-
-- :red_circle: NEVER {rule}
-- :white_check_mark: ALWAYS {rule}
-
-## EXECUTION PROTOCOLS:
-
-1. **{Verb}** {action}
-
-## NEXT STEP TRIGGER:
-
-When {condition}, proceed to `next_step`.
-```
-
----
+- IN scope: Skill creation, skill migration, skill improvement
+- OUT scope: Subagent creation (different workflow), schema creation, script creation
 
 ## Workflow Overview
 
@@ -177,428 +57,157 @@ When {condition}, proceed to `next_step`.
 │                    FACTORY 6-PHASE WORKFLOW                      │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
-│  Phase 1: PRE-ANALYSIS                                          │
-│  └─ Questions: purpose, triggers, scope, frequency              │
-│     └─ Decision Gate: proceed / stop (one-off prompt)           │
+│  Step 00: INIT                                                   │
+│  └─ Parse args, detect mode (core/simple/standard)              │
 │                                                                  │
-│  Phase 2: ARCHITECTURE                                          │
-│  └─ Structure: Simple / Standard / Advanced                     │
-│  └─ Define files and references needed                          │
+│  Step 01: PRE-ANALYSIS                                          │
+│  └─ Discovery questions, decision gate (proceed/stop)           │
 │                                                                  │
-│  Phase 3: DESCRIPTION ENGINEERING                               │
-│  └─ Craft description for optimal triggering                    │
-│  └─ Apply formula: CAPABILITIES + USE CASES + TRIGGERS          │
-│  └─ Validate: < 1024 chars                                      │
+│  Step 02: ARCHITECTURE                                          │
+│  └─ Structure selection, tools, recommendations                 │
 │                                                                  │
-│  Phase 4: WORKFLOW DESIGN                                       │
-│  └─ Define numbered steps                                       │
-│  └─ Create decision tree (if multi-path)                        │
-│  └─ Add input/output examples                                   │
+│  Step 03: DESCRIPTION                                           │
+│  └─ Description engineering with formula                        │
 │                                                                  │
-│  Phase 5: VALIDATION (Dry-Run)                                  │
-│  └─ 12-point checklist                                          │
-│  └─ Preview structure + SKILL.md                                │
-│  └─ BREAKPOINT: User approval                                   │
+│  Step 04: WORKFLOW                                              │
+│  └─ Workflow design, steps definition, decision trees           │
 │                                                                  │
-│  Phase 6: GENERATION                                            │
-│  └─ Create all files                                            │
-│  └─ Update plugin.json if needed                                │
-│  └─ Conformity report                                           │
+│  Step 05: VALIDATION                                            │
+│  └─ 12-point checklist, preview, BREAKPOINT                     │
+│                                                                  │
+│  Step 06: GENERATION                                            │
+│  └─ Create files, update plugin.json, report                    │
 │                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
----
+## Flags
 
-## Phase 1: Pre-Analysis
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--core` | off | Core skill (user-invocable: false, no steps) |
+| `--simple` | off | Simple skill (no steps/, for < 3 phases) |
 
-### Discovery Questions
+**Behavior by Mode:**
 
-Ask these questions to understand the skill need:
+| Mode | Steps Generated | Location | user-invocable |
+|------|-----------------|----------|----------------|
+| Default | Yes | `skills/{name}/` | true |
+| `--simple` | No | `skills/{name}/` | true |
+| `--core` | No | `skills/core/{name}/` | false |
 
-1. **Purpose**: What problem does this skill solve?
-2. **Frequency**: How often will this be used? (daily/weekly/rare)
-3. **Triggers**: What phrases would invoke this skill?
-4. **Scope**: What's in scope? What's explicitly out of scope?
-5. **Persona**: Who uses this skill? (all users / specific role)
+## Steps
 
-### Decision Gate
+| Step | Name | Description | Skippable |
+|------|------|-------------|-----------|
+| 00 | init | Parse args, mode detection | No |
+| 01 | preanalysis | Discovery questions, decision gate | No |
+| 02 | architecture | Structure selection, tools | No |
+| 03 | description | Description engineering | No |
+| 04 | workflow | Workflow design, steps definition | No |
+| 05 | validation | 12-point checklist, BREAKPOINT | No |
+| 06 | generation | Create files, report | No |
 
-**PROCEED** if:
-- Used more than once
-- Has clear triggers
-- Solves repeatable problem
+## Step Files
 
-**STOP** if:
-- One-time task → use conversation directly
-- Volatile procedure → document elsewhere
-- Runtime config → use settings/env
+- [steps/step-00-init.md](steps/step-00-init.md) — Initialization
+- [steps/step-01-preanalysis.md](steps/step-01-preanalysis.md) — Pre-Analysis
+- [steps/step-02-architecture.md](steps/step-02-architecture.md) — Architecture
+- [steps/step-03-description.md](steps/step-03-description.md) — Description
+- [steps/step-04-workflow.md](steps/step-04-workflow.md) — Workflow
+- [steps/step-05-validation.md](steps/step-05-validation.md) — Validation
+- [steps/step-06-generation.md](steps/step-06-generation.md) — Generation
 
----
+## Reference Files
 
-## Phase 2: Architecture
+- [references/apex-style-guide.md](references/apex-style-guide.md) — APEX style formatting
+- [references/best-practices-synthesis.md](references/best-practices-synthesis.md) — Core best practices
+- [references/checklist-validation.md](references/checklist-validation.md) — 12-point validation
+- [references/description-formulas.md](references/description-formulas.md) — Description patterns
+- [references/yaml-rules.md](references/yaml-rules.md) — Frontmatter syntax
+- [references/skill-templates.md](references/skill-templates.md) — APEX templates
+- [references/agents-catalog.md](references/agents-catalog.md) — Agent recommendations
+- [references/stacks-catalog.md](references/stacks-catalog.md) — Stack detection
 
-### Structure Options
+## Templates (for generated steps)
 
-| Structure | When to Use | Files |
-|-----------|-------------|-------|
-| **Simple** | Single workflow, < 200 lines | `SKILL.md` only |
-| **Standard** | Multi-step, references needed | `SKILL.md` + `references/` |
-| **Advanced** | Templates, scripts, multi-workflow | Full structure |
+- [templates/step-init-template.md](templates/step-init-template.md) — Init step template
+- [templates/step-generic-template.md](templates/step-generic-template.md) — Generic step template
+- [templates/step-finish-template.md](templates/step-finish-template.md) — Finish step template
 
-### File Structure Templates
+## Shared Components Used
 
-**Simple:**
+- `breakpoint-system` — Validation approval (step-05)
+- `complexity-calculator` — Sizing determination
+- `clarification-engine` — Gap analysis on description (optional)
+- `project-memory` — Store generated skill metadata
+
+## Subagents
+
+| Agent | Model | Trigger |
+|-------|-------|---------|
+| `@Explore` | - | Always at init (background) |
+
+## Generated Skill Structure
+
+**Default (with steps):**
 ```
 skills/{name}/
-└── SKILL.md
-```
-
-**Standard:**
-```
-skills/{name}/
-├── SKILL.md
+├── SKILL.md                    # Router (~200 lines)
+├── steps/
+│   ├── step-00-init.md
+│   ├── step-01-{phase1}.md
+│   ├── step-02-{phase2}.md
+│   └── step-99-finish.md
 └── references/
-    ├── checklist.md
-    └── examples.md
+    └── {domain}.md
 ```
 
-**Advanced:**
+**Simple (--simple) or Core (--core):**
 ```
 skills/{name}/
-├── SKILL.md
-├── references/
-│   ├── detailed-guide.md
-│   └── examples.md
-├── templates/
-│   └── output-template.md
-└── scripts/
-    └── helper.py
+└── SKILL.md                    # Complete skill
 ```
 
-### Tools Selection
-
-Choose allowed-tools based on skill needs:
-
-| Need | Tools |
-|------|-------|
-| Read-only analysis | `Read, Glob, Grep` |
-| File modifications | `Read, Write, Edit` |
-| User interaction | `AskUserQuestion` |
-| Command execution | `Bash` |
-| Exploration | `Read, Glob, Grep` + `agent: Explore` |
-
-### Recommendations (Auto-detected)
-
-Factory analyzes project context to recommend relevant components:
-
-1. **Stack Skills** — Based on detected config files (package.json, composer.json, etc.)
-2. **Agents** — Based on skill type and domain keywords
-
-#### Detection Process
-
-```
-1. SCAN project root for config files
-2. IDENTIFY stack(s) from detection rules
-3. ANALYZE skill purpose for domain keywords
-4. RECOMMEND relevant agents and stacks
-```
-
-#### Output Block
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ [RECOMMENDATIONS] Context-Aware Suggestions                      │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│ DETECTED STACK:                                                  │
-│ • php-symfony (composer.json + symfony/*)                        │
-│ • frontend-editor (tailwind.config.ts)                           │
-│                                                                  │
-│ SUGGESTED AGENTS for this skill type:                            │
-│ • code-reviewer (skill generates code)                           │
-│ • security-auditor (auth domain detected)                        │
-│                                                                  │
-│ These components will be documented in the generated skill.      │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-See [references/stacks-catalog.md](references/stacks-catalog.md) for stack detection rules.
-See [references/agents-catalog.md](references/agents-catalog.md) for agent recommendation logic.
-
----
-
-## Phase 3: Description Engineering
-
-### Formula
+## Description Formula
 
 ```
 DESCRIPTION = [CAPABILITIES] + [USE CASES] + [TRIGGERS] + [BOUNDARIES]
 ```
 
-### Components
+**Rules:**
+- Length: 50-150 words (< 1024 chars)
+- Trigger words: 3-5 natural phrases
+- Specificity: No generic terms ("helper", "utility")
+- Action verbs: Start with what it does
 
-| Component | Purpose | Example |
-|-----------|---------|---------|
-| CAPABILITIES | What it does | "Generates API documentation" |
-| USE CASES | When to use | "Use when documenting endpoints" |
-| TRIGGERS | Natural phrases | "Trigger: API docs, document API" |
-| BOUNDARIES | What it doesn't do | "Not for: internal docs" |
-
-### Examples
-
-**Good Description:**
-```yaml
-description: >-
-  Generates comprehensive API documentation from code.
-  Extracts endpoints, parameters, responses, and examples.
-  Use when: documenting REST APIs, creating OpenAPI specs,
-  updating endpoint docs. Triggers: API docs, document API,
-  endpoint documentation. Not for: internal code docs.
-```
-
-**Bad Description:**
-```yaml
-description: "Documentation helper"  # Too vague, won't trigger
-```
-
-### Validation Rules
-
-- **Length**: 50-150 words (< 1024 characters)
-- **Trigger words**: Include 3-5 natural phrases
-- **Specificity**: Avoid generic terms ("helper", "utility")
-- **Action verbs**: Start with what it does
-
-See [references/description-formulas.md](references/description-formulas.md) for patterns.
-
----
-
-## Phase 4: Workflow Design
-
-### Numbered Steps
-
-Every skill needs clear, numbered steps:
-
-```markdown
-## Workflow
-
-1. **Analyze** input requirements
-2. **Validate** preconditions
-3. **Execute** main logic
-4. **Verify** results
-5. **Report** outcome
-```
-
-### Decision Trees
-
-For multi-path skills:
-
-```markdown
-## Decision Tree
-
-IF input is file path:
-  → Read and analyze file
-  → Generate documentation
-ELSE IF input is directory:
-  → Scan all files
-  → Generate index + per-file docs
-ELSE:
-  → Ask for clarification
-```
-
-### Input/Output Examples
-
-Always include:
-
-```markdown
-## Examples
-
-### Input
-```
-/doc-generator src/api/users.ts
-```
-
-### Output
-```markdown
-# Users API
-
-## GET /users
-Returns list of users...
-```
-```
-
----
-
-## Phase 5: Validation (Dry-Run + Automated Script)
-
-### 12-Point Checklist
-
-Before generation, verify:
+## 12-Point Checklist (Summary)
 
 | # | Check | Required |
 |---|-------|----------|
-| 1 | `name` is unique and kebab-case | Yes |
-| 2 | `name` length ≤ 64 characters | Yes |
-| 3 | `description` is specific (not vague) | Yes |
-| 4 | `description` length < 1024 chars | Yes |
-| 5 | Description has trigger words | Yes |
-| 6 | SKILL.md body < 500 lines | Yes |
-| 7 | All referenced files exist | Yes |
-| 8 | `allowed-tools` is appropriate | Yes |
-| 9 | Workflow steps are numbered | Yes |
+| 1 | Name is kebab-case | Yes |
+| 2 | Name <= 64 chars | Yes |
+| 3 | Description is specific | Yes |
+| 4 | Description < 1024 chars | Yes |
+| 5 | 3+ trigger words | Yes |
+| 6 | SKILL.md < 500 lines | Yes |
+| 7 | Referenced files exist | Yes |
+| 8 | Tools are appropriate | Yes |
+| 9 | Steps numbered | Yes |
 | 10 | Examples included | Recommended |
 | 11 | Error handling defined | Recommended |
 | 12 | Limitations documented | Recommended |
 
 See [references/checklist-validation.md](references/checklist-validation.md) for details.
 
-### Automated Validation
-
-Run the validation script on the preview structure:
-
-```bash
-python3 ${CLAUDE_PLUGIN_ROOT}/skills/factory/scripts/validate_skill_output.py <skill_path>
-```
-
-Options:
-- Default mode: All checks are blocking
-- `--permissive`: Recommended checks become warnings only
-
-### Preview
-
-Show user:
-1. File structure to create
-2. SKILL.md preview (first 50 lines)
-3. **Automated validation report** (from script)
-
-### BREAKPOINT
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ [VALIDATION] Skill Ready for Generation                         │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│ Skill: {name}                                                   │
-│ Type: {user | core}                                             │
-│ Structure: {simple | standard | advanced}                       │
-│                                                                  │
-│ Files to create:                                                │
-│ • skills/{path}/{name}/SKILL.md                                 │
-│ • skills/{path}/{name}/references/...                           │
-│                                                                  │
-│ Validation: ✅ PASS (12/12) or ❌ FAIL (N issues)               │
-│                                                                  │
-├─────────────────────────────────────────────────────────────────┤
-│ [A] Generate  [B] Modify  [C] Cancel                            │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Phase 6: Generation
-
-### Actions
-
-1. **Create directory structure**
-2. **Write SKILL.md** with full content
-3. **Write reference files** if needed
-4. **Update plugin.json** (add skill path)
-5. **Run post-generation validation**:
-   ```bash
-   python3 ${CLAUDE_PLUGIN_ROOT}/skills/factory/scripts/validate_skill_output.py <generated_skill_path>
-   ```
-6. **Generate conformity report**
-
-### Conformity Report
-
-```markdown
-## Generation Complete
-
-✅ Created: skills/{name}/SKILL.md
-✅ Created: skills/{name}/references/checklist.md
-✅ Updated: .claude-plugin/plugin.json
-✅ Validation: PASS (12/12 checks)
-
-### Skill Summary
-- Name: {name}
-- Type: {user | core}
-- Lines: {count}
-- References: {count}
-
-### Next Steps
-1. Test with: /{name} [args]
-2. Verify auto-triggering works
-3. Add to documentation if public
-```
-
----
-
-## Reference Files
-
-- [apex-style-guide.md](references/apex-style-guide.md) — APEX style formatting rules
-- [best-practices-synthesis.md](references/best-practices-synthesis.md) — Core best practices
-- [checklist-validation.md](references/checklist-validation.md) — 12-point validation
-- [description-formulas.md](references/description-formulas.md) — Description patterns
-- [yaml-rules.md](references/yaml-rules.md) — Frontmatter syntax
-- [skill-templates.md](references/skill-templates.md) — User, core, and workflow templates
-- [agents-catalog.md](references/agents-catalog.md) — Agent recommendation logic
-- [stacks-catalog.md](references/stacks-catalog.md) — Stack auto-detection rules
-
----
-
-## Integration Core Skills
-
-Factory integrates with EPCI v6 core skills for modular, composable skill generation.
-
-### Core Skills Usage in Factory
-
-| Phase | Core Skill | Usage |
-|-------|------------|-------|
-| 1 | `@skill:clarification-engine` | Gap analysis on skill description (optional, enhances discovery) |
-| 2 | `@skill:complexity-calculator` | Sizing determination: Simple/Standard/Advanced |
-| 5 | `@skill:breakpoint-system` | Validation approval breakpoint (type: validation) |
-| 6 | `@skill:project-memory` | Store generated skill metadata as project artifact |
-
-### Generated Skills: Core Skill Dependencies
-
-When Factory generates user skills, it documents which core skills those skills should use:
-
-| Skill Type | Required Core Skills | Optional Core Skills |
-|------------|---------------------|---------------------|
-| **Exploration** (brainstorm, debug) | breakpoint-system, clarification-engine | project-memory |
-| **Specification** (spec) | breakpoint-system, complexity-calculator | clarification-engine, project-memory |
-| **Implementation** (implement, quick) | breakpoint-system, state-manager, tdd-enforcer | complexity-calculator, project-memory |
-| **Transformation** (improve, refactor) | breakpoint-system, state-manager | project-memory |
-
-### How to Reference Core Skills in Generated Skills
-
-In generated SKILL.md files, document core skill integration:
-
-```markdown
-## Core Skills Integration
-
-This skill uses the following internal components:
-
-| Core Skill | Purpose |
-|------------|---------|
-| `@skill:breakpoint-system` | {How this skill uses breakpoints} |
-| `@skill:state-manager` | {How this skill tracks state} |
-```
-
----
-
 ## Anti-Patterns
 
 | Anti-Pattern | Problem | Solution |
 |--------------|---------|----------|
-| Vague description | Won't trigger correctly | Use formula with triggers |
-| Everything in SKILL.md | Context overflow | Use progressive disclosure |
+| Vague description | Won't trigger | Use formula with triggers |
+| Everything in SKILL.md | Context overflow | Use steps/ structure |
 | No examples | Users confused | Add input/output examples |
-| Generic name | Conflicts possible | Use specific, unique names |
 | Multi-purpose | Hard to trigger | Split into focused skills |
-
----
 
 ## Limitations
 
@@ -606,3 +215,4 @@ This skill does NOT:
 - Create subagents (different workflow)
 - Modify existing skills (use edit manually)
 - Generate tests automatically
+- Create schemas or scripts
