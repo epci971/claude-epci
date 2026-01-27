@@ -189,3 +189,58 @@ Before committing:
 - [ ] Core skills documented (if used)
 - [ ] Task tool documented for delegated phases
 - [ ] Tested with `/skill-name`
+
+---
+
+## 11. Native vs Custom Agents
+
+### Native Agents (Use When Generic)
+
+Claude Code provides built-in agents optimized for specific tasks:
+
+| Agent | Identifier | Model | Best For |
+|-------|------------|-------|----------|
+| Explore | `Explore` | Haiku | Codebase exploration, file discovery |
+| Plan | `Plan` | Inherits | Research for planning phase |
+| General-purpose | `general-purpose` | Inherits | Complex multi-step autonomous tasks |
+
+**Characteristics:**
+- `Explore`: Read-only (Read, Glob, Grep), fast Haiku model, perfect for exploration phases
+- `Plan`: Context isolation for safe research
+- `general-purpose`: Full tool access for complex operations
+
+### Custom Agents (Use When EPCI-Specific)
+
+| Agent | Purpose | Why Custom |
+|-------|---------|------------|
+| `@planner` | EPCI task decomposition | Specific output format required |
+| `@plan-validator` | CQNT validation checklist | Domain-specific rules |
+| `@code-reviewer` | EPCI review criteria | Custom checklist |
+| `@security-auditor` | OWASP with EPCI reporting | Structured security format |
+
+### Decision Matrix
+
+| Situation | Use Native | Use Custom |
+|-----------|------------|------------|
+| Generic file search | `Explore` | — |
+| Research for planning | `Plan` | — |
+| Complex autonomous task | `general-purpose` | — |
+| EPCI-formatted plan | — | `@planner` |
+| Plan with CQNT validation | — | `@plan-validator` |
+| Code review with EPCI checklist | — | `@code-reviewer` |
+| Security audit with OWASP | — | `@security-auditor` |
+
+### Invocation Example
+
+```typescript
+// Native agent (generic exploration)
+Task({
+  subagent_type: "Explore",
+  prompt: `Find files related to authentication...`
+})
+
+// Custom agent (EPCI-specific validation)
+Task({
+  subagent_type: "plan-validator",
+  prompt: `Validate plan against CQNT criteria...`
+})

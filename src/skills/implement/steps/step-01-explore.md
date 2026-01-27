@@ -26,10 +26,39 @@ next_step: steps/step-02-plan.md
    - Identify functional requirements
    - Identify non-functional requirements (performance, security)
 
-2. **Search** codebase for relevant code
-   - Use Glob to find files by pattern
-   - Use Grep to search for related functionality
-   - Use @Explore agent for comprehensive analysis
+2. **Invoke Native Explore Agent**
+
+Delegate comprehensive codebase exploration to Claude Code's native Explore agent:
+
+```typescript
+Task({
+  subagent_type: "Explore",
+  prompt: `
+## Exploration Objective
+Analyze codebase for feature: {feature_name}
+
+## Search Focus
+1. Files matching patterns/keywords: {patterns_keywords}
+2. Existing patterns for: {functionality_type}
+3. Dependencies in modules: {target_modules}
+
+## Thoroughness Level
+very thorough
+
+## Required Output
+- Relevant files with purpose annotations
+- Architecture patterns identified
+- Internal/external dependencies mapped
+- Files to modify/create list
+  `
+})
+```
+
+**Why Native Explore:**
+- Read-only guaranteed (no accidental modifications)
+- Haiku model = fast and cost-effective
+- Context isolation (doesn't pollute main thread)
+- Supports thoroughness levels: quick, medium, very thorough
 
 3. **Identify** existing patterns
    - Architecture patterns in use

@@ -141,6 +141,60 @@ Task({
 })
 ```
 
+## 🔵 Native Agents (Built-in Claude Code)
+
+Claude Code provides built-in agents optimized for specific tasks. Use these for generic operations before considering custom agents.
+
+### Available Native Agents
+
+| Agent | Identifier | Model | Tools | Best For |
+|-------|------------|-------|-------|----------|
+| **Explore** | `Explore` | Haiku | Read-only (Read, Glob, Grep) | Fast codebase exploration |
+| **Plan** | `Plan` | Inherits | Read-only | Research for planning |
+| **General-purpose** | `general-purpose` | Inherits | All tools | Complex multi-step tasks |
+| **Bash** | `Bash` | Inherits | Bash only | Isolated terminal commands |
+
+### Key Characteristics
+
+- **Explore**: Optimized for speed (Haiku model), perfect for read-only search
+- **Plan**: Context isolation for safe planning research
+- **General-purpose**: Full tool access for complex autonomous tasks
+
+### Rule: Native vs Custom
+
+| Use Native When | Use Custom When |
+|-----------------|-----------------|
+| Generic exploration | EPCI-specific format needed |
+| General research | Domain-specific validation |
+| Multi-step autonomous | Custom checklist required |
+| No special format needed | Structured output required |
+
+**Guideline**: Use native agents when the task is **generic**, use custom agents when **EPCI-specific** formatting or validation is required.
+
+### Invocation Pattern
+
+```typescript
+Task({
+  subagent_type: "Explore",  // Native agent identifier
+  prompt: `
+## Exploration Objective
+{objective}
+
+## Search Focus
+1. {focus_1}
+2. {focus_2}
+
+## Thoroughness Level
+{quick | medium | very thorough}
+
+## Expected Output
+- Relevant files with purpose
+- Patterns identified
+- Dependencies mapped
+  `
+})
+```
+
 ### 3. Auto-Detect Stack Context
 
 Check project for stack signatures:
