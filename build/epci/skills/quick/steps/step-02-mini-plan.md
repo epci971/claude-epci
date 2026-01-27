@@ -30,6 +30,7 @@ When task is near SMALL complexity limit, delegate to planner agent:
 ```typescript
 Task({
   subagent_type: "planner",
+  model: "sonnet",
   prompt: `
 ## Feature
 {feature_name}

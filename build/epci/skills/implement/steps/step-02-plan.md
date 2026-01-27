@@ -33,6 +33,7 @@ Delegate task decomposition to the planner agent:
 ```typescript
 Task({
   subagent_type: "planner",
+  model: "sonnet",
   prompt: `
 ## Feature
 {feature_name}
@@ -58,6 +59,7 @@ Include test strategy for each task.
 ```typescript
 Task({
   subagent_type: "plan-validator",
+  model: "opus",
   prompt: `
 ## Plan to Validate
 {plan_from_planner}

@@ -33,6 +33,7 @@ Delegate code review to the code-reviewer agent:
 ```typescript
 Task({
   subagent_type: "code-reviewer",
+  model: "opus",
   prompt: `
 ## Files to Review
 {modified_files_list}

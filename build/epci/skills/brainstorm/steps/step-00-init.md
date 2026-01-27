@@ -96,16 +96,26 @@ Store for later steps:
 
 ### 4. Launch @Explore (Background)
 
-```
-Task: Explore codebase for brainstorm context
-Focus:
-  - Project stack and architecture
-  - Related existing features
-  - Code patterns and conventions
-  - Test coverage areas
-  - Security patterns (auth, permissions)
+```typescript
+Task({
+  subagent_type: "Explore",
+  model: "haiku",
+  run_in_background: true,
+  prompt: `
+## Exploration Objective
+Explore codebase for brainstorm context
 
-run_in_background: true
+## Search Focus
+- Project stack and architecture
+- Related existing features
+- Code patterns and conventions
+- Test coverage areas
+- Security patterns (auth, permissions)
+
+## Thoroughness Level
+medium
+  `
+})
 ```
 
 ### 5. Check Special Modes

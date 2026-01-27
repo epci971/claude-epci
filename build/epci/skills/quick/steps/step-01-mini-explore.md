@@ -24,6 +24,7 @@ Delegate fast codebase scan to Claude Code's native Explore agent:
 ```typescript
 Task({
   subagent_type: "Explore",
+  model: "haiku",
   prompt: `
 ## Quick Exploration
 Feature/Fix: {feature_or_fix_description}

@@ -30,6 +30,7 @@ Delegate security audit to the security-auditor agent:
 ```typescript
 Task({
   subagent_type: "security-auditor",
+  model: "opus",
   prompt: `
 ## Files to Audit
 {auth_security_files}

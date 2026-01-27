@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Script deploy.py**: Nouveau script de déploiement pour copier `src/` → `build/epci/` avec validation intégrée
+  - Exclusions automatiques: `__pycache__/`, `*.pyc`, `tests/`
+  - Import direct de `validate.py` pour validation post-copie
+  - Vérification cohérence des versions (plugin.json vs README.md)
+  - Rollback automatique si validation échoue
+  - CLI: `--dry-run`, `--force`, `--verbose`, `--skip-version-check`
+  - Exit codes explicites (0=success, 1=validation, 2=copy, 3=version)
+
 ## [5.6.0] - 2026-01-20
 
 ### Added
