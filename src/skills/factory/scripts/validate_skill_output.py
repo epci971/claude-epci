@@ -187,10 +187,11 @@ class SkillValidator:
         self._validate_allowed_tools()
         self._validate_workflow_steps()
 
-        # Recommended checks (10-12) - warnings if permissive
+        # Recommended checks (10-13) - warnings if permissive
         self._check_examples(is_warning=permissive)
         self._check_error_handling(is_warning=permissive)
         self._check_limitations(is_warning=permissive)
+        self._check_task_tool_documentation(is_warning=permissive)
 
         return self.report
 
@@ -536,6 +537,80 @@ class SkillValidator:
             message="Limitations documented" if has_limitations else "No limitations section found",
             is_warning=is_warning
         ))
+
+    def _check_task_tool_documentation(self, is_warning: bool = False) -> None:
+        """Check 13: Task tool documentation for complex workflows with agent delegation."""
+        steps_dir = self.skill_path / "steps"
+
+        # Skip if no steps directory (simple skill)
+        if not steps_dir.exists():
+            self.report.add(ValidationResult(
+                check_number=13,
+                name="Task tool docs",
+                passed=True,
+                message="Simple skill (no steps/, no Task tool needed)",
+                is_warning=is_warning
+            ))
+            return
+
+        # Count steps to determine complexity
+        step_files = list(steps_dir.glob("step-*.md"))
+
+        # Only check for complex skills (4+ steps)
+        if len(step_files) < 4:
+            self.report.add(ValidationResult(
+                check_number=13,
+                name="Task tool docs",
+                passed=True,
+                message=f"Simple workflow ({len(step_files)} steps, Task tool optional)",
+                is_warning=is_warning
+            ))
+            return
+
+        # For complex skills, check if any delegable agents are referenced
+        delegable_agents = ["@planner", "@plan-validator", "@code-reviewer", "@security-auditor"]
+        uses_delegable = False
+        has_task_doc = False
+
+        for step_file in step_files:
+            try:
+                content = step_file.read_text(encoding="utf-8")
+                for agent in delegable_agents:
+                    if agent in content:
+                        uses_delegable = True
+                        # Check for Task invocation syntax
+                        if "subagent_type:" in content or "subagent_type=" in content:
+                            has_task_doc = True
+                            break
+                if has_task_doc:
+                    break
+            except (OSError, UnicodeDecodeError):
+                pass
+
+        if not uses_delegable:
+            self.report.add(ValidationResult(
+                check_number=13,
+                name="Task tool docs",
+                passed=True,
+                message="No delegable agents used",
+                is_warning=is_warning
+            ))
+        elif has_task_doc:
+            self.report.add(ValidationResult(
+                check_number=13,
+                name="Task tool docs",
+                passed=True,
+                message="Task tool invocations documented",
+                is_warning=is_warning
+            ))
+        else:
+            self.report.add(ValidationResult(
+                check_number=13,
+                name="Task tool docs",
+                passed=False,
+                message="Delegable agents referenced but no Task invocation found",
+                is_warning=is_warning
+            ))
 
 
 def print_report(report: ValidationReport, permissive: bool = False) -> int:

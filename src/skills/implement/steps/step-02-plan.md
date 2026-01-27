@@ -20,30 +20,72 @@ next_step: steps/step-03-code.md
 
 ## EXECUTION PROTOCOLS:
 
-1. **Synthesize** exploration findings
-   - Review identified patterns
-   - Review dependencies
-   - Review files to modify/create
+### 1. Synthesize Exploration Findings
 
-2. **Define** implementation order
-   - Start with foundation components
-   - Build dependent components in order
-   - End with integration points
+- Review identified patterns
+- Review dependencies
+- Review files to modify/create
 
-3. **Specify** test strategy
-   - Unit tests for each component
-   - Integration tests for interactions
-   - Coverage targets (min 70%)
+### 2. Invoke @planner (Sonnet)
 
-4. **Create** implementation plan
-   - Numbered steps with clear scope
-   - TDD approach for each step
-   - Expected outputs per step
+Delegate task decomposition to the planner agent:
 
-5. **Update** Feature Document
-   - Add implementation plan section
-   - Add test strategy section
-   - Add acceptance criteria mapping
+```typescript
+Task({
+  subagent_type: "planner",
+  prompt: `
+## Feature
+{feature_name}
+
+## Requirements
+{requirements_from_exploration}
+
+## Identified Files
+{files_to_modify_create}
+
+## Constraints
+{identified_constraints}
+
+## Output Format
+Atomic tasks (2-15 min each) with dependencies, ordered by implementation sequence.
+Include test strategy for each task.
+  `
+})
+```
+
+### 3. Validate Plan with @plan-validator (Opus)
+
+```typescript
+Task({
+  subagent_type: "plan-validator",
+  prompt: `
+## Plan to Validate
+{plan_from_planner}
+
+## Feature Requirements
+{original_requirements}
+
+## Validation Checklist
+- Completeness: All requirements covered
+- Consistency: No circular dependencies
+- Feasibility: Resources available
+- Quality: Tasks atomic and testable (TDD strategy defined)
+
+## Expected Output
+APPROVED or NEEDS_REVISION with specific feedback
+  `
+})
+```
+
+**Handle Result:**
+- If APPROVED: continue to breakpoint
+- If NEEDS_REVISION: apply feedback and re-invoke @planner
+
+### 4. Update Feature Document
+
+- Add implementation plan section
+- Add test strategy section
+- Add acceptance criteria mapping
 
 ## CONTEXT BOUNDARIES:
 

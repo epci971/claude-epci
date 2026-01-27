@@ -75,6 +75,72 @@ Reason: Skill generates files and requires user input
 [Accept] [Modify]
 ```
 
+## 🔴 MANDATORY: Task Tool for Subagent Delegation
+
+### Rule: When to Use Task Tool
+
+Skills with phases that can be delegated MUST use the Task tool:
+
+| Situation | Task tool | Notes |
+|-----------|-----------|-------|
+| Planning phase | `Task(subagent_type: "planner")` | ✅ Delegable |
+| Plan validation | `Task(subagent_type: "plan-validator")` | ✅ Delegable |
+| Review phase | `Task(subagent_type: "code-reviewer")` | ✅ Delegable |
+| Security audit | `Task(subagent_type: "security-auditor")` | ✅ Delegable |
+| **Implementation** | ❌ Thread principal | Needs stack skills access |
+| **QA validation** | ❌ Thread principal | Not prioritized |
+
+### Exception: Implementation Phase
+
+Implementation (`@implementer`) MUST NOT be delegated because:
+- Subagents don't have access to the Skill tool
+- Cannot load stack skills (python-django, javascript-react, etc.)
+- Main thread has access to all skills
+
+### Why This is CRITICAL
+
+- **Context isolation**: Agent receives only its prompt
+- **Cost optimization**: Uses optimal model (Sonnet vs Opus)
+- **Parallelization**: Multiple agents can run in parallel
+- **Memory preservation**: Main context window not saturated
+
+### Mandatory Pattern in Steps
+
+Each step that delegates to an agent MUST include:
+
+```typescript
+Task({
+  subagent_type: "{agent-name}",
+  prompt: `
+## Objective
+{clear objective}
+
+## Context
+{necessary context}
+
+## Expected Output
+{format expected}
+  `
+})
+```
+
+### Anti-pattern: Description without Invocation
+
+❌ FORBIDDEN:
+```markdown
+### Invoke @code-reviewer
+- Pass files
+- Request review
+```
+
+✅ REQUIRED:
+```typescript
+Task({
+  subagent_type: "code-reviewer",
+  prompt: "..."
+})
+```
+
 ### 3. Auto-Detect Stack Context
 
 Check project for stack signatures:

@@ -38,6 +38,7 @@ class AuditPhase(Enum):
     CORE_SKILLS = 3
     STACK_SKILLS = 4
     STEP_CHAIN = 5
+    TASK_TOOL = 6
 
 
 class Severity(Enum):
@@ -337,6 +338,7 @@ class SkillAuditor:
         self.report.phases[AuditPhase.CORE_SKILLS] = self._run_phase_3_core_skills()
         self.report.phases[AuditPhase.STACK_SKILLS] = self._run_phase_4_stack_skills()
         self.report.phases[AuditPhase.STEP_CHAIN] = self._run_phase_5_step_chain()
+        self.report.phases[AuditPhase.TASK_TOOL] = self._run_phase_6_task_tool()
 
         return self.report
 
@@ -886,6 +888,112 @@ class SkillAuditor:
 
         return reachable
 
+    def _run_phase_6_task_tool(self) -> PhaseReport:
+        """Phase 6: Task Tool Compliance - check delegated phases use explicit Task invocations."""
+        phase_report = PhaseReport(phase=AuditPhase.TASK_TOOL)
+
+        # Skip if no steps directory (simple skill)
+        if not self.steps_dir.exists():
+            phase_report.results.append(AuditResult(
+                phase=AuditPhase.TASK_TOOL,
+                check_id="P6.0",
+                name="Task tool check",
+                passed=True,
+                message="No steps/ directory (simple skill)",
+                severity=Severity.INFO
+            ))
+            return phase_report
+
+        # Agents that should be invoked via Task tool
+        delegable_agents = [
+            ("@planner", "planner"),
+            ("@plan-validator", "plan-validator"),
+            ("@code-reviewer", "code-reviewer"),
+            ("@security-auditor", "security-auditor"),
+        ]
+
+        # Agents that should NOT be delegated (need main thread access)
+        non_delegable_agents = ["@implementer", "@qa-reviewer"]
+
+        # Check each step file for agent references
+        issues = []
+        for step_file in self.steps_dir.glob("step-*.md"):
+            try:
+                content = step_file.read_text(encoding="utf-8")
+                step_name = step_file.stem
+
+                for agent_ref, agent_type in delegable_agents:
+                    if agent_ref in content:
+                        # Check for proper Task invocation
+                        has_task_invocation = (
+                            f'subagent_type: "{agent_type}"' in content or
+                            f"subagent_type: '{agent_type}'" in content or
+                            f'subagent_type="{agent_type}"' in content or
+                            f"subagent_type='{agent_type}'" in content or
+                            f'subagent_type: {agent_type}' in content
+                        )
+
+                        if not has_task_invocation:
+                            issues.append({
+                                "step": step_name,
+                                "agent": agent_ref,
+                                "type": agent_type
+                            })
+
+            except (OSError, UnicodeDecodeError):
+                pass
+
+        # Report results
+        if issues:
+            for idx, issue in enumerate(issues, 1):
+                phase_report.results.append(AuditResult(
+                    phase=AuditPhase.TASK_TOOL,
+                    check_id=f"P6.{idx}",
+                    name=f"Task invocation for {issue['agent']}",
+                    passed=False,
+                    message=f"{issue['step']}: {issue['agent']} referenced but no Task invocation found",
+                    severity=Severity.ERROR,
+                    suggestion=(
+                        f"Add Task invocation:\n"
+                        f'  Task(subagent_type: "{issue["type"]}", prompt: "...")'
+                    )
+                ))
+        else:
+            # Check if skill uses any delegable agents at all
+            uses_delegable = False
+            for step_file in self.steps_dir.glob("step-*.md"):
+                try:
+                    content = step_file.read_text(encoding="utf-8")
+                    for agent_ref, _ in delegable_agents:
+                        if agent_ref in content:
+                            uses_delegable = True
+                            break
+                    if uses_delegable:
+                        break
+                except (OSError, UnicodeDecodeError):
+                    pass
+
+            if uses_delegable:
+                phase_report.results.append(AuditResult(
+                    phase=AuditPhase.TASK_TOOL,
+                    check_id="P6.1",
+                    name="Task tool compliance",
+                    passed=True,
+                    message="All delegable agents have proper Task invocations",
+                    severity=Severity.INFO
+                ))
+            else:
+                phase_report.results.append(AuditResult(
+                    phase=AuditPhase.TASK_TOOL,
+                    check_id="P6.0",
+                    name="Task tool check",
+                    passed=True,
+                    message="Skill does not use delegable agents",
+                    severity=Severity.INFO
+                ))
+
+        return phase_report
+
 
 def print_ascii_report(report: AuditReport) -> None:
     """Print audit report in ASCII format."""
@@ -904,6 +1012,7 @@ def print_ascii_report(report: AuditReport) -> None:
         AuditPhase.CORE_SKILLS: "Phase 3: Core Skills Usage",
         AuditPhase.STACK_SKILLS: "Phase 4: Stack Skills Detection",
         AuditPhase.STEP_CHAIN: "Phase 5: Step Chain Validation",
+        AuditPhase.TASK_TOOL: "Phase 6: Task Tool Compliance",
     }
 
     for phase, phase_report in report.phases.items():

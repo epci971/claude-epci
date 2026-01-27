@@ -23,37 +23,66 @@ conditional_next:
 
 ## EXECUTION PROTOCOLS:
 
-1. **Invoke** @security-auditor agent
-   - Pass all code handling external input
-   - Pass authentication/authorization code
-   - Pass data storage code
+### 1. Invoke @security-auditor (Opus)
 
-2. **OWASP Top 10** verification
-   - A01: Broken Access Control
-   - A02: Cryptographic Failures
-   - A03: Injection
-   - A04: Insecure Design
-   - A05: Security Misconfiguration
-   - A06: Vulnerable Components
-   - A07: Auth Failures
-   - A08: Data Integrity Failures
-   - A09: Logging Failures
-   - A10: SSRF
+Delegate security audit to the security-auditor agent:
 
-3. **Input validation** check
-   - All user inputs validated
-   - Proper sanitization
-   - Type checking
+```typescript
+Task({
+  subagent_type: "security-auditor",
+  prompt: `
+## Files to Audit
+{auth_security_files}
 
-4. **Data protection** review
-   - Sensitive data encrypted
-   - No secrets in code
-   - Proper access controls
+## Audit Scope
+- Authentication/Authorization code
+- Data validation and sanitization
+- Secret handling and storage
+- API security and input handling
 
-5. **Report** findings
-   - Severity classification
-   - Remediation recommendations
-   - Re-review requirements
+## OWASP Top 10 Checklist
+Verify against all categories:
+- A01: Broken Access Control
+- A02: Cryptographic Failures
+- A03: Injection
+- A04: Insecure Design
+- A05: Security Misconfiguration
+- A06: Vulnerable Components
+- A07: Auth Failures
+- A08: Data Integrity Failures
+- A09: Logging Failures
+- A10: SSRF
+
+## Expected Output
+Security audit report with:
+- Vulnerability count by severity (Critical/High/Medium/Low)
+- OWASP category for each finding
+- Location (file:line)
+- Remediation recommendations
+- Verdict: PASS / FAIL_CRITICAL / FAIL_HIGH
+  `
+})
+```
+
+### 2. Process Security Audit Results
+
+Based on @security-auditor verdict:
+- If PASS: continue to breakpoint
+- If FAIL_CRITICAL/FAIL_HIGH: must fix before proceeding
+- Medium/Low: recommended but not blocking
+
+### 3. Verify Input Validation
+
+Confirm audit covered:
+- All user inputs validated
+- Proper sanitization applied
+- Type checking enforced
+
+### 4. Document Security Posture
+
+- Record audit findings in feature document
+- Note any accepted risks with justification
+- Track remediation for non-critical issues
 
 ## CONTEXT BOUNDARIES:
 

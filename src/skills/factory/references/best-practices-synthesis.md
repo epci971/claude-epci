@@ -141,7 +141,44 @@ In generated skills, reference core skills:
 
 ---
 
-## 9. Quality Checklist (Quick)
+## 9. Task Tool Integration (MANDATORY)
+
+### 🔴 Rule: Subagent Delegation
+
+Skills with multi-phase workflows MUST document Task tool usage for:
+- Phase delegation (planning, review, security audit)
+- Context isolation (preserve main thread)
+- Model optimization (Sonnet for execution, Opus for validation)
+
+### Required Documentation
+
+In SKILL.md "Shared Components Used" section:
+```markdown
+## Subagent Delegation
+
+| Phase | Agent | Invocation |
+|-------|-------|------------|
+| Plan | @planner | `Task(subagent_type: "planner")` |
+| Plan Validation | @plan-validator | `Task(subagent_type: "plan-validator")` |
+| Review | @code-reviewer | `Task(subagent_type: "code-reviewer")` |
+| Security | @security-auditor | `Task(subagent_type: "security-auditor")` |
+```
+
+### Exception: Implementation Phase
+
+Implementation phase MUST NOT be delegated:
+- @implementer cannot access stack skills (via Skill tool)
+- Main thread required for technology-specific patterns
+
+### Validation
+
+Audit script (Phase 6) checks:
+- Complex workflows (4+ steps) document Task usage
+- Each delegated phase shows explicit Task invocation
+
+---
+
+## 10. Quality Checklist (Quick)
 
 Before committing:
 - [ ] Name unique and kebab-case
@@ -150,4 +187,5 @@ Before committing:
 - [ ] All references linked
 - [ ] Examples included
 - [ ] Core skills documented (if used)
+- [ ] Task tool documented for delegated phases
 - [ ] Tested with `/skill-name`

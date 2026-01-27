@@ -166,6 +166,24 @@ This skill does NOT:
 - Work with Z
 ```
 
+### 13. Task Tool Documentation (MANDATORY for complex)
+
+**Rule**: Multi-phase workflows with agent delegation MUST document Task invocations
+
+**Validation**:
+- [ ] Delegated phases show `Task(subagent_type: ...)` syntax
+- [ ] Not just "@agent-name" descriptions
+- [ ] Context passed to agent is documented
+
+**Severity**: ERROR for workflows with 4+ phases
+
+**Check**:
+```bash
+# Verify Task invocations present for agent references
+grep -r "subagent_type:" steps/
+# Should match each @agent reference
+```
+
 ---
 
 ## Validation Report Template
@@ -193,8 +211,9 @@ This skill does NOT:
 │ [✓] 10. Examples included                           │
 │ [✓] 11. Error handling defined                      │
 │ [✓] 12. Limitations documented                      │
+│ [✓] 13. Task tool documented (if delegating)        │
 │                                                      │
-│ Result: PASS (12/12)                                │
+│ Result: PASS (13/13)                                │
 │                                                      │
 └─────────────────────────────────────────────────────┘
 ```
