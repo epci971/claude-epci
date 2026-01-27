@@ -33,6 +33,7 @@ Delegate comprehensive codebase exploration to Claude Code's native Explore agen
 ```typescript
 Task({
   subagent_type: "Explore",
+  model: "haiku",
   prompt: `
 ## Exploration Objective
 Analyze codebase for feature: {feature_name}
