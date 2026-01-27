@@ -27,19 +27,21 @@ Before implementing each component, load the **complete stack skill** based on f
 
 ### File Type → Stack Skill Mapping
 
-| File Type | Load Stack Skill |
-|-----------|------------------|
-| `*.py` | `@skill:python-django` (SKILL.md + all references) |
-| `*.php` | `@skill:php-symfony` (SKILL.md + all references) |
-| `*.java` | `@skill:java-springboot` (SKILL.md + all references) |
-| `*.tsx`, `*.jsx`, `*.ts`, `*.js` | `@skill:javascript-react` (SKILL.md + all references) |
-| `*.css`, `*.scss`, `*.html` | `@skill:frontend-editor` (SKILL.md + all references) |
+| File Type | Load Stack Skill | Action |
+|-----------|------------------|--------|
+| `*.py` | python-django | `Read("src/skills/stack/python-django/SKILL.md")` + tous les fichiers dans `references/` |
+| `*.php` | php-symfony | `Read("src/skills/stack/php-symfony/SKILL.md")` + tous les fichiers dans `references/` |
+| `*.java` | java-springboot | `Read("src/skills/stack/java-springboot/SKILL.md")` + tous les fichiers dans `references/` |
+| `*.tsx`, `*.jsx`, `*.ts`, `*.js` | javascript-react | `Read("src/skills/stack/javascript-react/SKILL.md")` + tous les fichiers dans `references/` |
+| `*.css`, `*.scss`, `*.html` | frontend-editor | `Read("src/skills/stack/frontend-editor/SKILL.md")` + tous les fichiers dans `references/` |
 
 ### Loading Protocol
 
 For each component in the implementation plan:
 1. **Identify** the target file(s) and their extensions
-2. **Load** the complete stack skill via `@skill:{stack-name}`
+2. **Load** le stack skill complet via Read tool:
+   - Lire `SKILL.md` du stack correspondant
+   - Lire TOUS les fichiers dans `references/` (architecture, testing, security, etc.)
 3. **Apply** ALL stack patterns: architecture, ORM/data, API, testing
 4. **Use** stack-specific test commands
 
@@ -103,12 +105,16 @@ If a component spans multiple file types (e.g., API endpoint + React component):
 ### Before Each Component
 
 1. Identify target file type(s) from implementation plan
-2. Load complete stack skill: `@skill:{stack-name}`
+2. Load complete stack skill via Read tool:
+   - `Read("src/skills/stack/{stack-name}/SKILL.md")`
+   - `Read("src/skills/stack/{stack-name}/references/architecture.md")`
+   - `Read("src/skills/stack/{stack-name}/references/testing.md")`
+   - etc.
 3. All patterns available: architecture, ORM, API, testing, etc.
 
 ### Component: {name} [{file-type} → {stack}]
 
-**Stack loaded:** `@skill:{stack-name}` ✓
+**Stack loaded:** `{stack-name}` via Read ✓
 
 #### RED: Write failing test
 - Follow {stack} testing patterns (from SKILL.md + references/testing.md)

@@ -108,35 +108,55 @@ next_step: steps/step-05-document.md
 {PASS | FAIL}
 ```
 
-## BREAKPOINT:
+## BREAKPOINT: QA Review Complete (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: validation
-  title: "QA Review Complete"
-  data: {
-    context: "QA validation by @qa-reviewer complete",
-    item_to_validate: {
-      objectif: "Confirm feature meets acceptance criteria",
-      contexte: "Feature: {feature-slug}, AC met: {N}/{N}",
-      contraintes: "Test pass rate: {%}%, Defects: {N}",
-      success_criteria: "All acceptance criteria met, no blocking defects"
-    }
-  }
-  ask: {
-    question: "Accept QA validation outcome?",
-    header: "QA Review",
-    options: [
-      {label: "Proceed (Recommended)", description: "QA validation passed"},
-      {label: "Fix Defects First", description: "Address found issues"},
-      {label: "Accept Known Issues", description: "Document and proceed"}
-    ]
-  }
-  suggestions: [
-    {pattern: "ac", text: "{N}/{N} acceptance criteria met", priority: "P1"},
-    {pattern: "defects", text: "Review {N} defects found", priority: "P2"}
-  ]
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🧪 QA REVIEW TERMINÉ                                                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Validation QA par @qa-reviewer terminée                             │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Critères d'acceptation: {N}/{N} validés                             │
+│ Taux de succès tests: {%}%                                          │
+│ Défauts trouvés: {N}                                                │
+│                                                                     │
+│ Critère de succès: Tous les AC validés, aucun défaut bloquant       │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] {N}/{N} critères d'acceptation validés                         │
+│ [P2] Réviser {N} défauts trouvés                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer (Recommended) — Validation QA réussie           │ │
+│ │  [B] Corriger défauts d'abord — Traiter les issues trouvés     │ │
+│ │  [C] Accepter issues connues — Documenter et continuer         │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Accepter le résultat de la validation QA?",
+    header: "QA Review",
+    multiSelect: false,
+    options: [
+      { label: "Continuer (Recommended)", description: "Validation QA réussie" },
+      { label: "Corriger défauts d'abord", description: "Traiter les issues trouvés" },
+      { label: "Accepter issues connues", description: "Documenter et continuer" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

@@ -312,56 +312,68 @@ Location: docs/specs/{feature-slug}/
 - JSON valid: Yes
 ```
 
-## BREAKPOINT:
+## BREAKPOINT: Specifications Generated (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: plan-review
-  title: "Specifications Generated"
-  data: {
-    metrics: {
-      complexity: "{complexity}",
-      complexity_score: {score},
-      files_impacted: {task_count},
-      time_estimate: "{total_hours}h",
-      risk_level: "LOW",
-      risk_description: "Spec generation only, no code changes"
-    },
-    validations: {
-      plan_validator: {
-        verdict: "APPROVED",
-        completeness: "{task_count} tasks with {step_count} steps",
-        consistency: "All dependencies mapped in DAG",
-        feasibility: "Effort estimates calibrated",
-        quality: "Acceptance criteria defined per task"
-      }
-    },
-    skills_loaded: ["project-memory", "decompose-validator"],
-    preview_next: {
-      tasks: [
-        {title: "index.md ({lines} lines)", time: "-"},
-        {title: "task-001-{slug}.md", time: "{estimate}"},
-        {title: "{feature}.prd.json ({size} KB)", time: "-"}
-      ],
-      remaining_tasks: {task_count}
-    },
-    feature_doc_path: "docs/specs/{feature-slug}/"
-  }
-  ask: {
-    question: "Proceed with specifications?",
-    header: "Specs Review",
-    options: [
-      {label: "Continue to Ralph (Recommended)", description: "Generate execution artifacts"},
-      {label: "Skip Ralph", description: "Specs only, no execution artifacts"},
-      {label: "Edit Tasks", description: "Modify generated task files"},
-      {label: "Regenerate", description: "Regenerate with changes"}
-    ]
-  }
-  suggestions: [
-    {pattern: "review-ac", text: "Review acceptance criteria for completeness", priority: "P1"},
-    {pattern: "edge-cases", text: "Consider adding edge case tests", priority: "P2"}
-  ]
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📋 SPÉCIFICATIONS GÉNÉRÉES                                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Complexité: {complexity} (score: {score})                         │
+│ • Fichiers/tâches: {task_count}                                     │
+│ • Temps estimé: {total_hours}h                                      │
+│ • Niveau risque: LOW (génération spec uniquement)                   │
+│                                                                     │
+│ VALIDATIONS                                                         │
+│ • @plan-validator: APPROVED                                         │
+│   - Complétude: {task_count} tâches avec {step_count} steps         │
+│   - Cohérence: Toutes dépendances mappées dans DAG                  │
+│   - Faisabilité: Estimations calibrées                              │
+│   - Qualité: Critères d'acceptation définis par tâche               │
+│                                                                     │
+│ PREVIEW FICHIERS                                                    │
+│ | index.md ({lines} lignes) |                                       │
+│ | task-001-{slug}.md | ~{estimate} |                                │
+│ | {feature}.prd.json ({size} KB) |                                  │
+│                                                                     │
+│ Location: docs/specs/{feature-slug}/                                │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Réviser critères d'acceptation pour complétude                 │
+│ [P2] Considérer ajout tests edge cases                              │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer vers Ralph (Recommended) — Générer artifacts    │ │
+│ │  [B] Skip Ralph — Specs uniquement                             │ │
+│ │  [C] Éditer tâches — Modifier fichiers générés                 │ │
+│ │  [D] Régénérer — Régénérer avec modifications                  │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Procéder avec les spécifications?",
+    header: "Specs Review",
+    multiSelect: false,
+    options: [
+      { label: "Continuer vers Ralph (Recommended)", description: "Générer artifacts d'exécution" },
+      { label: "Skip Ralph", description: "Specs uniquement, pas d'artifacts exécution" },
+      { label: "Éditer tâches", description: "Modifier fichiers tâches générés" },
+      { label: "Régénérer", description: "Régénérer avec modifications" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

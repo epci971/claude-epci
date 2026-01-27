@@ -219,6 +219,25 @@ See [references/checklist-validation.md](references/checklist-validation.md) for
 | No examples | Users confused | Add input/output examples |
 | Multi-purpose | Hard to trigger | Split into focused skills |
 
+## INVOCATION PROTOCOL (CRITICAL)
+
+Les syntaxes `@skill:epci:xxx` et `@agent:xxx` dans les step files sont **DOCUMENTAIRES SEULEMENT**.
+Claude interprète les blocs de code comme des exemples, pas comme des instructions d'exécution.
+
+**Pour invoquer réellement:**
+
+| Type | Syntaxe documentaire | Invocation réelle |
+|------|---------------------|-------------------|
+| Breakpoints | `@skill:epci:breakpoint-system` | Section impérative + AskUserQuestion explicite |
+| Agents | `@agent:Explore` | `Task({ subagent_type: "Explore", ... })` |
+| Core skills | `@skill:epci:project-memory` | `Read(".claude/state/...")` pour fichiers d'état |
+
+**Règle pour auteurs de step files:**
+- Utiliser le format impératif direct (pas dans bloc de code)
+- Afficher les boîtes ASCII hors bloc exécutable
+- Appeler AskUserQuestion explicitement
+- Ajouter `⏸️ ATTENDS la réponse` après chaque breakpoint
+
 ## Limitations
 
 This skill does NOT:

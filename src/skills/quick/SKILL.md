@@ -178,6 +178,25 @@ TINY tasks skip breakpoints for speed. All breakpoints MUST use `@skill:epci:bre
 | TDD fails 2x | Code won't pass tests | Escalate or investigate |
 | Stack not detected | No signature match | Continue without stack skill |
 
+## INVOCATION PROTOCOL (CRITICAL)
+
+Les syntaxes `@skill:epci:xxx` et `@agent:xxx` dans les step files sont **DOCUMENTAIRES SEULEMENT**.
+Claude interprète les blocs de code comme des exemples, pas comme des instructions d'exécution.
+
+**Pour invoquer réellement:**
+
+| Type | Syntaxe documentaire | Invocation réelle |
+|------|---------------------|-------------------|
+| Breakpoints | `@skill:epci:breakpoint-system` | Section impérative + AskUserQuestion explicite |
+| Agents | `@agent:implementer` | `Task({ subagent_type: "implementer", ... })` |
+| Stack skills | `@skill:python-django` | `Read("src/skills/stack/python-django/SKILL.md")` |
+
+**Règle pour auteurs de step files:**
+- Utiliser le format impératif direct (pas dans bloc de code)
+- Afficher les boîtes ASCII hors bloc exécutable
+- Appeler AskUserQuestion explicitement
+- Ajouter `⏸️ ATTENDS la réponse` après chaque breakpoint
+
 ## Limitations
 
 This skill does NOT:

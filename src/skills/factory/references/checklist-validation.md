@@ -184,6 +184,76 @@ grep -r "subagent_type:" steps/
 # Should match each @agent reference
 ```
 
+### 14. Breakpoint Syntax Validation (CRITICAL)
+
+**Rule**: Breakpoints MUST use imperative format, NOT `@skill:epci:breakpoint-system` in code blocks
+
+**Correct format**:
+```markdown
+### X. BREAKPOINT: {Title} (OBLIGATOIRE)
+
+AFFICHE cette boîte:
+┌─────────────────────────────────────────────────────────────────────┐
+│ {CONTENT}                                                           │
+└─────────────────────────────────────────────────────────────────────┘
+
+APPELLE:
+AskUserQuestion({...})
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
+```
+
+**Anti-pattern (will NOT execute)**:
+```typescript
+@skill:epci:breakpoint-system
+  type: validation
+  ...
+```
+
+**Severity**: ERROR - Claude interprets code blocks as documentation
+
+**Check**:
+```bash
+# Detect incorrect breakpoint syntax in step files
+grep -rn "@skill:epci:breakpoint-system" steps/
+# Should return 0 matches (all breakpoints should be imperative)
+
+# Verify AskUserQuestion calls exist where BREAKPOINT sections are
+grep -l "BREAKPOINT:" steps/ | xargs grep -l "AskUserQuestion"
+# All files with BREAKPOINT should have AskUserQuestion
+```
+
+### 15. Agent/Skill Invocation Syntax (CRITICAL)
+
+**Rule**: Agent and skill invocations in code blocks are DOCUMENTARY ONLY - they will NOT execute
+
+**Anti-patterns (will NOT execute)**:
+```python
+@agent:ems-evaluator (Haiku)
+  input: { ... }
+
+@skill:epci:project-memory
+  init()
+```
+
+**Correct invocation**:
+- Agents → `Task({ subagent_type: "agent-name", model: "model", prompt: "..." })`
+- Core skills → Direct logic or Read/Write of state files
+- Stack skills → `Read("src/skills/stack/{stack}/SKILL.md")`
+
+**Severity**: ERROR - These invocations will be ignored by Claude
+
+**Check**:
+```bash
+# Detect @agent: in code blocks (excluding documentation sections)
+grep -rn "@agent:" steps/ | grep -v "documentaire"
+# Should only appear in documentation/comments
+
+# Detect @skill: in code blocks
+grep -rn "@skill:epci:" steps/ | grep -v "documentaire"
+# Should only appear in documentation/comments
+```
+
 ---
 
 ## Validation Report Template
@@ -212,8 +282,10 @@ grep -r "subagent_type:" steps/
 │ [✓] 11. Error handling defined                      │
 │ [✓] 12. Limitations documented                      │
 │ [✓] 13. Task tool documented (if delegating)        │
+│ [✓] 14. Breakpoint syntax imperative                │
+│ [✓] 15. No @skill:/@agent: in code blocks           │
 │                                                      │
-│ Result: PASS (13/13)                                │
+│ Result: PASS (15/15)                                │
 │                                                      │
 └─────────────────────────────────────────────────────┘
 ```

@@ -123,55 +123,69 @@ APPROVED or NEEDS_REVISION with specific feedback
 | {AC1} | {component} | {test} |
 ```
 
-## BREAKPOINT:
+## BREAKPOINT: Plan Validation (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: plan-review
-  title: "Plan Validation"
-  data: {
-    metrics: {
-      complexity: "{complexity}",
-      complexity_score: {score},
-      files_impacted: {N},
-      time_estimate: "{hours}h",
-      risk_level: "{LOW|MEDIUM|HIGH}",
-      risk_description: "{risk notes}"
-    },
-    validations: {
-      plan_validator: {
-        verdict: "APPROVED",
-        completeness: "{phases} phases defined",
-        consistency: "Dependencies mapped",
-        feasibility: "Within scope",
-        quality: "TDD strategy defined"
-      }
-    },
-    skills_loaded: ["tdd-enforcer", "state-manager"],
-    preview_next: {
-      tasks: [
-        {title: "{Phase 1 summary}", time: "{estimate}"},
-        {title: "{Phase 2 summary}", time: "{estimate}"},
-        {title: "{Phase 3 summary}", time: "{estimate}"}
-      ],
-      remaining_tasks: {N}
-    },
-    feature_doc_path: ".epci/features/{feature-slug}/FEATURE.md"
-  }
-  ask: {
-    question: "Approve implementation plan?",
-    header: "Plan Review",
-    options: [
-      {label: "Approve and Code (Recommended)", description: "Proceed to TDD implementation"},
-      {label: "Modify Plan", description: "Adjust phases or approach"},
-      {label: "Abort", description: "Revise requirements first"}
-    ]
-  }
-  suggestions: [
-    {pattern: "tdd", text: "TDD cycle enforced: RED → GREEN → REFACTOR", priority: "P1"},
-    {pattern: "coverage", text: "Coverage target: {%}%", priority: "P2"}
-  ]
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📋 VALIDATION DU PLAN                                               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Complexité: {complexity} (score: {score})                         │
+│ • Fichiers impactés: {N}                                            │
+│ • Temps estimé: {hours}h                                            │
+│ • Niveau de risque: {LOW|MEDIUM|HIGH}                               │
+│ • Description risque: {risk notes}                                  │
+│                                                                     │
+│ VALIDATIONS                                                         │
+│ • @plan-validator: {APPROVED}                                       │
+│   - Complétude: {phases} phases définies                            │
+│   - Cohérence: Dépendances mappées                                  │
+│   - Faisabilité: Dans le scope                                      │
+│   - Qualité: Stratégie TDD définie                                  │
+│                                                                     │
+│ PREVIEW TÂCHES                                                      │
+│ | Phase 1: {summary_1} | ~{estimate_1} |                            │
+│ | Phase 2: {summary_2} | ~{estimate_2} |                            │
+│ | Phase 3: {summary_3} | ~{estimate_3} |                            │
+│ Tâches restantes: {N}                                               │
+│                                                                     │
+│ Skills chargés: tdd-enforcer, state-manager                         │
+│ Doc feature: .epci/features/{feature-slug}/FEATURE.md               │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Cycle TDD enforced: RED → GREEN → REFACTOR                     │
+│ [P2] Cible coverage: {%}%                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Approuver et Coder (Recommended) — Passer au TDD          │ │
+│ │  [B] Modifier le plan — Ajuster phases ou approche             │ │
+│ │  [C] Abandonner — Réviser requirements d'abord                 │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Approuver le plan d'implémentation?",
+    header: "Plan Review",
+    multiSelect: false,
+    options: [
+      { label: "Approuver et Coder (Recommended)", description: "Procéder à l'implémentation TDD" },
+      { label: "Modifier le plan", description: "Ajuster phases ou approche" },
+      { label: "Abandonner", description: "Réviser requirements d'abord" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

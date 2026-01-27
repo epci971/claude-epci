@@ -47,9 +47,61 @@ Centralizes all breakpoint display logic for consistency, token economy, and mai
 4. **Invoke** AskUserQuestion (if interactive type)
 5. **Return** user response to calling skill
 
-## Invocation Pattern
+## CRITICAL: Invocation Protocol
+
+**⚠️ WARNING**: La syntaxe `@skill:epci:breakpoint-system` est **DOCUMENTAIRE SEULEMENT**.
+Claude interprète les blocs de code comme des **exemples**, pas comme des **instructions d'exécution**.
+
+### Comment invoquer réellement un breakpoint
+
+Les breakpoints doivent être implémentés **directement** dans les step files avec:
+
+1. **Section BREAKPOINT impérative** (pas dans un bloc de code)
+2. **Boîte ASCII affichée** (pas de @skill:)
+3. **Appel AskUserQuestion explicite**
+4. **Instruction ATTENDS**
+
+### Format impératif correct
+
+```markdown
+### X. BREAKPOINT: {Title} (OBLIGATOIRE)
+
+AFFICHE cette boîte:
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ {ICON} {TITLE}                                                      │
+├─────────────────────────────────────────────────────────────────────┤
+│ {CONTENT}                                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Option 1 (Recommended) — description                      │ │
+│ │  [B] Option 2 — description                                    │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+
+APPELLE:
+AskUserQuestion({
+  questions: [{
+    question: "{QUESTION}",
+    header: "{HEADER}",
+    multiSelect: false,
+    options: [
+      { label: "Option 1 (Recommended)", description: "..." },
+      { label: "Option 2", description: "..." }
+    ]
+  }]
+})
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
+```
+
+### Syntaxe documentaire (NE PAS UTILISER pour invoquer)
+
+La syntaxe ci-dessous est pour **documentation/référence** uniquement:
 
 ```typescript
+// DOCUMENTATION ONLY - Claude n'exécute pas ce bloc
 @skill:epci:breakpoint-system
   type: {TYPE}
   title: "{TITLE}"
@@ -391,3 +443,22 @@ This skill does NOT:
 - Implement business logic (stays in calling skills)
 - Validate business data (display only)
 - Generate suggestions (received as input)
+
+## Anti-patterns à éviter
+
+| Anti-pattern | Problème | Solution |
+|--------------|----------|----------|
+| `@skill:epci:breakpoint-system` dans bloc code | Claude ignore l'invocation | Format impératif direct |
+| Pas de AskUserQuestion | Pas d'interactivité | Appel explicite obligatoire |
+| Pas de ATTENDS | Continue sans réponse | Instruction ATTENDS explicite |
+| Breakpoint sans numérotation | Ordre ambigu | Section `### X. BREAKPOINT:` |
+
+## Checklist pour auteurs de skills
+
+Avant de commit un step file avec breakpoint:
+
+- [ ] Section `### X. BREAKPOINT: {Title} (OBLIGATOIRE)`
+- [ ] Boîte ASCII affichée en dehors d'un bloc de code exécutable
+- [ ] Appel `AskUserQuestion({...})` explicite
+- [ ] Instruction `⏸️ ATTENDS la réponse`
+- [ ] Pas de syntaxe `@skill:epci:` dans les instructions

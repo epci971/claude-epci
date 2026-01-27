@@ -36,14 +36,24 @@ IF --continue <id> provided:
   → Skip to step-04-iteration.md at iteration N+1
 ```
 
-### 2. Load Project Context via project-memory
+### 2. Load Project Context (SI DISPONIBLE)
 
-```python
-@skill:epci:project-memory
-  init()
-  patterns = get_patterns()
-  preferences = get_preferences()
-  related_features = recall_features(idea)
+Charger le contexte projet depuis les fichiers d'état:
+
+```
+SI le fichier `.claude/state/features/index.json` existe:
+  Read(".claude/state/features/index.json")
+  → Extraire les features récentes liées au sujet
+  → Stocker patterns et préférences
+
+SI le fichier `.claude/state/project-patterns.json` existe:
+  Read(".claude/state/project-patterns.json")
+  → Extraire conventions de code
+  → Extraire préférences utilisateur
+
+SINON:
+  → Continuer sans historique projet
+  → Log: "project-memory unavailable, continuing without history context"
 ```
 
 Store for later steps:

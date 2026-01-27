@@ -46,60 +46,56 @@ See [references/solution-scoring.md](../references/solution-scoring.md) for form
 | S2: Refactor cache layer | 2 | 3 | 2 | 5 | 3.00 |
 | S3: Add invalidation hook | 3 | 4 | 3 | 4 | 3.50 |
 
-### 2. Present Diagnostic Breakpoint
+### 2. BREAKPOINT: Diagnostic (OBLIGATOIRE sauf --turbo)
 
-Use `breakpoint-system` with type "diagnostic":
+AFFICHE cette boîte:
 
 ```
-@skill:epci:breakpoint-system
-  type: diagnostic
-  title: "Root Cause Analysis Complete"
-  data: {
-    root_cause: "{top hypothesis}",
-    confidence: {confidence}%,
-    decision_tree: "H1 > H2 > H3",
-    solutions: [
-      { id: "S1", title: "{solution 1}", effort: "Low", risk: "Low" },
-      { id: "S2", title: "{solution 2}", effort: "Medium", risk: "Medium" },
-      { id: "S3", title: "{solution 3}", effort: "High", risk: "Low" }
-    ]
-  }
-  ask: {
-    question: "Quelle solution implementer?",
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🔍 ROOT CAUSE ANALYSIS COMPLETE                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Root Cause: {top hypothesis}                                        │
+│ Confidence: {confidence}%                                           │
+│                                                                     │
+│ Decision Tree: H1 > H2 > H3                                         │
+│                                                                     │
+│ SOLUTIONS (Ranked):                                                 │
+│ ┌──────┬────────────────────────┬────────┬────────┬───────┐        │
+│ │ ID   │ Solution               │ Effort │ Risk   │ Score │        │
+│ ├──────┼────────────────────────┼────────┼────────┼───────┤        │
+│ │ S1   │ {solution 1}           │ Low    │ Low    │ 4.25  │        │
+│ │ S2   │ {solution 2}           │ Medium │ Medium │ 3.50  │        │
+│ │ S3   │ {solution 3}           │ High   │ Low    │ 3.00  │        │
+│ └──────┴────────────────────────┴────────┴────────┴───────┘        │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] S1: {title} (Recommended) — Simple, low risk              │ │
+│ │  [B] S2: {title} — Plus de travail, meilleur long-terme        │ │
+│ │  [C] Détails — Afficher analyse complète                       │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Quelle solution implémenter?",
     header: "Solution",
+    multiSelect: false,
     options: [
       { label: "S1: {title} (Recommended)", description: "Simple, low risk" },
-      { label: "S2: {title}", description: "More work, better long-term" },
-      { label: "Details", description: "Show full analysis" }
+      { label: "S2: {title}", description: "Plus de travail, meilleur long-terme" },
+      { label: "Détails", description: "Afficher analyse complète" }
     ]
-  }
+  }]
+})
 ```
 
-**Breakpoint Display:**
-
-```
-+---------------------------------------------------------------------+
-| [DIAGNOSTIC] Root Cause Analysis Complete                            |
-+---------------------------------------------------------------------+
-|                                                                      |
-| Root Cause: {hypothesis}                                             |
-| Confidence: {N}%                                                     |
-|                                                                      |
-| Decision Tree: H1 > H2 > H3                                          |
-|                                                                      |
-| Solutions (Ranked):                                                  |
-| +-------+------------------------+--------+--------+-------+        |
-| | ID    | Solution               | Effort | Risk   | Score |        |
-| +-------+------------------------+--------+--------+-------+        |
-| | S1    | {solution 1}           | Low    | Low    | 4.25  |        |
-| | S2    | {solution 2}           | Medium | Medium | 3.50  |        |
-| | S3    | {solution 3}           | High   | Low    | 3.00  |        |
-| +-------+------------------------+--------+--------+-------+        |
-|                                                                      |
-+---------------------------------------------------------------------+
-| [A] S1 (Recommended)  [B] S2  [C] Details  [?] Autre                |
-+---------------------------------------------------------------------+
-```
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 3. --turbo Mode: Skip Breakpoint
 

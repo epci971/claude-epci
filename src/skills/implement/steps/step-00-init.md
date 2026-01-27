@@ -63,31 +63,50 @@ Complexity: {TINY|SMALL|STANDARD|LARGE}
 Routing: {next step path}
 ```
 
-## BREAKPOINT (for STANDARD+ only):
+## BREAKPOINT (for STANDARD+ only) - OBLIGATOIRE
 
-```typescript
-@skill:epci:breakpoint-system
-  type: validation
-  title: "Complexity Assessment"
-  data: {
-    context: "Feature complexity detection complete",
-    item_to_validate: {
-      objectif: "Confirm complexity routing decision",
-      contexte: "Feature: {feature-slug}, Complexity: {complexity}",
-      contraintes: "~{loc} LOC across {files} files",
-      success_criteria: "User confirms appropriate workflow"
-    }
-  }
-  ask: {
-    question: "Proceed with detected complexity?",
-    header: "Complexity",
-    options: [
-      {label: "Proceed with EPCI (Recommended)", description: "Full workflow for STANDARD+ features"},
-      {label: "Downgrade to /quick", description: "Simpler than estimated, use quick workflow"},
-      {label: "Abort", description: "Refine requirements first"}
-    ]
-  }
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📊 ÉVALUATION COMPLEXITÉ                                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Détection complexité terminée                                       │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Complexité: {complexity}                                            │
+│ Estimation: ~{loc} LOC sur {files} fichiers                         │
+│                                                                     │
+│ Critère de succès: L'utilisateur confirme le workflow approprié     │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer avec EPCI (Recommended) — Workflow complet      │ │
+│ │  [B] Rétrograder vers /quick — Plus simple qu'estimé           │ │
+│ │  [C] Abandonner — Affiner les requirements d'abord             │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Procéder avec la complexité détectée?",
+    header: "Complexity",
+    multiSelect: false,
+    options: [
+      { label: "Continuer avec EPCI (Recommended)", description: "Workflow complet pour features STANDARD+" },
+      { label: "Rétrograder vers /quick", description: "Plus simple qu'estimé, utiliser quick workflow" },
+      { label: "Abandonner", description: "Affiner les requirements d'abord" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

@@ -162,36 +162,55 @@ RETRY PROTOCOL:
 
 **Max retries: 2**
 
-If still failing after 2 retries, invoke diagnostic breakpoint:
+If still failing after 2 retries, AFFICHE cette boîte:
 
-```typescript
-@skill:epci:breakpoint-system
-  type: diagnostic
-  title: "TDD Failure"
-  data: {
-    root_cause: "{identified cause or 'Unknown - needs investigation'}",
-    confidence: 0.5,
-    decision_tree: "RED failed → GREEN attempt 1 failed → GREEN attempt 2 failed",
-    solutions: [
-      {id: "S1", title: "Continue Investigation", effort: "5-10 min", risk: "Medium"},
-      {id: "S2", title: "Use /debug Workflow", effort: "15-30 min", risk: "Low"},
-      {id: "S3", title: "Abort and Fix Manually", effort: "Variable", risk: "Low"}
-    ]
-  }
-  ask: {
-    question: "Tests failing after 2 attempts. How to proceed?",
-    header: "TDD Failure",
-    options: [
-      {label: "Continue Investigation", description: "May take longer but stays in /quick"},
-      {label: "Use /debug (Recommended)", description: "Structured debugging workflow"},
-      {label: "Abort", description: "Fix manually outside workflow"}
-    ]
-  }
-  suggestions: [
-    {pattern: "error", text: "Last error: {error message}", priority: "P1"},
-    {pattern: "debug", text: "/debug provides hypothesis-driven investigation", priority: "P2"}
-  ]
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🔴 ÉCHEC TDD                                                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Root Cause: {identified cause or 'Unknown - needs investigation'}   │
+│ Confidence: 50%                                                     │
+│                                                                     │
+│ Decision Tree:                                                      │
+│ RED failed → GREEN attempt 1 failed → GREEN attempt 2 failed        │
+│                                                                     │
+│ Solutions:                                                          │
+│ | S1 | Continue Investigation | 5-10 min | Risk: Medium |           │
+│ | S2 | Use /debug Workflow    | 15-30 min | Risk: Low   |           │
+│ | S3 | Abort and Fix Manually | Variable  | Risk: Low   |           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Dernière erreur: {error message}                               │
+│ [P2] /debug fournit investigation hypothesis-driven                 │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer investigation — Reste dans /quick               │ │
+│ │  [B] Utiliser /debug (Recommended) — Workflow debug structuré  │ │
+│ │  [C] Abandonner — Corriger manuellement                        │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Tests en échec après 2 tentatives. Comment procéder?",
+    header: "TDD Failure",
+    multiSelect: false,
+    options: [
+      { label: "Continuer investigation", description: "Peut prendre plus de temps mais reste dans /quick" },
+      { label: "Utiliser /debug (Recommended)", description: "Workflow debugging structuré" },
+      { label: "Abandonner", description: "Corriger manuellement en dehors du workflow" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ## OUTPUT FORMAT:
 

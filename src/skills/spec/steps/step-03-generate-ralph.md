@@ -335,36 +335,57 @@ Location: .ralph/{feature-slug}/
 ```
 ```
 
-## BREAKPOINT:
+## BREAKPOINT: Specification Complete (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: validation
-  title: "Specification Complete"
-  data: {
-    context: "All specification and Ralph artifacts generated",
-    item_to_validate: {
-      objectif: "Choose next action for feature implementation",
-      contexte: "Feature: {feature-slug}, Complexity: {TINY|SMALL|STANDARD|LARGE}",
-      contraintes: "Specs: docs/specs/{slug}/, Ralph: .ralph/{slug}/",
-      success_criteria: "User selects implementation path"
-    }
-  }
-  ask: {
-    question: "How would you like to proceed?",
-    header: "Next Step",
-    options: [
-      {label: "Launch {/quick or /implement} (Recommended)", description: "Start implementation workflow"},
-      {label: "Run Ralph Batch", description: "Execute ./.ralph/{slug}/ralph.sh"},
-      {label: "Review Files", description: "Inspect generated artifacts"},
-      {label: "Done", description: "End workflow, implement later"}
-    ]
-  }
-  suggestions: [
-    {pattern: "stack", text: "Review PROMPT.md for stack-specific adjustments", priority: "P1"},
-    {pattern: "parallel", text: "Consider parallel task execution for optimization", priority: "P2"}
-  ]
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ SPÉCIFICATION COMPLÈTE                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Tous les artifacts de spec et Ralph générés                         │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Complexité: {TINY|SMALL|STANDARD|LARGE}                             │
+│ Specs: docs/specs/{slug}/                                           │
+│ Ralph: .ralph/{slug}/                                               │
+│                                                                     │
+│ Critère de succès: Utilisateur sélectionne chemin implémentation    │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Réviser PROMPT.md pour ajustements stack-specific              │
+│ [P2] Considérer exécution parallèle des tâches pour optimisation    │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Lancer {/quick ou /implement} (Recommended)               │ │
+│ │  [B] Run Ralph Batch — Exécuter ralph.sh                       │ │
+│ │  [C] Review fichiers — Inspecter artifacts générés             │ │
+│ │  [D] Terminé — Fin workflow, implémenter plus tard             │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Comment voulez-vous procéder?",
+    header: "Next Step",
+    multiSelect: false,
+    options: [
+      { label: "Lancer {/quick ou /implement} (Recommended)", description: "Démarrer workflow implémentation" },
+      { label: "Run Ralph Batch", description: "Exécuter ./.ralph/{slug}/ralph.sh" },
+      { label: "Review fichiers", description: "Inspecter artifacts générés" },
+      { label: "Terminé", description: "Fin workflow, implémenter plus tard" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ## COMPLETION:
 

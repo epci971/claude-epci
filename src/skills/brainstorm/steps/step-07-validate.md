@@ -64,30 +64,50 @@ Structure brief into validatable sections:
 - Dependencies: {...}
 ```
 
-### 3. BREAKPOINT: Section-by-Section Validation
+### 3. BREAKPOINT: Section-by-Section Validation (OBLIGATOIRE sauf --quick)
 
-For each major section (unless --quick):
+Pour chaque section majeure, AFFICHE cette boîte:
 
-```typescript
-@skill:epci:breakpoint-system
-  type: validation
-  title: "Validate: {section_name}"
-  data: {
-    section: "{section_name}",
-    content: "{section_content}",
-    source: "{decisions that informed this section}",
-    confidence: "{HIGH|MEDIUM|LOW}"
-  }
-  ask: {
-    question: "Is this {section_name} accurate?",
-    header: "{section}",
-    options: [
-      {label: "Approve", description: "Section is correct"},
-      {label: "Edit", description: "Make changes"},
-      {label: "Skip remaining", description: "Auto-approve rest"}
-    ]
-  }
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ VALIDATION: {section_name}                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ CONTENU                                                             │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ {section_content}                                               │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ Source: {decisions that informed this section}                      │
+│ Confiance: {HIGH|MEDIUM|LOW}                                        │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Approuver (Recommended) — Section correcte                │ │
+│ │  [B] Éditer — Faire des modifications                          │ │
+│ │  [C] Ignorer le reste — Auto-approuver suivantes               │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Cette section {section_name} est-elle correcte?",
+    header: "{section}",
+    multiSelect: false,
+    options: [
+      { label: "Approuver (Recommended)", description: "Section correcte" },
+      { label: "Éditer", description: "Faire des modifications" },
+      { label: "Ignorer le reste", description: "Auto-approuver les sections suivantes" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer à la section suivante.
 
 Sections to validate (in order):
 1. Executive Summary

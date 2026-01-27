@@ -39,17 +39,29 @@ ELSE:
 
 ### 2. Generate Clarification Questions
 
-```python
-IF --turbo flag:
-  @agent:clarifier (Haiku)
-    input: idea_raw, project_context
-    output: questions[], suggestions[]
-ELSE:
-  @skill:epci:clarification-engine
-    input: idea_raw, project_context
-    mode: brainstorm
-    max_questions: 3
+**Mode Turbo (--turbo flag)**:
+Lance un agent clarifier pour générer les questions rapidement.
+
 ```
+Task({
+  subagent_type: "clarifier",
+  model: "haiku",
+  prompt: "Génère 2-3 questions de clarification pour ce brainstorm.
+    Idée: {idea_raw}
+    Contexte projet: {project_context}
+
+    Retourne: questions[] avec catégorie, texte, suggestion."
+})
+```
+
+**Mode Standard**:
+Génère les questions selon le score de clarté:
+
+| Score clarté | Questions | Focus |
+|--------------|-----------|-------|
+| < 0.6 | 3 questions | scope, users, success |
+| 0.6 - 0.8 | 2 questions | scope, constraints |
+| > 0.8 | 1 question | confirmation |
 
 Question categories:
 - **Scope**: "What's the boundary of this feature?"
@@ -57,30 +69,54 @@ Question categories:
 - **Constraints**: "Any technical or business constraints?"
 - **Success**: "How will you know it's successful?"
 
-### 3. BREAKPOINT: Clarification
+### 3. BREAKPOINT: Clarification (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: validation
-  title: "Clarification"
-  data: {
-    original_input: "{idea_raw}",
-    clarity_score: {score},
-    questions: [
-      {category: "Scope", question: "...", suggestion: "..."},
-      {category: "Users", question: "...", suggestion: "..."}
-    ]
-  }
-  ask: {
-    question: "Please answer these questions to clarify your idea:",
-    header: "Clarify",
-    options: [
-      {label: "Answer questions", description: "Provide answers inline"},
-      {label: "Skip clarification", description: "Proceed with current understanding"},
-      {label: "Rephrase idea", description: "Start over with clearer description"}
-    ]
-  }
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ❓ CLARIFICATION                                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Idée originale: {idea_raw}                                          │
+│ Score de clarté: {clarity_score}/1.0                                │
+│                                                                     │
+│ Questions de clarification:                                         │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ [Scope] {question_1}                                            │ │
+│ │   → Suggestion: {suggestion_1}                                  │ │
+│ │                                                                 │ │
+│ │ [Users] {question_2}                                            │ │
+│ │   → Suggestion: {suggestion_2}                                  │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Répondre aux questions (Recommended) — fournir réponses   │ │
+│ │  [B] Ignorer clarification — continuer tel quel                │ │
+│ │  [C] Reformuler l'idée — recommencer                           │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Répondez aux questions pour clarifier votre idée:",
+    header: "Clarify",
+    multiSelect: false,
+    options: [
+      { label: "Répondre aux questions (Recommended)", description: "Fournir réponses inline" },
+      { label: "Ignorer clarification", description: "Continuer tel quel" },
+      { label: "Reformuler l'idée", description: "Recommencer avec description plus claire" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 4. Integrate Responses
 
@@ -111,26 +147,51 @@ Synthesize into structured brief:
 **Success Criteria**: {how to measure success}
 ```
 
-### 6. BREAKPOINT: Brief Validation
+### 6. BREAKPOINT: Brief Validation (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: validation
-  title: "Brief Validation"
-  data: {
-    brief: "{reformulated brief}",
-    changes_from_original: ["{diff1}", "{diff2}"]
-  }
-  ask: {
-    question: "Is this reformulation accurate?",
-    header: "Validate",
-    options: [
-      {label: "Validate (Recommended)", description: "Proceed with this brief"},
-      {label: "Adjust", description: "Make corrections"},
-      {label: "Reject", description: "Start over"}
-    ]
-  }
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ VALIDATION DU BRIEF                                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Brief reformulé:                                                    │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ {reformulated_brief}                                            │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ Changements par rapport à l'original:                               │
+│ • {diff1}                                                           │
+│ • {diff2}                                                           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Valider (Recommended) — Continuer avec ce brief           │ │
+│ │  [B] Ajuster — Faire des corrections                           │ │
+│ │  [C] Rejeter — Recommencer                                     │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Cette reformulation est-elle correcte?",
+    header: "Validate",
+    multiSelect: false,
+    options: [
+      { label: "Valider (Recommended)", description: "Continuer avec ce brief" },
+      { label: "Ajuster", description: "Faire des corrections" },
+      { label: "Rejeter", description: "Recommencer" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 7. Handle Rejection Loop
 

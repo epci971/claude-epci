@@ -51,25 +51,44 @@
 {{/each}}
 
 {{#if has_breakpoint}}
-## BREAKPOINT
+### X. BREAKPOINT: {{step_title}} Validation (OBLIGATOIRE)
+
+AFFICHE cette boîte:
 
 ```
-@skill:epci:breakpoint-system
-  type: {{breakpoint_type}}
-  title: "{{step_title}} Validation"
-  data: {
-    // Step-specific data
-  }
-  ask: {
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ {{step_title}} VALIDATION                                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ {Step-specific data to display}                                     │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer (Recommended) — Proceed to next step            │ │
+│ │  [B] Modifier — Adjust current step                            │ │
+│ │  [C] Annuler — Stop workflow                                   │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
     question: "How would you like to proceed?",
     header: "Action",
+    multiSelect: false,
     options: [
-      { label: "Continue", description: "Proceed to next step" },
-      { label: "Modify", description: "Adjust current step" },
-      { label: "Cancel", description: "Stop workflow" }
+      { label: "Continuer (Recommended)", description: "Proceed to next step" },
+      { label: "Modifier", description: "Adjust current step" },
+      { label: "Annuler", description: "Stop workflow" }
     ]
-  }
+  }]
+})
 ```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 {{/if}}
 
 ## Outputs
