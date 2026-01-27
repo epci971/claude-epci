@@ -1,0 +1,119 @@
+# {{FEATURE_TITLE}}
+
+> Technical Specification | Generated {{DATE}} | {{TASK_COUNT}} tasks | {{TOTAL_HOURS}}h estimated
+
+---
+
+## Overview
+
+{{DESCRIPTION}}
+
+## Scope
+
+### In Scope
+
+{{#each SCOPE_IN}}
+- {{this}}
+{{/each}}
+
+### Out of Scope
+
+{{#each SCOPE_OUT}}
+- {{this}}
+{{/each}}
+
+---
+
+## Tasks
+
+| # | Task | Description | Effort | Dependencies |
+|---|------|-------------|--------|--------------|
+{{#each TASKS}}
+| {{this.number}} | [{{this.title}}]({{this.file}}) | {{this.description}} | {{this.minutes}} min | {{this.deps}} |
+{{/each}}
+
+---
+
+## Dependency Graph
+
+```mermaid
+graph TD
+{{#each PHASES}}
+    subgraph Phase {{this.number}}: {{this.title}}
+{{#each this.tasks}}
+        T{{this.number}}[task-{{this.id}}: {{this.title}}]
+{{/each}}
+    end
+{{/each}}
+
+{{#each EDGES}}
+    T{{this.from}} --> T{{this.to}}
+{{/each}}
+```
+
+---
+
+## Execution Order
+
+{{#each EXECUTION_ORDER}}
+{{this.order}}. **{{this.id}}** — {{this.title}}{{#if this.deps}} (after: {{this.deps}}){{/if}}
+{{/each}}
+
+---
+
+## Metrics
+
+| Metric | Value |
+|--------|-------|
+| Total Tasks | {{TASK_COUNT}} |
+| Total Steps | {{STEP_COUNT}} |
+| Estimated Effort | {{TOTAL_HOURS}}h |
+| Critical Path | {{CRITICAL_PATH}} |
+| Optimized Duration | {{OPTIMIZED_HOURS}}h |
+| Complexity | {{COMPLEXITY}} |
+
+---
+
+## Files
+
+### Task Specifications
+
+{{#each TASKS}}
+- [{{this.file}}]({{this.file}}) — {{this.title}}
+{{/each}}
+
+### Machine-Readable
+
+- [{{FEATURE_SLUG}}.prd.json]({{FEATURE_SLUG}}.prd.json) — PRD v2.0 format
+
+---
+
+## Routing Recommendation
+
+| Complexity | Recommended Skill | Command |
+|------------|-------------------|---------|
+| {{COMPLEXITY}} | {{RECOMMENDED_SKILL}} | `{{RECOMMENDED_COMMAND}}` |
+
+### Execution Options
+
+**Option A: Manual Implementation**
+```bash
+{{RECOMMENDED_COMMAND}}
+```
+
+**Option B: Ralph Batch Execution**
+```bash
+./.ralph/{{FEATURE_SLUG}}/ralph.sh
+```
+
+---
+
+## Source
+
+- **Brief**: {{SOURCE_PATH}}
+- **Generated**: {{DATE}}
+- **Generator**: /spec v1.0 — EPCI v6.0
+
+---
+
+*This specification is auto-generated. Edit task-XXX.md files to modify, then regenerate index and PRD.json.*

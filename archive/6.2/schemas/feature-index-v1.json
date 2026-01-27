@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "feature-index-v1",
+  "title": "Feature Index",
+  "description": "Index of all features tracked by state-manager",
+  "type": "object",
+  "required": ["version", "features"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Schema version"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["slug", "status", "created_at"],
+        "properties": {
+          "slug": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["in_progress", "completed", "paused", "failed"]
+          },
+          "created_at": { "type": "string", "format": "date-time" },
+          "completed_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "description": "List of tracked features"
+    }
+  }
+}

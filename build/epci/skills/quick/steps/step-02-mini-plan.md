@@ -17,7 +17,46 @@ next_step: steps/step-03-code.md
 
 ## EXECUTION PROTOCOLS:
 
-### 1. Generate Minimal Plan
+### 1. Determine Planning Approach
+
+Based on complexity from step-01:
+- **TINY tasks**: Generate inline plan (no delegation)
+- **SMALL+ tasks** (near limit, 3 files, complex patterns): Invoke @planner
+
+### 2. For SMALL+ Tasks: Invoke @planner (Sonnet)
+
+When task is near SMALL complexity limit, delegate to planner agent:
+
+```typescript
+Task({
+  subagent_type: "planner",
+  prompt: `
+## Feature
+{feature_name}
+
+## Target Files
+{identified_files_from_step_01}
+
+## Complexity
+SMALL (near limit: 3 files or complex patterns)
+
+## Constraints
+- Maximum 5 steps
+- Maximum 200 LOC
+- TDD required
+
+## Output Format
+Minimal plan with:
+- Objective (1-2 sentences)
+- Files list with actions
+- Ordered steps (max 5)
+- Test strategy
+- Completion criteria
+  `
+})
+```
+
+### 3. For TINY Tasks: Generate Inline Plan
 
 Create a lightweight plan following the structure in [references/plan-structure.md](../references/plan-structure.md):
 
@@ -43,7 +82,7 @@ Create a lightweight plan following the structure in [references/plan-structure.
 {Clear completion criteria}
 ```
 
-### 2. Define Test Strategy
+### 4. Define Test Strategy
 
 Determine what tests to write:
 
@@ -62,7 +101,7 @@ TEST STRATEGY:
 - TINY: 1 test sufficient
 - SMALL: 1-3 tests recommended
 
-### 3. Estimate LOC
+### 5. Estimate LOC
 
 Quick estimate of code changes:
 
@@ -78,7 +117,7 @@ Quick estimate of code changes:
 - SMALL: max 200 LOC total
 - If exceeds → warn but continue (user accepted complexity)
 
-### 4. Define Completion Criteria
+### 6. Define Completion Criteria
 
 Clear, measurable criteria:
 

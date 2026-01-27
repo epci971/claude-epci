@@ -67,7 +67,7 @@ Create production-ready skills for EPCI v6.0 following best practices.
 │  Step 02: ARCHITECTURE                                          │
 │  └─ Structure selection, tools, recommendations                 │
 │                                                                  │
-│  Step 03: DESCRIPTION                                           │r
+│  Step 03: DESCRIPTION                                           │
 │  └─ Description engineering with formula                        │
 │                                                                  │
 │  Step 04: WORKFLOW                                              │

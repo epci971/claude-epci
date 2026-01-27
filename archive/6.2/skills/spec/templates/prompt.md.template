@@ -1,0 +1,297 @@
+# Ralph Execution Context — {{FEATURE_TITLE}}
+
+## Feature
+
+| Property | Value |
+|----------|-------|
+| **Slug** | {{FEATURE_SLUG}} |
+| **Complexity** | {{COMPLEXITY}} |
+| **Tasks** | {{TASK_COUNT}} |
+| **Estimated** | {{TOTAL_HOURS}}h |
+
+---
+
+## Stack
+
+| Property | Value |
+|----------|-------|
+| **Framework** | {{STACK_FRAMEWORK}} |
+| **Language** | {{STACK_LANGUAGE}} |
+| **Test Framework** | {{TEST_FRAMEWORK}} |
+
+---
+
+## Execution Rules
+
+### MANDATORY
+
+- 🔴 Follow TDD cycle: RED → GREEN → REFACTOR
+- 🔴 Complete each task fully before moving to next
+- 🔴 Run tests after each step completion
+- 🔴 Update MEMORY.md after each task completion
+- 🔴 Commit changes with conventional commit format
+- 🔴 Never skip acceptance criteria validation
+
+### WORKFLOW
+
+1. Read current task from `docs/specs/{{FEATURE_SLUG}}/task-XXX.md`
+2. Execute steps sequentially (15-30 min each)
+3. Write tests BEFORE implementation (TDD)
+4. Validate ALL acceptance criteria
+5. Mark task complete in MEMORY.md
+6. Commit: `feat({{FEATURE_SLUG}}): complete task-XXX - {title}`
+7. Proceed to next task by dependency order
+
+---
+
+## Specifications
+
+### Location
+
+```
+docs/specs/{{FEATURE_SLUG}}/
+```
+
+### Files
+
+| File | Description |
+|------|-------------|
+| `index.md` | Overview, DAG, metrics |
+{{#each TASKS}}
+| `{{this.file}}` | {{this.title}} |
+{{/each}}
+| `{{FEATURE_SLUG}}.prd.json` | Machine-readable PRD |
+
+---
+
+## Execution Order
+
+Execute tasks in this order (respects dependencies):
+
+{{#each EXECUTION_ORDER}}
+{{this.order}}. **{{this.id}}**: {{this.title}}
+{{#if this.deps}}   → After: {{this.deps}}{{/if}}
+{{/each}}
+
+### Parallel Opportunities
+
+{{#if PARALLEL_GROUPS}}
+{{#each PARALLEL_GROUPS}}
+**Group {{this.number}}**: {{this.tasks}} can run in parallel
+{{/each}}
+{{else}}
+*Sequential execution required — no parallel opportunities*
+{{/if}}
+
+---
+
+## Stack-Specific Guidelines
+
+{{#if STACK_DJANGO}}
+### Django / Python
+
+- Use service layer pattern (avoid fat models/views)
+- pytest for all tests with Factory Boy for fixtures
+- Type hints required (mypy compatible)
+- Django REST Framework for API endpoints
+- Celery for async tasks if needed
+- Follow existing project conventions
+
+### Commit Format
+
+```
+feat({{FEATURE_SLUG}}): {description}
+fix({{FEATURE_SLUG}}): {description}
+test({{FEATURE_SLUG}}): {description}
+```
+{{/if}}
+
+{{#if STACK_REACT}}
+### React / TypeScript
+
+- Functional components with hooks only
+- Vitest + React Testing Library for tests
+- Zustand for state management (if needed)
+- TypeScript strict mode enabled
+- Tailwind CSS for styling
+- Follow existing component patterns
+
+### Commit Format
+
+```
+feat({{FEATURE_SLUG}}): {description}
+fix({{FEATURE_SLUG}}): {description}
+test({{FEATURE_SLUG}}): {description}
+```
+{{/if}}
+
+{{#if STACK_SPRING}}
+### Spring Boot / Java
+
+- Service layer pattern with interfaces
+- JUnit 5 + Mockito for testing
+- Lombok to reduce boilerplate
+- Constructor injection (not field)
+- Spring Security for authorization
+- Follow existing package structure
+
+### Commit Format
+
+```
+feat({{FEATURE_SLUG}}): {description}
+fix({{FEATURE_SLUG}}): {description}
+test({{FEATURE_SLUG}}): {description}
+```
+{{/if}}
+
+{{#if STACK_SYMFONY}}
+### Symfony / PHP
+
+- Service layer pattern
+- PHPUnit + Prophecy for mocking
+- Doctrine ORM for persistence
+- Voters for authorization checks
+- Messenger for async processing
+- Follow PSR-12 coding standards
+
+### Commit Format
+
+```
+feat({{FEATURE_SLUG}}): {description}
+fix({{FEATURE_SLUG}}): {description}
+test({{FEATURE_SLUG}}): {description}
+```
+{{/if}}
+
+{{#if STACK_GENERIC}}
+### Generic Guidelines
+
+- Follow existing project conventions
+- Write comprehensive tests for all code
+- Document non-obvious decisions
+- Use existing patterns and utilities
+- Maintain consistent code style
+
+### Commit Format
+
+```
+feat({{FEATURE_SLUG}}): {description}
+fix({{FEATURE_SLUG}}): {description}
+test({{FEATURE_SLUG}}): {description}
+```
+{{/if}}
+
+---
+
+## Context Persistence
+
+After completing EACH TASK (not step):
+
+### 1. Update MEMORY.md
+
+```markdown
+## Progress
+
+| Task | Status | Completed At | Notes |
+|------|--------|--------------|-------|
+| task-001 | completed | {ISO-8601} | {brief note} |
+| task-002 | in_progress | - | Starting step 1 |
+```
+
+### 2. Record Files Modified
+
+```markdown
+## Files Modified
+
+| File | Action | Task |
+|------|--------|------|
+| src/path/file.py | created | task-001 |
+| tests/test_file.py | created | task-001 |
+```
+
+### 3. Record Tests Added
+
+```markdown
+## Tests Added
+
+| Test | Coverage | Task |
+|------|----------|------|
+| test_user_creation | 95% | task-001 |
+```
+
+### 4. Record Decisions (if any)
+
+```markdown
+## Decisions Made
+
+| Decision | Rationale | Task |
+|----------|-----------|------|
+| Used UUID for IDs | Better for distributed systems | task-001 |
+```
+
+---
+
+## Resumption Protocol
+
+If execution is interrupted:
+
+1. **Read MEMORY.md** for current state
+2. **Check git log** for committed work
+3. **Identify last completed task** from Progress table
+4. **Find next pending task** by dependency order
+5. **Continue from there** (don't repeat completed work)
+
+### Status Check Commands
+
+```bash
+# View current memory state
+cat .ralph/{{FEATURE_SLUG}}/MEMORY.md
+
+# Check git commits for this feature
+git log --oneline --grep="{{FEATURE_SLUG}}"
+
+# Verify test status
+{{TEST_COMMAND}}
+```
+
+---
+
+## Error Handling
+
+### If a Step Fails
+
+1. Document error in MEMORY.md Issues section
+2. Attempt fix based on error message
+3. If stuck > 15 min, pause and request help
+4. Never skip — all steps must pass
+
+### If Tests Fail
+
+1. Fix failing tests before proceeding
+2. Never disable or skip tests
+3. Document any test adjustments
+
+### If Acceptance Criteria Not Met
+
+1. Review implementation against AC
+2. Identify missing functionality
+3. Implement until AC passes
+4. Add tests for AC validation
+
+---
+
+## Completion Checklist
+
+Before marking feature complete:
+
+- [ ] All tasks marked `completed` in MEMORY.md
+- [ ] All acceptance criteria validated
+- [ ] All tests passing ({{TEST_COMMAND}})
+- [ ] All changes committed
+- [ ] No pending TODOs in code
+- [ ] MEMORY.md fully updated
+
+---
+
+*Ralph Execution Context generated by /spec v1.0 — EPCI v6.0*
+*Feature: {{FEATURE_SLUG}} | {{DATE}}*

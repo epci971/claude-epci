@@ -17,19 +17,38 @@ next_step: steps/step-02-mini-plan.md
 
 ## EXECUTION PROTOCOLS:
 
-### 1. Quick Keyword Search
+### 1. Invoke Native Explore Agent (Quick Mode)
 
-Based on input description, search for relevant files:
+Delegate fast codebase scan to Claude Code's native Explore agent:
 
-```bash
-# Example for "fix login button"
-grep -r "login" --include="*.{ts,tsx,js,jsx}" src/
-grep -r "LoginButton" --include="*.{ts,tsx,js,jsx}" src/
+```typescript
+Task({
+  subagent_type: "Explore",
+  prompt: `
+## Quick Exploration
+Feature/Fix: {feature_or_fix_description}
+
+## Find
+- Target files for modification (max 3)
+- Relevant patterns to follow
+- Test file location
+
+## Thoroughness Level
+quick
+
+## Output Format
+- Primary file: {path} — {purpose}
+- Test file: {path} — {exists|create}
+- Pattern: {key pattern to follow}
+  `
+})
 ```
 
-**Output:**
-- List of potentially relevant files (max 5)
-- Note file locations and purposes
+**Why Native Explore (Quick):**
+- Haiku model = fastest response
+- Read-only guaranteed (safe exploration)
+- Context isolation (efficient memory)
+- `quick` thoroughness matches /quick workflow speed
 
 ### 2. Identify Target Files
 

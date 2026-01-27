@@ -26,31 +26,58 @@ conditional_next:
 
 ## EXECUTION PROTOCOLS:
 
-1. **Invoke** @code-reviewer agent
-   - Pass all modified/created files
-   - Request comprehensive review
+### 1. Invoke @code-reviewer (Opus)
 
-2. **Review** test coverage
-   - Verify coverage target met (min 70%)
-   - Identify untested paths
-   - Check edge case coverage
+Delegate code review to the code-reviewer agent:
 
-3. **Security** assessment
-   - Check for injection vulnerabilities
-   - Check for authentication/authorization issues
-   - Check for data exposure risks
-   - If concerns found → proceed to step-04b-security
+```typescript
+Task({
+  subagent_type: "code-reviewer",
+  prompt: `
+## Files to Review
+{modified_files_list}
 
-4. **Code quality** check
-   - Verify patterns followed
-   - Check naming conventions
-   - Review error handling
-   - Check for code smells
+## Original Requirements
+{feature_requirements}
 
-5. **Determine** additional reviews needed
-   - Security review required?
-   - QA validation required?
-   - Performance review required?
+## Implementation Plan Summary
+{plan_summary}
+
+## Review Focus
+- Code quality: patterns, naming, error handling
+- Test coverage: target 70% minimum
+- Security: OWASP Top 10 awareness
+- Plan alignment: implementation matches plan
+
+## Expected Output
+Review report with:
+- Files reviewed count
+- Issues found (Critical/Important/Minor)
+- Test coverage assessment
+- Verdict: APPROVED / CHANGES_REQUIRED / SECURITY_REVIEW_NEEDED
+  `
+})
+```
+
+### 2. Process Review Results
+
+Based on @code-reviewer verdict:
+- If APPROVED: continue to breakpoint
+- If CHANGES_REQUIRED: address findings before proceeding
+- If SECURITY_REVIEW_NEEDED: proceed to step-04b-security
+
+### 3. Verify Test Coverage
+
+- Confirm coverage target met (min 70%)
+- Identify any untested paths flagged by reviewer
+- Check edge case coverage
+
+### 4. Determine Additional Reviews
+
+Based on review findings:
+- Security review required? → step-04b-security
+- QA validation required? → step-04c-qa
+- Performance concerns? → note for documentation
 
 ## CONTEXT BOUNDARIES:
 

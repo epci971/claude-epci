@@ -21,6 +21,46 @@ next_step: steps/step-04-review.md
 - 🔵 YOU ARE A DISCIPLINED TDD PRACTITIONER
 - 💭 FOCUS on one test at a time, complete cycle before next
 
+## DYNAMIC STACK LOADING (Per-File):
+
+Before implementing each component, load the **complete stack skill** based on file type.
+
+### File Type → Stack Skill Mapping
+
+| File Type | Load Stack Skill |
+|-----------|------------------|
+| `*.py` | `@skill:python-django` (SKILL.md + all references) |
+| `*.php` | `@skill:php-symfony` (SKILL.md + all references) |
+| `*.java` | `@skill:java-springboot` (SKILL.md + all references) |
+| `*.tsx`, `*.jsx`, `*.ts`, `*.js` | `@skill:javascript-react` (SKILL.md + all references) |
+| `*.css`, `*.scss`, `*.html` | `@skill:frontend-editor` (SKILL.md + all references) |
+
+### Loading Protocol
+
+For each component in the implementation plan:
+1. **Identify** the target file(s) and their extensions
+2. **Load** the complete stack skill via `@skill:{stack-name}`
+3. **Apply** ALL stack patterns: architecture, ORM/data, API, testing
+4. **Use** stack-specific test commands
+
+### Multi-File Components
+
+If a component spans multiple file types (e.g., API endpoint + React component):
+- Load ALL relevant stack skills
+- Apply backend patterns for backend files
+- Apply frontend patterns for frontend files
+- Each file follows its stack's full conventions
+
+### Stack-Specific Test Commands
+
+| Stack | Test Command | Coverage |
+|-------|--------------|----------|
+| `python-django` | `pytest {test_file} -v` | `pytest --cov={module}` |
+| `php-symfony` | `./vendor/bin/phpunit --filter {test}` | `phpunit --coverage-text` |
+| `java-springboot` | `./gradlew test --tests "{TestClass}"` | `./gradlew jacocoTestReport` |
+| `javascript-react` | `npm test -- {file}` | `npm test -- --coverage` |
+| `frontend-editor` | `npm test -- {file}` | N/A (a11y checks) |
+
 ## EXECUTION PROTOCOLS:
 
 1. **Follow** implementation plan order
@@ -60,39 +100,65 @@ next_step: steps/step-04-review.md
 
 ## TDD CYCLE TEMPLATE:
 
-```
-## Component: {name}
+### Before Each Component
 
-### RED: Write failing test
+1. Identify target file type(s) from implementation plan
+2. Load complete stack skill: `@skill:{stack-name}`
+3. All patterns available: architecture, ORM, API, testing, etc.
+
+### Component: {name} [{file-type} → {stack}]
+
+**Stack loaded:** `@skill:{stack-name}` ✓
+
+#### RED: Write failing test
+- Follow {stack} testing patterns (from SKILL.md + references/testing.md)
+- Use {stack} test framework conventions
+- Apply {stack} assertion style
+
 ```{language}
-// test/{component}.test.ts
-describe('{component}', () => {
-  it('should {expected behavior}', () => {
-    // Arrange
-    // Act
-    // Assert
-  });
-});
+// {stack-specific test path}
+// Example: tests/test_{component}.py (Django)
+// Example: __tests__/{component}.test.tsx (React)
+{test code following stack patterns}
 ```
 
-### Run test: FAIL 🔴
-{test output showing failure}
+#### Run test: FAIL 🔴
+```bash
+# Use stack-specific command
+{stack test command} → Expected failure
+```
 
-### GREEN: Implement
+#### GREEN: Implement
+- Follow {stack} architecture patterns (from SKILL.md + references/architecture.md)
+- Apply {stack} ORM/data patterns if applicable
+- Respect {stack} anti-patterns list
+
 ```{language}
-// src/{component}.ts
-{minimal implementation}
+// {stack-specific source path}
+{minimal implementation following stack conventions}
 ```
 
-### Run test: PASS ✅
-{test output showing pass}
-
-### REFACTOR: Improve
-{refactoring notes if any}
-
-### Run test: PASS ✅
-{confirm tests still pass}
+#### Run test: PASS ✅
+```bash
+{stack test command} → Pass
 ```
+
+#### REFACTOR: Improve
+- Apply {stack} code conventions
+- Check against {stack} anti-patterns
+- Run full test suite to verify no regressions
+
+#### Run test: PASS ✅
+```bash
+{stack test command} → Still passing
+```
+
+### Unmapped File Types
+
+For extensions not in the mapping table:
+- Use generic TDD cycle without stack-specific patterns
+- Follow project conventions from CLAUDE.md
+- Apply standard Arrange/Act/Assert structure
 
 ## OUTPUT FORMAT:
 

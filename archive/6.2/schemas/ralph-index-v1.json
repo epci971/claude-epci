@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ralph-index-v1",
+  "title": "Ralph Index Schema",
+  "description": "Task index for Ralph automated execution",
+  "type": "object",
+  "required": ["version", "feature", "tasks"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Schema version"
+    },
+    "feature": {
+      "type": "string",
+      "description": "Feature slug"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Generation timestamp"
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/task"
+      },
+      "description": "Ordered task list"
+    }
+  },
+  "$defs": {
+    "task": {
+      "type": "object",
+      "required": ["id", "title", "status"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^T[0-9]{3}$",
+          "description": "Task ID (T001, T002, etc.)"
+        },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "completed", "failed", "skipped"]
+        },
+        "depends_on": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Task dependencies"
+        },
+        "estimated_minutes": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 120
+        }
+      }
+    }
+  }
+}
