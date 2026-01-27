@@ -136,41 +136,60 @@ Based on review findings:
 {APPROVED | CHANGES_REQUIRED | SECURITY_REVIEW_NEEDED | QA_NEEDED}
 ```
 
-## BREAKPOINT:
+## BREAKPOINT: Code Review Complete (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: phase-transition
-  title: "Code Review Complete [C→I]"
-  data: {
-    phase_completed: "code",
-    phase_next: "inspect",
-    summary: {
-      duration: "{duration}",
-      tasks_completed: {N},
-      files_modified: ["{files}"],
-      tests_status: "{passing}/{total} passing"
-    },
-    checkpoint_created: {
-      id: "{feature_id}-checkpoint-code",
-      resumable: true
-    }
-  }
-  ask: {
-    question: "Proceed with review outcome?",
-    header: "Phase C→I",
-    options: [
-      {label: "Accept and Document (Recommended)", description: "Proceed to documentation phase"},
-      {label: "Request Security Review", description: "Deep security audit needed"},
-      {label: "Request QA Validation", description: "Additional QA testing needed"},
-      {label: "Address Findings", description: "Fix issues before proceeding"}
-    ]
-  }
-  suggestions: [
-    {pattern: "coverage", text: "Coverage: {%}% achieved", priority: "P1"},
-    {pattern: "issues", text: "{N} issues found ({severity})", priority: "P2"}
-  ]
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ CODE REVIEW TERMINÉ [C→I]                                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ RÉSUMÉ DE PHASE                                                     │
+│ • Phase terminée: code                                              │
+│ • Phase suivante: inspect                                           │
+│ • Durée: {duration}                                                 │
+│ • Tâches complétées: {N}                                            │
+│ • Fichiers modifiés: {files}                                        │
+│ • Tests: {passing}/{total} passing                                  │
+│                                                                     │
+│ CHECKPOINT                                                          │
+│ • ID: {feature_id}-checkpoint-code                                  │
+│ • Reprise possible: oui                                             │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Coverage: {%}% atteint                                         │
+│ [P2] {N} issues trouvés ({severity})                                │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Accepter et Documenter (Recommended) — Passer à la doc    │ │
+│ │  [B] Demander Security Review — Audit sécurité approfondi      │ │
+│ │  [C] Demander QA Validation — Tests QA additionnels            │ │
+│ │  [D] Traiter les findings — Corriger avant de continuer        │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Procéder avec le résultat de la review?",
+    header: "Phase C→I",
+    multiSelect: false,
+    options: [
+      { label: "Accepter et Documenter (Recommended)", description: "Passer à la phase documentation" },
+      { label: "Demander Security Review", description: "Audit sécurité approfondi nécessaire" },
+      { label: "Demander QA Validation", description: "Tests QA additionnels nécessaires" },
+      { label: "Traiter les findings", description: "Corriger les issues avant de continuer" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

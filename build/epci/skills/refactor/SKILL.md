@@ -233,6 +233,27 @@ See [references/refactoring-patterns.md](references/refactoring-patterns.md) for
 | Metrics tool missing | Not installed | Use Claude estimation |
 | Scope too large | Underestimated | Split into phases |
 
+## INVOCATION PROTOCOL (CRITICAL)
+
+Les syntaxes `@skill:epci:xxx` et `@agent:xxx` dans les step files sont **DOCUMENTAIRES SEULEMENT**.
+Claude interprète les blocs de code comme des exemples, pas comme des instructions d'exécution.
+
+**Pour invoquer réellement:**
+
+| Type | Syntaxe documentaire | Invocation réelle |
+|------|---------------------|-------------------|
+| Breakpoints | `@skill:epci:breakpoint-system` | Section impérative + AskUserQuestion explicite |
+| Agents | `@agent:code-reviewer` | `Task({ subagent_type: "code-reviewer", ... })` |
+| Agents | `@agent:security-auditor` | `Task({ subagent_type: "security-auditor", ... })` |
+| Agents | `@agent:Explore` | `Task({ subagent_type: "Explore", ... })` |
+| Stack skills | `@skill:python-django` | `Read("src/skills/stack/python-django/SKILL.md")` |
+
+**Règle pour auteurs de step files:**
+- Utiliser le format impératif direct (pas dans bloc de code)
+- Afficher les boîtes ASCII hors bloc exécutable
+- Appeler AskUserQuestion explicitement
+- Ajouter `⏸️ ATTENDS la réponse` après chaque breakpoint
+
 ## Limitations
 
 This skill does NOT:

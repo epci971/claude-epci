@@ -66,43 +66,64 @@ IF ems.global < 60 AND NOT finish --force:
     - Save checkpoint
 ```
 
-### 3. BREAKPOINT: Finish Validation
+### 3. BREAKPOINT: Finish Validation (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: plan-review
-  title: "Finish Exploration"
-  data: {
-    metrics: {
-      iterations: {count},
-      ems_final: {ems.global},
-      decisions_count: {decisions.length},
-      open_threads: {open_threads.length},
-      techniques_used: {techniques_applied.length}
-    },
-    summary: {
-      key_decisions: [...],
-      open_threads: [...],
-      ems_progression: "{initial} -> {final} (+{delta})"
-    },
-    quality_assessment: "{EXCELLENT|GOOD|ADEQUATE|LOW}"
-  }
-  ask: {
-    question: "Ready to generate outputs?",
-    header: "Finish",
-    options: [
-      {label: "Generate outputs (Recommended)", description: "Create brief and journal"},
-      {label: "Preview first", description: "See @planner breakdown before finalizing"},
-      {label: "Continue iterating", description: "Add more exploration"},
-      {label: "Save checkpoint", description: "Pause for later resumption"}
-    ]
-  }
-  suggestions: [
-    {pattern: "open_threads", text: "{count} open threads will be noted in brief", priority: "P1"},
-    {pattern: "ems", text: "Final EMS {score} - {quality_assessment}", priority: "P2"},
-    {pattern: "preview", text: "Preview shows implementation breakdown before commit", priority: "P3"}
-  ]
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🏁 FIN D'EXPLORATION                                                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Itérations: {count}                                               │
+│ • EMS final: {ems.global}/100                                       │
+│ • Décisions prises: {decisions.length}                              │
+│ • Threads ouverts: {open_threads.length}                            │
+│ • Techniques utilisées: {techniques_applied.length}                 │
+│                                                                     │
+│ RÉSUMÉ                                                              │
+│ Décisions clés:                                                     │
+│ • {decision_1}                                                      │
+│ • {decision_2}                                                      │
+│                                                                     │
+│ Progression EMS: {initial} → {final} (+{delta})                     │
+│ Évaluation qualité: {EXCELLENT|GOOD|ADEQUATE|LOW}                   │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] {open_threads.length} threads ouverts seront notés dans brief  │
+│ [P2] EMS final {score} — {quality_assessment}                       │
+│ [P3] Preview montre le découpage avant validation                   │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Générer outputs (Recommended) — Créer brief et journal    │ │
+│ │  [B] Preview d'abord — Voir découpage @planner                 │ │
+│ │  [C] Continuer itérations — Explorer davantage                 │ │
+│ │  [D] Sauvegarder checkpoint — Pause pour reprise               │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Prêt à générer les outputs?",
+    header: "Finish",
+    multiSelect: false,
+    options: [
+      { label: "Générer outputs (Recommended)", description: "Créer brief et journal" },
+      { label: "Preview d'abord", description: "Voir découpage @planner avant finalisation" },
+      { label: "Continuer itérations", description: "Ajouter plus d'exploration" },
+      { label: "Sauvegarder checkpoint", description: "Pause pour reprise ultérieure" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 4. Handle Open Threads
 

@@ -63,14 +63,21 @@ ELSE:
 
 ### 3. Update Project Memory (Optional)
 
-```python
-@skill:epci:project-memory
-  store_artifact({
-    type: "{{skill_name}}-output",
-    data: session.outputs,
-    timestamp: now()
-  })
+SI le projet utilise project-memory (fichier `.claude/state/features/index.json` existe):
+
+```markdown
+1. Lire le fichier index.json existant avec Read tool
+2. Ajouter une entrée pour cet artifact:
+   {
+     "id": "{session_id}",
+     "type": "{{skill_name}}-output",
+     "data": {summary of outputs},
+     "timestamp": "{ISO date}"
+   }
+3. Écrire le fichier mis à jour avec Write tool
 ```
+
+SINON: Passer cette étape (pas de persistence nécessaire)
 
 ### 4. Generate Completion Summary
 

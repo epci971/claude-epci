@@ -141,35 +141,55 @@ Confirm audit covered:
 {PASS | FAIL_CRITICAL | FAIL_HIGH}
 ```
 
-## BREAKPOINT:
+## BREAKPOINT: Security Review Complete (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: validation
-  title: "Security Review Complete"
-  data: {
-    context: "Security audit by @security-auditor complete",
-    item_to_validate: {
-      objectif: "Confirm security posture acceptable",
-      contexte: "Feature: {feature-slug}, Vulnerabilities: {N total}",
-      contraintes: "Critical/High: {N} must fix, Medium/Low: {N} recommended",
-      success_criteria: "No unresolved CRITICAL/HIGH vulnerabilities"
-    }
-  }
-  ask: {
-    question: "Accept security review outcome?",
-    header: "Security",
-    options: [
-      {label: "Proceed (Recommended)", description: "Security posture acceptable"},
-      {label: "Fix Critical Issues", description: "Address high-severity findings first"},
-      {label: "Accept Risk", description: "Document reason and proceed"}
-    ]
-  }
-  suggestions: [
-    {pattern: "owasp", text: "OWASP Top 10 verified", priority: "P1"},
-    {pattern: "findings", text: "Review {N} findings before proceeding", priority: "P2"}
-  ]
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🔐 SECURITY REVIEW TERMINÉ                                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Audit sécurité par @security-auditor terminé                        │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Vulnérabilités totales: {N}                                         │
+│ • Critical/High: {N} (à corriger obligatoirement)                   │
+│ • Medium/Low: {N} (recommandé)                                      │
+│                                                                     │
+│ Critère de succès: Aucune vulnérabilité CRITICAL/HIGH non résolue   │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] OWASP Top 10 vérifié                                           │
+│ [P2] Réviser {N} findings avant de continuer                        │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer (Recommended) — Posture sécurité acceptable     │ │
+│ │  [B] Corriger issues critiques — Traiter high-severity d'abord │ │
+│ │  [C] Accepter le risque — Documenter et continuer              │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Accepter le résultat de la security review?",
+    header: "Security",
+    multiSelect: false,
+    options: [
+      { label: "Continuer (Recommended)", description: "Posture sécurité acceptable" },
+      { label: "Corriger issues critiques", description: "Traiter les findings high-severity d'abord" },
+      { label: "Accepter le risque", description: "Documenter la raison et continuer" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

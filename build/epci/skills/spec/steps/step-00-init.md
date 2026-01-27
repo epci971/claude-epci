@@ -123,58 +123,98 @@ Project Context:
 Ready for: Analysis & Decomposition
 ```
 
-## BREAKPOINT (if clarification needed):
+## BREAKPOINT (if clarification needed) - OBLIGATOIRE
 
-```typescript
-@skill:epci:breakpoint-system
-  type: validation
-  title: "Input Needs Clarification"
-  data: {
-    context: "Provided description requires refinement",
-    item_to_validate: {
-      objectif: "Clarify requirements before proceeding",
-      contexte: "Feature: {feature-slug}, Source: {text|discovery}",
-      contraintes: "{clarification questions from clarification-engine}",
-      success_criteria: "Clear requirements for spec generation"
-    }
-  }
-  ask: {
-    question: "How would you like to clarify?",
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ❓ CLARIFICATION NÉCESSAIRE                                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ La description fournie nécessite des précisions                     │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Source: {text|discovery}                                            │
+│ Questions de clarification:                                         │
+│ {clarification questions}                                           │
+│                                                                     │
+│ Critère de succès: Requirements clairs pour génération spec         │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Répondre aux questions (Recommended)                      │ │
+│ │  [B] Fournir fichier brief — Fichier structuré                 │ │
+│ │  [C] Annuler — Affiner requirements                            │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Comment voulez-vous clarifier?",
     header: "Clarify",
+    multiSelect: false,
     options: [
-      {label: "Answer Questions (Recommended)", description: "Provide clarifications inline"},
-      {label: "Provide Brief File", description: "Supply a structured brief document"},
-      {label: "Cancel", description: "Abort and refine requirements"}
+      { label: "Répondre aux questions (Recommended)", description: "Fournir clarifications inline" },
+      { label: "Fournir fichier brief", description: "Fournir un document brief structuré" },
+      { label: "Annuler", description: "Annuler et affiner requirements" }
     ]
-  }
+  }]
+})
 ```
 
-## BREAKPOINT (if discovery mode and no brief found):
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
-```typescript
-@skill:epci:breakpoint-system
-  type: validation
-  title: "Source Required"
-  data: {
-    context: "No existing brief found for feature",
-    item_to_validate: {
-      objectif: "Provide source for spec generation",
-      contexte: "Feature: {feature-slug}, Searched: docs/briefs/{slug}/",
-      contraintes: "Need brief file, text description, or brainstorm first",
-      success_criteria: "Valid source provided"
-    }
-  }
-  ask: {
-    question: "How would you like to provide source?",
+## BREAKPOINT (if discovery mode and no brief found) - OBLIGATOIRE
+
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📄 SOURCE REQUISE                                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Aucun brief existant trouvé pour cette feature                      │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Recherché: docs/briefs/{slug}/                                      │
+│ Besoin: fichier brief, description texte, ou brainstorm d'abord     │
+│                                                                     │
+│ Critère de succès: Source valide fournie                            │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Fournir chemin brief — Chemin vers fichier existant       │ │
+│ │  [B] Description texte — Décrire requirements inline           │ │
+│ │  [C] Lancer /brainstorm d'abord (Recommended) — Explorer       │ │
+│ │  [D] Annuler — Abandonner le workflow                          │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Comment voulez-vous fournir la source?",
     header: "Source",
+    multiSelect: false,
     options: [
-      {label: "Provide Brief Path", description: "Path to existing brief file"},
-      {label: "Text Description", description: "Describe requirements inline"},
-      {label: "Run /brainstorm First (Recommended)", description: "Explore idea before specifying"},
-      {label: "Cancel", description: "Abort workflow"}
+      { label: "Fournir chemin brief", description: "Chemin vers fichier brief existant" },
+      { label: "Description texte", description: "Décrire requirements inline" },
+      { label: "Lancer /brainstorm d'abord (Recommended)", description: "Explorer l'idée avant de spécifier" },
+      { label: "Annuler", description: "Abandonner le workflow" }
     ]
-  }
+  }]
+})
 ```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

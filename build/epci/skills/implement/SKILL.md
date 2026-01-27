@@ -188,7 +188,26 @@ This skill uses `epci:breakpoint-system` at key workflow points.
 | step-04b-security | `validation` | Security review approval |
 | step-04c-qa | `validation` | QA validation approval |
 
-All breakpoints MUST use `@skill:epci:breakpoint-system` invocation format.
+**Note:** Les step files utilisent le format impératif direct (pas `@skill:epci:breakpoint-system`).
+
+## INVOCATION PROTOCOL (CRITICAL)
+
+Les syntaxes `@skill:epci:xxx` et `@agent:xxx` dans les step files sont **DOCUMENTAIRES SEULEMENT**.
+Claude interprète les blocs de code comme des exemples, pas comme des instructions d'exécution.
+
+**Pour invoquer réellement:**
+
+| Type | Syntaxe documentaire | Invocation réelle |
+|------|---------------------|-------------------|
+| Breakpoints | `@skill:epci:breakpoint-system` | Section impérative + AskUserQuestion explicite |
+| Agents | `@agent:code-reviewer` | `Task({ subagent_type: "code-reviewer", ... })` |
+| Stack skills | `@skill:python-django` | `Read("src/skills/stack/python-django/SKILL.md")` |
+
+**Règle pour auteurs de step files:**
+- Utiliser le format impératif direct (pas dans bloc de code)
+- Afficher les boîtes ASCII hors bloc exécutable
+- Appeler AskUserQuestion explicitement
+- Ajouter `⏸️ ATTENDS la réponse` après chaque breakpoint
 
 ## Limitations
 

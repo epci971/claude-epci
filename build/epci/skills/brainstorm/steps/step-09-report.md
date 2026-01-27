@@ -23,19 +23,31 @@
 
 ### 1. Calculate Complexity Routing
 
-```python
-@skill:epci:complexity-calculator
-  input: {
-    brief: brief_final,
-    ems: ems,
-    codebase_context: codebase_analysis
-  }
-  output: {
-    complexity: "TINY|SMALL|STANDARD|LARGE",
-    routing: "/quick|/implement",
-    confidence: 0.85,
-    factors: [...]
-  }
+Évalue le brief selon ces critères pour déterminer la complexité:
+
+| Critère | TINY | SMALL | STANDARD | LARGE |
+|---------|------|-------|----------|-------|
+| Fichiers impactés | 1 | 2-3 | 4-10 | 10+ |
+| Durée estimée | <1h | 1-2h | 2-8h | >8h |
+| Dépendances | 0 | 1-2 | 3-5 | 6+ |
+| Tests requis | Unitaires simples | Unitaires | Int. + Unit. | E2E + Int. + Unit. |
+
+Calcul du score:
+```
+score_fichiers = map_files_to_score(estimated_files)
+score_duree = map_duration_to_score(estimated_duration)
+score_deps = map_deps_to_score(dependencies_count)
+
+complexity = weighted_average([
+  (score_fichiers, 0.4),
+  (score_duree, 0.35),
+  (score_deps, 0.25)
+])
+
+SI complexity < 25 → TINY
+SI complexity < 50 → SMALL
+SI complexity < 75 → STANDARD
+SINON → LARGE
 ```
 
 Routing rules:
@@ -70,17 +82,30 @@ hook_data = {
 Bash("python src/hooks/runner.py post-brainstorm --context '{json}'")
 ```
 
-### 3. Store Metrics in project-memory
+### 3. Store Metrics in Project State (SI DISPONIBLE)
 
-```python
-@skill:epci:project-memory
-  store_feature_metrics(
-    slug=slug,
-    ems_final=ems["global"],
-    iterations=iteration,
-    techniques=techniques_applied,
-    duration=duration_minutes
-  )
+Sauvegarder les métriques pour référence future:
+
+```
+SI le dossier `.claude/state/features/` existe:
+  Read(".claude/state/features/index.json")
+
+  Ajouter entrée pour cette session:
+  {
+    "slug": "{slug}",
+    "type": "brainstorm",
+    "ems_final": {ems.global},
+    "iterations": {iteration},
+    "techniques": {techniques_applied},
+    "duration_minutes": {duration_minutes},
+    "timestamp": "{ISO8601}"
+  }
+
+  Write(".claude/state/features/index.json", updated_index)
+
+SINON:
+  → Skip metrics storage
+  → Log: "project-memory unavailable, skipping metrics storage"
 ```
 
 ### 4. Clean Up Session

@@ -90,29 +90,54 @@ Based on template and brief, generate research prompts:
 -> Objective: {why}
 ```
 
-### 5. BREAKPOINT: Perplexity Research
+### 5. BREAKPOINT: Perplexity Research (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: info-only
-  title: "Research Prompts"
-  data: {
-    prompts: [
-      {topic: "...", type: "Standard", query: "...", objective: "..."},
-      {topic: "...", type: "Deep Research", query: "...", objective: "..."}
-    ],
-    injection_note: "Copy prompts to Perplexity, then paste results here"
-  }
-  ask: {
-    question: "Would you like to run these research prompts?",
-    header: "Research",
-    options: [
-      {label: "Run research", description: "I'll paste results when ready"},
-      {label: "Skip research", description: "Continue without external research"},
-      {label: "Generate different prompts", description: "Adjust research focus"}
-    ]
-  }
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🔍 PROMPTS DE RECHERCHE PERPLEXITY                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Prompts générés pour recherche externe:                             │
+│                                                                     │
+│ **1. {topic_1}** {Standard | Deep Research}                         │
+│ `{query_1}`                                                         │
+│ → Objectif: {objective_1}                                           │
+│                                                                     │
+│ **2. {topic_2}** {Standard | Deep Research}                         │
+│ `{query_2}`                                                         │
+│ → Objectif: {objective_2}                                           │
+│                                                                     │
+│ 💡 Copiez les prompts vers Perplexity, collez les résultats ici     │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Lancer recherche (Recommended) — Je colle quand prêt      │ │
+│ │  [B] Ignorer recherche — Continuer sans recherche externe      │ │
+│ │  [C] Autres prompts — Ajuster le focus                         │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Voulez-vous lancer ces recherches Perplexity?",
+    header: "Research",
+    multiSelect: false,
+    options: [
+      { label: "Lancer recherche (Recommended)", description: "Je colle les résultats quand prêt" },
+      { label: "Ignorer recherche", description: "Continuer sans recherche externe" },
+      { label: "Autres prompts", description: "Ajuster le focus de recherche" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 6. Initialize EMS Baseline
 

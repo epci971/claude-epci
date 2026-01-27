@@ -16,58 +16,69 @@
 
 ## Protocol
 
-### 1. Display Plan Summary and Request Approval
+### 1. BREAKPOINT: Plan Validation (OBLIGATOIRE)
 
-Present the complete plan using breakpoint-system:
+AFFICHE cette boîte:
 
-```typescript
-@skill:epci:breakpoint-system
-  type: plan-review
-  title: "Refactoring Plan Validation"
-  data: {
-    metrics: {
-      complexity: "{scope}",
-      complexity_score: {transformations_count},
-      files_impacted: {files_count},
-      time_estimate: "{estimate}",
-      risk_level: "{LOW|MEDIUM|HIGH}",
-      risk_description: "{highest risk transformation}"
-    },
-    validations: {
-      plan_validator: {
-        verdict: "APPROVED",
-        completeness: "{transformations_count} transformations defined",
-        consistency: "Dependency order validated",
-        feasibility: "All transformations atomic",
-        quality: "TDD strategy per transformation"
-      }
-    },
-    skills_loaded: ["tdd-enforcer"],
-    preview_next: {
-      tasks: [
-        {title: "T1: {transformation_1_title}", time: "{estimate}"},
-        {title: "T2: {transformation_2_title}", time: "{estimate}"},
-        {title: "T3: {transformation_3_title}", time: "{estimate}"}
-      ],
-      remaining_tasks: {transformations_count}
-    },
-    feature_doc_path: "{target_file}"
-  }
-  ask: {
-    question: "Proceed with refactoring plan?",
-    header: "Plan Review",
-    options: [
-      {label: "Execute (Recommended)", description: "Proceed with TDD-enforced transformations"},
-      {label: "Modify Plan", description: "Adjust transformations or order"},
-      {label: "Cancel", description: "Abort refactoring"}
-    ]
-  }
-  suggestions: [
-    {pattern: "baseline", text: "Run tests first to ensure baseline is green", priority: "P1"},
-    {pattern: "risk", text: "{highest_risk_transformation} could be split into smaller steps", priority: "P2"},
-    {pattern: "atomic", text: "Use --atomic flag for easier rollback", priority: "P3"}
-  ]
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📋 VALIDATION PLAN REFACTORING                                      │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Scope: {scope}                                                    │
+│ • Score complexité: {transformations_count}                         │
+│ • Fichiers impactés: {files_count}                                  │
+│ • Temps estimé: {estimate}                                          │
+│ • Niveau risque: {LOW|MEDIUM|HIGH}                                  │
+│ • Description risque: {highest risk transformation}                 │
+│                                                                     │
+│ VALIDATIONS                                                         │
+│ • @plan-validator: APPROVED                                         │
+│   - Complétude: {transformations_count} transformations définies    │
+│   - Cohérence: Ordre dépendances validé                             │
+│   - Faisabilité: Toutes transformations atomiques                   │
+│   - Qualité: Stratégie TDD par transformation                       │
+│                                                                     │
+│ PREVIEW TRANSFORMATIONS                                             │
+│ | T1: {transformation_1_title} | ~{estimate} |                      │
+│ | T2: {transformation_2_title} | ~{estimate} |                      │
+│ | T3: {transformation_3_title} | ~{estimate} |                      │
+│                                                                     │
+│ Target: {target_file}                                               │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Lancer tests d'abord pour confirmer baseline verte             │
+│ [P2] {highest_risk_transformation} pourrait être split en steps     │
+│ [P3] Utiliser --atomic flag pour rollback facile                    │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Exécuter (Recommended) — TDD-enforced transformations     │ │
+│ │  [B] Modifier plan — Ajuster transformations ou ordre          │ │
+│ │  [C] Annuler — Abandonner refactoring                          │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Procéder avec le plan de refactoring?",
+    header: "Plan Review",
+    multiSelect: false,
+    options: [
+      { label: "Exécuter (Recommended)", description: "Procéder avec transformations TDD-enforced" },
+      { label: "Modifier plan", description: "Ajuster transformations ou ordre" },
+      { label: "Annuler", description: "Abandonner refactoring" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 2. Expected Metrics Delta (displayed in breakpoint)
 

@@ -106,40 +106,57 @@ very thorough
 - `path/to/new1.ts` — {purpose}
 ```
 
-## BREAKPOINT:
+## BREAKPOINT: Exploration Complete (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: phase-transition
-  title: "Exploration Complete [E→P]"
-  data: {
-    phase_completed: "explore",
-    phase_next: "plan",
-    summary: {
-      duration: "{duration}",
-      tasks_completed: 1,
-      files_modified: [],
-      tests_status: "N/A"
-    },
-    checkpoint_created: {
-      id: "{feature_id}-checkpoint-explore",
-      resumable: true
-    }
-  }
-  ask: {
-    question: "Proceed to Planning phase?",
-    header: "Phase E→P",
-    options: [
-      {label: "Continue to Plan (Recommended)", description: "Proceed with implementation planning"},
-      {label: "Extend Exploration", description: "Explore more files before planning"},
-      {label: "Abort", description: "Scope too large, cancel implementation"}
-    ]
-  }
-  suggestions: [
-    {pattern: "findings", text: "Review {N} files to modify before planning", priority: "P1"},
-    {pattern: "patterns", text: "Follow identified patterns: {patterns}", priority: "P2"}
-  ]
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🔍 EXPLORATION TERMINÉE [E→P]                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ RÉSUMÉ DE PHASE                                                     │
+│ • Phase terminée: explore                                           │
+│ • Phase suivante: plan                                              │
+│ • Durée: {duration}                                                 │
+│ • Fichiers modifiés: aucun (read-only)                              │
+│ • Tests: N/A                                                        │
+│                                                                     │
+│ CHECKPOINT                                                          │
+│ • ID: {feature_id}-checkpoint-explore                               │
+│ • Reprise possible: oui                                             │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Réviser {N} fichiers à modifier avant planning                 │
+│ [P2] Suivre les patterns identifiés: {patterns}                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer vers Plan (Recommended) — Planifier implémentation│
+│ │  [B] Étendre exploration — Explorer plus de fichiers           │ │
+│ │  [C] Abandonner — Scope trop large                             │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Passer à la phase Planning?",
+    header: "Phase E→P",
+    multiSelect: false,
+    options: [
+      { label: "Continuer vers Plan (Recommended)", description: "Procéder à la planification" },
+      { label: "Étendre exploration", description: "Explorer plus de fichiers avant de planifier" },
+      { label: "Abandonner", description: "Scope trop large, annuler implémentation" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

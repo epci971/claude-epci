@@ -230,6 +230,27 @@ IF all hypotheses exhausted:
 | TDD fails 2x | Complex root cause | Escalate to COMPLEX route |
 | Fix introduces regression | Incomplete testing | Rollback, add more tests |
 
+## INVOCATION PROTOCOL (CRITICAL)
+
+Les syntaxes `@skill:epci:xxx` et `@agent:xxx` dans les step files sont **DOCUMENTAIRES SEULEMENT**.
+Claude interprète les blocs de code comme des exemples, pas comme des instructions d'exécution.
+
+**Pour invoquer réellement:**
+
+| Type | Syntaxe documentaire | Invocation réelle |
+|------|---------------------|-------------------|
+| Breakpoints | `@skill:epci:breakpoint-system` | Section impérative + AskUserQuestion explicite |
+| Agents | `@agent:clarifier` | `Task({ subagent_type: "clarifier", model: "haiku", ... })` |
+| Agents | `@agent:code-reviewer` | `Task({ subagent_type: "code-reviewer", ... })` |
+| Core skills | `@skill:epci:project-memory` | `Read(".claude/state/...")` pour fichiers d'état |
+| Stack skills | `@skill:python-django` | `Read("src/skills/stack/python-django/SKILL.md")` |
+
+**Règle pour auteurs de step files:**
+- Utiliser le format impératif direct (pas dans bloc de code)
+- Afficher les boîtes ASCII hors bloc exécutable
+- Appeler AskUserQuestion explicitement
+- Ajouter `⏸️ ATTENDS la réponse` après chaque breakpoint
+
 ## Limitations
 
 This skill does NOT:

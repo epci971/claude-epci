@@ -63,41 +63,64 @@ IF --quick mode:
   → Focus on Target and Priority only
 ```
 
-### 3. BREAKPOINT: Framing Validation
+### 3. BREAKPOINT: Framing Validation (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: plan-review
-  title: "Framing Validation"
-  data: {
-    metrics: {
-      template: "{template}",
-      ems_initial: {ems.global},
-      hmw_count: {hmw_questions.length},
-      codebase_context: "{available|partial|none}"
-    },
-    brief_summary: "{brief_v0 condensed}",
-    framing_questions: [
-      {category: "Target", question: "...", suggestion: "..."},
-      {category: "Constraints", question: "...", suggestion: "..."},
-      {category: "Timeline", question: "...", suggestion: "..."}
-    ]
-  }
-  ask: {
-    question: "Ready to start exploration iterations?",
-    header: "Framing",
-    options: [
-      {label: "Start iterations (Recommended)", description: "Begin structured exploration"},
-      {label: "Adjust framing", description: "Modify template or brief"},
-      {label: "Add context", description: "Provide more background first"}
-    ]
-  }
-  suggestions: [
-    {pattern: "template", text: "Template '{template}' selected - seems appropriate for your topic", priority: "P1"},
-    {pattern: "ems", text: "Starting EMS: {ems.global} - typical for validated brief", priority: "P2"},
-    {pattern: "hmw", text: "Review HMW questions - they guide exploration", priority: "P3"}
-  ]
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📋 VALIDATION DU CADRAGE                                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Template: {template}                                              │
+│ • EMS initial: {ems_initial}/100                                    │
+│ • Questions HMW: {hmw_count}                                        │
+│ • Contexte codebase: {available|partial|none}                       │
+│                                                                     │
+│ RÉSUMÉ DU BRIEF                                                     │
+│ {brief_v0_condensed}                                                │
+│                                                                     │
+│ QUESTIONS DE CADRAGE                                                │
+│ [Target] {question_target}                                          │
+│   → Suggestion: {suggestion_target}                                 │
+│ [Constraints] {question_constraints}                                │
+│   → Suggestion: {suggestion_constraints}                            │
+│ [Timeline] {question_timeline}                                      │
+│   → Suggestion: {suggestion_timeline}                               │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Template '{template}' sélectionné — adapté à votre sujet       │
+│ [P2] EMS départ: {ems.global} — typique pour brief validé           │
+│ [P3] Révisez les questions HMW — elles guident l'exploration        │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Démarrer itérations (Recommended) — Exploration structurée│ │
+│ │  [B] Ajuster cadrage — Modifier template ou brief              │ │
+│ │  [C] Ajouter contexte — Plus de background d'abord             │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Prêt à démarrer les itérations d'exploration?",
+    header: "Framing",
+    multiSelect: false,
+    options: [
+      { label: "Démarrer itérations (Recommended)", description: "Commencer exploration structurée" },
+      { label: "Ajuster cadrage", description: "Modifier template ou brief" },
+      { label: "Ajouter contexte", description: "Fournir plus de background d'abord" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 4. Integrate Responses
 

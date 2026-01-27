@@ -20,26 +20,34 @@
 
 ## Protocol
 
-### 1. Generate @planner Preview
+### 1. Generate Preview via Agent planner
 
-```python
-@agent:planner (Sonnet)
-  input: {
-    brief: brief_v0,
-    decisions: decisions,
-    codebase_context: codebase_analysis,
-    mode: "preview"  # Don't create full plan, just breakdown
-  }
-  output: {
-    tasks_preview: [
-      {title: "...", complexity: "SMALL", description: "..."},
-      {title: "...", complexity: "STANDARD", description: "..."}
-    ],
-    estimated_complexity: "STANDARD",
-    dependencies: [...],
-    risks: [...]
-  }
+LANCE l'agent planner pour générer un preview de l'implémentation:
+
 ```
+Task({
+  subagent_type: "planner",
+  model: "sonnet",
+  prompt: "Génère un preview d'implémentation pour ce brainstorm.
+    Brief: {brief_v0}
+    Décisions: {decisions}
+    Contexte codebase: {codebase_analysis}
+    Mode: preview (pas de plan complet, juste découpage)
+
+    Retourne JSON:
+    {
+      tasks_preview: [
+        {title: '...', complexity: 'SMALL', description: '...'},
+        {title: '...', complexity: 'STANDARD', description: '...'}
+      ],
+      estimated_complexity: 'STANDARD',
+      dependencies: [...],
+      risks: [...]
+    }"
+})
+```
+
+ATTENDS le résultat avant de continuer.
 
 ### 2. Display Preview (if requested)
 
@@ -79,63 +87,94 @@ IF NOT --no-security flag:
     trigger_security_audit = true
 ```
 
-### 4. Run @security-auditor (if triggered)
+### 4. Run Security Audit via Agent (if triggered)
 
-```python
+```
 IF trigger_security_audit:
-  @agent:security-auditor (Opus)
-    input: {
-      brief: brief_v0,
-      decisions: decisions,
-      codebase_security: codebase_analysis.security_patterns,
-      mode: "preventive"  # Pre-implementation audit
-    }
-    output: {
-      risk_level: "LOW|MEDIUM|HIGH",
-      concerns: [...],
-      recommendations: [...],
-      owasp_relevant: [...]
-    }
+  LANCE l'agent security-auditor:
+
+  Task({
+    subagent_type: "security-auditor",
+    model: "opus",
+    prompt: "Effectue un audit de sécurité préventif pour ce brainstorm.
+      Brief: {brief_v0}
+      Décisions: {decisions}
+      Patterns sécurité codebase: {codebase_analysis.security_patterns}
+      Mode: preventive (audit pré-implémentation)
+
+      Retourne JSON:
+      {
+        risk_level: 'LOW|MEDIUM|HIGH',
+        concerns: [...],
+        recommendations: [...],
+        owasp_relevant: [...]
+      }"
+  })
+
+  ATTENDS le résultat avant de continuer.
 ```
 
-### 5. BREAKPOINT: Preview Results (if preview requested)
+### 5. BREAKPOINT: Preview Results (OBLIGATOIRE si preview demandé)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: plan-review
-  title: "Implementation Preview"
-  data: {
-    metrics: {
-      complexity: "{estimated}",
-      tasks_count: {count},
-      risks_count: {risks.length}
-    },
-    tasks_preview: [...],
-    security_audit: {
-      triggered: {true|false},
-      risk_level: "{level}",
-      concerns: [...]
-    },
-    routing: {
-      recommended: "{/implement|/quick}",
-      reason: "{complexity-based reasoning}"
-    }
-  }
-  ask: {
-    question: "Proceed with brief generation?",
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 👁️ PREVIEW IMPLÉMENTATION                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Complexité estimée: {complexity}                                  │
+│ • Nombre de tâches: {tasks_count}                                   │
+│ • Risques identifiés: {risks_count}                                 │
+│                                                                     │
+│ DÉCOUPAGE TÂCHES                                                    │
+│ | # | Tâche | Complexité | Dépendances |                            │
+│ |---|-------|------------|-------------|                            │
+│ | 1 | {title_1} | {complexity_1} | - |                              │
+│ | 2 | {title_2} | {complexity_2} | T1 |                             │
+│                                                                     │
+│ AUDIT SÉCURITÉ                                                      │
+│ • Déclenché: {triggered}                                            │
+│ • Niveau risque: {risk_level}                                       │
+│ • Préoccupations: {concerns}                                        │
+│                                                                     │
+│ ROUTING RECOMMANDÉ                                                  │
+│ → {/implement|/quick}                                               │
+│ → Raison: {complexity-based reasoning}                              │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Complexité {level} → recommande {skill}                        │
+│ [P2] {concern} — sera noté dans le brief                            │
+│ [P3] Considère {mitigation} pour {risk}                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Générer brief (Recommended) — Créer outputs finaux        │ │
+│ │  [B] Ajuster scope — Modifier selon preview                    │ │
+│ │  [C] Ajouter notes sécurité — Inclure recommandations          │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Procéder à la génération du brief?",
     header: "Preview",
+    multiSelect: false,
     options: [
-      {label: "Generate brief (Recommended)", description: "Create final outputs"},
-      {label: "Adjust scope", description: "Modify based on preview"},
-      {label: "Add security notes", description: "Include security recommendations"}
+      { label: "Générer brief (Recommended)", description: "Créer outputs finaux" },
+      { label: "Ajuster scope", description: "Modifier selon preview" },
+      { label: "Ajouter notes sécurité", description: "Inclure recommandations sécurité" }
     ]
-  }
-  suggestions: [
-    {pattern: "complexity", text: "Complexity {level} -> recommend {skill}", priority: "P1"},
-    {pattern: "security", text: "{concern} - will be noted in brief", priority: "P2"},
-    {pattern: "risk", text: "Consider {mitigation} for {risk}", priority: "P3"}
-  ]
+  }]
+})
 ```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 6. Update Brief with Preview Insights
 

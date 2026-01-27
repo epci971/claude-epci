@@ -31,24 +31,32 @@ FOR each response from previous iteration:
   - Mark addressed questions
 ```
 
-### 2. Recalculate EMS via @ems-evaluator
+### 2. Recalculate EMS via Agent ems-evaluator
 
-```python
-@agent:ems-evaluator (Haiku)
-  input: {
-    session_state: current_state,
-    responses: user_responses,
-    iteration: current_iteration,
-    previous_ems: ems
-  }
-  output: {
-    scores: { clarity, depth, coverage, decisions, actionability },
-    global: weighted_score,
-    delta: change_from_previous,
-    weak_axes: [axes with score < 50],
-    strong_axes: [axes with score >= 70]
-  }
+LANCE l'agent ems-evaluator pour recalculer le score:
+
 ```
+Task({
+  subagent_type: "ems-evaluator",
+  model: "haiku",
+  prompt: "Calcule l'EMS pour cette session brainstorm.
+    État session: {current_state}
+    Réponses utilisateur: {user_responses}
+    Itération: {current_iteration}
+    EMS précédent: {ems}
+
+    Retourne JSON:
+    {
+      scores: { clarity, depth, coverage, decisions, actionability },
+      global: weighted_score,
+      delta: change_from_previous,
+      weak_axes: [axes avec score < 50],
+      strong_axes: [axes avec score >= 70]
+    }"
+})
+```
+
+ATTENDS le résultat avant de continuer.
 
 Update EMS history:
 ```json
@@ -77,21 +85,29 @@ Update EMS history:
 
 ### 4. Check Technique Suggestion
 
-```python
+```
 IF weak_axes not empty AND no_recent_technique:
-  @agent:technique-advisor (Haiku)
-    input: {
-      weak_axes: [...],
-      template: current_template,
-      iteration: current_iteration
-    }
-    output: {
-      technique: "5-whys",
-      description: "...",
-      how_to_apply: "..."
-    }
+  LANCE l'agent technique-advisor:
 
-  BREAKPOINT: Suggest technique
+  Task({
+    subagent_type: "technique-advisor",
+    model: "haiku",
+    prompt: "Suggère une technique de brainstorming adaptée.
+      Axes faibles: {weak_axes}
+      Template: {current_template}
+      Itération: {current_iteration}
+
+      Retourne JSON:
+      {
+        technique: 'nom-technique',
+        description: '...',
+        how_to_apply: '...'
+      }"
+  })
+
+  ATTENDS le résultat.
+
+  BREAKPOINT: Suggérer technique (affiche recommandation)
 ```
 
 ### 5. Check Targeted Perplexity Research
@@ -106,49 +122,64 @@ IF iter >= 2 AND ems.global < 50 AND weak_axes:
   BREAKPOINT: Offer targeted research
 ```
 
-### 6. BREAKPOINT: EMS Status
+### 6. BREAKPOINT: EMS Status (OBLIGATOIRE)
 
-```typescript
-@skill:epci:breakpoint-system
-  type: ems-status
-  title: "Iteration {iteration} Status"
-  data: {
-    ems: {
-      global: {score},
-      axes: {
-        clarity: {score},
-        depth: {score},
-        coverage: {score},
-        decisions: {score},
-        actionability: {score}
-      },
-      delta: {change},
-      weak_axes: [...],
-      history: [...]
-    },
-    phase: "{DIVERGENT|CONVERGENT}",
-    persona: "{current_persona}",
-    iteration: {n},
-    max_iterations: 10,
-    technique_suggested: "{technique or null}",
-    persona_switch: "{new_persona or null}"
-  }
-  ask: {
-    question: "How would you like to continue?",
-    header: "EMS {score}",
-    options: [
-      {label: "Continue", description: "Answer questions and iterate"},
-      {label: "Dive [topic]", description: "Deep dive on specific point"},
-      {label: "Pivot", description: "Reorient toward emerging subject"},
-      {label: "Finish", description: "Generate outputs now"}
-    ]
-  }
-  suggestions: [
-    {pattern: "weak", text: "Focus on {weak_axis} - currently lowest", priority: "P1"},
-    {pattern: "technique", text: "Try {technique} to unblock {axis}", priority: "P2"},
-    {pattern: "checkpoint", text: "Consider saving checkpoint if pausing", priority: "P3"}
-  ]
+AFFICHE cette boîte:
+
 ```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📊 STATUT ITÉRATION {iteration}                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ EMS GLOBAL: {score}/100 ({delta})                                   │
+│                                                                     │
+│ AXES EMS                                                            │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ Clarté        [{bar}] {clarity}/100                             │ │
+│ │ Profondeur    [{bar}] {depth}/100                               │ │
+│ │ Couverture    [{bar}] {coverage}/100                            │ │
+│ │ Décisions     [{bar}] {decisions}/100                           │ │
+│ │ Actionnabilité[{bar}] {actionability}/100                       │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ Phase: {DIVERGENT|CONVERGENT} | Persona: {persona}                  │
+│ Itération: {n}/10 | Technique suggérée: {technique or "-"}          │
+│ Axes faibles: {weak_axes}                                           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Focus sur {weak_axis} — actuellement le plus bas               │
+│ [P2] Essaie {technique} pour débloquer {axis}                       │
+│ [P3] Considère sauvegarder checkpoint si pause                      │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer (Recommended) — Répondre et itérer              │ │
+│ │  [B] Dive [sujet] — Approfondir un point                       │ │
+│ │  [C] Pivoter — Réorienter                                      │ │
+│ │  [D] Finir — Générer les outputs maintenant                    │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Comment voulez-vous continuer?",
+    header: "EMS {score}",
+    multiSelect: false,
+    options: [
+      { label: "Continuer (Recommended)", description: "Répondre aux questions et itérer" },
+      { label: "Dive [sujet]", description: "Approfondir un point spécifique" },
+      { label: "Pivoter", description: "Réorienter vers un sujet émergent" },
+      { label: "Finir", description: "Générer les outputs maintenant" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 7. Check Phase Transition (EMS = 50)
 

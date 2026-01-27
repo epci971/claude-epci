@@ -157,28 +157,47 @@ allowed-tools: {tools}
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 5. BREAKPOINT: User Approval
+### 5. BREAKPOINT: User Approval (OBLIGATOIRE)
+
+AFFICHE cette boîte:
 
 ```
-@skill:epci:breakpoint-system
-  type: validation
-  title: "Skill Ready for Generation"
-  data: {
-    skill_name: "{name}",
-    validation_status: "{PASS|FAIL}",
-    errors_count: N,
-    warnings_count: N
-  }
-  ask: {
-    question: "How would you like to proceed?",
-    header: "Action",
-    options: [
-      { label: "Generate", description: "Create all files now" },
-      { label: "Modify", description: "Go back and adjust settings" },
-      { label: "Cancel", description: "Abort skill creation" }
-    ]
-  }
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ SKILL PRÊT POUR GÉNÉRATION                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Skill: {name}                                                       │
+│ Statut validation: {PASS|FAIL}                                      │
+│ Erreurs: {errors_count}                                             │
+│ Warnings: {warnings_count}                                          │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Générer (Recommended) — Créer tous les fichiers           │ │
+│ │  [B] Modifier — Retourner ajuster les paramètres               │ │
+│ │  [C] Annuler — Abandonner création skill                       │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
 ```
+
+APPELLE:
+```
+AskUserQuestion({
+  questions: [{
+    question: "Comment voulez-vous procéder?",
+    header: "Action",
+    multiSelect: false,
+    options: [
+      { label: "Générer (Recommended)", description: "Créer tous les fichiers maintenant" },
+      { label: "Modifier", description: "Retourner ajuster les paramètres" },
+      { label: "Annuler", description: "Abandonner création skill" }
+    ]
+  }]
+})
+```
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 6. Handle User Response
 
