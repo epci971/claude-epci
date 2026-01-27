@@ -1,6 +1,6 @@
 # EPCI Plugin — Claude Code
 
-> **Version** : 6.0.0
+> **Version** : 6.2.1
 > **License** : MIT
 > **Last Audit** : 2025-01-26 (Score: 85/100)
 
