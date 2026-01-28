@@ -7,6 +7,15 @@ next_step: null
 
 # Step 03: Generate Ralph Artifacts
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [stack-guidelines.md](../references/stack-guidelines.md) | Stack detection and conventions |
+| [memory-template.md](../references/memory-template.md) | MEMORY.md structure |
+| [execution-workflow.md](../references/execution-workflow.md) | TDD and completion rules |
+| [breakpoint-formats.md#completion-summary-box](../references/breakpoint-formats.md#completion-summary-box) | Final breakpoint |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER generate Ralph without valid specs
@@ -22,18 +31,12 @@ next_step: null
 
 ### 1. Detect Project Stack
 
-Use @Explore or existing project context:
+Use detection matrix from [stack-guidelines.md](../references/stack-guidelines.md#stack-detection-matrix).
 
-```
-Stack Detection:
-├── Python/Django → manage.py, requirements.txt with django
-├── JavaScript/React → package.json with react
-├── Java/Spring → pom.xml or build.gradle with spring-boot
-├── PHP/Symfony → composer.json with symfony
-└── Generic → No specific markers
-```
-
-Store stack info for PROMPT.md generation.
+Store detected stack for PROMPT.md generation:
+- `STACK_FRAMEWORK`: Django | React | Spring | Symfony | Generic
+- `STACK_LANGUAGE`: Python | TypeScript | Java | PHP | -
+- `TEST_FRAMEWORK`: pytest | vitest | junit | phpunit | project-specific
 
 ### 2. Create Directory Structure
 
@@ -45,181 +48,34 @@ mkdir -p .ralph/{feature-slug}/
 
 Use template from `templates/prompt.md.template`.
 
-**Stack-Aware Content:**
+**Template variables to fill:**
+- Feature metadata: slug, complexity, task count, hours
+- Stack info: framework, language, test framework
+- Execution order: from DAG topological sort
+- Stack guidelines: inject content from [stack-guidelines.md](../references/stack-guidelines.md)
 
-```markdown
-# Ralph Execution Context — {Feature Title}
-
-## Feature
-
-- **Slug**: {feature-slug}
-- **Complexity**: {level}
-- **Tasks**: {count}
-- **Estimated**: {hours}h
-
-## Stack
-
-- **Framework**: {Django|React|Spring|Symfony|Generic}
-- **Language**: {Python|TypeScript|Java|PHP}
-- **Test Framework**: {pytest|vitest|junit|phpunit}
-
-## Execution Rules
-
-### MANDATORY:
-- 🔴 Follow TDD cycle: RED → GREEN → REFACTOR
-- 🔴 Complete each task before moving to next
-- 🔴 Run tests after each step
-- 🔴 Update MEMORY.md after each task completion
-
-### WORKFLOW:
-1. Read current task from specs/task-XXX.md
-2. Execute steps sequentially
-3. Write tests before implementation (TDD)
-4. Validate acceptance criteria
-5. Mark task complete in MEMORY.md
-6. Proceed to next task by dependency order
-
-## Specifications
-
-Location: `docs/specs/{feature-slug}/`
-
-Files:
-- `index.md` — Overview and DAG
-- `task-001-{slug}.md` — First task
-- `task-002-{slug}.md` — Second task
-- ...
-- `{feature}.prd.json` — Machine-readable
-
-## Execution Order
-
-{Topological order from DAG}
-
-1. task-001: {title}
-2. task-002: {title}
-3. ...
-
-## Stack-Specific Guidelines
-
-{Content varies by stack}
-
-### For Django:
-- Use service layer pattern
-- pytest for testing
-- Factory Boy for fixtures
-- Type hints required
-
-### For React:
-- Functional components with hooks
-- Vitest + React Testing Library
-- Zustand for state if needed
-- TypeScript strict mode
-
-### For Spring:
-- Service layer pattern
-- JUnit 5 + Mockito
-- Lombok for boilerplate
-- Constructor injection
-
-### For Symfony:
-- Service layer pattern
-- PHPUnit + Prophecy
-- Doctrine for persistence
-- Voters for authorization
-
-### For Generic:
-- Follow existing project conventions
-- Write tests for all code
-- Document decisions
-
-## Context Persistence
-
-After each task completion:
-1. Update MEMORY.md with:
-   - Task ID completed
-   - Files modified
-   - Tests added
-   - Issues encountered
-
-2. Commit changes:
-   ```bash
-   git add .
-   git commit -m "feat({feature}): complete task-XXX - {title}"
-   ```
-
-## Resumption
-
-To resume after interruption:
-1. Read MEMORY.md for last state
-2. Check git log for completed work
-3. Continue from next uncompleted task
-```
+Load appropriate stack section based on detection:
+- Django → [stack-guidelines.md#django-guidelines](../references/stack-guidelines.md#django-guidelines)
+- React → [stack-guidelines.md#react-guidelines](../references/stack-guidelines.md#react-guidelines)
+- Spring → [stack-guidelines.md#spring-boot-guidelines](../references/stack-guidelines.md#spring-boot-guidelines)
+- Symfony → [stack-guidelines.md#symfony-guidelines](../references/stack-guidelines.md#symfony-guidelines)
+- Generic → [stack-guidelines.md#generic-guidelines](../references/stack-guidelines.md#generic-guidelines)
 
 ### 4. Generate MEMORY.md
 
-**Template Structure:**
+Use template structure from [memory-template.md](../references/memory-template.md#complete-template).
 
-```markdown
-# Ralph Memory — {Feature Title}
-
-## Current State
-
-- **Feature**: {feature-slug}
-- **Started**: {timestamp}
-- **Current Task**: task-001
-- **Status**: IN_PROGRESS
-
-## Progress
-
-| Task | Status | Completed At | Notes |
-|------|--------|--------------|-------|
-| task-001 | pending | - | - |
-| task-002 | pending | - | - |
-| ... | ... | ... | ... |
-
-## Files Modified
-
-{Updated during execution}
-
-| File | Action | Task |
-|------|--------|------|
-| - | - | - |
-
-## Tests Added
-
-{Updated during execution}
-
-| Test | Coverage | Task |
-|------|----------|------|
-| - | - | - |
-
-## Issues Encountered
-
-{Updated during execution}
-
-| Issue | Resolution | Task |
-|-------|------------|------|
-| - | - | - |
-
-## Decisions Made
-
-{Updated during execution}
-
-| Decision | Rationale | Task |
-|----------|-----------|------|
-| - | - | - |
-
-## Context Notes
-
-{Free-form notes for context preservation}
-
----
-
-*Last updated: {timestamp}*
-```
+**Initialize:**
+- All tasks as `pending` in Progress table
+- Current Task to first task ID
+- Status to `PENDING`
+- Started to current ISO-8601 timestamp
+- Empty tables for Files/Tests/Issues/Decisions
+- Context Notes placeholder
 
 ### 5. Generate ralph.sh
 
-**Runner Script:**
+**Runner Script Structure:**
 
 ```bash
 #!/bin/bash
@@ -248,7 +104,7 @@ if [[ ! -f "${RALPH_DIR}/PROMPT.md" ]]; then
     exit 1
 fi
 
-# Start Claude Code with context
+# Display context
 echo "Starting Claude Code with Ralph context..."
 echo ""
 echo "Context loaded:"
@@ -272,28 +128,23 @@ chmod +x .ralph/{feature-slug}/ralph.sh
 
 ### 6. Update .ralph/index.json
 
-**Registry Structure:**
+**Registry entry:**
 
 ```json
 {
-  "version": "1.0",
-  "features": [
-    {
-      "slug": "{feature-slug}",
-      "title": "{Feature Title}",
-      "created_at": "{timestamp}",
-      "status": "ready",
-      "complexity": "{level}",
-      "tasks": {count},
-      "spec_path": "docs/specs/{feature-slug}/",
-      "ralph_path": ".ralph/{feature-slug}/",
-      "prd_path": "docs/specs/{feature-slug}/{feature}.prd.json"
-    }
-  ]
+  "slug": "{feature-slug}",
+  "title": "{Feature Title}",
+  "created_at": "{ISO-8601}",
+  "status": "ready",
+  "complexity": "{level}",
+  "tasks": {count},
+  "spec_path": "docs/specs/{feature-slug}/",
+  "ralph_path": ".ralph/{feature-slug}/",
+  "prd_path": "docs/specs/{feature-slug}/{feature}.prd.json"
 }
 ```
 
-**Update Logic:**
+**Update logic:**
 - If index.json exists: append to features array
 - If not: create new with this feature
 - Check for duplicates by slug
@@ -337,55 +188,17 @@ Location: .ralph/{feature-slug}/
 
 ## BREAKPOINT: Specification Complete (OBLIGATOIRE)
 
-AFFICHE cette boîte:
+AFFICHE le format depuis [references/breakpoint-formats.md#completion-summary-box](../references/breakpoint-formats.md#completion-summary-box).
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ✅ SPÉCIFICATION COMPLÈTE                                           │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ Tous les artifacts de spec et Ralph générés                         │
-│                                                                     │
-│ Feature: {feature-slug}                                             │
-│ Complexité: {TINY|SMALL|STANDARD|LARGE}                             │
-│ Specs: docs/specs/{slug}/                                           │
-│ Ralph: .ralph/{slug}/                                               │
-│                                                                     │
-│ Critère de succès: Utilisateur sélectionne chemin implémentation    │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] Réviser PROMPT.md pour ajustements stack-specific              │
-│ [P2] Considérer exécution parallèle des tâches pour optimisation    │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Lancer {/quick ou /implement} (Recommended)               │ │
-│ │  [B] Run Ralph Batch — Exécuter ralph.sh                       │ │
-│ │  [C] Review fichiers — Inspecter artifacts générés             │ │
-│ │  [D] Terminé — Fin workflow, implémenter plus tard             │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+Remplis les variables:
+- `{feature-slug}`: Feature slug from state
+- `{complexity}`: TINY/SMALL/STANDARD/LARGE
+- `{slug}`: Same as feature-slug
+- `{/quick ou /implement}`: Based on routing recommendation
 
-APPELLE:
-```
-AskUserQuestion({
-  questions: [{
-    question: "Comment voulez-vous procéder?",
-    header: "Next Step",
-    multiSelect: false,
-    options: [
-      { label: "Lancer {/quick ou /implement} (Recommended)", description: "Démarrer workflow implémentation" },
-      { label: "Run Ralph Batch", description: "Exécuter ./.ralph/{slug}/ralph.sh" },
-      { label: "Review fichiers", description: "Inspecter artifacts générés" },
-      { label: "Terminé", description: "Fin workflow, implémenter plus tard" }
-    ]
-  }]
-})
-```
+APPELLE AskUserQuestion avec les options depuis la reference.
 
-⏸️ ATTENDS la réponse utilisateur avant de continuer.
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## COMPLETION:
 

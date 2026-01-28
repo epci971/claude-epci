@@ -18,6 +18,13 @@
 | `codebase_analysis` | From step-02 | No |
 | `--quick` flag | From step-00 | No |
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [breakpoint-formats.md](../references/breakpoint-formats.md#framing-validation-box) | Framing validation ASCII box template |
+| [iteration-rules.md](../references/iteration-rules.md#quick-mode-adjustments) | Quick mode question limits |
+
 ## Protocol
 
 ### 1. Prepare Framing Summary
@@ -57,68 +64,18 @@ Target critical missing information:
 | **Dependencies** | "Does this depend on other work?" |
 | **Priority** | "What's the most critical aspect?" |
 
-```
-IF --quick mode:
-  → Limit to 2 questions
-  → Focus on Target and Priority only
-```
+Apply [quick mode adjustments](../references/iteration-rules.md#quick-mode-adjustments): limit to 2 questions (Target + Priority) if `--quick` flag active.
 
 ### 3. BREAKPOINT: Framing Validation (OBLIGATOIRE)
 
-AFFICHE cette boîte:
+AFFICHE le format Framing Validation depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#framing-validation-box).
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 📋 VALIDATION DU CADRAGE                                            │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ MÉTRIQUES                                                           │
-│ • Template: {template}                                              │
-│ • EMS initial: {ems_initial}/100                                    │
-│ • Questions HMW: {hmw_count}                                        │
-│ • Contexte codebase: {available|partial|none}                       │
-│                                                                     │
-│ RÉSUMÉ DU BRIEF                                                     │
-│ {brief_v0_condensed}                                                │
-│                                                                     │
-│ QUESTIONS DE CADRAGE                                                │
-│ [Target] {question_target}                                          │
-│   → Suggestion: {suggestion_target}                                 │
-│ [Constraints] {question_constraints}                                │
-│   → Suggestion: {suggestion_constraints}                            │
-│ [Timeline] {question_timeline}                                      │
-│   → Suggestion: {suggestion_timeline}                               │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] Template '{template}' sélectionné — adapté à votre sujet       │
-│ [P2] EMS départ: {ems.global} — typique pour brief validé           │
-│ [P3] Révisez les questions HMW — elles guident l'exploration        │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Démarrer itérations (Recommended) — Exploration structurée│ │
-│ │  [B] Ajuster cadrage — Modifier template ou brief              │ │
-│ │  [C] Ajouter contexte — Plus de background d'abord             │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+Remplis les variables:
+- `{template}`, `{ems_initial}`, `{hmw_count}`
+- `{brief_v0_condensed}`
+- Questions de cadrage avec suggestions
 
-APPELLE:
-```
-AskUserQuestion({
-  questions: [{
-    question: "Prêt à démarrer les itérations d'exploration?",
-    header: "Framing",
-    multiSelect: false,
-    options: [
-      { label: "Démarrer itérations (Recommended)", description: "Commencer exploration structurée" },
-      { label: "Ajuster cadrage", description: "Modifier template ou brief" },
-      { label: "Ajouter contexte", description: "Fournir plus de background d'abord" }
-    ]
-  }]
-})
-```
+APPELLE AskUserQuestion avec les options depuis la référence.
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

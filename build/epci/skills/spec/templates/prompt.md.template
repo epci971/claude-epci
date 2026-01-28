@@ -87,15 +87,7 @@ Execute tasks in this order (respects dependencies):
 
 ## Stack-Specific Guidelines
 
-{{#if STACK_DJANGO}}
-### Django / Python
-
-- Use service layer pattern (avoid fat models/views)
-- pytest for all tests with Factory Boy for fixtures
-- Type hints required (mypy compatible)
-- Django REST Framework for API endpoints
-- Celery for async tasks if needed
-- Follow existing project conventions
+{{STACK_GUIDELINES}}
 
 ### Commit Format
 
@@ -104,82 +96,6 @@ feat({{FEATURE_SLUG}}): {description}
 fix({{FEATURE_SLUG}}): {description}
 test({{FEATURE_SLUG}}): {description}
 ```
-{{/if}}
-
-{{#if STACK_REACT}}
-### React / TypeScript
-
-- Functional components with hooks only
-- Vitest + React Testing Library for tests
-- Zustand for state management (if needed)
-- TypeScript strict mode enabled
-- Tailwind CSS for styling
-- Follow existing component patterns
-
-### Commit Format
-
-```
-feat({{FEATURE_SLUG}}): {description}
-fix({{FEATURE_SLUG}}): {description}
-test({{FEATURE_SLUG}}): {description}
-```
-{{/if}}
-
-{{#if STACK_SPRING}}
-### Spring Boot / Java
-
-- Service layer pattern with interfaces
-- JUnit 5 + Mockito for testing
-- Lombok to reduce boilerplate
-- Constructor injection (not field)
-- Spring Security for authorization
-- Follow existing package structure
-
-### Commit Format
-
-```
-feat({{FEATURE_SLUG}}): {description}
-fix({{FEATURE_SLUG}}): {description}
-test({{FEATURE_SLUG}}): {description}
-```
-{{/if}}
-
-{{#if STACK_SYMFONY}}
-### Symfony / PHP
-
-- Service layer pattern
-- PHPUnit + Prophecy for mocking
-- Doctrine ORM for persistence
-- Voters for authorization checks
-- Messenger for async processing
-- Follow PSR-12 coding standards
-
-### Commit Format
-
-```
-feat({{FEATURE_SLUG}}): {description}
-fix({{FEATURE_SLUG}}): {description}
-test({{FEATURE_SLUG}}): {description}
-```
-{{/if}}
-
-{{#if STACK_GENERIC}}
-### Generic Guidelines
-
-- Follow existing project conventions
-- Write comprehensive tests for all code
-- Document non-obvious decisions
-- Use existing patterns and utilities
-- Maintain consistent code style
-
-### Commit Format
-
-```
-feat({{FEATURE_SLUG}}): {description}
-fix({{FEATURE_SLUG}}): {description}
-test({{FEATURE_SLUG}}): {description}
-```
-{{/if}}
 
 ---
 

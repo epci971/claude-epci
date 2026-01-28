@@ -2,6 +2,15 @@
 
 > Reference for generating Ralph execution artifacts.
 
+## Cross-References
+
+| Topic | Reference File |
+|-------|---------------|
+| Stack detection & guidelines | [stack-guidelines.md](stack-guidelines.md) |
+| MEMORY.md structure | [memory-template.md](memory-template.md) |
+| TDD & execution rules | [execution-workflow.md](execution-workflow.md) |
+| Breakpoint formats | [breakpoint-formats.md](breakpoint-formats.md) |
+
 ## Overview
 
 Ralph is the batch execution system for EPCI. It uses Claude Code with persistent context to execute tasks autonomously. The `/spec` skill generates three artifacts:
@@ -18,6 +27,8 @@ Ralph is the batch execution system for EPCI. It uses Claude Code with persisten
 ├── MEMORY.md      # Execution state (updates during run)
 └── ralph.sh       # Executable runner script
 ```
+
+---
 
 ## PROMPT.md
 
@@ -41,7 +52,7 @@ Provides Claude Code with:
 {Detected stack info: framework, language, test framework}
 
 ## Execution Rules
-{MANDATORY rules for execution}
+{MANDATORY rules — see execution-workflow.md}
 
 ## Specifications
 {Location and files list}
@@ -50,7 +61,7 @@ Provides Claude Code with:
 {Topological order from DAG}
 
 ## Stack-Specific Guidelines
-{Conventions for detected stack}
+{Conventions for detected stack — see stack-guidelines.md}
 
 ## Context Persistence
 {Instructions for updating MEMORY.md}
@@ -59,59 +70,14 @@ Provides Claude Code with:
 {How to continue after interruption}
 ```
 
-### Stack Detection
+### Generation
 
-Detect from project files:
+1. Detect stack using [stack-guidelines.md#stack-detection-matrix](stack-guidelines.md#stack-detection-matrix)
+2. Load appropriate guidelines from stack-guidelines.md
+3. Fill template from `templates/prompt.md.template`
+4. Inject execution rules from [execution-workflow.md](execution-workflow.md)
 
-| Stack | Detection Files | Result |
-|-------|-----------------|--------|
-| Django | `manage.py` + `requirements.txt` with django | Python/Django |
-| React | `package.json` with react | JavaScript/React |
-| Spring | `pom.xml` or `build.gradle` with spring-boot | Java/Spring |
-| Symfony | `composer.json` with symfony | PHP/Symfony |
-| Generic | No specific markers | Generic |
-
-### Stack-Specific Content
-
-**Django:**
-```markdown
-### For Django:
-- Use service layer pattern (avoid fat models/views)
-- pytest for testing with Factory Boy fixtures
-- Type hints required (mypy compatible)
-- Django REST Framework for APIs
-- Celery for async tasks
-```
-
-**React:**
-```markdown
-### For React:
-- Functional components with hooks (no classes)
-- Vitest + React Testing Library
-- Zustand for state management (if needed)
-- TypeScript in strict mode
-- Tailwind CSS for styling
-```
-
-**Spring:**
-```markdown
-### For Spring:
-- Service layer pattern with interfaces
-- JUnit 5 + Mockito for testing
-- Lombok to reduce boilerplate
-- Constructor injection (not field)
-- Spring Security for auth
-```
-
-**Symfony:**
-```markdown
-### For Symfony:
-- Service layer pattern
-- PHPUnit + Prophecy for testing
-- Doctrine ORM for persistence
-- Voters for authorization
-- Messenger for async processing
-```
+---
 
 ## MEMORY.md
 
@@ -122,74 +88,20 @@ Tracks execution state for:
 - Resumption after interruption
 - History and decisions
 
-### Template Structure
+### Template
 
-```markdown
-# Ralph Memory — {Feature Title}
+See [memory-template.md](memory-template.md) for complete template structure.
 
-## Current State
-{Feature slug, start time, current task, status}
+### Generation
 
-## Progress
-{Table of tasks with status}
-
-## Files Modified
-{Updated during execution}
-
-## Tests Added
-{Updated during execution}
-
-## Issues Encountered
-{Updated during execution}
-
-## Decisions Made
-{Updated during execution}
-
-## Context Notes
-{Free-form notes}
+1. Initialize all tasks as `pending` in Progress table
+2. Set Current Task to first task ID
+3. Set Status to `PENDING`
+4. Set Started to current ISO-8601 timestamp
+5. Leave modification tables empty
+6. Add Context Notes placeholder
 
 ---
-*Last updated: {timestamp}*
-```
-
-### Status Values
-
-| Status | Meaning |
-|--------|---------|
-| `pending` | Not yet started |
-| `in_progress` | Currently executing |
-| `completed` | Successfully finished |
-| `blocked` | Waiting on external factor |
-| `failed` | Encountered error |
-
-### Update Protocol
-
-After each task completion:
-
-1. Update task status to `completed`
-2. Add files modified to table
-3. Add tests created to table
-4. Record any decisions made
-5. Update timestamp
-
-Example update:
-
-```markdown
-## Progress
-
-| Task | Status | Completed At | Notes |
-|------|--------|--------------|-------|
-| task-001 | completed | 2026-01-26T11:00:00Z | - |
-| task-002 | in_progress | - | Working on step 2 |
-| task-003 | pending | - | - |
-
-## Files Modified
-
-| File | Action | Task |
-|------|--------|------|
-| src/models/user.py | created | task-001 |
-| tests/test_user.py | created | task-001 |
-```
 
 ## ralph.sh
 
@@ -239,7 +151,6 @@ echo "- Specs: ${SPEC_DIR}/"
 echo ""
 
 # Launch Claude Code
-# Note: Actual invocation depends on Claude Code CLI version
 claude --resume-with-context "${RALPH_DIR}/PROMPT.md" \
        --memory "${RALPH_DIR}/MEMORY.md"
 
@@ -252,6 +163,8 @@ echo "=== Ralph Execution Complete ==="
 ```bash
 chmod +x .ralph/{feature-slug}/ralph.sh
 ```
+
+---
 
 ## index.json Registry
 
@@ -301,15 +214,14 @@ When generating new feature:
 3. Append new feature entry
 4. Write updated index.json
 
-## Execution Workflow
+---
 
-### Starting Execution
+## Execution
+
+### Starting
 
 ```bash
-# Navigate to project root
 cd /path/to/project
-
-# Run Ralph for feature
 ./.ralph/auth-oauth/ralph.sh
 ```
 
@@ -323,6 +235,8 @@ Claude Code will:
 5. Update MEMORY.md after each task
 6. Commit changes with conventional commits
 
+See [execution-workflow.md](execution-workflow.md) for detailed rules.
+
 ### Resumption
 
 If interrupted:
@@ -331,57 +245,9 @@ If interrupted:
 3. Continues from last in_progress task
 4. Skips completed tasks
 
-### Completion
+See [execution-workflow.md#resumption-protocol](execution-workflow.md#resumption-protocol).
 
-When all tasks completed:
-1. MEMORY.md shows all tasks as `completed`
-2. Final summary displayed
-3. Consider running `/implement` review phase
-
-## Best Practices
-
-### PROMPT.md
-
-- Keep stack guidelines focused
-- Include commit message format
-- Reference spec file locations explicitly
-- Add project-specific conventions
-
-### MEMORY.md
-
-- Initialize with all tasks in `pending`
-- Update after each task, not each step
-- Keep context notes brief but useful
-- Include error details if failed
-
-### ralph.sh
-
-- Always check prerequisites
-- Display clear progress messages
-- Handle missing files gracefully
-- Support dry-run mode (future)
-
-## Troubleshooting
-
-### Ralph Won't Start
-
-1. Check `.ralph/{slug}/` directory exists
-2. Verify `ralph.sh` is executable
-3. Confirm `PROMPT.md` and `MEMORY.md` exist
-4. Check spec directory exists
-
-### Task Stuck
-
-1. Check MEMORY.md for current state
-2. Look at Issues Encountered section
-3. Manually update status if needed
-4. Restart Ralph
-
-### Wrong Stack Detected
-
-1. Edit PROMPT.md manually
-2. Adjust stack-specific guidelines
-3. Regenerate if needed
+---
 
 ## Integration
 
@@ -410,3 +276,27 @@ If Ralph not available, follow specs manually:
 2. Execute tasks in order
 3. Follow acceptance criteria
 4. Run tests after each task
+
+---
+
+## Troubleshooting
+
+### Ralph Won't Start
+
+1. Check `.ralph/{slug}/` directory exists
+2. Verify `ralph.sh` is executable
+3. Confirm `PROMPT.md` and `MEMORY.md` exist
+4. Check spec directory exists
+
+### Task Stuck
+
+1. Check MEMORY.md for current state
+2. Look at Issues Encountered section
+3. Manually update status if needed
+4. Restart Ralph
+
+### Wrong Stack Detected
+
+1. Edit PROMPT.md manually
+2. Adjust stack-specific guidelines
+3. Regenerate if needed

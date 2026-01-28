@@ -91,7 +91,94 @@ description: >-
   Not for: direct user invocation.
 ```
 
-## 7. Anti-Patterns Summary
+## 7. Progressive Disclosure Pattern
+
+| Level | File | Content | Lines |
+|-------|------|---------|-------|
+| 1 | SKILL.md | Overview, links to steps/references | ~200 |
+| 2 | steps/*.md | Declarative procedures | 50-150 each |
+| 3 | references/*.md | Schemas, templates, tables | Variable |
+
+### 7.1 Content Location Matrix
+
+| Content Type | Location | Threshold |
+|--------------|----------|-----------|
+| Procedure (WHAT to do) | steps/ | Always |
+| ASCII templates | references/ | > 10 lines |
+| JSON schemas | references/ | > 5 fields |
+| Lookup tables | references/ | > 10 rows |
+| Business rules | references/ | > 3 rules |
+| Breakpoint formats | references/ | Always centralize |
+| AskUserQuestion options | references/ | If reused across steps |
+| Output templates | references/ | > 20 lines |
+
+### 7.2 Extraction Thresholds (Refactoring)
+
+Explicit thresholds for `--refactor` mode:
+
+| Content | Threshold | Target Reference | Example |
+|---------|-----------|------------------|---------|
+| ASCII box | > 10 lines | `breakpoint-formats.md` | Phase output boxes |
+| JSON schema | > 5 fields | `{domain}-schema.md` | State structure |
+| Lookup table | > 10 rows | `{domain}-tables.md` | Scoring criteria |
+| Business rules | > 3 rules | `{domain}-rules.md` | Validation rules |
+| Output template | > 20 lines | `{domain}-templates.md` | Report formats |
+| **Step file** | > 200 lines | **Must refactor** | Extract to refs |
+
+**Step Size Targets:**
+| Metric | Violation | Warning | Target |
+|--------|-----------|---------|--------|
+| Step lines | > 200 | > 150 | < 150 |
+| SKILL.md | > 500 | > 400 | < 300 |
+
+### Decision Tree
+
+```
+1. Is it a FORMAT (visual display)?
+   → references/ (breakpoint-formats.md pattern)
+
+2. Is it a RULE/THRESHOLD?
+   → references/ if reused, inline if unique to step
+
+3. Is it ORCHESTRATION (IF/FOR/Task)?
+   → steps/ (this is procedural logic)
+
+4. Is it DATA (schema, lookup table)?
+   → references/
+
+5. Is it > 20 lines of inline content?
+   → Extract to references/
+```
+
+### Rules
+
+**DO**:
+- Link from step to reference: `See [references/file.md](../references/file.md)`
+- Keep step descriptions under 50 words per action
+- Maintain single source of truth in references/
+- Add "Reference Files Used" table in each step
+
+**DO NOT**:
+- Duplicate schemas in steps/
+- Embed full templates in steps/
+- Copy reference tables into procedures
+- Inline ASCII boxes > 10 lines
+
+### Step Content Guidelines
+
+Steps should be **declarative** (WHAT to do), not **definitional** (data/schema).
+
+| Content Type | Location | Example |
+|--------------|----------|---------|
+| Procedure | steps/ | "Apply template from references/X" |
+| Template | references/ | Full markdown template |
+| Schema | references/ | JSON/YAML structure |
+| Table > 10 rows | references/ | Scoring criteria, rules |
+| Breakpoint format | references/ | ASCII box with variables |
+
+---
+
+## 8. Anti-Patterns Summary
 
 | Anti-Pattern | Problem | Fix |
 |--------------|---------|-----|
@@ -101,8 +188,9 @@ description: >-
 | Multi-purpose skills | Hard to trigger | Split into focused |
 | No examples | User confusion | Add input/output |
 | Generic names | Collisions | Use specific names |
+| Duplicated content | Maintenance burden | Single source in references/ |
 
-## 8. Core Skills Integration
+## 9. Core Skills Integration
 
 EPCI v6 provides 6 core skills for composable functionality. Document usage in generated skills.
 
@@ -141,7 +229,7 @@ In generated skills, reference core skills:
 
 ---
 
-## 9. Task Tool Integration (MANDATORY)
+## 10. Task Tool Integration (MANDATORY)
 
 ### 🔴 Rule: Subagent Delegation
 
@@ -178,7 +266,7 @@ Audit script (Phase 6) checks:
 
 ---
 
-## 10. Quality Checklist (Quick)
+## 11. Quality Checklist (Quick)
 
 Before committing:
 - [ ] Name unique and kebab-case
@@ -192,7 +280,7 @@ Before committing:
 
 ---
 
-## 11. Native vs Custom Agents
+## 12. Native vs Custom Agents
 
 ### Native Agents (Use When Generic)
 

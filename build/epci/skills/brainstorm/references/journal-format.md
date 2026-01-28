@@ -10,7 +10,6 @@ The journal captures the complete thinking process of a brainstorm session. Unli
 **Location**: `docs/briefs/{slug}/`
 **Audience**: The brainstorm participant for personal reference and traceability.
 **Principle**: Complete history - nothing omitted.
-**Note**: Not generated in Quick Mode.
 
 ## Template
 
