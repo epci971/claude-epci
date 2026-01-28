@@ -9,7 +9,7 @@ description: >-
   Triggers: create skill, new skill, factory, generate component.
   Not for: one-time prompts, volatile procedures, runtime configuration.
 user-invocable: true
-argument-hint: "[skill-name] [--core] [--simple] [--audit]"
+argument-hint: "[skill-name] [--core] [--simple] [--audit] [--refactor]"
 allowed-tools: Read, Write, Edit, Glob, Grep, AskUserQuestion
 ---
 
@@ -24,6 +24,7 @@ Create production-ready skills for EPCI v6.0 following best practices.
 /factory state-manager --core      # Internal core skill (no steps)
 /factory tiny-helper --simple      # Simple skill (no steps)
 /factory brainstorm --audit        # Audit existing skill for EPCI compliance
+/factory debug --refactor          # Refactor existing skill (steps→references)
 ```
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -89,6 +90,7 @@ Create production-ready skills for EPCI v6.0 following best practices.
 | `--core` | off | Core skill (user-invocable: false, no steps) |
 | `--simple` | off | Simple skill (no steps/, for < 3 phases) |
 | `--audit` | off | Audit existing skill for EPCI compliance |
+| `--refactor` | off | Refactor existing skill (apply steps→references pattern) |
 
 **Behavior by Mode:**
 
@@ -98,6 +100,7 @@ Create production-ready skills for EPCI v6.0 following best practices.
 | `--simple` | No | `skills/{name}/` | true |
 | `--core` | No | `skills/core/{name}/` | false |
 | `--audit` | N/A | Validates existing skill | N/A |
+| `--refactor` | N/A | Refactors existing skill | N/A |
 
 **Audit Mode** validates an existing skill against EPCI best practices:
 - Phase 1: Structure (12-point checklist)
@@ -105,6 +108,12 @@ Create production-ready skills for EPCI v6.0 following best practices.
 - Phase 3: Core skills usage
 - Phase 4: Stack skills detection
 - Phase 5: Step chain validation
+
+**Refactor Mode** applies the steps→references pattern to existing skills:
+- Phase 1: Analysis (inventory, detect duplications, map extractions)
+- Phase 2: Extraction Plan (new references, steps to modify)
+- Phase 3: Execution (create references, update steps, consolidate)
+- Phase 4: Validation (line counts, cross-links, metrics)
 
 ## Steps
 
@@ -127,6 +136,7 @@ Create production-ready skills for EPCI v6.0 following best practices.
 - [steps/step-04-workflow.md](steps/step-04-workflow.md) — Workflow
 - [steps/step-05-validation.md](steps/step-05-validation.md) — Validation
 - [steps/step-06-generation.md](steps/step-06-generation.md) — Generation
+- [steps/step-07-refactor.md](steps/step-07-refactor.md) — Refactoring (--refactor mode)
 
 ## Reference Files
 
@@ -138,6 +148,9 @@ Create production-ready skills for EPCI v6.0 following best practices.
 - [references/skill-templates.md](references/skill-templates.md) — APEX templates
 - [references/agents-catalog.md](references/agents-catalog.md) — Agent recommendations
 - [references/stacks-catalog.md](references/stacks-catalog.md) — Stack detection
+- [references/skill-refactoring-prompt.md](references/skill-refactoring-prompt.md) — Refactoring workflow
+- [references/refactoring-checklist.md](references/refactoring-checklist.md) — Post-refactoring validation
+- [references/refactoring-formats.md](references/refactoring-formats.md) — Refactoring display templates
 
 ## Templates (for generated steps)
 
@@ -237,6 +250,52 @@ Claude interprète les blocs de code comme des exemples, pas comme des instructi
 - Afficher les boîtes ASCII hors bloc exécutable
 - Appeler AskUserQuestion explicitement
 - Ajouter `⏸️ ATTENDS la réponse` après chaque breakpoint
+
+## Refactoring Mode
+
+The `--refactor` flag enables automated refactoring of existing skills to follow the steps→references pattern.
+
+### When to Use
+
+- Steps exceeding 200 lines
+- Duplicated content across steps
+- Inline ASCII boxes > 10 lines
+- Inline schemas > 5 fields
+- Missing "Reference Files Used" tables
+
+### Workflow
+
+```
+/factory {skill-name} --refactor
+```
+
+Routes to `step-07-refactor.md` which executes:
+
+1. **Analysis**: Inventory files, detect violations, map extractions
+2. **Plan**: Define new references, identify steps to modify
+3. **Execute**: Create references, update steps, consolidate
+4. **Validate**: Check line counts, cross-links, run audit
+
+### Extraction Thresholds
+
+| Content Type | Threshold | Target Reference |
+|--------------|-----------|------------------|
+| ASCII box | > 10 lines | `breakpoint-formats.md` |
+| JSON schema | > 5 fields | `{domain}-schema.md` |
+| Lookup table | > 10 rows | `{domain}-tables.md` |
+| Business rules | > 3 rules | `{domain}-rules.md` |
+| Output template | > 20 lines | `{domain}-templates.md` |
+
+### Priority Queue
+
+| Skill | Priority | Critical Issue |
+|-------|----------|----------------|
+| debug | P1 | step-07-complex.md (277 lines) |
+| refactor | P1 | step-07-report.md (229 lines) |
+| implement | P2 | step-04-review.md (201 lines) |
+| quick | P3 | step-03-code.md (238 lines) |
+
+See [references/skill-refactoring-prompt.md](references/skill-refactoring-prompt.md) for the complete workflow.
 
 ## Limitations
 

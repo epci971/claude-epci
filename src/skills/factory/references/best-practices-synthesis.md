@@ -110,6 +110,26 @@ description: >-
 | Business rules | references/ | > 3 rules |
 | Breakpoint formats | references/ | Always centralize |
 | AskUserQuestion options | references/ | If reused across steps |
+| Output templates | references/ | > 20 lines |
+
+### 7.2 Extraction Thresholds (Refactoring)
+
+Explicit thresholds for `--refactor` mode:
+
+| Content | Threshold | Target Reference | Example |
+|---------|-----------|------------------|---------|
+| ASCII box | > 10 lines | `breakpoint-formats.md` | Phase output boxes |
+| JSON schema | > 5 fields | `{domain}-schema.md` | State structure |
+| Lookup table | > 10 rows | `{domain}-tables.md` | Scoring criteria |
+| Business rules | > 3 rules | `{domain}-rules.md` | Validation rules |
+| Output template | > 20 lines | `{domain}-templates.md` | Report formats |
+| **Step file** | > 200 lines | **Must refactor** | Extract to refs |
+
+**Step Size Targets:**
+| Metric | Violation | Warning | Target |
+|--------|-----------|---------|--------|
+| Step lines | > 200 | > 150 | < 150 |
+| SKILL.md | > 500 | > 400 | < 300 |
 
 ### Decision Tree
 

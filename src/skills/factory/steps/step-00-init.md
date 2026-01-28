@@ -14,6 +14,7 @@
 | `--core` | User flag | No |
 | `--simple` | User flag | No |
 | `--audit` | User flag | No |
+| `--refactor` | User flag | No |
 
 ## Protocol
 
@@ -36,6 +37,10 @@ Validate:
 IF --audit flag:
   → mode = "audit"
   → GOTO: Audit Mode (section 2b below)
+
+IF --refactor flag:
+  → mode = "refactor"
+  → GOTO: Refactor Mode (section 2c below)
 
 IF --core flag:
   → mode = "core"
@@ -99,6 +104,46 @@ When `--audit` flag is detected:
 +----------------------------------------------------------------------+
 | RESULT: PASS WITH WARNINGS (1 warning)                                |
 +----------------------------------------------------------------------+
+```
+
+### 2c. Refactor Mode (--refactor flag)
+
+When `--refactor` flag is detected:
+
+1. **Resolve skill path**:
+   ```
+   Search for existing skill in order:
+     1. src/skills/{skill-name}/
+     2. src/skills/core/{skill-name}/
+     3. src/skills/stack/{skill-name}/
+
+   IF skill not found:
+     → Error: "Skill '{skill-name}' not found"
+     → EXIT
+   ```
+
+2. **Initialize refactor session**:
+   ```json
+   {
+     "factory_id": "refactor-{skill-name}-{timestamp}",
+     "skill_name": "<parsed name>",
+     "skill_path": "<resolved path>",
+     "mode": "refactor",
+     "status": "initialized"
+   }
+   ```
+
+3. **Route to step-07-refactor.md**:
+   ```
+   → GOTO: step-07-refactor.md
+   → Skip steps 01-06 (creation workflow)
+   ```
+
+**Example invocation**:
+```
+/factory debug --refactor
+→ Resolves: src/skills/debug/
+→ Routes to: step-07-refactor.md
 ```
 
 ### 3. Check for Existing Skill
