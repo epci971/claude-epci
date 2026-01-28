@@ -7,6 +7,12 @@ next_step: null
 
 # Step 07: Memory
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [breakpoint-formats.md](../references/breakpoint-formats.md#memory) | Memory summary box |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER skip index.json update
@@ -85,21 +91,9 @@ For an OAuth feature:
 
 ## COMPLETION SUMMARY:
 
-```
-+------------------------------------------------------------------+
-| [M] MEMORY PHASE COMPLETE                                        |
-+------------------------------------------------------------------+
-| Feature: {feature-slug}                                          |
-|                                                                  |
-| Summary: {1-2 sentence summary}                                  |
-|                                                                  |
-| Modified Files: {count}                                          |
-| Tests Added: {count}                                             |
-|                                                                  |
-| index.json updated at:                                           |
-| .claude/state/features/index.json                                |
-+------------------------------------------------------------------+
-```
+AFFICHE le format depuis [breakpoint-formats.md#memory](../references/breakpoint-formats.md#memory)
+
+**Note:** Info-only display, no user interaction required.
 
 ## NEXT STEP TRIGGER:
 

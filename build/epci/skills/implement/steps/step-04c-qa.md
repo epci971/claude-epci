@@ -7,6 +7,14 @@ next_step: steps/step-05-document.md
 
 # Step 04c: QA Review
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [review-checklists.md](../references/review-checklists.md#qa-validation-checklist) | QA validation checklist |
+| [output-templates.md](../references/output-templates.md#qa-output) | QA output format |
+| [breakpoint-formats.md](../references/breakpoint-formats.md#qa) | Breakpoint ASCII box |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER skip acceptance criteria verification
@@ -59,104 +67,33 @@ next_step: steps/step-05-document.md
 
 ## QA CHECKLIST:
 
-```
-### Acceptance Criteria
-- [ ] AC1: {description} — {PASS|FAIL}
-- [ ] AC2: {description} — {PASS|FAIL}
-- [ ] AC3: {description} — {PASS|FAIL}
-
-### Happy Paths
-- [ ] Standard user flow works
-- [ ] Expected inputs handled
-- [ ] Output matches specification
-
-### Edge Cases
-- [ ] Boundary values handled
-- [ ] Empty inputs handled
-- [ ] Large inputs handled
-- [ ] Special characters handled
-
-### Error Handling
-- [ ] Invalid input rejected gracefully
-- [ ] Error messages user-friendly
-- [ ] Recovery path available
-- [ ] No crashes on errors
-```
+APPLY checklist from [review-checklists.md#qa-validation-checklist](../references/review-checklists.md#qa-validation-checklist)
 
 ## OUTPUT FORMAT:
 
-```
-## QA Validation Report
-
-### Acceptance Criteria
-| # | Criterion | Status | Notes |
-|---|-----------|--------|-------|
-| 1 | {AC1} | {PASS|FAIL} | {notes} |
-| 2 | {AC2} | {PASS|FAIL} | {notes} |
-
-### Test Results
-- Happy paths: {N}/{N} passed
-- Edge cases: {N}/{N} passed
-- Error handling: {N}/{N} passed
-
-### Defects Found
-| # | Severity | Description | Steps to Reproduce |
-|---|----------|-------------|-------------------|
-| 1 | {sev} | {desc} | {steps} |
-
-### Verdict
-{PASS | FAIL}
-```
+APPLY template from [output-templates.md#qa-output](../references/output-templates.md#qa-output)
 
 ## BREAKPOINT: QA Review Complete (OBLIGATOIRE)
 
-AFFICHE cette boîte:
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 🧪 QA REVIEW TERMINÉ                                                │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ Validation QA par @qa-reviewer terminée                             │
-│                                                                     │
-│ Feature: {feature-slug}                                             │
-│ Critères d'acceptation: {N}/{N} validés                             │
-│ Taux de succès tests: {%}%                                          │
-│ Défauts trouvés: {N}                                                │
-│                                                                     │
-│ Critère de succès: Tous les AC validés, aucun défaut bloquant       │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] {N}/{N} critères d'acceptation validés                         │
-│ [P2] Réviser {N} défauts trouvés                                    │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Continuer (Recommended) — Validation QA réussie           │ │
-│ │  [B] Corriger défauts d'abord — Traiter les issues trouvés     │ │
-│ │  [C] Accepter issues connues — Documenter et continuer         │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE le format depuis [breakpoint-formats.md#qa](../references/breakpoint-formats.md#qa)
 
 APPELLE:
 ```
 AskUserQuestion({
   questions: [{
-    question: "Accepter le résultat de la validation QA?",
+    question: "Accepter le resultat de la validation QA?",
     header: "QA Review",
     multiSelect: false,
     options: [
-      { label: "Continuer (Recommended)", description: "Validation QA réussie" },
-      { label: "Corriger défauts d'abord", description: "Traiter les issues trouvés" },
+      { label: "Continuer (Recommended)", description: "Validation QA reussie" },
+      { label: "Corriger defauts d'abord", description: "Traiter les issues trouves" },
       { label: "Accepter issues connues", description: "Documenter et continuer" }
     ]
   }]
 })
 ```
 
-⏸️ ATTENDS la réponse utilisateur avant de continuer.
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

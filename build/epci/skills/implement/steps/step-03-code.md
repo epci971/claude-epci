@@ -7,6 +7,12 @@ next_step: steps/step-04-review.md
 
 # Step 03: Code [C]
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [tdd-rules.md](../references/tdd-rules.md) | TDD cycle and coverage rules |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER write implementation before test
@@ -29,29 +35,19 @@ Before implementing each component, load the **complete stack skill** based on f
 
 | File Type | Load Stack Skill | Action |
 |-----------|------------------|--------|
-| `*.py` | python-django | `Read("src/skills/stack/python-django/SKILL.md")` + tous les fichiers dans `references/` |
-| `*.php` | php-symfony | `Read("src/skills/stack/php-symfony/SKILL.md")` + tous les fichiers dans `references/` |
-| `*.java` | java-springboot | `Read("src/skills/stack/java-springboot/SKILL.md")` + tous les fichiers dans `references/` |
-| `*.tsx`, `*.jsx`, `*.ts`, `*.js` | javascript-react | `Read("src/skills/stack/javascript-react/SKILL.md")` + tous les fichiers dans `references/` |
-| `*.css`, `*.scss`, `*.html` | frontend-editor | `Read("src/skills/stack/frontend-editor/SKILL.md")` + tous les fichiers dans `references/` |
+| `*.py` | python-django | Read SKILL.md + all `references/` files |
+| `*.php` | php-symfony | Read SKILL.md + all `references/` files |
+| `*.java` | java-springboot | Read SKILL.md + all `references/` files |
+| `*.tsx`, `*.jsx`, `*.ts`, `*.js` | javascript-react | Read SKILL.md + all `references/` files |
+| `*.css`, `*.scss`, `*.html` | frontend-editor | Read SKILL.md + all `references/` files |
 
 ### Loading Protocol
 
 For each component in the implementation plan:
 1. **Identify** the target file(s) and their extensions
-2. **Load** le stack skill complet via Read tool:
-   - Lire `SKILL.md` du stack correspondant
-   - Lire TOUS les fichiers dans `references/` (architecture, testing, security, etc.)
+2. **Load** the complete stack skill via Read tool
 3. **Apply** ALL stack patterns: architecture, ORM/data, API, testing
 4. **Use** stack-specific test commands
-
-### Multi-File Components
-
-If a component spans multiple file types (e.g., API endpoint + React component):
-- Load ALL relevant stack skills
-- Apply backend patterns for backend files
-- Apply frontend patterns for frontend files
-- Each file follows its stack's full conventions
 
 ### Stack-Specific Test Commands
 
@@ -69,22 +65,10 @@ If a component spans multiple file types (e.g., API endpoint + React component):
    - Start with Phase 1 components
    - Complete each component before moving to next
 
-2. **For each component**, execute TDD cycle:
-
-   ### RED Phase
-   a. Write failing test that defines expected behavior
-   b. Run test to confirm it fails
-   c. Verify test fails for the right reason
-
-   ### GREEN Phase
-   a. Write minimal implementation to pass test
-   b. Run test to confirm it passes
-   c. Verify no other tests broken
-
-   ### REFACTOR Phase
-   a. Improve code quality without changing behavior
-   b. Run tests to confirm all still pass
-   c. Apply identified patterns from exploration
+2. **For each component**, execute TDD cycle (see [tdd-rules.md](../references/tdd-rules.md)):
+   - **RED Phase**: Write failing test, verify it fails for the right reason
+   - **GREEN Phase**: Write minimal implementation to pass
+   - **REFACTOR Phase**: Improve code quality, run tests to confirm
 
 3. **Update** progress in Feature Document
    - Mark components as completed
@@ -105,59 +89,19 @@ If a component spans multiple file types (e.g., API endpoint + React component):
 ### Before Each Component
 
 1. Identify target file type(s) from implementation plan
-2. Load complete stack skill via Read tool:
-   - `Read("src/skills/stack/{stack-name}/SKILL.md")`
-   - `Read("src/skills/stack/{stack-name}/references/architecture.md")`
-   - `Read("src/skills/stack/{stack-name}/references/testing.md")`
-   - etc.
+2. Load complete stack skill via Read tool
 3. All patterns available: architecture, ORM, API, testing, etc.
 
-### Component: {name} [{file-type} → {stack}]
+### Component Implementation
 
-**Stack loaded:** `{stack-name}` via Read ✓
+**Stack loaded:** `{stack-name}` via Read
 
-#### RED: Write failing test
-- Follow {stack} testing patterns (from SKILL.md + references/testing.md)
-- Use {stack} test framework conventions
-- Apply {stack} assertion style
-
-```{language}
-// {stack-specific test path}
-// Example: tests/test_{component}.py (Django)
-// Example: __tests__/{component}.test.tsx (React)
-{test code following stack patterns}
-```
-
-#### Run test: FAIL 🔴
-```bash
-# Use stack-specific command
-{stack test command} → Expected failure
-```
-
-#### GREEN: Implement
-- Follow {stack} architecture patterns (from SKILL.md + references/architecture.md)
-- Apply {stack} ORM/data patterns if applicable
-- Respect {stack} anti-patterns list
-
-```{language}
-// {stack-specific source path}
-{minimal implementation following stack conventions}
-```
-
-#### Run test: PASS ✅
-```bash
-{stack test command} → Pass
-```
-
-#### REFACTOR: Improve
-- Apply {stack} code conventions
-- Check against {stack} anti-patterns
-- Run full test suite to verify no regressions
-
-#### Run test: PASS ✅
-```bash
-{stack test command} → Still passing
-```
+1. **RED**: Write failing test following stack testing patterns
+2. **Run test**: Expected failure
+3. **GREEN**: Implement minimal code following stack conventions
+4. **Run test**: Pass
+5. **REFACTOR**: Improve code quality, check against stack anti-patterns
+6. **Run test**: Still passing
 
 ### Unmapped File Types
 
@@ -172,11 +116,11 @@ For extensions not in the mapping table:
 ## Coding Progress
 
 ### Completed Components
-- ✅ {Component 1} — {N} tests passing
-- ✅ {Component 2} — {N} tests passing
+- {Component 1} - {N} tests passing
+- {Component 2} - {N} tests passing
 
 ### In Progress
-- ⏳ {Component 3} — RED phase
+- {Component 3} - RED phase
 
 ### Test Coverage
 - Current: {%}

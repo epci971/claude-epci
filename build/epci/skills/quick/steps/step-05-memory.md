@@ -7,6 +7,12 @@ next_step: null
 
 # Step 05: Memory [M]
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [breakpoint-formats.md](../references/breakpoint-formats.md#complete) | Completion summary display |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER skip index.json update
@@ -97,34 +103,11 @@ Use `state-manager` to update:
 }
 ```
 
-### 5. Present Completion Breakpoint
+### 5. Present Completion Summary
 
-Display final summary to user:
+AFFICHE le format depuis [breakpoint-formats.md#complete](../references/breakpoint-formats.md#complete)
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ [COMPLETE] /quick Execution Finished                             │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│ Summary: {1-2 sentence summary}                                  │
-│                                                                  │
-│ ┌─ Stats ───────────────────────────────────────────────────┐   │
-│ │  Complexity: {TINY|SMALL}                                 │   │
-│ │  Files Modified: {count}                                  │   │
-│ │  Tests Added: {count}                                     │   │
-│ │  Duration: {time}                                         │   │
-│ └───────────────────────────────────────────────────────────┘   │
-│                                                                  │
-│ Modified Files:                                                  │
-│ • {path/to/file1.ts}                                            │
-│ • {path/to/file2.test.ts}                                       │
-│                                                                  │
-│ Memory updated: .claude/state/features/index.json               │
-│                                                                  │
-├─────────────────────────────────────────────────────────────────┤
-│ Next: git commit | /commit | Create PR                          │
-└─────────────────────────────────────────────────────────────────┘
-```
+**Note:** Info-only display, no user interaction required.
 
 ## CONTEXT BOUNDARIES:
 

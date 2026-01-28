@@ -10,6 +10,12 @@ conditional_next:
 
 # Step 00: Initialization
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [breakpoint-formats.md](../references/breakpoint-formats.md#init) | Breakpoint ASCII box |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER skip complexity detection
@@ -65,48 +71,25 @@ Routing: {next step path}
 
 ## BREAKPOINT (for STANDARD+ only) - OBLIGATOIRE
 
-AFFICHE cette boîte:
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 📊 ÉVALUATION COMPLEXITÉ                                            │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ Détection complexité terminée                                       │
-│                                                                     │
-│ Feature: {feature-slug}                                             │
-│ Complexité: {complexity}                                            │
-│ Estimation: ~{loc} LOC sur {files} fichiers                         │
-│                                                                     │
-│ Critère de succès: L'utilisateur confirme le workflow approprié     │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Continuer avec EPCI (Recommended) — Workflow complet      │ │
-│ │  [B] Rétrograder vers /quick — Plus simple qu'estimé           │ │
-│ │  [C] Abandonner — Affiner les requirements d'abord             │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE le format depuis [breakpoint-formats.md#init](../references/breakpoint-formats.md#init)
 
 APPELLE:
 ```
 AskUserQuestion({
   questions: [{
-    question: "Procéder avec la complexité détectée?",
+    question: "Proceder avec la complexite detectee?",
     header: "Complexity",
     multiSelect: false,
     options: [
       { label: "Continuer avec EPCI (Recommended)", description: "Workflow complet pour features STANDARD+" },
-      { label: "Rétrograder vers /quick", description: "Plus simple qu'estimé, utiliser quick workflow" },
+      { label: "Retrograder vers /quick", description: "Plus simple qu'estime, utiliser quick workflow" },
       { label: "Abandonner", description: "Affiner les requirements d'abord" }
     ]
   }]
 })
 ```
 
-⏸️ ATTENDS la réponse utilisateur avant de continuer.
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

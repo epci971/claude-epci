@@ -2,14 +2,6 @@
 
 > ASCII box templates for /spec skill breakpoints with AskUserQuestion integration.
 
-## Overview
-
-This reference contains the 5 breakpoint formats used throughout the /spec workflow. Each breakpoint uses a consistent ASCII box structure with:
-- Header with emoji and title
-- Context section with variables
-- Proactive suggestions (P1/P2/P3)
-- Options block for AskUserQuestion
-
 ## Common Elements
 
 ### Progress Indicators
@@ -31,12 +23,14 @@ Estimated: ~{hours}h
 ### Standard Options Block
 
 ```
-┌─ Options ──────────────────────────────────────────────────────┐
-│  [A] Primary action (Recommended) — Description               │
-│  [B] Alternative action — Description                         │
-│  [C] Another option — Description                             │
-│  [?] Autre reponse...                                         │
-└────────────────────────────────────────────────────────────────┘
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Primary action (Recommended) — Description               │ │
+│ │  [B] Alternative action — Description                         │ │
+│ │  [C] Another option — Description                             │ │
+│ │  [?] Autre reponse...                                         │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -55,7 +49,7 @@ Estimated: ~{hours}h
 │ La description fournie necessite des precisions                     │
 │                                                                     │
 │ Feature: {feature-slug}                                             │
-│ Source: {text|discovery}                                            │
+│ Source: {source_type}                                               │
 │ Questions de clarification:                                         │
 │ {clarification_questions}                                           │
 │                                                                     │
@@ -83,16 +77,14 @@ Estimated: ~{hours}h
 
 ```json
 {
-  "questions": [{
-    "question": "Comment voulez-vous clarifier?",
-    "header": "Clarify",
-    "multiSelect": false,
-    "options": [
-      { "label": "Repondre aux questions (Recommended)", "description": "Fournir clarifications inline" },
-      { "label": "Fournir fichier brief", "description": "Fournir un document brief structure" },
-      { "label": "Annuler", "description": "Annuler et affiner requirements" }
-    ]
-  }]
+  "question": "Comment voulez-vous clarifier?",
+  "header": "Clarify",
+  "multiSelect": false,
+  "options": [
+    { "label": "Repondre aux questions (Recommended)", "description": "Fournir clarifications inline" },
+    { "label": "Fournir fichier brief", "description": "Fournir un document brief structure" },
+    { "label": "Annuler", "description": "Annuler et affiner requirements" }
+  ]
 }
 ```
 
@@ -139,17 +131,15 @@ Estimated: ~{hours}h
 
 ```json
 {
-  "questions": [{
-    "question": "Comment voulez-vous fournir la source?",
-    "header": "Source",
-    "multiSelect": false,
-    "options": [
-      { "label": "Fournir chemin brief", "description": "Chemin vers fichier brief existant" },
-      { "label": "Description texte", "description": "Decrire requirements inline" },
-      { "label": "Lancer /brainstorm d'abord (Recommended)", "description": "Explorer l'idee avant de specifier" },
-      { "label": "Annuler", "description": "Abandonner le workflow" }
-    ]
-  }]
+  "question": "Comment voulez-vous fournir la source?",
+  "header": "Source",
+  "multiSelect": false,
+  "options": [
+    { "label": "Lancer /brainstorm d'abord (Recommended)", "description": "Explorer l'idee avant de specifier" },
+    { "label": "Fournir chemin brief", "description": "Chemin vers fichier brief existant" },
+    { "label": "Description texte", "description": "Decrire requirements inline" },
+    { "label": "Annuler", "description": "Abandonner le workflow" }
+  ]
 }
 ```
 
@@ -183,17 +173,20 @@ Estimated: ~{hours}h
 │ │                          └──► T004 ──► T006                   │   │
 │ └────────────────────────────────────────────────────────────────┘   │
 │                                                                      │
-│ Validation: @decompose-validator -> {APPROVED}                       │
+│ Validation: @decompose-validator -> {validation_status}              │
 │                                                                      │
 │ [P1] Consider splitting task-003 if scope grows                      │
 │ [P2] task-004 and task-005 can parallelize                           │
 │                                                                      │
 ├─────────────────────────────────────────────────────────────────────┤
-│ [A] Approve and generate specs (Recommended)                         │
-│ [B] Modify task breakdown                                            │
-│ [C] View task details                                                │
-│ [D] Re-decompose with different strategy                             │
-│ [E] Cancel                                                           │
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Approve and generate specs (Recommended)                  │ │
+│ │  [B] Modify task breakdown                                     │ │
+│ │  [C] View task details                                         │ │
+│ │  [D] Re-decompose with different strategy                      │ │
+│ │  [E] Cancel                                                    │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -210,23 +203,22 @@ Estimated: ~{hours}h
 | `{title}` | Task list | Task title |
 | `{min}` | Task | Duration in minutes |
 | `{steps}` | Task | Step count |
+| `{validation_status}` | @decompose-validator | APPROVED or issues found |
 
 ### AskUserQuestion
 
 ```json
 {
-  "questions": [{
-    "question": "Comment proceder avec la decomposition?",
-    "header": "Decomposition",
-    "multiSelect": false,
-    "options": [
-      { "label": "Approve and generate specs (Recommended)", "description": "Valider et generer les fichiers specs" },
-      { "label": "Modify task breakdown", "description": "Ajuster les taches manuellement" },
-      { "label": "View task details", "description": "Voir le detail de chaque tache" },
-      { "label": "Re-decompose with different strategy", "description": "Refaire la decomposition" },
-      { "label": "Cancel", "description": "Annuler le workflow" }
-    ]
-  }]
+  "question": "Comment proceder avec la decomposition?",
+  "header": "Decomposition",
+  "multiSelect": false,
+  "options": [
+    { "label": "Approve and generate specs (Recommended)", "description": "Valider et generer les fichiers specs" },
+    { "label": "Modify task breakdown", "description": "Ajuster les taches manuellement" },
+    { "label": "View task details", "description": "Voir le detail de chaque tache" },
+    { "label": "Re-decompose with different strategy", "description": "Refaire la decomposition" },
+    { "label": "Cancel", "description": "Annuler le workflow" }
+  ]
 }
 ```
 
@@ -298,17 +290,15 @@ Estimated: ~{hours}h
 
 ```json
 {
-  "questions": [{
-    "question": "Proceder avec les specifications?",
-    "header": "Specs Review",
-    "multiSelect": false,
-    "options": [
-      { "label": "Continuer vers Ralph (Recommended)", "description": "Generer artifacts d'execution" },
-      { "label": "Skip Ralph", "description": "Specs uniquement, pas d'artifacts execution" },
-      { "label": "Editer taches", "description": "Modifier fichiers taches generes" },
-      { "label": "Regenerer", "description": "Regenerer avec modifications" }
-    ]
-  }]
+  "question": "Proceder avec les specifications?",
+  "header": "Specs Review",
+  "multiSelect": false,
+  "options": [
+    { "label": "Continuer vers Ralph (Recommended)", "description": "Generer artifacts d'execution" },
+    { "label": "Skip Ralph", "description": "Specs uniquement, pas d'artifacts execution" },
+    { "label": "Editer taches", "description": "Modifier fichiers taches generes" },
+    { "label": "Regenerer", "description": "Regenerer avec modifications" }
+  ]
 }
 ```
 
@@ -328,7 +318,7 @@ Estimated: ~{hours}h
 │ Tous les artifacts de spec et Ralph generes                         │
 │                                                                     │
 │ Feature: {feature-slug}                                             │
-│ Complexite: {TINY|SMALL|STANDARD|LARGE}                             │
+│ Complexite: {complexity}                                            │
 │ Specs: docs/specs/{slug}/                                           │
 │ Ralph: .ralph/{slug}/                                               │
 │                                                                     │
@@ -340,7 +330,7 @@ Estimated: ~{hours}h
 │ [P2] Considerer execution parallele des taches pour optimisation    │
 ├─────────────────────────────────────────────────────────────────────┤
 │ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Lancer {/quick ou /implement} (Recommended)               │ │
+│ │  [A] Lancer {skill} (Recommended)                              │ │
 │ │  [B] Run Ralph Batch — Executer ralph.sh                       │ │
 │ │  [C] Review fichiers — Inspecter artifacts generes             │ │
 │ │  [D] Termine — Fin workflow, implementer plus tard             │ │
@@ -354,24 +344,23 @@ Estimated: ~{hours}h
 | Variable | Source | Description |
 |----------|--------|-------------|
 | `{feature-slug}` | State | Feature identifier |
+| `{complexity}` | State | TINY/SMALL/STANDARD/LARGE |
 | `{slug}` | State | Same as feature-slug |
-| `{/quick ou /implement}` | Routing | Based on complexity |
+| `{skill}` | Routing | /quick or /implement based on complexity |
 
 ### AskUserQuestion
 
 ```json
 {
-  "questions": [{
-    "question": "Comment voulez-vous proceder?",
-    "header": "Next Step",
-    "multiSelect": false,
-    "options": [
-      { "label": "Lancer {skill} (Recommended)", "description": "Demarrer workflow implementation" },
-      { "label": "Run Ralph Batch", "description": "Executer ./.ralph/{slug}/ralph.sh" },
-      { "label": "Review fichiers", "description": "Inspecter artifacts generes" },
-      { "label": "Termine", "description": "Fin workflow, implementer plus tard" }
-    ]
-  }]
+  "question": "Comment voulez-vous proceder?",
+  "header": "Next Step",
+  "multiSelect": false,
+  "options": [
+    { "label": "Lancer {skill} (Recommended)", "description": "Demarrer workflow implementation" },
+    { "label": "Run Ralph Batch", "description": "Executer ./.ralph/{slug}/ralph.sh" },
+    { "label": "Review fichiers", "description": "Inspecter artifacts generes" },
+    { "label": "Termine", "description": "Fin workflow, implementer plus tard" }
+  ]
 }
 ```
 
