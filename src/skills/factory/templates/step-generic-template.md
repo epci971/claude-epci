@@ -38,6 +38,9 @@
 
 ## Protocol
 
+> **DECLARATIVE STYLE**: Each action describes WHAT to do.
+> For detailed schemas/templates, link to references/.
+
 {{#each protocols}}
 ### {{@index}}. {{this.verb}}
 
@@ -49,6 +52,14 @@
 ```
 {{/if}}
 {{/each}}
+
+{{#if reference_files}}
+## Reference Files Used
+
+{{#each reference_files}}
+- [{{this.name}}](../references/{{this.filename}}) — {{this.purpose}}
+{{/each}}
+{{/if}}
 
 {{#if has_breakpoint}}
 ### X. BREAKPOINT: {{step_title}} Validation (OBLIGATOIRE)

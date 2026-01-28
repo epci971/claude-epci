@@ -74,14 +74,15 @@ Update EMS history:
 
 ### 3. Check Auto-Switch Persona
 
-| Condition | Switch To | Signal |
-|-----------|-----------|--------|
-| Unsubstantiated certainty ("obviously", "definitely") | Sparring [!] | "[!] [Challenge] Wait - you said 'obviously'..." |
-| EMS stagnation (< 5 pts x 2 iter) | Pragmatique [>] | "[>] [Action] We're stuck. Let's make a decision." |
-| iter >= 6 without decisions | Pragmatique [>] | "[>] [Action] Time to converge." |
-| Synthesis needed (coverage high, decisions low) | Architecte [#] | "[#] [Structure] Let's organize what we have." |
-| Open exploration (low clarity) | Maieuticien [?] | "[?] [Exploration] Tell me more about..." |
-| Manual override via `mode` command | Requested | "[X] [Mode] Switching as requested." |
+Check auto-switch conditions from [references/personas.md](../references/personas.md) (section "Auto-Switch Rules").
+
+Key triggers:
+- Unsubstantiated certainty → Sparring [!]
+- EMS stagnation → Pragmatique [>]
+- Synthesis needed → Architecte [#]
+- Open exploration → Maieuticien [?]
+
+If triggered, update `session.active_persona` and signal switch at message start.
 
 ### 4. Check Technique Suggestion
 

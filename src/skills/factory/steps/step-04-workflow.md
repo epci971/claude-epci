@@ -101,7 +101,27 @@ ELSE:
 {expected output format}
 ```
 
-### 6. Determine Steps to Generate
+### 6. Generate Step Content (DECLARATIVE)
+
+**Rule**: If content exceeds 50 words or contains structured data (schemas, templates, tables > 10 rows), move to reference file and link.
+
+❌ **BAD** - Inline schema in step:
+```markdown
+### Generate Output
+Use this schema:
+```json
+{ "id": "H1", "hypothesis": "...", "confidence": 0.8, ... }
+```
+```
+
+✅ **GOOD** - Reference to schema:
+```markdown
+### Generate Output
+Apply schema from [references/hypothesis-schema.md](../references/hypothesis-schema.md).
+Populate fields with current analysis data.
+```
+
+### 7. Determine Steps to Generate
 
 **For standard mode (default):**
 
@@ -131,7 +151,7 @@ for condition in conditional_flows:
 | step-0Xb-{variant}.md | step-generic-template.md | Conditional branch |
 | step-99-finish.md | step-finish-template.md | Finalize, outputs |
 
-### 7. Store Workflow Design
+### 8. Store Workflow Design
 
 ```json
 {

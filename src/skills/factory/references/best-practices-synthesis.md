@@ -91,7 +91,40 @@ description: >-
   Not for: direct user invocation.
 ```
 
-## 7. Anti-Patterns Summary
+## 7. Progressive Disclosure Pattern
+
+| Level | File | Content | Lines |
+|-------|------|---------|-------|
+| 1 | SKILL.md | Overview, links to steps/references | ~200 |
+| 2 | steps/*.md | Declarative procedures | 50-150 each |
+| 3 | references/*.md | Schemas, templates, tables | Variable |
+
+### Rules
+
+**DO**:
+- Link from step to reference: `See [references/file.md](../references/file.md)`
+- Keep step descriptions under 50 words per action
+- Maintain single source of truth in references/
+
+**DO NOT**:
+- Duplicate schemas in steps/
+- Embed full templates in steps/
+- Copy reference tables into procedures
+
+### Step Content Guidelines
+
+Steps should be **declarative** (WHAT to do), not **definitional** (data/schema).
+
+| Content Type | Location | Example |
+|--------------|----------|---------|
+| Procedure | steps/ | "Apply template from references/X" |
+| Template | references/ | Full markdown template |
+| Schema | references/ | JSON/YAML structure |
+| Table > 10 rows | references/ | Scoring criteria, rules |
+
+---
+
+## 8. Anti-Patterns Summary
 
 | Anti-Pattern | Problem | Fix |
 |--------------|---------|-----|
@@ -101,8 +134,9 @@ description: >-
 | Multi-purpose skills | Hard to trigger | Split into focused |
 | No examples | User confusion | Add input/output |
 | Generic names | Collisions | Use specific names |
+| Duplicated content | Maintenance burden | Single source in references/ |
 
-## 8. Core Skills Integration
+## 9. Core Skills Integration
 
 EPCI v6 provides 6 core skills for composable functionality. Document usage in generated skills.
 
@@ -141,7 +175,7 @@ In generated skills, reference core skills:
 
 ---
 
-## 9. Task Tool Integration (MANDATORY)
+## 10. Task Tool Integration (MANDATORY)
 
 ### 🔴 Rule: Subagent Delegation
 
@@ -178,7 +212,7 @@ Audit script (Phase 6) checks:
 
 ---
 
-## 10. Quality Checklist (Quick)
+## 11. Quality Checklist (Quick)
 
 Before committing:
 - [ ] Name unique and kebab-case
@@ -192,7 +226,7 @@ Before committing:
 
 ---
 
-## 11. Native vs Custom Agents
+## 12. Native vs Custom Agents
 
 ### Native Agents (Use When Generic)
 
