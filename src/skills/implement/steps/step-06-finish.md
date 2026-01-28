@@ -9,13 +9,13 @@ next_step: steps/step-07-memory.md
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
 @../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
 | output-templates.md | Completion output format (section #finish-output) |
-| breakpoint-formats.md | Completion summary box (section #finish) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -66,9 +66,38 @@ APPLY template from output-templates.md (section #finish-output importé ci-dess
 
 ## COMPLETION SUMMARY:
 
-AFFICHE la boîte Finish (section #finish du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte (info-only, pas d'interaction):
 
-**Note:** Info-only display, no user interaction required.
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ IMPLEMENTATION COMPLETE                                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ Feature: {feature-slug}                                             │
+│                                                                     │
+│ Summary:                                                            │
+│ - {files_created} files created                                     │
+│ - {files_modified} files modified                                   │
+│ - {tests_added} tests added ({coverage}% coverage)                  │
+│ - Documentation complete                                            │
+│                                                                     │
+│ EPCI Phases Completed:                                              │
+│ [E] Explore                                                         │
+│ [P] Plan                                                            │
+│ [C] Code                                                            │
+│ [I] Inspect                                                         │
+│                                                                     │
+│ Ready for commit and review.                                        │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{feature-slug}`: Feature identifier
+- `{files_created}`: New files count
+- `{files_modified}`: Modified files count
+- `{tests_added}`: New tests count
+- `{coverage}`: Final coverage percentage
+
+**Note:** Info-only display, no AskUserQuestion needed.
 
 ## NEXT STEP TRIGGER:
 

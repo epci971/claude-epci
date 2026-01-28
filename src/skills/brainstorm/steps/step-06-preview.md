@@ -20,11 +20,7 @@
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
-
-| Reference | Purpose |
-|-----------|---------|
-| breakpoint-formats.md | Preview implementation box (section #preview-implementation-box) |
+*(Breakpoint templates are inline in this file)*
 
 ## Protocol
 
@@ -124,14 +120,62 @@ IF trigger_security_audit:
 
 ### 5. BREAKPOINT: Preview Results (OBLIGATOIRE si preview demandé)
 
-AFFICHE la boîte Preview Implementation (section #preview-implementation-box du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 👁️ PREVIEW IMPLÉMENTATION                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Complexité estimée: {complexity}                                  │
+│ • Nombre de tâches: {tasks_count}                                   │
+│ • Risques identifiés: {risks_count}                                 │
+│                                                                     │
+│ DÉCOUPAGE TÂCHES                                                    │
+│ | # | Tâche | Complexité | Dépendances |                            │
+│ |---|-------|------------|-------------|                            │
+│ | 1 | {title_1} | {complexity_1} | - |                              │
+│ | 2 | {title_2} | {complexity_2} | T1 |                             │
+│                                                                     │
+│ AUDIT SÉCURITÉ                                                      │
+│ • Déclenché: {triggered}                                            │
+│ • Niveau risque: {risk_level}                                       │
+│ • Préoccupations: {concerns}                                        │
+│                                                                     │
+│ ROUTING RECOMMANDÉ                                                  │
+│ → {routing}                                                         │
+│ → Raison: {routing_reason}                                          │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Complexité {complexity} → recommande {skill}                   │
+│ [P2] {concern} — sera noté dans le brief                            │
+│ [P3] Considère {mitigation} pour {risk}                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Générer brief (Recommended) — Créer outputs finaux        │ │
+│ │  [B] Ajuster scope — Modifier selon preview                    │ │
+│ │  [C] Ajouter notes sécurité — Inclure recommandations          │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{complexity}`, `{tasks_count}`, `{risks_count}` depuis planner results
-- `{title_1}`, `{complexity_1}`, `{title_2}`, `{complexity_2}` depuis tasks_preview
-- `{triggered}`, `{risk_level}`, `{concerns}` depuis security_audit
-- `{routing}`, `{routing_reason}` depuis routing recommendation
-- Suggestions proactives P1/P2/P3 basées sur résultats
+- `{complexity}`: Estimated overall complexity (`STANDARD`, etc.)
+- `{tasks_count}`: Number of tasks in breakdown
+- `{risks_count}`: Number of identified risks
+- `{title_1}`, `{complexity_1}`: First task title and complexity
+- `{title_2}`, `{complexity_2}`: Second task title and complexity
+- `{triggered}`: Security audit triggered (`Yes` or `No`)
+- `{risk_level}`: Security risk level (`LOW`, `MEDIUM`, `HIGH`)
+- `{concerns}`: Security concerns list
+- `{routing}`: Recommended skill (`/implement` or `/quick`)
+- `{routing_reason}`: Routing justification
+- `{skill}`: Recommended skill for P1
+- `{concern}`: Specific concern for P2
+- `{mitigation}`, `{risk}`: Mitigation suggestion for P3
 
 APPELLE AskUserQuestion:
 ```json

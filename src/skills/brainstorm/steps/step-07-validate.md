@@ -20,11 +20,7 @@
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
-
-| Reference | Purpose |
-|-----------|---------|
-| breakpoint-formats.md | Section validation box (section #section-validation-box) |
+*(Breakpoint templates are inline in this file)*
 
 ## Protocol
 
@@ -74,13 +70,36 @@ Structure brief into validatable sections:
 
 ### 3. BREAKPOINT: Section-by-Section Validation (OBLIGATOIRE sauf --quick)
 
-Pour chaque section majeure, AFFICHE la boîte Section Validation (section #section-validation-box du fichier breakpoint-formats.md importé ci-dessus).
+Pour chaque section majeure, AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ VALIDATION: {section_name}                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ CONTENU                                                             │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ {section_content}                                               │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ Source: {source_decisions}                                          │
+│ Confiance: {confidence}                                             │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Approuver (Recommended) — Section correcte                │ │
+│ │  [B] Éditer — Faire des modifications                          │ │
+│ │  [C] Ignorer le reste — Auto-approuver suivantes               │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{section_name}` - nom de la section (Executive Summary, Problem Statement, etc.)
-- `{section_content}` - contenu de la section
-- `{source_decisions}` - décisions ayant informé cette section
-- `{confidence}` - niveau de confiance (HIGH, MEDIUM, LOW)
+- `{section_name}`: Name of the section (e.g., `Executive Summary`)
+- `{section_content}`: Section content to validate
+- `{source_decisions}`: Decisions that informed this section (e.g., `Decision #3, #5`)
+- `{confidence}`: Confidence level (`HIGH`, `MEDIUM`, `LOW`)
 
 APPELLE AskUserQuestion:
 ```json

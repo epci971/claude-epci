@@ -9,7 +9,6 @@ next_step: null
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
 @../references/stack-guidelines.md
 @../references/memory-template.md
 @../references/execution-workflow.md
@@ -19,7 +18,8 @@ next_step: null
 | stack-guidelines.md | Stack detection and conventions |
 | memory-template.md | MEMORY.md structure |
 | execution-workflow.md | TDD and completion rules |
-| breakpoint-formats.md | Final breakpoint (section #completion-summary-box) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -193,15 +193,59 @@ Location: .ralph/{feature-slug}/
 
 ## BREAKPOINT: Specification Complete (OBLIGATOIRE)
 
-AFFICHE la boîte Completion Summary (section #completion-summary-box du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ SPECIFICATION COMPLETE                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Tous les artifacts de spec et Ralph generes                         │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Complexite: {complexity}                                            │
+│ Specs: docs/specs/{slug}/                                           │
+│ Ralph: .ralph/{slug}/                                               │
+│                                                                     │
+│ Critere de succes: Utilisateur selectionne chemin implementation    │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Reviser PROMPT.md pour ajustements stack-specific              │
+│ [P2] Considerer execution parallele des taches pour optimisation    │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Lancer {skill} (Recommended)                              │ │
+│ │  [B] Run Ralph Batch — Executer ralph.sh                       │ │
+│ │  [C] Review fichiers — Inspecter artifacts generes             │ │
+│ │  [D] Termine — Fin workflow, implementer plus tard             │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
 - `{feature-slug}`: Feature slug from state
-- `{complexity}`: TINY/SMALL/STANDARD/LARGE
+- `{complexity}`: `TINY`/`SMALL`/`STANDARD`/`LARGE`
 - `{slug}`: Same as feature-slug
-- `{/quick ou /implement}`: Based on routing recommendation
+- `{skill}`: `/quick` or `/implement` based on complexity routing
 
-APPELLE AskUserQuestion avec les options depuis la reference.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Comment voulez-vous proceder?",
+  "header": "Next Step",
+  "multiSelect": false,
+  "options": [
+    { "label": "Lancer {skill} (Recommended)", "description": "Demarrer workflow implementation" },
+    { "label": "Run Ralph Batch", "description": "Executer ./.ralph/{slug}/ralph.sh" },
+    { "label": "Review fichiers", "description": "Inspecter artifacts generes" },
+    { "label": "Termine", "description": "Fin workflow, implementer plus tard" }
+  ]
+}
+```
+
+**Note**: Replace `{skill}` with `/quick` or `/implement` based on complexity routing.
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

@@ -21,17 +21,17 @@
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
 @../references/iteration-rules.md
 @../references/ems-system.md
 @../references/personas.md
 
 | Reference | Purpose |
 |-----------|---------|
-| breakpoint-formats.md | EMS status ASCII box template (section #ems-status-box) |
 | iteration-rules.md | Phase transitions, stagnation, thresholds |
 | ems-system.md | EMS calculation and anchors |
 | personas.md | Auto-switch rules |
+
+*(Breakpoint templates are inline in this file)*
 
 ## Protocol
 
@@ -104,13 +104,56 @@ IF iter >= 2 AND ems.global < 50 AND weak_axes:
 
 ### 6. BREAKPOINT: EMS Status (OBLIGATOIRE)
 
-AFFICHE la boîte EMS Status (section #ems-status-box du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📊 STATUT ITÉRATION {iteration}                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ EMS GLOBAL: {score}/100 ({delta})                                   │
+│                                                                     │
+│ AXES EMS                                                            │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ Clarté        [{bar_clarity}] {clarity}/100                     │ │
+│ │ Profondeur    [{bar_depth}] {depth}/100                         │ │
+│ │ Couverture    [{bar_coverage}] {coverage}/100                   │ │
+│ │ Décisions     [{bar_decisions}] {decisions}/100                 │ │
+│ │ Actionnabilité[{bar_actionability}] {actionability}/100         │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ Phase: {phase} | Persona: {persona}                                 │
+│ Itération: {iteration}/10 | Technique suggérée: {technique}         │
+│ Axes faibles: {weak_axes}                                           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Focus sur {weak_axis} — actuellement le plus bas               │
+│ [P2] Essaie {technique} pour débloquer {axis}                       │
+│ [P3] Considère sauvegarder checkpoint si pause                      │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer (Recommended) — Répondre et itérer              │ │
+│ │  [B] Dive [sujet] — Approfondir un point                       │ │
+│ │  [C] Pivoter — Réorienter                                      │ │
+│ │  [D] Finir — Générer les outputs maintenant                    │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Progress bar format**: `[████████░░] 80/100` (█ = filled, ░ = empty)
 
 Remplis les variables:
-- `{iteration}`, `{score}`, `{delta}` depuis session state
-- `{clarity}`, `{depth}`, `{coverage}`, `{decisions}`, `{actionability}` depuis ems-evaluator
-- `{phase}`, `{persona}`, `{weak_axes}` depuis session state
-- Suggestions P1/P2/P3 basées sur weak_axes
+- `{iteration}`: Current iteration number
+- `{score}`: EMS global score
+- `{delta}`: Change from previous (e.g., `+12`)
+- `{clarity}`, `{depth}`, `{coverage}`, `{decisions}`, `{actionability}`: Axis scores from ems-evaluator
+- `{bar_*}`: Progress bars (10 chars each)
+- `{phase}`: `DIVERGENT` or `CONVERGENT`
+- `{persona}`: Active persona (e.g., `architecte`)
+- `{technique}`: Suggested technique or `-`
+- `{weak_axes}`: Axes with score < 50
 
 APPELLE AskUserQuestion:
 ```json

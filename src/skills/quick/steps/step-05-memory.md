@@ -9,11 +9,7 @@ next_step: null
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
-
-| Reference | Purpose |
-|-----------|---------|
-| breakpoint-formats.md | Completion summary display (section #complete) |
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -107,9 +103,42 @@ Use `state-manager` to update:
 
 ### 5. Present Completion Summary
 
-AFFICHE la boîte Complete (section #complete du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte (info-only, pas d'interaction):
 
-**Note:** Info-only display, no user interaction required.
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ [COMPLETE] /quick Execution Finished                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│ Summary: {summary}                                               │
+│                                                                  │
+│ ┌─ Stats ───────────────────────────────────────────────────┐   │
+│ │  Complexity: {complexity}                                 │   │
+│ │  Files Modified: {files_count}                            │   │
+│ │  Tests Added: {tests_count}                               │   │
+│ │  Duration: {duration}                                     │   │
+│ └───────────────────────────────────────────────────────────┘   │
+│                                                                  │
+│ Modified Files:                                                  │
+│ • {file_1}                                                       │
+│ • {file_2}                                                       │
+│                                                                  │
+│ Memory updated: .claude/state/features/index.json               │
+│                                                                  │
+├─────────────────────────────────────────────────────────────────┤
+│ Next: git commit | /commit | Create PR                          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{summary}`: 1-2 sentence task summary
+- `{complexity}`: `TINY` or `SMALL`
+- `{files_count}`: Number of files modified
+- `{tests_count}`: Number of tests added
+- `{duration}`: Time spent on task
+- `{file_1}`, `{file_2}`: Modified file paths
+
+**Note:** Info-only display, no AskUserQuestion needed.
 
 ## CONTEXT BOUNDARIES:
 

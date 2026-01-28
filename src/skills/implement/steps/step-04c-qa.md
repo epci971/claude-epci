@@ -9,7 +9,6 @@ next_step: steps/step-05-document.md
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
 @../references/review-checklists.md
 @../references/output-templates.md
 
@@ -17,7 +16,8 @@ next_step: steps/step-05-document.md
 |-----------|---------|
 | review-checklists.md | QA validation checklist (section #qa-validation-checklist) |
 | output-templates.md | QA output format (section #qa-output) |
-| breakpoint-formats.md | Breakpoint ASCII box (section #qa) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -79,7 +79,42 @@ APPLY template from output-templates.md (section #qa-output importé ci-dessus).
 
 ## BREAKPOINT: QA Review Complete (OBLIGATOIRE)
 
-AFFICHE la boîte QA (section #qa du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ QA REVIEW TERMINE                                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Validation QA par @qa-reviewer terminee                             │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Criteres d'acceptation: {ac_passed}/{ac_total} valides              │
+│ Taux de succes tests: {test_success_rate}%                          │
+│ Defauts trouves: {defects_count}                                    │
+│                                                                     │
+│ Critere de succes: Tous les AC valides, aucun defaut bloquant       │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] {ac_passed}/{ac_total} criteres d'acceptation valides          │
+│ [P2] Reviser {defects_count} defauts trouves                        │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer (Recommended) - Validation QA reussie           │ │
+│ │  [B] Corriger defauts d'abord - Traiter les issues trouves     │ │
+│ │  [C] Accepter issues connues - Documenter et continuer         │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{feature-slug}`: Feature identifier
+- `{ac_passed}`: Acceptance criteria passed
+- `{ac_total}`: Total acceptance criteria
+- `{test_success_rate}`: Test success percentage
+- `{defects_count}`: Number of defects found
 
 APPELLE:
 ```

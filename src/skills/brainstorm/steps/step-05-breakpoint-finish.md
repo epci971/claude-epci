@@ -23,15 +23,15 @@
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
 @../references/iteration-rules.md
 @../references/ems-system.md
 
 | Reference | Purpose |
 |-----------|---------|
-| breakpoint-formats.md | Finish validation box (section #finish-validation-box) |
 | iteration-rules.md | Minimum EMS thresholds (section #finalization-thresholds), Low EMS warning (section #low-ems-warning) |
 | ems-system.md | Quality level messages (section #thresholds-and-messages) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## Protocol
 
@@ -79,13 +79,56 @@ IF ems.global < 60 AND NOT finish --force:
 
 ### 3. BREAKPOINT: Finish Validation (OBLIGATOIRE)
 
-AFFICHE la boîte Finish Validation (section #finish-validation-box du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🏁 FIN D'EXPLORATION                                                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Itérations: {count}                                               │
+│ • EMS final: {ems_global}/100                                       │
+│ • Décisions prises: {decisions_count}                               │
+│ • Threads ouverts: {open_threads_count}                             │
+│ • Techniques utilisées: {techniques_count}                          │
+│                                                                     │
+│ RÉSUMÉ                                                              │
+│ Décisions clés:                                                     │
+│ • {decision_1}                                                      │
+│ • {decision_2}                                                      │
+│                                                                     │
+│ Progression EMS: {initial} → {final} (+{delta})                     │
+│ Évaluation qualité: {quality_assessment}                            │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] {open_threads_count} threads ouverts seront notés dans brief   │
+│ [P2] EMS final {ems_global} — {quality_message}                     │
+│ [P3] Preview montre le découpage avant validation                   │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Générer outputs (Recommended) — Créer brief et journal    │ │
+│ │  [B] Preview d'abord — Voir découpage @planner                 │ │
+│ │  [C] Continuer itérations — Explorer davantage                 │ │
+│ │  [D] Sauvegarder checkpoint — Pause pour reprise               │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Quality levels**: EXCELLENT (90-100), GOOD (70-89), ADEQUATE (50-69), LOW (<50)
 
 Remplis les variables:
-- `{count}`, `{ems.global}`, `{decisions.length}`, `{open_threads.length}` depuis session state
-- Key decisions list
-- `{initial}` → `{final}` (+`{delta}`) depuis EMS history
-- Quality assessment depuis ems-system.md (section #thresholds-and-messages imported above)
+- `{count}`: Total iterations
+- `{ems_global}`: Final EMS score
+- `{decisions_count}`: Number of decisions
+- `{open_threads_count}`: Open threads count
+- `{techniques_count}`: Techniques used
+- `{decision_1}`, `{decision_2}`: Key decisions
+- `{initial}`, `{final}`, `{delta}`: EMS progression
+- `{quality_assessment}`: `EXCELLENT`, `GOOD`, `ADEQUATE`, or `LOW`
+- `{quality_message}`: Quality feedback message
 
 APPELLE AskUserQuestion:
 ```json

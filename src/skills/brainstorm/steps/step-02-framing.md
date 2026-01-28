@@ -20,11 +20,7 @@
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
-
-| Reference | Purpose |
-|-----------|---------|
-| breakpoint-formats.md | Perplexity research box (section #perplexity-research-box) |
+*(Breakpoint templates are inline in this file)*
 
 ## Protocol
 
@@ -100,11 +96,41 @@ Based on template and brief, generate research prompts:
 
 ### 5. BREAKPOINT: Perplexity Research (OBLIGATOIRE)
 
-AFFICHE la boîte Perplexity Research (section #perplexity-research-box du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🔍 PROMPTS DE RECHERCHE PERPLEXITY                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Prompts générés pour recherche externe:                             │
+│                                                                     │
+│ **1. {topic_1}** {mode_1}                                           │
+│ `{query_1}`                                                         │
+│ → Objectif: {objective_1}                                           │
+│                                                                     │
+│ **2. {topic_2}** {mode_2}                                           │
+│ `{query_2}`                                                         │
+│ → Objectif: {objective_2}                                           │
+│                                                                     │
+│ 💡 Copiez les prompts vers Perplexity, collez les résultats ici     │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Lancer recherche (Recommended) — Je colle quand prêt      │ │
+│ │  [B] Ignorer recherche — Continuer sans recherche externe      │ │
+│ │  [C] Autres prompts — Ajuster le focus                         │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{topic_1}`, `{mode_1}` (Standard | Deep Research), `{query_1}`, `{objective_1}`
-- `{topic_2}`, `{mode_2}`, `{query_2}`, `{objective_2}`
+- `{topic_1}`: First research topic (e.g., "Authentication patterns")
+- `{mode_1}`: Research mode (`Standard` or `Deep Research`)
+- `{query_1}`: Perplexity query (e.g., `Django 5 OAuth2 best practices 2025 2026`)
+- `{objective_1}`: Why this research helps
+- `{topic_2}`, `{mode_2}`, `{query_2}`, `{objective_2}`: Second research item
 
 APPELLE AskUserQuestion:
 ```json

@@ -9,13 +9,13 @@ next_step: steps/step-03-code.md
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
 @../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
 | output-templates.md | Plan output format (section #plan-output) |
-| breakpoint-formats.md | Breakpoint ASCII box (section #plan) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -110,7 +110,64 @@ APPLY template from output-templates.md (section #plan-output importé ci-dessus
 
 ## BREAKPOINT: Plan Validation (OBLIGATOIRE)
 
-AFFICHE la boîte Plan (section #plan du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ VALIDATION DU PLAN                                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ METRIQUES                                                           │
+│ - Complexite: {complexity} (score: {score})                         │
+│ - Fichiers impactes: {files_count}                                  │
+│ - Temps estime: {hours}h                                            │
+│ - Niveau de risque: {risk_level}                                    │
+│ - Description risque: {risk_notes}                                  │
+│                                                                     │
+│ VALIDATIONS                                                         │
+│ - @plan-validator: {validation_status}                              │
+│   - Completude: {phases} phases definies                            │
+│   - Coherence: Dependances mappees                                  │
+│   - Faisabilite: Dans le scope                                      │
+│   - Qualite: Strategie TDD definie                                  │
+│                                                                     │
+│ PREVIEW TACHES                                                      │
+│ | Phase 1: {summary_1} | ~{estimate_1} |                            │
+│ | Phase 2: {summary_2} | ~{estimate_2} |                            │
+│ | Phase 3: {summary_3} | ~{estimate_3} |                            │
+│ Taches restantes: {remaining_tasks}                                 │
+│                                                                     │
+│ Skills charges: tdd-enforcer, state-manager                         │
+│ Doc feature: .epci/features/{feature-slug}/FEATURE.md               │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Cycle TDD enforced: RED -> GREEN -> REFACTOR                   │
+│ [P2] Cible coverage: {coverage_target}%                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Approuver et Coder (Recommended) - Passer au TDD          │ │
+│ │  [B] Modifier le plan - Ajuster phases ou approche             │ │
+│ │  [C] Abandonner - Reviser requirements d'abord                 │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{complexity}`: `TINY`/`SMALL`/`STANDARD`/`LARGE`
+- `{score}`: Numeric complexity score
+- `{files_count}`: Number of files to modify
+- `{hours}`: Estimated hours
+- `{risk_level}`: `LOW`/`MEDIUM`/`HIGH`
+- `{risk_notes}`: Risk description text
+- `{validation_status}`: `APPROVED` or issues found
+- `{phases}`: Number of phases in plan
+- `{summary_1}`, `{summary_2}`, `{summary_3}`: Phase summaries
+- `{estimate_1}`, `{estimate_2}`, `{estimate_3}`: Phase estimates
+- `{remaining_tasks}`: Tasks beyond preview
+- `{feature-slug}`: Feature identifier
+- `{coverage_target}`: Target test coverage percentage
 
 APPELLE:
 ```

@@ -12,11 +12,7 @@ conditional_next:
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
-
-| Reference | Purpose |
-|-----------|---------|
-| breakpoint-formats.md | Breakpoint ASCII box (section #init) |
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -73,7 +69,36 @@ Routing: {next step path}
 
 ## BREAKPOINT (for STANDARD+ only) - OBLIGATOIRE
 
-AFFICHE la boîte Init (section #init du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ EVALUATION COMPLEXITE                                               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Detection complexite terminee                                       │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Complexite: {complexity}                                            │
+│ Estimation: ~{loc} LOC sur {files} fichiers                         │
+│                                                                     │
+│ Critere de succes: L'utilisateur confirme le workflow approprie     │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer avec EPCI (Recommended) - Workflow complet      │ │
+│ │  [B] Retrograder vers /quick - Plus simple qu'estime           │ │
+│ │  [C] Abandonner - Affiner les requirements d'abord             │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{feature-slug}`: Kebab-case feature identifier from input
+- `{complexity}`: `TINY`, `SMALL`, `STANDARD`, or `LARGE` from complexity-calculator
+- `{loc}`: Estimated lines of code
+- `{files}`: Estimated number of files
 
 APPELLE:
 ```

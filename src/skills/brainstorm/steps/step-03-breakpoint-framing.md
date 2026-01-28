@@ -20,13 +20,13 @@
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
 @../references/iteration-rules.md
 
 | Reference | Purpose |
 |-----------|---------|
-| breakpoint-formats.md | Framing validation box (section #framing-validation-box) |
 | iteration-rules.md | Quick mode question limits (section #quick-mode-adjustments) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## Protocol
 
@@ -71,12 +71,53 @@ Apply quick mode adjustments from iteration-rules.md (section #quick-mode-adjust
 
 ### 3. BREAKPOINT: Framing Validation (OBLIGATOIRE)
 
-AFFICHE la boîte Framing Validation (section #framing-validation-box du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📋 VALIDATION DU CADRAGE                                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Template: {template}                                              │
+│ • EMS initial: {ems_initial}/100                                    │
+│ • Questions HMW: {hmw_count}                                        │
+│ • Contexte codebase: {available|partial|none}                       │
+│                                                                     │
+│ RÉSUMÉ DU BRIEF                                                     │
+│ {brief_v0_condensed}                                                │
+│                                                                     │
+│ QUESTIONS DE CADRAGE                                                │
+│ [Target] {question_target}                                          │
+│   → Suggestion: {suggestion_target}                                 │
+│ [Constraints] {question_constraints}                                │
+│   → Suggestion: {suggestion_constraints}                            │
+│ [Timeline] {question_timeline}                                      │
+│   → Suggestion: {suggestion_timeline}                               │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Template '{template}' sélectionné — adapté à votre sujet       │
+│ [P2] EMS départ: {ems_initial} — typique pour brief validé          │
+│ [P3] Révisez les questions HMW — elles guident l'exploration        │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Démarrer itérations (Recommended) — Exploration structurée│ │
+│ │  [B] Ajuster cadrage — Modifier template ou brief              │ │
+│ │  [C] Ajouter contexte — Plus de background d'abord             │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{template}`, `{ems_initial}`, `{hmw_count}` depuis session state
-- `{brief_v0_condensed}` - résumé du brief
-- Questions de cadrage avec suggestions
+- `{template}`: Selected template (e.g., `feature-development`)
+- `{ems_initial}`: Initial EMS score
+- `{hmw_count}`: Number of HMW questions
+- `{brief_v0_condensed}`: Summary of brief
+- `{question_target}`: Target clarification question
+- `{question_constraints}`: Constraints question
+- `{question_timeline}`: Timeline question
 
 APPELLE AskUserQuestion:
 ```json

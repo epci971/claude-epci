@@ -10,12 +10,12 @@ next_step: steps/step-04-document.md
 ## Reference Files
 
 @../references/tdd-rules.md
-@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
 | tdd-rules.md | TDD cycle rules and examples |
-| breakpoint-formats.md | TDD failure breakpoint (section #tdd-failure) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -112,7 +112,42 @@ RETRY PROTOCOL:
 
 If still failing after 2 retries:
 
-AFFICHE la boîte TDD Failure (section #tdd-failure du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ECHEC TDD                                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Root Cause: {root_cause}                                            │
+│ Confidence: {confidence}%                                           │
+│                                                                     │
+│ Decision Tree:                                                      │
+│ RED failed -> GREEN attempt 1 failed -> GREEN attempt 2 failed      │
+│                                                                     │
+│ Solutions:                                                          │
+│ | S1 | Continue Investigation | 5-10 min | Risk: Medium |           │
+│ | S2 | Use /debug Workflow    | 15-30 min | Risk: Low   |           │
+│ | S3 | Abort and Fix Manually | Variable  | Risk: Low   |           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Derniere erreur: {last_error}                                  │
+│ [P2] /debug fournit investigation hypothesis-driven                 │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer investigation - Reste dans /quick               │ │
+│ │  [B] Utiliser /debug (Recommended) - Workflow debug structure  │ │
+│ │  [C] Abandonner - Corriger manuellement                        │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{root_cause}`: Identified cause or `Unknown - needs investigation`
+- `{confidence}`: Confidence percentage in root cause
+- `{last_error}`: Last error message from failed test
 
 APPELLE:
 ```
@@ -122,8 +157,8 @@ AskUserQuestion({
     header: "TDD Failure",
     multiSelect: false,
     options: [
-      { label: "Continuer investigation", description: "Peut prendre plus de temps mais reste dans /quick" },
       { label: "Utiliser /debug (Recommended)", description: "Workflow debugging structure" },
+      { label: "Continuer investigation", description: "Peut prendre plus de temps mais reste dans /quick" },
       { label: "Abandonner", description: "Corriger manuellement en dehors du workflow" }
     ]
   }]

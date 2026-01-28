@@ -9,11 +9,7 @@ next_step: steps/step-02-plan.md
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
-
-| Reference | Purpose |
-|-----------|---------|
-| breakpoint-formats.md | Breakpoint ASCII box (section #explore) |
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -117,7 +113,43 @@ very thorough
 
 ## BREAKPOINT: Exploration Complete (OBLIGATOIRE)
 
-AFFICHE la boîte Explore (section #explore du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ EXPLORATION TERMINEE [E->P]                                         │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ RESUME DE PHASE                                                     │
+│ - Phase terminee: explore                                           │
+│ - Phase suivante: plan                                              │
+│ - Duree: {duration}                                                 │
+│ - Fichiers modifies: aucun (read-only)                              │
+│ - Tests: N/A                                                        │
+│                                                                     │
+│ CHECKPOINT                                                          │
+│ - ID: {feature_id}-checkpoint-explore                               │
+│ - Reprise possible: oui                                             │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Reviser {files_count} fichiers a modifier avant planning       │
+│ [P2] Suivre les patterns identifies: {patterns}                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer vers Plan (Recommended) - Planifier impl        │ │
+│ │  [B] Etendre exploration - Explorer plus de fichiers           │ │
+│ │  [C] Abandonner - Scope trop large                             │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{duration}`: Time spent in explore phase
+- `{feature_id}`: Feature identifier for checkpoint
+- `{files_count}`: Number of files identified to modify
+- `{patterns}`: Identified code patterns (e.g., `Repository, Service`)
 
 APPELLE:
 ```

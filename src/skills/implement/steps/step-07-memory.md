@@ -9,11 +9,7 @@ next_step: null
 
 ## Reference Files
 
-@../references/breakpoint-formats.md
-
-| Reference | Purpose |
-|-----------|---------|
-| breakpoint-formats.md | Memory summary box (section #memory) |
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -93,9 +89,31 @@ For an OAuth feature:
 
 ## COMPLETION SUMMARY:
 
-AFFICHE la boîte Memory (section #memory du fichier breakpoint-formats.md importé ci-dessus).
+AFFICHE cette boîte (info-only, pas d'interaction):
 
-**Note:** Info-only display, no user interaction required.
+```
++------------------------------------------------------------------+
+| [M] MEMORY PHASE COMPLETE                                        |
++------------------------------------------------------------------+
+| Feature: {feature-slug}                                          |
+|                                                                  |
+| Summary: {summary}                                               |
+|                                                                  |
+| Modified Files: {files_count}                                    |
+| Tests Added: {tests_count}                                       |
+|                                                                  |
+| index.json updated at:                                           |
+| .claude/state/features/index.json                                |
++------------------------------------------------------------------+
+```
+
+Remplis les variables:
+- `{feature-slug}`: Feature identifier
+- `{summary}`: 1-2 sentence implementation summary
+- `{files_count}`: Files modified count
+- `{tests_count}`: Tests added count
+
+**Note:** Info-only display, no AskUserQuestion needed.
 
 ## NEXT STEP TRIGGER:
 
