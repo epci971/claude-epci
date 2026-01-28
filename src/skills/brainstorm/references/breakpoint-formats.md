@@ -312,6 +312,32 @@ Used in: `step-01-clarify.md` (section 3)
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+### Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{idea_raw}` | Original user idea | `Add dark mode to the app` |
+| `{clarity_score}` | Calculated clarity score | `0.6` |
+| `{question_1}` | First clarification question | `What's the boundary of this feature?` |
+| `{suggestion_1}` | Suggestion for question 1 | `Focus on the main UI only` |
+| `{question_2}` | Second clarification question | `Who is the primary user?` |
+| `{suggestion_2}` | Suggestion for question 2 | `End users on web platform` |
+
+### AskUserQuestion Options
+
+```json
+{
+  "question": "Répondez aux questions pour clarifier votre idée:",
+  "header": "Clarify",
+  "multiSelect": false,
+  "options": [
+    { "label": "Répondre aux questions (Recommended)", "description": "Fournir réponses inline" },
+    { "label": "Ignorer clarification", "description": "Continuer tel quel" },
+    { "label": "Reformuler l'idée", "description": "Recommencer avec description plus claire" }
+  ]
+}
+```
+
 ---
 
 ## Brief Validation Box
@@ -342,6 +368,230 @@ Used in: `step-01-clarify.md` (section 6)
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
+```
+
+### Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{reformulated_brief}` | Reformulated brief content | `Build a dark mode toggle...` |
+| `{diff1}` | First change from original | `Added scope boundaries` |
+| `{diff2}` | Second change from original | `Clarified target users` |
+
+### AskUserQuestion Options
+
+```json
+{
+  "question": "Cette reformulation est-elle correcte?",
+  "header": "Validate",
+  "multiSelect": false,
+  "options": [
+    { "label": "Valider (Recommended)", "description": "Continuer avec ce brief" },
+    { "label": "Ajuster", "description": "Faire des corrections" },
+    { "label": "Rejeter", "description": "Recommencer" }
+  ]
+}
+```
+
+---
+
+## Perplexity Research Box
+
+Used in: `step-02-framing.md` (section 5)
+
+### Template
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🔍 PROMPTS DE RECHERCHE PERPLEXITY                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Prompts générés pour recherche externe:                             │
+│                                                                     │
+│ **1. {topic_1}** {mode_1}                                           │
+│ `{query_1}`                                                         │
+│ → Objectif: {objective_1}                                           │
+│                                                                     │
+│ **2. {topic_2}** {mode_2}                                           │
+│ `{query_2}`                                                         │
+│ → Objectif: {objective_2}                                           │
+│                                                                     │
+│ 💡 Copiez les prompts vers Perplexity, collez les résultats ici     │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Lancer recherche (Recommended) — Je colle quand prêt      │ │
+│ │  [B] Ignorer recherche — Continuer sans recherche externe      │ │
+│ │  [C] Autres prompts — Ajuster le focus                         │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{topic_1}` | First research topic | `Authentication patterns` |
+| `{mode_1}` | Research mode | `Standard` or `Deep Research` |
+| `{query_1}` | Perplexity query | `Django 5 OAuth2 best practices 2025 2026` |
+| `{objective_1}` | Why this research helps | `Identify recommended auth flow` |
+| `{topic_2}` | Second research topic | `Testing strategies` |
+| `{mode_2}` | Research mode | `Standard` |
+| `{query_2}` | Perplexity query | `pytest Django integration testing 2025 2026` |
+| `{objective_2}` | Why this research helps | `Ensure test coverage approach` |
+
+### AskUserQuestion Options
+
+```json
+{
+  "question": "Voulez-vous lancer ces recherches Perplexity?",
+  "header": "Research",
+  "multiSelect": false,
+  "options": [
+    { "label": "Lancer recherche (Recommended)", "description": "Je colle les résultats quand prêt" },
+    { "label": "Ignorer recherche", "description": "Continuer sans recherche externe" },
+    { "label": "Autres prompts", "description": "Ajuster le focus de recherche" }
+  ]
+}
+```
+
+---
+
+## Preview Implementation Box
+
+Used in: `step-06-preview.md` (section 5)
+
+### Template
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 👁️ PREVIEW IMPLÉMENTATION                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Complexité estimée: {complexity}                                  │
+│ • Nombre de tâches: {tasks_count}                                   │
+│ • Risques identifiés: {risks_count}                                 │
+│                                                                     │
+│ DÉCOUPAGE TÂCHES                                                    │
+│ | # | Tâche | Complexité | Dépendances |                            │
+│ |---|-------|------------|-------------|                            │
+│ | 1 | {title_1} | {complexity_1} | - |                              │
+│ | 2 | {title_2} | {complexity_2} | T1 |                             │
+│                                                                     │
+│ AUDIT SÉCURITÉ                                                      │
+│ • Déclenché: {triggered}                                            │
+│ • Niveau risque: {risk_level}                                       │
+│ • Préoccupations: {concerns}                                        │
+│                                                                     │
+│ ROUTING RECOMMANDÉ                                                  │
+│ → {routing}                                                         │
+│ → Raison: {routing_reason}                                          │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Complexité {level} → recommande {skill}                        │
+│ [P2] {concern} — sera noté dans le brief                            │
+│ [P3] Considère {mitigation} pour {risk}                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Générer brief (Recommended) — Créer outputs finaux        │ │
+│ │  [B] Ajuster scope — Modifier selon preview                    │ │
+│ │  [C] Ajouter notes sécurité — Inclure recommandations          │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{complexity}` | Estimated overall complexity | `STANDARD` |
+| `{tasks_count}` | Number of tasks in breakdown | `5` |
+| `{risks_count}` | Number of identified risks | `2` |
+| `{title_1}`, `{title_2}` | Task titles | `Setup auth middleware` |
+| `{complexity_1}`, `{complexity_2}` | Task complexities | `SMALL` |
+| `{triggered}` | Security audit triggered | `Yes` or `No` |
+| `{risk_level}` | Security risk level | `LOW`, `MEDIUM`, `HIGH` |
+| `{concerns}` | Security concerns | `Token storage, CSRF` |
+| `{routing}` | Recommended skill | `/implement` or `/quick` |
+| `{routing_reason}` | Routing justification | `Multiple tasks with dependencies` |
+| `{level}` | Complexity level for P1 | `STANDARD` |
+| `{skill}` | Recommended skill for P1 | `/implement` |
+| `{concern}` | Concern for P2 | `Token expiration handling` |
+| `{mitigation}` | Mitigation for P3 | `rate limiting` |
+| `{risk}` | Risk for P3 | `brute force attacks` |
+
+### AskUserQuestion Options
+
+```json
+{
+  "question": "Procéder à la génération du brief?",
+  "header": "Preview",
+  "multiSelect": false,
+  "options": [
+    { "label": "Générer brief (Recommended)", "description": "Créer outputs finaux" },
+    { "label": "Ajuster scope", "description": "Modifier selon preview" },
+    { "label": "Ajouter notes sécurité", "description": "Inclure recommandations sécurité" }
+  ]
+}
+```
+
+---
+
+## Section Validation Box
+
+Used in: `step-07-validate.md` (section 3)
+
+### Template
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ VALIDATION: {section_name}                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ CONTENU                                                             │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ {section_content}                                               │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ Source: {source_decisions}                                          │
+│ Confiance: {confidence}                                             │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Approuver (Recommended) — Section correcte                │ │
+│ │  [B] Éditer — Faire des modifications                          │ │
+│ │  [C] Ignorer le reste — Auto-approuver suivantes               │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{section_name}` | Name of the section | `Executive Summary` |
+| `{section_content}` | Section content to validate | `Build a secure auth...` |
+| `{source_decisions}` | Decisions that informed this section | `Decision #3, #5` |
+| `{confidence}` | Confidence level | `HIGH`, `MEDIUM`, `LOW` |
+
+### AskUserQuestion Options
+
+```json
+{
+  "question": "Cette section {section_name} est-elle correcte?",
+  "header": "{section}",
+  "multiSelect": false,
+  "options": [
+    { "label": "Approuver (Recommended)", "description": "Section correcte" },
+    { "label": "Éditer", "description": "Faire des modifications" },
+    { "label": "Ignorer le reste", "description": "Auto-approuver les sections suivantes" }
+  ]
+}
 ```
 
 ---
