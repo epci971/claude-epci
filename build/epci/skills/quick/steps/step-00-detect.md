@@ -67,7 +67,9 @@ def is_native_plan(file_path: str) -> bool:
 
 ### 3. Detect Stack Skills
 
-Run stack detection algorithm (see [references/stack-detection.md](../references/stack-detection.md)):
+@../references/stack-detection.md
+
+Run stack detection algorithm (see stack-detection.md imported above):
 
 ```
 STACK DETECTION ORDER:

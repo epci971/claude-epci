@@ -1,3 +1,15 @@
+---
+name: step-00-init
+description: Parse arguments, detect mode (core/simple/standard/audit), initialize session
+prev_step: null
+next_step: steps/step-01-preanalysis.md
+conditional_next:
+  - condition: "--audit flag"
+    step: steps/step-07-refactor.md
+  - condition: "--refactor flag"
+    step: steps/step-07-refactor.md
+---
+
 # Step 00: Init
 
 > Parse arguments, detect mode (core/simple/standard/audit), initialize session.

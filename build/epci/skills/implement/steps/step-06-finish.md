@@ -7,12 +7,15 @@ next_step: steps/step-07-memory.md
 
 # Step 06: Finish
 
-## Reference Files Used
+## Reference Files
+
+@../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [output-templates.md](../references/output-templates.md#finish-output) | Completion output format |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#finish) | Completion summary box |
+| output-templates.md | Completion output format (section #finish-output) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -59,13 +62,42 @@ next_step: steps/step-07-memory.md
 
 ## OUTPUT FORMAT:
 
-APPLY template from [output-templates.md#finish-output](../references/output-templates.md#finish-output)
+APPLY template from output-templates.md (section #finish-output importé ci-dessus).
 
 ## COMPLETION SUMMARY:
 
-AFFICHE le format depuis [breakpoint-formats.md#finish](../references/breakpoint-formats.md#finish)
+AFFICHE cette boîte (info-only, pas d'interaction):
 
-**Note:** Info-only display, no user interaction required.
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ IMPLEMENTATION COMPLETE                                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ Feature: {feature-slug}                                             │
+│                                                                     │
+│ Summary:                                                            │
+│ - {files_created} files created                                     │
+│ - {files_modified} files modified                                   │
+│ - {tests_added} tests added ({coverage}% coverage)                  │
+│ - Documentation complete                                            │
+│                                                                     │
+│ EPCI Phases Completed:                                              │
+│ [E] Explore                                                         │
+│ [P] Plan                                                            │
+│ [C] Code                                                            │
+│ [I] Inspect                                                         │
+│                                                                     │
+│ Ready for commit and review.                                        │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{feature-slug}`: Feature identifier
+- `{files_created}`: New files count
+- `{files_modified}`: Modified files count
+- `{tests_added}`: New tests count
+- `{coverage}`: Final coverage percentage
+
+**Note:** Info-only display, no AskUserQuestion needed.
 
 ## NEXT STEP TRIGGER:
 

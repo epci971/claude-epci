@@ -10,13 +10,17 @@ conditional_next:
 
 # Step 04b: Security Review
 
-## Reference Files Used
+## Reference Files
+
+@../references/review-checklists.md
+@../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [review-checklists.md](../references/review-checklists.md#security-review-checklist) | OWASP Top 10 checklist |
-| [output-templates.md](../references/output-templates.md#security-output) | Security audit output format |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#security) | Breakpoint ASCII box |
+| review-checklists.md | OWASP Top 10 checklist (section #security-review-checklist) |
+| output-templates.md | Security audit output format (section #security-output) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -90,15 +94,49 @@ Confirm audit covered:
 
 ## SECURITY CHECKLIST:
 
-APPLY checklist from [review-checklists.md#security-review-checklist](../references/review-checklists.md#security-review-checklist)
+APPLY checklist from review-checklists.md (section #security-review-checklist importé ci-dessus).
 
 ## OUTPUT FORMAT:
 
-APPLY template from [output-templates.md#security-output](../references/output-templates.md#security-output)
+APPLY template from output-templates.md (section #security-output importé ci-dessus).
 
 ## BREAKPOINT: Security Review Complete (OBLIGATOIRE)
 
-AFFICHE le format depuis [breakpoint-formats.md#security](../references/breakpoint-formats.md#security)
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ SECURITY REVIEW TERMINE                                             │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Audit securite par @security-auditor termine                        │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Vulnerabilites totales: {vuln_total}                                │
+│ - Critical/High: {vuln_critical} (a corriger obligatoirement)       │
+│ - Medium/Low: {vuln_low} (recommande)                               │
+│                                                                     │
+│ Critere de succes: Aucune vulnerabilite CRITICAL/HIGH non resolue   │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] OWASP Top 10 verifie                                           │
+│ [P2] Reviser {vuln_total} findings avant de continuer               │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer (Recommended) - Posture securite acceptable     │ │
+│ │  [B] Corriger issues critiques - Traiter high-severity d'abord │ │
+│ │  [C] Accepter le risque - Documenter et continuer              │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{feature-slug}`: Feature identifier
+- `{vuln_total}`: Total vulnerabilities found
+- `{vuln_critical}`: Critical/High severity count
+- `{vuln_low}`: Medium/Low severity count
 
 APPELLE:
 ```

@@ -1,3 +1,15 @@
+---
+name: step-05-validation
+description: Run 12-point checklist, preview structure, get user approval via BREAKPOINT
+prev_step: steps/step-04-workflow.md
+next_step: steps/step-06-generation.md
+conditional_next:
+  - condition: "Modify"
+    step: steps/step-01-preanalysis.md
+  - condition: "Cancel"
+    step: null
+---
+
 # Step 05: Validation
 
 > Run 12-point checklist, preview structure, get user approval via BREAKPOINT.
@@ -224,7 +236,11 @@ AskUserQuestion({
 
 ## Reference Files
 
-- [references/checklist-validation.md](../references/checklist-validation.md) — Detailed validation rules
+@../references/checklist-validation.md
+
+| Reference | Purpose |
+|-----------|---------|
+| checklist-validation.md | Detailed validation rules |
 
 ## Error Handling
 

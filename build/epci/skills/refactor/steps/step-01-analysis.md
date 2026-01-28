@@ -1,3 +1,10 @@
+---
+name: step-01-analysis
+description: Collect metrics BEFORE, detect code smells, build dependency graph
+prev_step: steps/step-00-init.md
+next_step: steps/step-02-planning.md
+---
+
 # Step 01: Analysis
 
 > Collect metrics BEFORE, detect code smells, build dependency graph.
@@ -92,7 +99,9 @@ Use hybrid detection (Claude + rules):
 | Deep Nesting | Indentation | > 4 levels |
 | Long Parameter List | Parameters | > 5 parameters |
 
-See [references/code-smells-catalog.md](../references/code-smells-catalog.md).
+@../references/code-smells-catalog.md
+
+See code-smells-catalog.md (imported above).
 
 ### 4. Build Dependency Graph
 

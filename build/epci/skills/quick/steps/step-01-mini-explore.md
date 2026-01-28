@@ -7,11 +7,9 @@ next_step: steps/step-02-mini-plan.md
 
 # Step 01: Mini-Explore [E]
 
-## Reference Files Used
+## Reference Files
 
-| Reference | Purpose |
-|-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#complexity) | Complexity alert breakpoint |
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -127,7 +125,39 @@ Stack Context: {stack skill loaded, if any}
 
 If exploration reveals more complexity than expected:
 
-AFFICHE le format depuis [breakpoint-formats.md#complexity](../references/breakpoint-formats.md#complexity)
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ALERTE COMPLEXITE                                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ L'exploration revele une complexite plus elevee qu'estimee          │
+│                                                                     │
+│ Initial: {initial_complexity}                                       │
+│ Apres exploration: Semble {revised_complexity}                      │
+│                                                                     │
+│ Raison: {complexity_reason}                                         │
+│                                                                     │
+│ Critere de succes: Utilisateur confirme le workflow approprie       │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Les taches STANDARD+ beneficient du workflow EPCI complet      │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer avec /quick - Malgre complexite plus elevee     │ │
+│ │  [B] Utiliser /implement (Recommended) - Workflow EPCI complet │ │
+│ │  [C] Abandonner - Reevaluer les requirements                   │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{initial_complexity}`: Original estimate (`TINY` or `SMALL`)
+- `{revised_complexity}`: Revised estimate after exploration (`STANDARD`)
+- `{complexity_reason}`: Why complexity seems higher
 
 APPELLE:
 ```
@@ -137,8 +167,8 @@ AskUserQuestion({
     header: "Complexity",
     multiSelect: false,
     options: [
-      { label: "Continuer avec /quick", description: "Proceder malgre complexite (peut prendre plus de temps)" },
       { label: "Utiliser /implement (Recommended)", description: "Escalader vers workflow EPCI complet" },
+      { label: "Continuer avec /quick", description: "Proceder malgre complexite (peut prendre plus de temps)" },
       { label: "Abandonner", description: "Annuler et reevaluer requirements" }
     ]
   }]

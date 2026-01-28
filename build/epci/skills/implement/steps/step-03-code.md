@@ -7,11 +7,13 @@ next_step: steps/step-04-review.md
 
 # Step 03: Code [C]
 
-## Reference Files Used
+## Reference Files
+
+@../references/tdd-rules.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [tdd-rules.md](../references/tdd-rules.md) | TDD cycle and coverage rules |
+| tdd-rules.md | TDD cycle and coverage rules |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -65,7 +67,7 @@ For each component in the implementation plan:
    - Start with Phase 1 components
    - Complete each component before moving to next
 
-2. **For each component**, execute TDD cycle (see [tdd-rules.md](../references/tdd-rules.md)):
+2. **For each component**, execute TDD cycle (see tdd-rules.md importé ci-dessus):
    - **RED Phase**: Write failing test, verify it fails for the right reason
    - **GREEN Phase**: Write minimal implementation to pass
    - **REFACTOR Phase**: Improve code quality, run tests to confirm

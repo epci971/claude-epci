@@ -1,3 +1,10 @@
+---
+name: step-06-generation
+description: Create all files, update plugin.json, generate conformity report
+prev_step: steps/step-05-validation.md
+next_step: null
+---
+
 # Step 06: Generation
 
 > Create all files, update plugin.json, generate conformity report.

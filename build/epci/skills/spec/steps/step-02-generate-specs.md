@@ -7,13 +7,17 @@ next_step: steps/step-03-generate-ralph.md
 
 # Step 02: Generate Specifications
 
-## Reference Files Used
+## Reference Files
+
+@../references/task-format.md
+@../references/prd-schema.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [task-format.md](../references/task-format.md) | Task file structure |
-| [prd-schema.md](../references/prd-schema.md) | PRD.json schema |
-| [breakpoint-formats.md#specs-generated-box](../references/breakpoint-formats.md#specs-generated-box) | Review breakpoint |
+| task-format.md | Task file structure |
+| prd-schema.md | PRD.json schema |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -64,7 +68,7 @@ Use template from `templates/index.md.template`.
 
 For each task, use template from `templates/task.md.template`.
 
-Follow structure defined in [task-format.md](../references/task-format.md).
+Follow structure defined in task-format.md (importé ci-dessus).
 
 **Required sections per task:**
 - YAML frontmatter with all fields
@@ -78,7 +82,7 @@ Follow structure defined in [task-format.md](../references/task-format.md).
 
 ### 4. Generate PRD.json
 
-Create machine-readable version following [prd-schema.md](../references/prd-schema.md).
+Create machine-readable version following prd-schema.md (importé ci-dessus).
 
 **Validation before writing:**
 - All required fields present
@@ -124,21 +128,75 @@ Location: docs/specs/{feature-slug}/
 
 ## BREAKPOINT: Specifications Generated (OBLIGATOIRE)
 
-AFFICHE le format depuis [references/breakpoint-formats.md#specs-generated-box](../references/breakpoint-formats.md#specs-generated-box).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📋 SPECIFICATIONS GENEREES                                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ METRIQUES                                                           │
+│ • Complexite: {complexity} (score: {score})                         │
+│ • Fichiers/taches: {task_count}                                     │
+│ • Temps estime: {total_hours}h                                      │
+│ • Niveau risque: LOW (generation spec uniquement)                   │
+│                                                                     │
+│ VALIDATIONS                                                         │
+│ • @plan-validator: APPROVED                                         │
+│   - Completude: {task_count} taches avec {step_count} steps         │
+│   - Coherence: Toutes dependances mappees dans DAG                  │
+│   - Faisabilite: Estimations calibrees                              │
+│   - Qualite: Criteres d'acceptation definis par tache               │
+│                                                                     │
+│ PREVIEW FICHIERS                                                    │
+│ | index.md ({lines} lignes) |                                       │
+│ | task-001-{slug}.md | ~{estimate} |                                │
+│ | {feature}.prd.json ({size} KB) |                                  │
+│                                                                     │
+│ Location: docs/specs/{feature-slug}/                                │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Reviser criteres d'acceptation pour completude                 │
+│ [P2] Considerer ajout tests edge cases                              │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer vers Ralph (Recommended) — Generer artifacts    │ │
+│ │  [B] Skip Ralph — Specs uniquement                             │ │
+│ │  [C] Editer taches — Modifier fichiers generes                 │ │
+│ │  [D] Regenerer — Regenerer avec modifications                  │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{complexity}`: TINY/SMALL/STANDARD/LARGE
+- `{complexity}`: `TINY`/`SMALL`/`STANDARD`/`LARGE`
 - `{score}`: Complexity score
 - `{task_count}`: Number of task files
-- `{step_count}`: Total steps
+- `{step_count}`: Total steps across tasks
 - `{total_hours}`: Estimated hours
 - `{lines}`: Lines in index.md
-- `{slug}`: Task slugs for preview
+- `{slug}`: Task slug for preview
+- `{estimate}`: Estimated minutes for task
 - `{feature}`: Feature slug
 - `{size}`: PRD.json size in KB
 - `{feature-slug}`: Feature identifier
 
-APPELLE AskUserQuestion avec les options depuis la reference.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Proceder avec les specifications?",
+  "header": "Specs Review",
+  "multiSelect": false,
+  "options": [
+    { "label": "Continuer vers Ralph (Recommended)", "description": "Generer artifacts d'execution" },
+    { "label": "Skip Ralph", "description": "Specs uniquement, pas d'artifacts execution" },
+    { "label": "Editer taches", "description": "Modifier fichiers taches generes" },
+    { "label": "Regenerer", "description": "Regenerer avec modifications" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

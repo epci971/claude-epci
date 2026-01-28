@@ -7,14 +7,19 @@ next_step: null
 
 # Step 03: Generate Ralph Artifacts
 
-## Reference Files Used
+## Reference Files
+
+@../references/stack-guidelines.md
+@../references/memory-template.md
+@../references/execution-workflow.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [stack-guidelines.md](../references/stack-guidelines.md) | Stack detection and conventions |
-| [memory-template.md](../references/memory-template.md) | MEMORY.md structure |
-| [execution-workflow.md](../references/execution-workflow.md) | TDD and completion rules |
-| [breakpoint-formats.md#completion-summary-box](../references/breakpoint-formats.md#completion-summary-box) | Final breakpoint |
+| stack-guidelines.md | Stack detection and conventions |
+| memory-template.md | MEMORY.md structure |
+| execution-workflow.md | TDD and completion rules |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -31,7 +36,7 @@ next_step: null
 
 ### 1. Detect Project Stack
 
-Use detection matrix from [stack-guidelines.md](../references/stack-guidelines.md#stack-detection-matrix).
+Use detection matrix from stack-guidelines.md (section #stack-detection-matrix importé ci-dessus).
 
 Store detected stack for PROMPT.md generation:
 - `STACK_FRAMEWORK`: Django | React | Spring | Symfony | Generic
@@ -52,18 +57,18 @@ Use template from `templates/prompt.md.template`.
 - Feature metadata: slug, complexity, task count, hours
 - Stack info: framework, language, test framework
 - Execution order: from DAG topological sort
-- Stack guidelines: inject content from [stack-guidelines.md](../references/stack-guidelines.md)
+- Stack guidelines: inject content from stack-guidelines.md (importé ci-dessus)
 
 Load appropriate stack section based on detection:
-- Django → [stack-guidelines.md#django-guidelines](../references/stack-guidelines.md#django-guidelines)
-- React → [stack-guidelines.md#react-guidelines](../references/stack-guidelines.md#react-guidelines)
-- Spring → [stack-guidelines.md#spring-boot-guidelines](../references/stack-guidelines.md#spring-boot-guidelines)
-- Symfony → [stack-guidelines.md#symfony-guidelines](../references/stack-guidelines.md#symfony-guidelines)
-- Generic → [stack-guidelines.md#generic-guidelines](../references/stack-guidelines.md#generic-guidelines)
+- Django → stack-guidelines.md section #django-guidelines
+- React → stack-guidelines.md section #react-guidelines
+- Spring → stack-guidelines.md section #spring-boot-guidelines
+- Symfony → stack-guidelines.md section #symfony-guidelines
+- Generic → stack-guidelines.md section #generic-guidelines
 
 ### 4. Generate MEMORY.md
 
-Use template structure from [memory-template.md](../references/memory-template.md#complete-template).
+Use template structure from memory-template.md (section #complete-template importé ci-dessus).
 
 **Initialize:**
 - All tasks as `pending` in Progress table
@@ -188,15 +193,59 @@ Location: .ralph/{feature-slug}/
 
 ## BREAKPOINT: Specification Complete (OBLIGATOIRE)
 
-AFFICHE le format depuis [references/breakpoint-formats.md#completion-summary-box](../references/breakpoint-formats.md#completion-summary-box).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ SPECIFICATION COMPLETE                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Tous les artifacts de spec et Ralph generes                         │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Complexite: {complexity}                                            │
+│ Specs: docs/specs/{slug}/                                           │
+│ Ralph: .ralph/{slug}/                                               │
+│                                                                     │
+│ Critere de succes: Utilisateur selectionne chemin implementation    │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Reviser PROMPT.md pour ajustements stack-specific              │
+│ [P2] Considerer execution parallele des taches pour optimisation    │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Lancer {skill} (Recommended)                              │ │
+│ │  [B] Run Ralph Batch — Executer ralph.sh                       │ │
+│ │  [C] Review fichiers — Inspecter artifacts generes             │ │
+│ │  [D] Termine — Fin workflow, implementer plus tard             │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
 - `{feature-slug}`: Feature slug from state
-- `{complexity}`: TINY/SMALL/STANDARD/LARGE
+- `{complexity}`: `TINY`/`SMALL`/`STANDARD`/`LARGE`
 - `{slug}`: Same as feature-slug
-- `{/quick ou /implement}`: Based on routing recommendation
+- `{skill}`: `/quick` or `/implement` based on complexity routing
 
-APPELLE AskUserQuestion avec les options depuis la reference.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Comment voulez-vous proceder?",
+  "header": "Next Step",
+  "multiSelect": false,
+  "options": [
+    { "label": "Lancer {skill} (Recommended)", "description": "Demarrer workflow implementation" },
+    { "label": "Run Ralph Batch", "description": "Executer ./.ralph/{slug}/ralph.sh" },
+    { "label": "Review fichiers", "description": "Inspecter artifacts generes" },
+    { "label": "Termine", "description": "Fin workflow, implementer plus tard" }
+  ]
+}
+```
+
+**Note**: Replace `{skill}` with `/quick` or `/implement` based on complexity routing.
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

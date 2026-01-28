@@ -36,7 +36,10 @@ Scoring Criteria (25% each):
 Scoring Scale: 1-5 (5 = best)
 ```
 
-See [references/solution-scoring.md](../references/solution-scoring.md) for formula.
+@../references/solution-scoring.md
+@../references/debug-report-template.md
+
+See solution-scoring.md (imported above) for formula.
 
 **Example Matrix:**
 
@@ -170,7 +173,7 @@ Task(subagent_type: "qa-reviewer", ...)       // if triggered
 
 Create report at `docs/debug/{slug}-{date}.md`:
 
-See [references/debug-report-template.md](../references/debug-report-template.md) for template.
+See debug-report-template.md (imported above) for template.
 
 ```markdown
 # Debug Report: {slug}

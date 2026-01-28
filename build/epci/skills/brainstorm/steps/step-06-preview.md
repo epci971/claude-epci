@@ -1,3 +1,15 @@
+---
+name: step-06-preview
+description: Generate implementation preview and optional security audit
+prev_step: steps/step-05-breakpoint-finish.md
+next_step: steps/step-07-validate.md
+conditional_next:
+  - condition: "Adjust scope"
+    step: steps/step-04-iteration.md
+  - condition: "Cancel"
+    step: null
+---
+
 # Step 06: Preview
 
 > Generate implementation preview and optional security audit.
@@ -18,11 +30,9 @@
 | `preview_requested` | Session state | No |
 | `--no-security` flag | From step-00 | No |
 
-## Reference Files Used
+## Reference Files
 
-| Reference | Purpose |
-|-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#preview-implementation-box) | Preview implementation ASCII box template |
+*(Breakpoint templates are inline in this file)*
 
 ## Protocol
 
@@ -122,16 +132,76 @@ IF trigger_security_audit:
 
 ### 5. BREAKPOINT: Preview Results (OBLIGATOIRE si preview demandé)
 
-AFFICHE le format Preview Implementation depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#preview-implementation-box).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 👁️ PREVIEW IMPLÉMENTATION                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Complexité estimée: {complexity}                                  │
+│ • Nombre de tâches: {tasks_count}                                   │
+│ • Risques identifiés: {risks_count}                                 │
+│                                                                     │
+│ DÉCOUPAGE TÂCHES                                                    │
+│ | # | Tâche | Complexité | Dépendances |                            │
+│ |---|-------|------------|-------------|                            │
+│ | 1 | {title_1} | {complexity_1} | - |                              │
+│ | 2 | {title_2} | {complexity_2} | T1 |                             │
+│                                                                     │
+│ AUDIT SÉCURITÉ                                                      │
+│ • Déclenché: {triggered}                                            │
+│ • Niveau risque: {risk_level}                                       │
+│ • Préoccupations: {concerns}                                        │
+│                                                                     │
+│ ROUTING RECOMMANDÉ                                                  │
+│ → {routing}                                                         │
+│ → Raison: {routing_reason}                                          │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Complexité {complexity} → recommande {skill}                   │
+│ [P2] {concern} — sera noté dans le brief                            │
+│ [P3] Considère {mitigation} pour {risk}                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Générer brief (Recommended) — Créer outputs finaux        │ │
+│ │  [B] Ajuster scope — Modifier selon preview                    │ │
+│ │  [C] Ajouter notes sécurité — Inclure recommandations          │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{complexity}`, `{tasks_count}`, `{risks_count}`
-- `{title_1}`, `{complexity_1}`, `{title_2}`, `{complexity_2}`
-- `{triggered}`, `{risk_level}`, `{concerns}`
-- `{routing}`, `{routing_reason}`
-- Suggestions proactives P1/P2/P3
+- `{complexity}`: Estimated overall complexity (`STANDARD`, etc.)
+- `{tasks_count}`: Number of tasks in breakdown
+- `{risks_count}`: Number of identified risks
+- `{title_1}`, `{complexity_1}`: First task title and complexity
+- `{title_2}`, `{complexity_2}`: Second task title and complexity
+- `{triggered}`: Security audit triggered (`Yes` or `No`)
+- `{risk_level}`: Security risk level (`LOW`, `MEDIUM`, `HIGH`)
+- `{concerns}`: Security concerns list
+- `{routing}`: Recommended skill (`/implement` or `/quick`)
+- `{routing_reason}`: Routing justification
+- `{skill}`: Recommended skill for P1
+- `{concern}`: Specific concern for P2
+- `{mitigation}`, `{risk}`: Mitigation suggestion for P3
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Procéder à la génération du brief?",
+  "header": "Preview",
+  "multiSelect": false,
+  "options": [
+    { "label": "Générer brief (Recommended)", "description": "Créer outputs finaux" },
+    { "label": "Ajuster scope", "description": "Modifier selon preview" },
+    { "label": "Ajouter notes sécurité", "description": "Inclure recommandations sécurité" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

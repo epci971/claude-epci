@@ -1,3 +1,10 @@
+---
+name: step-09-report
+description: Calculate routing, execute hook, display completion summary
+prev_step: steps/step-08-generate.md
+next_step: null
+---
+
 # Step 09: Report
 
 > Calculate routing, execute hook, display completion summary.

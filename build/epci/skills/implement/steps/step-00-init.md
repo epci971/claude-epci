@@ -10,11 +10,9 @@ conditional_next:
 
 # Step 00: Initialization
 
-## Reference Files Used
+## Reference Files
 
-| Reference | Purpose |
-|-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#init) | Breakpoint ASCII box |
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -71,7 +69,36 @@ Routing: {next step path}
 
 ## BREAKPOINT (for STANDARD+ only) - OBLIGATOIRE
 
-AFFICHE le format depuis [breakpoint-formats.md#init](../references/breakpoint-formats.md#init)
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ EVALUATION COMPLEXITE                                               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Detection complexite terminee                                       │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Complexite: {complexity}                                            │
+│ Estimation: ~{loc} LOC sur {files} fichiers                         │
+│                                                                     │
+│ Critere de succes: L'utilisateur confirme le workflow approprie     │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer avec EPCI (Recommended) - Workflow complet      │ │
+│ │  [B] Retrograder vers /quick - Plus simple qu'estime           │ │
+│ │  [C] Abandonner - Affiner les requirements d'abord             │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{feature-slug}`: Kebab-case feature identifier from input
+- `{complexity}`: `TINY`, `SMALL`, `STANDARD`, or `LARGE` from complexity-calculator
+- `{loc}`: Estimated lines of code
+- `{files}`: Estimated number of files
 
 APPELLE:
 ```

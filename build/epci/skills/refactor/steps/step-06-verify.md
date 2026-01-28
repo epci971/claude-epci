@@ -1,3 +1,10 @@
+---
+name: step-06-verify
+description: Run full test suite, collect metrics AFTER, calculate delta
+prev_step: steps/step-05-review.md
+next_step: steps/step-07-report.md
+---
+
 # Step 06: Verify
 
 > Run full test suite, collect metrics AFTER, calculate delta.

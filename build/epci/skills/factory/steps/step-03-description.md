@@ -1,3 +1,10 @@
+---
+name: step-03-description
+description: Craft optimized description using formula for maximum trigger accuracy
+prev_step: steps/step-02-architecture.md
+next_step: steps/step-04-workflow.md
+---
+
 # Step 03: Description Engineering
 
 > Craft optimized description using formula for maximum trigger accuracy.
@@ -121,7 +128,11 @@ If user selects [Edit]:
 
 ## Reference Files
 
-- [references/description-formulas.md](../references/description-formulas.md) — Description patterns and examples
+@../references/description-formulas.md
+
+| Reference | Purpose |
+|-----------|---------|
+| description-formulas.md | Description patterns and examples |
 
 ## Examples
 

@@ -1,3 +1,15 @@
+---
+name: step-01-clarify
+description: Clarify user input, reformulate, and validate brief
+prev_step: steps/step-00-init.md
+next_step: steps/step-02-framing.md
+conditional_next:
+  - condition: "Rejection loop (3x)"
+    step: steps/step-01-clarify.md
+  - condition: "--no-clarify flag"
+    step: steps/step-02-framing.md
+---
+
 # Step 01: Clarify
 
 > Clarify user input, reformulate, and validate brief.
@@ -15,12 +27,9 @@
 | `project_context` | From step-00 | No |
 | `--turbo` flag | From step-00 | No |
 
-## Reference Files Used
+## Reference Files
 
-| Reference | Purpose |
-|-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#clarification-box) | Clarification ASCII box template |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#brief-validation-box) | Brief validation ASCII box template |
+*(Breakpoint templates are inline in this file)*
 
 ## Protocol
 
@@ -78,13 +87,54 @@ Question categories:
 
 ### 3. BREAKPOINT: Clarification (OBLIGATOIRE)
 
-AFFICHE le format Clarification depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#clarification-box).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ❓ CLARIFICATION                                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Idée originale: {idea_raw}                                          │
+│ Score de clarté: {clarity_score}/1.0                                │
+│                                                                     │
+│ Questions de clarification:                                         │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ [Scope] {question_1}                                            │ │
+│ │   → Suggestion: {suggestion_1}                                  │ │
+│ │                                                                 │ │
+│ │ [Users] {question_2}                                            │ │
+│ │   → Suggestion: {suggestion_2}                                  │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Répondre aux questions (Recommended) — fournir réponses   │ │
+│ │  [B] Ignorer clarification — continuer tel quel                │ │
+│ │  [C] Reformuler l'idée — recommencer                           │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{idea_raw}`, `{clarity_score}`
-- Questions et suggestions de clarification
+- `{idea_raw}`: Original user idea from session state
+- `{clarity_score}`: Calculated clarity score (0.0-1.0)
+- `{question_1}`, `{question_2}`: Clarification questions generated
+- `{suggestion_1}`, `{suggestion_2}`: Suggestions for each question
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Répondez aux questions pour clarifier votre idée:",
+  "header": "Clarify",
+  "multiSelect": false,
+  "options": [
+    { "label": "Répondre aux questions (Recommended)", "description": "Fournir réponses inline" },
+    { "label": "Ignorer clarification", "description": "Continuer tel quel" },
+    { "label": "Reformuler l'idée", "description": "Recommencer avec description plus claire" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
@@ -119,12 +169,49 @@ Synthesize into structured brief:
 
 ### 6. BREAKPOINT: Brief Validation (OBLIGATOIRE)
 
-AFFICHE le format Brief Validation depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#brief-validation-box).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ VALIDATION DU BRIEF                                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Brief reformulé:                                                    │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ {reformulated_brief}                                            │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ Changements par rapport à l'original:                               │
+│ • {diff1}                                                           │
+│ • {diff2}                                                           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Valider (Recommended) — Continuer avec ce brief           │ │
+│ │  [B] Ajuster — Faire des corrections                           │ │
+│ │  [C] Rejeter — Recommencer                                     │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{reformulated_brief}`, `{diff1}`, `{diff2}`
+- `{reformulated_brief}`: Reformulated brief content
+- `{diff1}`, `{diff2}`: Changes from original
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Cette reformulation est-elle correcte?",
+  "header": "Validate",
+  "multiSelect": false,
+  "options": [
+    { "label": "Valider (Recommended)", "description": "Continuer avec ce brief" },
+    { "label": "Ajuster", "description": "Faire des corrections" },
+    { "label": "Rejeter", "description": "Recommencer" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

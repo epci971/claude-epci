@@ -7,13 +7,17 @@ next_step: steps/step-05-document.md
 
 # Step 04c: QA Review
 
-## Reference Files Used
+## Reference Files
+
+@../references/review-checklists.md
+@../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [review-checklists.md](../references/review-checklists.md#qa-validation-checklist) | QA validation checklist |
-| [output-templates.md](../references/output-templates.md#qa-output) | QA output format |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#qa) | Breakpoint ASCII box |
+| review-checklists.md | QA validation checklist (section #qa-validation-checklist) |
+| output-templates.md | QA output format (section #qa-output) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -67,15 +71,50 @@ next_step: steps/step-05-document.md
 
 ## QA CHECKLIST:
 
-APPLY checklist from [review-checklists.md#qa-validation-checklist](../references/review-checklists.md#qa-validation-checklist)
+APPLY checklist from review-checklists.md (section #qa-validation-checklist importé ci-dessus).
 
 ## OUTPUT FORMAT:
 
-APPLY template from [output-templates.md#qa-output](../references/output-templates.md#qa-output)
+APPLY template from output-templates.md (section #qa-output importé ci-dessus).
 
 ## BREAKPOINT: QA Review Complete (OBLIGATOIRE)
 
-AFFICHE le format depuis [breakpoint-formats.md#qa](../references/breakpoint-formats.md#qa)
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ QA REVIEW TERMINE                                                   │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Validation QA par @qa-reviewer terminee                             │
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Criteres d'acceptation: {ac_passed}/{ac_total} valides              │
+│ Taux de succes tests: {test_success_rate}%                          │
+│ Defauts trouves: {defects_count}                                    │
+│                                                                     │
+│ Critere de succes: Tous les AC valides, aucun defaut bloquant       │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] {ac_passed}/{ac_total} criteres d'acceptation valides          │
+│ [P2] Reviser {defects_count} defauts trouves                        │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer (Recommended) - Validation QA reussie           │ │
+│ │  [B] Corriger defauts d'abord - Traiter les issues trouves     │ │
+│ │  [C] Accepter issues connues - Documenter et continuer         │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{feature-slug}`: Feature identifier
+- `{ac_passed}`: Acceptance criteria passed
+- `{ac_total}`: Total acceptance criteria
+- `{test_success_rate}`: Test success percentage
+- `{defects_count}`: Number of defects found
 
 APPELLE:
 ```

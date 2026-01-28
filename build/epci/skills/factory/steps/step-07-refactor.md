@@ -1,3 +1,10 @@
+---
+name: step-07-refactor
+description: Apply steps→references pattern to existing skills
+prev_step: steps/step-00-init.md
+next_step: null
+---
+
 # Step 07: Refactor
 
 > Apply steps→references pattern to existing skills.
@@ -7,14 +14,19 @@
 - Mode: `--refactor` detected in step-00-init
 - Skill path resolved and exists
 
-## Reference Files Used
+## Reference Files
+
+@../references/skill-refactoring-prompt.md
+@../references/refactoring-checklist.md
+@../references/refactoring-formats.md
+@../references/best-practices-synthesis.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [skill-refactoring-prompt.md](../references/skill-refactoring-prompt.md) | Master workflow and thresholds |
-| [refactoring-checklist.md](../references/refactoring-checklist.md) | Post-refactoring validation |
-| [refactoring-formats.md](../references/refactoring-formats.md) | ASCII display templates |
-| [best-practices-synthesis.md](../references/best-practices-synthesis.md) | Content location rules |
+| skill-refactoring-prompt.md | Master workflow and thresholds |
+| refactoring-checklist.md | Post-refactoring validation |
+| refactoring-formats.md | ASCII display templates |
+| best-practices-synthesis.md | Content location rules |
 
 ## Inputs
 
@@ -34,11 +46,11 @@ EXECUTE:
 2. COUNT lines for each file
 3. FLAG files > 200 lines (steps) or > 300 lines (references)
 
-AFFICHE le format depuis [refactoring-formats.md#structure-inventory](../references/refactoring-formats.md#structure-inventory)
+AFFICHE le format depuis refactoring-formats.md (section #structure-inventory importé ci-dessus)
 
 ### 1.2 Detect Extractions
 
-SCAN each step using thresholds from [best-practices-synthesis.md#7.2](../references/best-practices-synthesis.md):
+SCAN each step using thresholds from best-practices-synthesis.md (section #7.2 importé ci-dessus):
 
 | Pattern | Threshold | Marker |
 |---------|-----------|--------|
@@ -58,7 +70,7 @@ FOR each extraction found, document:
 
 ### 1.4 Phase 1 Output
 
-AFFICHE le format depuis [refactoring-formats.md#analysis-complete](../references/refactoring-formats.md#analysis-complete)
+AFFICHE le format depuis refactoring-formats.md (section #analysis-complete importé ci-dessus)
 
 ATTENDS confirmation avant Phase 2.
 
@@ -85,7 +97,7 @@ VERIFY before execution:
 - [ ] No circular dependencies
 - [ ] All destinations are valid
 
-AFFICHE le format depuis [refactoring-formats.md#extraction-plan](../references/refactoring-formats.md#extraction-plan)
+AFFICHE le format depuis refactoring-formats.md (section #extraction-plan importé ci-dessus)
 
 ATTENDS approval avant Phase 3.
 
@@ -96,13 +108,13 @@ ATTENDS approval avant Phase 3.
 ### 3.1 Create New References
 
 FOR each new reference:
-1. CREATE file using template from [refactoring-formats.md#reference-template](../references/refactoring-formats.md#reference-template)
+1. CREATE file using template from refactoring-formats.md (section #reference-template importé ci-dessus)
 2. ADD anchors for cross-linking: `## Section {#anchor}`
 
 ### 3.2 Update Steps
 
 FOR each step with extractions:
-1. ADD "Reference Files Used" table (see [refactoring-formats.md#step-update-pattern](../references/refactoring-formats.md#step-update-pattern))
+1. ADD "Reference Files" section (see refactoring-formats.md section #step-update-pattern importé ci-dessus)
 2. REPLACE inline content with links
 3. VERIFY line count < 200
 
@@ -127,7 +139,7 @@ python3 src/scripts/validate_skill.py {skill_path}/
 
 ### 4.2 Manual Checklist
 
-VERIFY using [refactoring-checklist.md](../references/refactoring-checklist.md):
+VERIFY using refactoring-checklist.md (importé ci-dessus):
 - [ ] All steps < 200 lines
 - [ ] "Reference Files Used" in steps using references
 - [ ] No inline ASCII > 10 lines
@@ -137,7 +149,7 @@ VERIFY using [refactoring-checklist.md](../references/refactoring-checklist.md):
 
 ### 4.3 Final Report
 
-AFFICHE le format depuis [refactoring-formats.md#final-report](../references/refactoring-formats.md#final-report)
+AFFICHE le format depuis refactoring-formats.md (section #final-report importé ci-dessus)
 
 ---
 

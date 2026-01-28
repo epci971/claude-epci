@@ -1,3 +1,19 @@
+---
+name: step-00-init
+description: Parse arguments, load context, detect continuation, launch exploration
+prev_step: null
+next_step: steps/step-01-clarify.md
+conditional_next:
+  - condition: "--party flag"
+    step: null
+    action: party-orchestrator
+  - condition: "--panel flag"
+    step: null
+    action: expert-panel
+  - condition: "--continue <id> provided"
+    step: steps/step-04-iteration.md
+---
+
 # Step 00: Init
 
 > Parse arguments, load context, launch codebase exploration.

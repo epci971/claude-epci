@@ -1,3 +1,10 @@
+---
+name: step-04-workflow
+description: Design workflow, define steps, create decision trees, determine steps generation
+prev_step: steps/step-03-description.md
+next_step: steps/step-05-validation.md
+---
+
 # Step 04: Workflow Design
 
 > Design workflow, define steps, create decision trees, determine steps generation.

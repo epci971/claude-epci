@@ -7,11 +7,9 @@ next_step: steps/step-02-generate-specs.md
 
 # Step 01: Analysis & Decomposition
 
-## Reference Files Used
+## Reference Files
 
-| Reference | Purpose |
-|-----------|---------|
-| [breakpoint-formats.md#decomposition-review-box](../references/breakpoint-formats.md#decomposition-review-box) | Review breakpoint |
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -220,20 +218,74 @@ graph LR
 
 ## BREAKPOINT: Decomposition Review (OBLIGATOIRE)
 
-AFFICHE le format depuis [references/breakpoint-formats.md#decomposition-review-box](../references/breakpoint-formats.md#decomposition-review-box).
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ [DECOMPOSITION] Task Breakdown Review                                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│ Feature: {feature-slug}                                              │
+│ Complexity: {level}                                                  │
+│ Tasks: {count} | Steps: {total_steps}                                │
+│ Estimated: ~{hours}h ({optimized}h optimized)                        │
+│                                                                      │
+│ ┌─ Tasks ───────────────────────────────────────────────────────┐   │
+│ │ 001. {title_1} ({min_1} min, {steps_1} steps)                 │   │
+│ │ 002. {title_2} ({min_2} min, {steps_2} steps) <- 001          │   │
+│ │ 003. {title_3} ({min_3} min, {steps_3} steps) <- 002          │   │
+│ │ ...                                                            │   │
+│ └────────────────────────────────────────────────────────────────┘   │
+│                                                                      │
+│ ┌─ DAG ─────────────────────────────────────────────────────────┐   │
+│ │ T001 ──► T002 ──► T003 ──┬──► T005                            │   │
+│ │                          └──► T004 ──► T006                   │   │
+│ └────────────────────────────────────────────────────────────────┘   │
+│                                                                      │
+│ Validation: @decompose-validator -> {validation_status}              │
+│                                                                      │
+│ [P1] Consider splitting task-003 if scope grows                      │
+│ [P2] task-004 and task-005 can parallelize                           │
+│                                                                      │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Approve and generate specs (Recommended)                  │ │
+│ │  [B] Modify task breakdown                                     │ │
+│ │  [C] View task details                                         │ │
+│ │  [D] Re-decompose with different strategy                      │ │
+│ │  [E] Cancel                                                    │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
 - `{feature-slug}`: Feature identifier
-- `{level}`: TINY/SMALL/STANDARD/LARGE
+- `{level}`: `TINY`/`SMALL`/`STANDARD`/`LARGE`
 - `{count}`: Number of tasks
 - `{total_steps}`: Sum of all steps
 - `{hours}`: Sequential hours
 - `{optimized}`: Parallel hours
-- `{title}`: Task titles
-- `{min}`: Duration in minutes
-- `{steps}`: Step count per task
+- `{title_1}`, `{title_2}`, `{title_3}`: Task titles
+- `{min_1}`, `{min_2}`, `{min_3}`: Duration in minutes
+- `{steps_1}`, `{steps_2}`, `{steps_3}`: Step count per task
+- `{validation_status}`: `APPROVED` or issues found
 
-APPELLE AskUserQuestion avec les options depuis la reference.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Comment proceder avec la decomposition?",
+  "header": "Decomposition",
+  "multiSelect": false,
+  "options": [
+    { "label": "Approve and generate specs (Recommended)", "description": "Valider et generer les fichiers specs" },
+    { "label": "Modify task breakdown", "description": "Ajuster les taches manuellement" },
+    { "label": "View task details", "description": "Voir le detail de chaque tache" },
+    { "label": "Re-decompose with different strategy", "description": "Refaire la decomposition" },
+    { "label": "Cancel", "description": "Annuler le workflow" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

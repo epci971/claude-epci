@@ -7,12 +7,15 @@ next_step: steps/step-04-document.md
 
 # Step 03: Code [C]
 
-## Reference Files Used
+## Reference Files
+
+@../references/tdd-rules.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [tdd-rules.md](../references/tdd-rules.md) | TDD cycle rules and examples |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#tdd-failure) | TDD failure breakpoint |
+| tdd-rules.md | TDD cycle rules and examples |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -67,14 +70,14 @@ Red-Green-Verify (skip Refactor)
 
 ### 3. Execute TDD Cycle
 
-Follow the TDD cycle as defined in [tdd-rules.md](../references/tdd-rules.md):
+Follow the TDD cycle as defined in tdd-rules.md (importé ci-dessus):
 
 1. **RED Phase**: Write failing test, run to confirm failure
 2. **GREEN Phase**: Write minimal code to pass, run to confirm pass
 3. **VERIFY Phase**: Run ALL tests + lint, confirm no regressions
 4. **REFACTOR Phase**: SKIP for /quick (speed priority)
 
-See [tdd-rules.md](../references/tdd-rules.md) for detailed rules, examples, and stack-specific commands.
+See tdd-rules.md (importé ci-dessus) for detailed rules, examples, and stack-specific commands.
 
 ### 4. Stack-Specific Commands
 
@@ -109,7 +112,42 @@ RETRY PROTOCOL:
 
 If still failing after 2 retries:
 
-AFFICHE le format depuis [breakpoint-formats.md#tdd-failure](../references/breakpoint-formats.md#tdd-failure)
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ECHEC TDD                                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Root Cause: {root_cause}                                            │
+│ Confidence: {confidence}%                                           │
+│                                                                     │
+│ Decision Tree:                                                      │
+│ RED failed -> GREEN attempt 1 failed -> GREEN attempt 2 failed      │
+│                                                                     │
+│ Solutions:                                                          │
+│ | S1 | Continue Investigation | 5-10 min | Risk: Medium |           │
+│ | S2 | Use /debug Workflow    | 15-30 min | Risk: Low   |           │
+│ | S3 | Abort and Fix Manually | Variable  | Risk: Low   |           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Derniere erreur: {last_error}                                  │
+│ [P2] /debug fournit investigation hypothesis-driven                 │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer investigation - Reste dans /quick               │ │
+│ │  [B] Utiliser /debug (Recommended) - Workflow debug structure  │ │
+│ │  [C] Abandonner - Corriger manuellement                        │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{root_cause}`: Identified cause or `Unknown - needs investigation`
+- `{confidence}`: Confidence percentage in root cause
+- `{last_error}`: Last error message from failed test
 
 APPELLE:
 ```
@@ -119,8 +157,8 @@ AskUserQuestion({
     header: "TDD Failure",
     multiSelect: false,
     options: [
-      { label: "Continuer investigation", description: "Peut prendre plus de temps mais reste dans /quick" },
       { label: "Utiliser /debug (Recommended)", description: "Workflow debugging structure" },
+      { label: "Continuer investigation", description: "Peut prendre plus de temps mais reste dans /quick" },
       { label: "Abandonner", description: "Corriger manuellement en dehors du workflow" }
     ]
   }]

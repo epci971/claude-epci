@@ -104,13 +104,56 @@ description: >-
 | Content Type | Location | Threshold |
 |--------------|----------|-----------|
 | Procedure (WHAT to do) | steps/ | Always |
-| ASCII templates | references/ | > 10 lines |
+| **Interactive breakpoints** | **steps/ (INLINE)** | **Always inline** |
+| ASCII templates (info-only) | references/ | > 10 lines |
 | JSON schemas | references/ | > 5 fields |
 | Lookup tables | references/ | > 10 rows |
 | Business rules | references/ | > 3 rules |
-| Breakpoint formats | references/ | Always centralize |
-| AskUserQuestion options | references/ | If reused across steps |
-| Output templates | references/ | > 20 lines |
+| AskUserQuestion options | steps/ (with breakpoint) | Always inline |
+| Output templates (non-interactive) | references/ | > 20 lines |
+
+### 7.1.1 Interactive Breakpoints: INLINE OBLIGATOIRE
+
+**🔴 CRITICAL RULE**: Interactive breakpoints with AskUserQuestion MUST be inline in step files, NOT in separate reference files.
+
+**Reason**: Claude does not automatically follow links to external reference files. Interactive breakpoints are critical for workflow execution and must be visible directly where they are used.
+
+**Correct Pattern:**
+```markdown
+### BREAKPOINT: {Name} (OBLIGATOIRE)
+
+AFFICHE cette boîte:
+
+\`\`\`
+┌─────────────────────────────────────────────────────────────────────┐
+│ {Icon} {TITLE}                                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│ {Content with variables}                                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] {Option 1} (Recommended) — {description}                  │ │
+│ │  [B] {Option 2} — {description}                                │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+\`\`\`
+
+APPELLE AskUserQuestion:
+\`\`\`json
+{ "question": "...", "header": "...", "options": [...] }
+\`\`\`
+
+⏸️ ATTENDS la réponse utilisateur avant de continuer.
+```
+
+**FORBIDDEN Pattern:**
+```markdown
+### BREAKPOINT: {Name}
+
+AFFICHE le format depuis [reference.md](../references/reference.md#anchor)
+```
+
+**Exception**: Non-interactive displays (summaries, info boxes without AskUserQuestion) may use references/ if > 10 lines, but interactive breakpoints MUST always be inline.
 
 ### 7.2 Extraction Thresholds (Refactoring)
 
@@ -118,12 +161,15 @@ Explicit thresholds for `--refactor` mode:
 
 | Content | Threshold | Target Reference | Example |
 |---------|-----------|------------------|---------|
-| ASCII box | > 10 lines | `breakpoint-formats.md` | Phase output boxes |
+| **Interactive breakpoint** | **ANY** | **KEEP INLINE** | Phase transitions with AskUserQuestion |
+| ASCII box (info-only) | > 10 lines | `{domain}-templates.md` | Summary boxes |
 | JSON schema | > 5 fields | `{domain}-schema.md` | State structure |
 | Lookup table | > 10 rows | `{domain}-tables.md` | Scoring criteria |
 | Business rules | > 3 rules | `{domain}-rules.md` | Validation rules |
 | Output template | > 20 lines | `{domain}-templates.md` | Report formats |
-| **Step file** | > 200 lines | **Must refactor** | Extract to refs |
+| **Step file** | > 200 lines | **Must refactor** | Extract non-interactive to refs |
+
+**Note**: Interactive breakpoints are exempt from extraction. They must remain inline regardless of size.
 
 **Step Size Targets:**
 | Metric | Violation | Warning | Target |
@@ -134,19 +180,22 @@ Explicit thresholds for `--refactor` mode:
 ### Decision Tree
 
 ```
-1. Is it a FORMAT (visual display)?
-   → references/ (breakpoint-formats.md pattern)
+1. Is it an INTERACTIVE BREAKPOINT (with AskUserQuestion)?
+   → ALWAYS INLINE in steps/ — NEVER extract!
 
-2. Is it a RULE/THRESHOLD?
+2. Is it a non-interactive FORMAT (summary, info display)?
+   → references/ if > 10 lines
+
+3. Is it a RULE/THRESHOLD?
    → references/ if reused, inline if unique to step
 
-3. Is it ORCHESTRATION (IF/FOR/Task)?
+4. Is it ORCHESTRATION (IF/FOR/Task)?
    → steps/ (this is procedural logic)
 
-4. Is it DATA (schema, lookup table)?
+5. Is it DATA (schema, lookup table)?
    → references/
 
-5. Is it > 20 lines of inline content?
+6. Is it > 20 lines of inline content (non-interactive)?
    → Extract to references/
 ```
 
@@ -160,9 +209,10 @@ Explicit thresholds for `--refactor` mode:
 
 **DO NOT**:
 - Duplicate schemas in steps/
-- Embed full templates in steps/
+- Embed full non-interactive templates in steps/ (> 20 lines)
 - Copy reference tables into procedures
-- Inline ASCII boxes > 10 lines
+- **Extract interactive breakpoints to references/** (must stay inline!)
+- Inline non-interactive ASCII boxes > 10 lines
 
 ### Step Content Guidelines
 
@@ -171,10 +221,12 @@ Steps should be **declarative** (WHAT to do), not **definitional** (data/schema)
 | Content Type | Location | Example |
 |--------------|----------|---------|
 | Procedure | steps/ | "Apply template from references/X" |
-| Template | references/ | Full markdown template |
+| **Interactive breakpoint** | **steps/ (INLINE)** | ASCII box + AskUserQuestion |
+| Template (non-interactive) | references/ | Output markdown template |
 | Schema | references/ | JSON/YAML structure |
 | Table > 10 rows | references/ | Scoring criteria, rules |
-| Breakpoint format | references/ | ASCII box with variables |
+
+**🔴 Interactive breakpoints MUST be inline. See section 7.1.1.**
 
 ---
 

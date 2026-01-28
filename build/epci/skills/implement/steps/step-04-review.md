@@ -12,13 +12,17 @@ conditional_next:
 
 # Step 04: Review [I]
 
-## Reference Files Used
+## Reference Files
+
+@../references/review-checklists.md
+@../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [review-checklists.md](../references/review-checklists.md#code-review-checklist) | Code quality checklist |
-| [output-templates.md](../references/output-templates.md#review-output) | Review output format |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#review) | Breakpoint ASCII box |
+| review-checklists.md | Code quality checklist (section #code-review-checklist) |
+| output-templates.md | Review output format (section #review-output) |
+
+*(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -95,15 +99,58 @@ Based on review findings:
 
 ## REVIEW CHECKLIST:
 
-APPLY checklist from [review-checklists.md#code-review-checklist](../references/review-checklists.md#code-review-checklist)
+APPLY checklist from review-checklists.md (section #code-review-checklist importé ci-dessus).
 
 ## OUTPUT FORMAT:
 
-APPLY template from [output-templates.md#review-output](../references/output-templates.md#review-output)
+APPLY template from output-templates.md (section #review-output importé ci-dessus).
 
 ## BREAKPOINT: Code Review Complete (OBLIGATOIRE)
 
-AFFICHE le format depuis [breakpoint-formats.md#review](../references/breakpoint-formats.md#review)
+AFFICHE cette boîte:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ CODE REVIEW TERMINE [C->I]                                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ RESUME DE PHASE                                                     │
+│ - Phase terminee: code                                              │
+│ - Phase suivante: inspect                                           │
+│ - Duree: {duration}                                                 │
+│ - Taches completees: {tasks_completed}                              │
+│ - Fichiers modifies: {files_modified}                               │
+│ - Tests: {tests_passing}/{tests_total} passing                      │
+│                                                                     │
+│ CHECKPOINT                                                          │
+│ - ID: {feature_id}-checkpoint-code                                  │
+│ - Reprise possible: oui                                             │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Coverage: {coverage}% atteint                                  │
+│ [P2] {issues_count} issues trouves ({severity})                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Accepter et Documenter (Recommended) - Passer a la doc    │ │
+│ │  [B] Demander Security Review - Audit securite approfondi      │ │
+│ │  [C] Demander QA Validation - Tests QA additionnels            │ │
+│ │  [D] Traiter les findings - Corriger avant de continuer        │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+Remplis les variables:
+- `{duration}`: Time spent in code phase
+- `{tasks_completed}`: Number of tasks done
+- `{files_modified}`: Files changed count
+- `{tests_passing}`: Passing test count
+- `{tests_total}`: Total test count
+- `{feature_id}`: Feature identifier for checkpoint
+- `{coverage}`: Current coverage percentage
+- `{issues_count}`: Number of issues found by @code-reviewer
+- `{severity}`: Highest severity (`Critical`/`Important`/`Minor`)
 
 APPELLE:
 ```

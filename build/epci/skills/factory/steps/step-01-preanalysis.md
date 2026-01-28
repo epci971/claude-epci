@@ -1,3 +1,13 @@
+---
+name: step-01-preanalysis
+description: Ask discovery questions to understand skill need, then apply decision gate
+prev_step: steps/step-00-init.md
+next_step: steps/step-02-architecture.md
+conditional_next:
+  - condition: "STOP (no override)"
+    step: null
+---
+
 # Step 01: Pre-Analysis
 
 > Ask discovery questions to understand skill need, then apply decision gate.
