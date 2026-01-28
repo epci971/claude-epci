@@ -7,6 +7,12 @@ next_step: steps/step-02-mini-plan.md
 
 # Step 01: Mini-Explore [E]
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [breakpoint-formats.md](../references/breakpoint-formats.md#complexity) | Complexity alert breakpoint |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER modify any files during exploration
@@ -38,8 +44,8 @@ Feature/Fix: {feature_or_fix_description}
 quick
 
 ## Output Format
-- Primary file: {path} — {purpose}
-- Test file: {path} — {exists|create}
+- Primary file: {path} - {purpose}
+- Test file: {path} - {exists|create}
 - Pattern: {key pattern to follow}
   `
 })
@@ -107,8 +113,8 @@ TEST FILE:
 ## Mini-Exploration Complete
 
 Target Files:
-1. {path/to/primary.ts} — {purpose}
-2. {path/to/test.ts} — {test file}
+1. {path/to/primary.ts} - {purpose}
+2. {path/to/test.ts} - {test file}
 
 Patterns:
 - {pattern 1}
@@ -119,52 +125,27 @@ Stack Context: {stack skill loaded, if any}
 
 ## COMPLEXITY RE-EVALUATION:
 
-If exploration reveals more complexity than expected, AFFICHE cette boîte:
+If exploration reveals more complexity than expected:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ⚠️ ALERTE COMPLEXITÉ                                                │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ L'exploration révèle une complexité plus élevée qu'estimée          │
-│                                                                     │
-│ Initial: {TINY|SMALL}                                               │
-│ Après exploration: Semble {STANDARD}                                │
-│                                                                     │
-│ Raison: {explanation of why complexity seems higher}                │
-│                                                                     │
-│ Critère de succès: Utilisateur confirme le workflow approprié       │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] Les tâches STANDARD+ bénéficient du workflow EPCI complet      │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Continuer avec /quick — Malgré complexité plus élevée     │ │
-│ │  [B] Utiliser /implement (Recommended) — Workflow EPCI complet │ │
-│ │  [C] Abandonner — Réévaluer les requirements                   │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE le format depuis [breakpoint-formats.md#complexity](../references/breakpoint-formats.md#complexity)
 
 APPELLE:
 ```
 AskUserQuestion({
   questions: [{
-    question: "Comment procéder avec la complexité plus élevée?",
+    question: "Comment proceder avec la complexite plus elevee?",
     header: "Complexity",
     multiSelect: false,
     options: [
-      { label: "Continuer avec /quick", description: "Procéder malgré complexité (peut prendre plus de temps)" },
+      { label: "Continuer avec /quick", description: "Proceder malgre complexite (peut prendre plus de temps)" },
       { label: "Utiliser /implement (Recommended)", description: "Escalader vers workflow EPCI complet" },
-      { label: "Abandonner", description: "Annuler et réévaluer requirements" }
+      { label: "Abandonner", description: "Annuler et reevaluer requirements" }
     ]
   }]
 })
 ```
 
-⏸️ ATTENDS la réponse utilisateur avant de continuer.
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

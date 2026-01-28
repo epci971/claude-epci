@@ -139,6 +139,7 @@ INPUT
 - [references/plan-structure.md](references/plan-structure.md) — Native plan format
 - [references/stack-detection.md](references/stack-detection.md) — Stack detection algorithm
 - [references/tdd-rules.md](references/tdd-rules.md) — TDD Red-Green cycle
+- [references/breakpoint-formats.md](references/breakpoint-formats.md) — ASCII box templates for breakpoints
 
 ## Shared Components Used
 
