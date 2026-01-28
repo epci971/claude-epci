@@ -7,6 +7,12 @@ next_step: steps/step-02-generate-specs.md
 
 # Step 01: Analysis & Decomposition
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [breakpoint-formats.md#decomposition-review-box](../references/breakpoint-formats.md#decomposition-review-box) | Review breakpoint |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER create circular dependencies
@@ -133,11 +139,6 @@ Tasks:
 ├── task-004: Implement API (deps: task-003)
 ├── task-005: Implement UI (deps: task-004)
 └── task-006: Integration tests (deps: task-004, task-005)
-
-Graph:
-task-001 ─► task-002 ─► task-003 ─► task-004 ─┬─► task-006
-                                               │
-                                   task-005 ───┘
 ```
 
 ### 7. Calculate Execution Order
@@ -155,7 +156,6 @@ Execution Order:
 
 Parallel Opportunities:
 - task-004 and task-005 can run in parallel
-- Optimized duration: X hours (vs Y hours sequential)
 ```
 
 ### 8. Validate with @decompose-validator
@@ -218,43 +218,24 @@ graph LR
 ### Validation: {APPROVED}
 ```
 
-## BREAKPOINT:
+## BREAKPOINT: Decomposition Review (OBLIGATOIRE)
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ [DECOMPOSITION] Task Breakdown Review                                │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│ Feature: {feature-slug}                                              │
-│ Complexity: {level}                                                  │
-│ Tasks: {count} | Steps: {total_steps}                                │
-│ Estimated: ~{hours}h ({optimized}h optimized)                        │
-│                                                                      │
-│ ┌─ Tasks ───────────────────────────────────────────────────────┐   │
-│ │ 001. {title} ({min} min, {steps} steps)                       │   │
-│ │ 002. {title} ({min} min, {steps} steps) ← 001                 │   │
-│ │ 003. {title} ({min} min, {steps} steps) ← 002                 │   │
-│ │ ...                                                            │   │
-│ └────────────────────────────────────────────────────────────────┘   │
-│                                                                      │
-│ ┌─ DAG ─────────────────────────────────────────────────────────┐   │
-│ │ T001 ──► T002 ──► T003 ──┬──► T005                            │   │
-│ │                          └──► T004 ──► T006                   │   │
-│ └────────────────────────────────────────────────────────────────┘   │
-│                                                                      │
-│ Validation: @decompose-validator → {APPROVED}                        │
-│                                                                      │
-│ 💡 P1: Consider splitting task-003 if scope grows                       │
-│ 💡 P2: task-004 and task-005 can parallelize                            │
-│                                                                      │
-├─────────────────────────────────────────────────────────────────────┤
-│ [A] Approve and generate specs (Recommended)                         │
-│ [B] Modify task breakdown                                            │
-│ [C] View task details                                                │
-│ [D] Re-decompose with different strategy                             │
-│ [E] Cancel                                                           │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE le format depuis [references/breakpoint-formats.md#decomposition-review-box](../references/breakpoint-formats.md#decomposition-review-box).
+
+Remplis les variables:
+- `{feature-slug}`: Feature identifier
+- `{level}`: TINY/SMALL/STANDARD/LARGE
+- `{count}`: Number of tasks
+- `{total_steps}`: Sum of all steps
+- `{hours}`: Sequential hours
+- `{optimized}`: Parallel hours
+- `{title}`: Task titles
+- `{min}`: Duration in minutes
+- `{steps}`: Step count per task
+
+APPELLE AskUserQuestion avec les options depuis la reference.
+
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

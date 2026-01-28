@@ -7,6 +7,13 @@ next_step: steps/step-01-analyze.md
 
 # Step 00: Initialization
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [breakpoint-formats.md#clarification-box](../references/breakpoint-formats.md#clarification-box) | Clarification breakpoint |
+| [breakpoint-formats.md#source-missing-box](../references/breakpoint-formats.md#source-missing-box) | Source missing breakpoint |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER proceed without valid input source
@@ -80,7 +87,7 @@ Store context for calibration in later steps.
 **If source_type == "discovery":**
 - Search for existing brief: `docs/briefs/{feature_slug}/brief-*.md`
 - If found: Switch to brief mode
-- If not found: Ask user for input via AskUserQuestion
+- If not found: Present BREAKPOINT for source
 
 ### 5. Initialize State
 
@@ -125,96 +132,28 @@ Ready for: Analysis & Decomposition
 
 ## BREAKPOINT (if clarification needed) - OBLIGATOIRE
 
-AFFICHE cette boîte:
+AFFICHE le format depuis [references/breakpoint-formats.md#clarification-box](../references/breakpoint-formats.md#clarification-box).
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ❓ CLARIFICATION NÉCESSAIRE                                         │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ La description fournie nécessite des précisions                     │
-│                                                                     │
-│ Feature: {feature-slug}                                             │
-│ Source: {text|discovery}                                            │
-│ Questions de clarification:                                         │
-│ {clarification questions}                                           │
-│                                                                     │
-│ Critère de succès: Requirements clairs pour génération spec         │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Répondre aux questions (Recommended)                      │ │
-│ │  [B] Fournir fichier brief — Fichier structuré                 │ │
-│ │  [C] Annuler — Affiner requirements                            │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+Remplis les variables:
+- `{feature-slug}`: Kebab-case feature identifier
+- `{source_type}`: `text` or `discovery`
+- `{clarification_questions}`: Questions from clarification-engine
 
-APPELLE:
-```
-AskUserQuestion({
-  questions: [{
-    question: "Comment voulez-vous clarifier?",
-    header: "Clarify",
-    multiSelect: false,
-    options: [
-      { label: "Répondre aux questions (Recommended)", description: "Fournir clarifications inline" },
-      { label: "Fournir fichier brief", description: "Fournir un document brief structuré" },
-      { label: "Annuler", description: "Annuler et affiner requirements" }
-    ]
-  }]
-})
-```
+APPELLE AskUserQuestion avec les options depuis la reference.
 
-⏸️ ATTENDS la réponse utilisateur avant de continuer.
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## BREAKPOINT (if discovery mode and no brief found) - OBLIGATOIRE
 
-AFFICHE cette boîte:
+AFFICHE le format depuis [references/breakpoint-formats.md#source-missing-box](../references/breakpoint-formats.md#source-missing-box).
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 📄 SOURCE REQUISE                                                   │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ Aucun brief existant trouvé pour cette feature                      │
-│                                                                     │
-│ Feature: {feature-slug}                                             │
-│ Recherché: docs/briefs/{slug}/                                      │
-│ Besoin: fichier brief, description texte, ou brainstorm d'abord     │
-│                                                                     │
-│ Critère de succès: Source valide fournie                            │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Fournir chemin brief — Chemin vers fichier existant       │ │
-│ │  [B] Description texte — Décrire requirements inline           │ │
-│ │  [C] Lancer /brainstorm d'abord (Recommended) — Explorer       │ │
-│ │  [D] Annuler — Abandonner le workflow                          │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+Remplis les variables:
+- `{feature-slug}`: Kebab-case feature identifier
+- `{slug}`: Same as feature-slug
 
-APPELLE:
-```
-AskUserQuestion({
-  questions: [{
-    question: "Comment voulez-vous fournir la source?",
-    header: "Source",
-    multiSelect: false,
-    options: [
-      { label: "Fournir chemin brief", description: "Chemin vers fichier brief existant" },
-      { label: "Description texte", description: "Décrire requirements inline" },
-      { label: "Lancer /brainstorm d'abord (Recommended)", description: "Explorer l'idée avant de spécifier" },
-      { label: "Annuler", description: "Abandonner le workflow" }
-    ]
-  }]
-})
-```
+APPELLE AskUserQuestion avec les options depuis la reference.
 
-⏸️ ATTENDS la réponse utilisateur avant de continuer.
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 
