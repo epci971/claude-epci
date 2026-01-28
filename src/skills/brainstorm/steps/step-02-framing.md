@@ -1,3 +1,10 @@
+---
+name: step-02-framing
+description: Auto-detect template, generate HMW questions, Perplexity prompts, and EMS baseline
+prev_step: steps/step-01-clarify.md
+next_step: steps/step-03-breakpoint-framing.md
+---
+
 # Step 02: Framing
 
 > Auto-detect template, generate HMW questions, Perplexity prompts, and EMS baseline.

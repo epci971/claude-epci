@@ -1,3 +1,10 @@
+---
+name: step-02-architecture
+description: Determine structure, select tools, and provide context-aware recommendations
+prev_step: steps/step-01-preanalysis.md
+next_step: steps/step-03-description.md
+---
+
 # Step 02: Architecture
 
 > Determine structure, select tools, and provide context-aware recommendations.

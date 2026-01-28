@@ -1,3 +1,15 @@
+---
+name: step-01-clarify
+description: Clarify user input, reformulate, and validate brief
+prev_step: steps/step-00-init.md
+next_step: steps/step-02-framing.md
+conditional_next:
+  - condition: "Rejection loop (3x)"
+    step: steps/step-01-clarify.md
+  - condition: "--no-clarify flag"
+    step: steps/step-02-framing.md
+---
+
 # Step 01: Clarify
 
 > Clarify user input, reformulate, and validate brief.

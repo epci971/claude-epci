@@ -1,3 +1,10 @@
+---
+name: step-07-report
+description: Generate final metrics report, update project-memory, suggest next steps
+prev_step: steps/step-06-verify.md
+next_step: null
+---
+
 # Step 07: Report
 
 > Generate final metrics report, update project-memory, suggest next steps.

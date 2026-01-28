@@ -1,3 +1,10 @@
+---
+name: step-02-planning
+description: Select patterns, create transformation plan, build Mikado graph if needed
+prev_step: steps/step-01-analysis.md
+next_step: steps/step-03-breakpoint.md
+---
+
 # Step 02: Planning
 
 > Select patterns, create transformation plan, build Mikado graph if needed.

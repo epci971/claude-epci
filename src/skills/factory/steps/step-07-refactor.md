@@ -1,3 +1,10 @@
+---
+name: step-07-refactor
+description: Apply steps→references pattern to existing skills
+prev_step: steps/step-00-init.md
+next_step: null
+---
+
 # Step 07: Refactor
 
 > Apply steps→references pattern to existing skills.

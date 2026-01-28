@@ -1,3 +1,15 @@
+---
+name: step-06-preview
+description: Generate implementation preview and optional security audit
+prev_step: steps/step-05-breakpoint-finish.md
+next_step: steps/step-07-validate.md
+conditional_next:
+  - condition: "Adjust scope"
+    step: steps/step-04-iteration.md
+  - condition: "Cancel"
+    step: null
+---
+
 # Step 06: Preview
 
 > Generate implementation preview and optional security audit.

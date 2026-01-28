@@ -1,3 +1,17 @@
+---
+name: step-05-review
+description: Conditional code, security, and QA reviews based on scope and patterns
+prev_step: steps/step-04-execute.md
+next_step: steps/step-06-verify.md
+conditional_next:
+  - condition: "Scope is single"
+    step: steps/step-06-verify.md
+  - condition: "--turbo flag"
+    step: steps/step-06-verify.md
+  - condition: "Critical issues found"
+    step: steps/step-05-review.md
+---
+
 # Step 05: Review
 
 > Conditional code, security, and QA reviews based on scope and patterns.

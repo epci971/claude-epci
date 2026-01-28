@@ -1,3 +1,17 @@
+---
+name: step-03-breakpoint
+description: User validates the refactoring plan before execution
+prev_step: steps/step-02-planning.md
+next_step: steps/step-04-execute.md
+conditional_next:
+  - condition: "Modify plan"
+    step: steps/step-02-planning.md
+  - condition: "Cancel"
+    step: null
+  - condition: "--dry-run flag"
+    step: null
+---
+
 # Step 03: Breakpoint
 
 > User validates the refactoring plan before execution.

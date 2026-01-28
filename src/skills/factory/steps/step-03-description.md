@@ -1,3 +1,10 @@
+---
+name: step-03-description
+description: Craft optimized description using formula for maximum trigger accuracy
+prev_step: steps/step-02-architecture.md
+next_step: steps/step-04-workflow.md
+---
+
 # Step 03: Description Engineering
 
 > Craft optimized description using formula for maximum trigger accuracy.

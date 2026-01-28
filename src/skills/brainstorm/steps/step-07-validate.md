@@ -1,3 +1,13 @@
+---
+name: step-07-validate
+description: Validate brief section by section before final generation
+prev_step: steps/step-06-preview.md
+next_step: steps/step-08-generate.md
+conditional_next:
+  - condition: "--quick flag"
+    step: steps/step-08-generate.md
+---
+
 # Step 07: Validate
 
 > Validate brief section by section before final generation.

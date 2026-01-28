@@ -1,3 +1,15 @@
+---
+name: step-05-breakpoint-finish
+description: Validate end of exploration before generation phase
+prev_step: steps/step-04-iteration.md
+next_step: steps/step-06-preview.md
+conditional_next:
+  - condition: "Continue iterating"
+    step: steps/step-04-iteration.md
+  - condition: "Save checkpoint"
+    step: null
+---
+
 # Step 05: Breakpoint Finish
 
 > Validate end of exploration before generation phase.

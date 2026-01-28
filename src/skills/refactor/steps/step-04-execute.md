@@ -1,3 +1,10 @@
+---
+name: step-04-execute
+description: Apply transformations with TDD enforcement, revert on failure
+prev_step: steps/step-03-breakpoint.md
+next_step: steps/step-05-review.md
+---
+
 # Step 04: Execute
 
 > Apply transformations with TDD enforcement, revert on failure.

@@ -1,3 +1,10 @@
+---
+name: step-01-analysis
+description: Collect metrics BEFORE, detect code smells, build dependency graph
+prev_step: steps/step-00-init.md
+next_step: steps/step-02-planning.md
+---
+
 # Step 01: Analysis
 
 > Collect metrics BEFORE, detect code smells, build dependency graph.

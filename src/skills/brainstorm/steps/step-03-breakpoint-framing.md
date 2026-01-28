@@ -1,3 +1,15 @@
+---
+name: step-03-breakpoint-framing
+description: Validate framing before entering iteration loop
+prev_step: steps/step-02-framing.md
+next_step: steps/step-04-iteration.md
+conditional_next:
+  - condition: "Adjust framing"
+    step: steps/step-03-breakpoint-framing.md
+  - condition: "Cancel session"
+    step: null
+---
+
 # Step 03: Breakpoint Framing
 
 > Validate framing before entering iteration loop.

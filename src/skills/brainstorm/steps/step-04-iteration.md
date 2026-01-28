@@ -1,3 +1,15 @@
+---
+name: step-04-iteration
+description: Main exploration loop with EMS tracking, persona switching, and techniques
+prev_step: steps/step-03-breakpoint-framing.md
+next_step: steps/step-05-breakpoint-finish.md
+conditional_next:
+  - condition: "Continue iteration"
+    step: steps/step-04-iteration.md
+  - condition: "Checkpoint saved"
+    step: null
+---
+
 # Step 04: Iteration
 
 > Main exploration loop with EMS tracking, persona switching, and techniques.

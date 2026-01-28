@@ -1,3 +1,10 @@
+---
+name: step-08-generate
+description: Write brief and journal files to disk
+prev_step: steps/step-07-validate.md
+next_step: steps/step-09-report.md
+---
+
 # Step 08: Generate
 
 > Write brief and journal files to disk.

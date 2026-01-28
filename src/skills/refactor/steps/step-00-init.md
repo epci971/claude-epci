@@ -1,3 +1,10 @@
+---
+name: step-00-init
+description: Parse input, detect stack, validate scope, launch exploration
+prev_step: null
+next_step: steps/step-01-analysis.md
+---
+
 # Step 00: Init
 
 > Parse input, detect stack, validate scope, launch exploration.
