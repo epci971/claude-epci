@@ -92,7 +92,9 @@ Use hybrid detection (Claude + rules):
 | Deep Nesting | Indentation | > 4 levels |
 | Long Parameter List | Parameters | > 5 parameters |
 
-See [references/code-smells-catalog.md](../references/code-smells-catalog.md).
+@../references/code-smells-catalog.md
+
+See code-smells-catalog.md (imported above).
 
 ### 4. Build Dependency Graph
 

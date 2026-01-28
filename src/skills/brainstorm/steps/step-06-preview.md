@@ -18,11 +18,13 @@
 | `preview_requested` | Session state | No |
 | `--no-security` flag | From step-00 | No |
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#preview-implementation-box) | Preview implementation ASCII box template |
+| breakpoint-formats.md | Preview implementation box (section #preview-implementation-box) |
 
 ## Protocol
 
@@ -122,16 +124,68 @@ IF trigger_security_audit:
 
 ### 5. BREAKPOINT: Preview Results (OBLIGATOIRE si preview demandé)
 
-AFFICHE le format Preview Implementation depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#preview-implementation-box).
+AFFICHE la boîte Preview Implementation (section #preview-implementation-box de breakpoint-formats.md importé ci-dessus):
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 👁️ PREVIEW IMPLÉMENTATION                                           │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Complexité estimée: {complexity}                                  │
+│ • Nombre de tâches: {tasks_count}                                   │
+│ • Risques identifiés: {risks_count}                                 │
+│                                                                     │
+│ DÉCOUPAGE TÂCHES                                                    │
+│ | # | Tâche | Complexité | Dépendances |                            │
+│ |---|-------|------------|-------------|                            │
+│ | 1 | {title_1} | {complexity_1} | - |                              │
+│ | 2 | {title_2} | {complexity_2} | T1 |                             │
+│                                                                     │
+│ AUDIT SÉCURITÉ                                                      │
+│ • Déclenché: {triggered}                                            │
+│ • Niveau risque: {risk_level}                                       │
+│ • Préoccupations: {concerns}                                        │
+│                                                                     │
+│ ROUTING RECOMMANDÉ                                                  │
+│ → {routing}                                                         │
+│ → Raison: {routing_reason}                                          │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Complexité {level} → recommande {skill}                        │
+│ [P2] {concern} — sera noté dans le brief                            │
+│ [P3] Considère {mitigation} pour {risk}                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Générer brief (Recommended) — Créer outputs finaux        │ │
+│ │  [B] Ajuster scope — Modifier selon preview                    │ │
+│ │  [C] Ajouter notes sécurité — Inclure recommandations          │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{complexity}`, `{tasks_count}`, `{risks_count}`
-- `{title_1}`, `{complexity_1}`, `{title_2}`, `{complexity_2}`
-- `{triggered}`, `{risk_level}`, `{concerns}`
-- `{routing}`, `{routing_reason}`
-- Suggestions proactives P1/P2/P3
+- `{complexity}`, `{tasks_count}`, `{risks_count}` depuis planner results
+- `{title_1}`, `{complexity_1}`, `{title_2}`, `{complexity_2}` depuis tasks_preview
+- `{triggered}`, `{risk_level}`, `{concerns}` depuis security_audit
+- `{routing}`, `{routing_reason}` depuis routing recommendation
+- Suggestions proactives P1/P2/P3 basées sur résultats
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Procéder à la génération du brief?",
+  "header": "Preview",
+  "multiSelect": false,
+  "options": [
+    { "label": "Générer brief (Recommended)", "description": "Créer outputs finaux" },
+    { "label": "Ajuster scope", "description": "Modifier selon preview" },
+    { "label": "Ajouter notes sécurité", "description": "Inclure recommandations sécurité" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

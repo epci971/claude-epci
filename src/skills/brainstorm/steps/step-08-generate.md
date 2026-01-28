@@ -41,7 +41,10 @@ mkdir -p docs/briefs/{slug}/
 
 ### 3. Generate Brief (PRD v3.0 Format)
 
-Apply template from [references/brief-format.md](../references/brief-format.md):
+@../references/brief-format.md
+@../references/journal-format.md
+
+Apply template from brief-format.md (imported above):
 - Populate all sections with session data (EMS, decisions, scope)
 - Include complexity routing from step-06
 - Inject security audit recommendations if available
@@ -55,7 +58,7 @@ Write(brief_path, brief_content)
 
 ### 5. Generate Journal
 
-Apply template from [references/journal-format.md](../references/journal-format.md):
+Apply template from journal-format.md (imported above):
 - Populate iteration history with all EMS progression data
 - Include all decisions, open threads, and persona switches
 - Add techniques applied and phase transitions

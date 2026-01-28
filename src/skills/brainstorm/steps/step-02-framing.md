@@ -18,11 +18,13 @@
 | `--quick` flag | From step-00 | No |
 | `--no-hmw` flag | From step-00 | No |
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#perplexity-research-box) | Perplexity research ASCII box template |
+| breakpoint-formats.md | Perplexity research box (section #perplexity-research-box) |
 
 ## Protocol
 
@@ -98,13 +100,52 @@ Based on template and brief, generate research prompts:
 
 ### 5. BREAKPOINT: Perplexity Research (OBLIGATOIRE)
 
-AFFICHE le format Perplexity Research depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#perplexity-research-box).
+AFFICHE la boîte Perplexity Research (section #perplexity-research-box de breakpoint-formats.md importé ci-dessus):
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🔍 PROMPTS DE RECHERCHE PERPLEXITY                                  │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Prompts générés pour recherche externe:                             │
+│                                                                     │
+│ **1. {topic_1}** {mode_1}                                           │
+│ `{query_1}`                                                         │
+│ → Objectif: {objective_1}                                           │
+│                                                                     │
+│ **2. {topic_2}** {mode_2}                                           │
+│ `{query_2}`                                                         │
+│ → Objectif: {objective_2}                                           │
+│                                                                     │
+│ 💡 Copiez les prompts vers Perplexity, collez les résultats ici     │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Lancer recherche (Recommended) — Je colle quand prêt      │ │
+│ │  [B] Ignorer recherche — Continuer sans recherche externe      │ │
+│ │  [C] Autres prompts — Ajuster le focus                         │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{topic_1}`, `{mode_1}`, `{query_1}`, `{objective_1}`
+- `{topic_1}`, `{mode_1}` (Standard | Deep Research), `{query_1}`, `{objective_1}`
 - `{topic_2}`, `{mode_2}`, `{query_2}`, `{objective_2}`
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Voulez-vous lancer ces recherches Perplexity?",
+  "header": "Research",
+  "multiSelect": false,
+  "options": [
+    { "label": "Lancer recherche (Recommended)", "description": "Je colle les résultats quand prêt" },
+    { "label": "Ignorer recherche", "description": "Continuer sans recherche externe" },
+    { "label": "Autres prompts", "description": "Ajuster le focus de recherche" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

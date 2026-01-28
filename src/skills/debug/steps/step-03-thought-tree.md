@@ -59,7 +59,9 @@ Each hypothesis MUST follow this schema:
 }
 ```
 
-See [references/hypothesis-schema.md](../references/hypothesis-schema.md) for full schema.
+@../references/hypothesis-schema.md
+
+See hypothesis-schema.md (imported above) for full schema.
 
 ### 3. Pairwise Ranking
 

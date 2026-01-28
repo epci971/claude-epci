@@ -19,14 +19,19 @@
 | `user_responses` | Previous iteration | No |
 | `--quick` flag | From step-00 | No |
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
+@../references/iteration-rules.md
+@../references/ems-system.md
+@../references/personas.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#ems-status-box) | EMS status ASCII box template |
-| [iteration-rules.md](../references/iteration-rules.md) | Phase transitions, stagnation, thresholds |
-| [ems-system.md](../references/ems-system.md) | EMS calculation and anchors |
-| [personas.md](../references/personas.md) | Auto-switch rules |
+| breakpoint-formats.md | EMS status ASCII box template (section #ems-status-box) |
+| iteration-rules.md | Phase transitions, stagnation, thresholds |
+| ems-system.md | EMS calculation and anchors |
+| personas.md | Auto-switch rules |
 
 ## Protocol
 
@@ -69,7 +74,7 @@ ATTENDS le résultat avant de continuer. Update EMS history in session state.
 
 ### 3. Check Auto-Switch Persona
 
-Check auto-switch conditions from [references/personas.md](../references/personas.md#auto-switch-rules).
+Check auto-switch conditions from personas.md (section #auto-switch-rules imported above).
 
 If triggered, update `session.active_persona` and signal switch at message start.
 
@@ -99,21 +104,70 @@ IF iter >= 2 AND ems.global < 50 AND weak_axes:
 
 ### 6. BREAKPOINT: EMS Status (OBLIGATOIRE)
 
-AFFICHE le format EMS Status depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#ems-status-box).
+AFFICHE la boîte EMS Status (section #ems-status-box de breakpoint-formats.md importé ci-dessus):
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📊 STATUT ITÉRATION {iteration}                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ EMS GLOBAL: {score}/100 ({delta})                                   │
+│                                                                     │
+│ AXES EMS                                                            │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ Clarté        [{bar}] {clarity}/100                             │ │
+│ │ Profondeur    [{bar}] {depth}/100                               │ │
+│ │ Couverture    [{bar}] {coverage}/100                            │ │
+│ │ Décisions     [{bar}] {decisions}/100                           │ │
+│ │ Actionnabilité[{bar}] {actionability}/100                       │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ Phase: {DIVERGENT|CONVERGENT} | Persona: {persona}                  │
+│ Itération: {n}/10 | Technique suggérée: {technique or "-"}          │
+│ Axes faibles: {weak_axes}                                           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Focus sur {weak_axis} — actuellement le plus bas               │
+│ [P2] Essaie {technique} pour débloquer {axis}                       │
+│ [P3] Considère sauvegarder checkpoint si pause                      │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Continuer (Recommended) — Répondre et itérer              │ │
+│ │  [B] Dive [sujet] — Approfondir un point                       │ │
+│ │  [C] Pivoter — Réorienter                                      │ │
+│ │  [D] Finir — Générer les outputs maintenant                    │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{iteration}`, `{score}`, `{delta}`
-- `{clarity}`, `{depth}`, `{coverage}`, `{decisions}`, `{actionability}`
-- `{phase}`, `{persona}`, `{weak_axes}`
+- `{iteration}`, `{score}`, `{delta}` depuis session state
+- `{clarity}`, `{depth}`, `{coverage}`, `{decisions}`, `{actionability}` depuis ems-evaluator
+- `{phase}`, `{persona}`, `{weak_axes}` depuis session state
 - Suggestions P1/P2/P3 basées sur weak_axes
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Comment voulez-vous continuer?",
+  "header": "EMS {score}",
+  "multiSelect": false,
+  "options": [
+    { "label": "Continuer (Recommended)", "description": "Répondre aux questions et itérer" },
+    { "label": "Dive [sujet]", "description": "Approfondir un point spécifique" },
+    { "label": "Pivoter", "description": "Réorienter vers un sujet émergent" },
+    { "label": "Finir", "description": "Générer les outputs maintenant" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
 ### 7. Check Phase Transition
 
-Apply rules from [references/iteration-rules.md](../references/iteration-rules.md#divergent--convergent).
+Apply rules from iteration-rules.md (section #divergent--convergent imported above).
 
 ```
 IF ems.global >= 50 AND phase == "DIVERGENT":
@@ -123,7 +177,7 @@ IF ems.global >= 50 AND phase == "DIVERGENT":
 
 ### 8. Check Finalization
 
-Apply thresholds from [references/iteration-rules.md](../references/iteration-rules.md#finalization-thresholds).
+Apply thresholds from iteration-rules.md (section #finalization-thresholds imported above).
 
 ```
 IF ems.global >= 70:
@@ -132,7 +186,7 @@ IF ems.global >= 70:
 
 ### 9. Check Energy (Stagnation/Fatigue)
 
-Apply detection from [references/iteration-rules.md](../references/iteration-rules.md#stagnation-detection).
+Apply detection from iteration-rules.md (section #stagnation-detection imported above).
 
 ```
 IF stagnation_detected OR iter >= 7:
@@ -156,11 +210,11 @@ Based on weak axes and current phase:
 -> Suggestion: {hint}
 ```
 
-Apply [quick mode adjustments](../references/iteration-rules.md#quick-mode-adjustments) if `--quick` flag active.
+Apply quick mode adjustments from iteration-rules.md (section #quick-mode-adjustments imported above) if `--quick` flag active.
 
 ## Loop Conditions
 
-See [references/iteration-rules.md](../references/iteration-rules.md#loop-conditions-summary) for complete table.
+See iteration-rules.md (section #loop-conditions-summary imported above) for complete table.
 
 | Condition | Action |
 |-----------|--------|

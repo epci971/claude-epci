@@ -7,11 +7,13 @@ next_step: null
 
 # Step 05: Memory [M]
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#complete) | Completion summary display |
+| breakpoint-formats.md | Completion summary display (section #complete) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

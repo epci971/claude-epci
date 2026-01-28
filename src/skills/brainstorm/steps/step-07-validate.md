@@ -18,11 +18,13 @@
 | `security_audit` | From step-06 | No |
 | `--quick` flag | From step-00 | No |
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#section-validation-box) | Section validation ASCII box template |
+| breakpoint-formats.md | Section validation box (section #section-validation-box) |
 
 ## Protocol
 
@@ -72,13 +74,50 @@ Structure brief into validatable sections:
 
 ### 3. BREAKPOINT: Section-by-Section Validation (OBLIGATOIRE sauf --quick)
 
-Pour chaque section majeure, AFFICHE le format Section Validation depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#section-validation-box).
+Pour chaque section majeure, AFFICHE la boîte Section Validation (section #section-validation-box de breakpoint-formats.md importé ci-dessus):
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ VALIDATION: {section_name}                                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ CONTENU                                                             │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ {section_content}                                               │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ Source: {source_decisions}                                          │
+│ Confiance: {confidence}                                             │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Approuver (Recommended) — Section correcte                │ │
+│ │  [B] Éditer — Faire des modifications                          │ │
+│ │  [C] Ignorer le reste — Auto-approuver suivantes               │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{section_name}`, `{section_content}`
-- `{source_decisions}`, `{confidence}`
+- `{section_name}` - nom de la section (Executive Summary, Problem Statement, etc.)
+- `{section_content}` - contenu de la section
+- `{source_decisions}` - décisions ayant informé cette section
+- `{confidence}` - niveau de confiance (HIGH, MEDIUM, LOW)
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Cette section {section_name} est-elle correcte?",
+  "header": "{section}",
+  "multiSelect": false,
+  "options": [
+    { "label": "Approuver (Recommended)", "description": "Section correcte" },
+    { "label": "Éditer", "description": "Faire des modifications" },
+    { "label": "Ignorer le reste", "description": "Auto-approuver les sections suivantes" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer à la section suivante.
 

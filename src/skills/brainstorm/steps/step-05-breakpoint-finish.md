@@ -21,13 +21,17 @@
 | `hmw_questions` | Session state | No |
 | `techniques_applied` | Session state | No |
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
+@../references/iteration-rules.md
+@../references/ems-system.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#finish-validation-box) | Finish validation ASCII box template |
-| [iteration-rules.md](../references/iteration-rules.md#finalization-thresholds) | Minimum EMS thresholds |
-| [ems-system.md](../references/ems-system.md#thresholds-and-messages) | Quality level messages |
+| breakpoint-formats.md | Finish validation box (section #finish-validation-box) |
+| iteration-rules.md | Minimum EMS thresholds (section #finalization-thresholds), Low EMS warning (section #low-ems-warning) |
+| ems-system.md | Quality level messages (section #thresholds-and-messages) |
 
 ## Protocol
 
@@ -61,7 +65,7 @@
 
 ### 2. Check Minimum Quality
 
-Apply [low EMS warning thresholds](../references/iteration-rules.md#low-ems-warning):
+Apply low EMS warning thresholds from iteration-rules.md (section #low-ems-warning imported above):
 
 ```
 IF ems.global < 60 AND NOT finish --force:
@@ -75,15 +79,64 @@ IF ems.global < 60 AND NOT finish --force:
 
 ### 3. BREAKPOINT: Finish Validation (OBLIGATOIRE)
 
-AFFICHE le format Finish Validation depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#finish-validation-box).
+AFFICHE la boîte Finish Validation (section #finish-validation-box de breakpoint-formats.md importé ci-dessus):
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 🏁 FIN D'EXPLORATION                                                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Itérations: {count}                                               │
+│ • EMS final: {ems.global}/100                                       │
+│ • Décisions prises: {decisions.length}                              │
+│ • Threads ouverts: {open_threads.length}                            │
+│ • Techniques utilisées: {techniques_applied.length}                 │
+│                                                                     │
+│ RÉSUMÉ                                                              │
+│ Décisions clés:                                                     │
+│ • {decision_1}                                                      │
+│ • {decision_2}                                                      │
+│                                                                     │
+│ Progression EMS: {initial} → {final} (+{delta})                     │
+│ Évaluation qualité: {EXCELLENT|GOOD|ADEQUATE|LOW}                   │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] {open_threads.length} threads ouverts seront notés dans brief  │
+│ [P2] EMS final {score} — {quality_assessment}                       │
+│ [P3] Preview montre le découpage avant validation                   │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Générer outputs (Recommended) — Créer brief et journal    │ │
+│ │  [B] Preview d'abord — Voir découpage @planner                 │ │
+│ │  [C] Continuer itérations — Explorer davantage                 │ │
+│ │  [D] Sauvegarder checkpoint — Pause pour reprise               │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{count}`, `{ems.global}`, `{decisions.length}`, `{open_threads.length}`
+- `{count}`, `{ems.global}`, `{decisions.length}`, `{open_threads.length}` depuis session state
 - Key decisions list
-- `{initial}` → `{final}` (+`{delta}`)
-- Quality assessment from [ems-system.md](../references/ems-system.md#thresholds-and-messages)
+- `{initial}` → `{final}` (+`{delta}`) depuis EMS history
+- Quality assessment depuis ems-system.md (section #thresholds-and-messages imported above)
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Prêt à générer les outputs?",
+  "header": "Finish",
+  "multiSelect": false,
+  "options": [
+    { "label": "Générer outputs (Recommended)", "description": "Créer brief et journal" },
+    { "label": "Preview d'abord", "description": "Voir découpage @planner avant finalisation" },
+    { "label": "Continuer itérations", "description": "Ajouter plus d'exploration" },
+    { "label": "Sauvegarder checkpoint", "description": "Pause pour reprise ultérieure" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

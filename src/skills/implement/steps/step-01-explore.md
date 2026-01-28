@@ -7,11 +7,13 @@ next_step: steps/step-02-plan.md
 
 # Step 01: Explore [E]
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#explore) | Breakpoint ASCII box |
+| breakpoint-formats.md | Breakpoint ASCII box (section #explore) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

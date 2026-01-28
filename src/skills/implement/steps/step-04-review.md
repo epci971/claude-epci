@@ -12,13 +12,17 @@ conditional_next:
 
 # Step 04: Review [I]
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
+@../references/review-checklists.md
+@../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [review-checklists.md](../references/review-checklists.md#code-review-checklist) | Code quality checklist |
-| [output-templates.md](../references/output-templates.md#review-output) | Review output format |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#review) | Breakpoint ASCII box |
+| review-checklists.md | Code quality checklist (section #code-review-checklist) |
+| output-templates.md | Review output format (section #review-output) |
+| breakpoint-formats.md | Breakpoint ASCII box (section #review) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

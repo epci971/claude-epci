@@ -277,8 +277,13 @@ AGENT_RECOMMENDATIONS = {
 
 ## Reference Files
 
-- [references/stacks-catalog.md](../references/stacks-catalog.md) — Stack detection rules
-- [references/agents-catalog.md](../references/agents-catalog.md) — Agent recommendation logic
+@../references/stacks-catalog.md
+@../references/agents-catalog.md
+
+| Reference | Purpose |
+|-----------|---------|
+| stacks-catalog.md | Stack detection rules |
+| agents-catalog.md | Agent recommendation logic |
 
 ## Error Handling
 

@@ -7,14 +7,19 @@ next_step: null
 
 # Step 03: Generate Ralph Artifacts
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
+@../references/stack-guidelines.md
+@../references/memory-template.md
+@../references/execution-workflow.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [stack-guidelines.md](../references/stack-guidelines.md) | Stack detection and conventions |
-| [memory-template.md](../references/memory-template.md) | MEMORY.md structure |
-| [execution-workflow.md](../references/execution-workflow.md) | TDD and completion rules |
-| [breakpoint-formats.md#completion-summary-box](../references/breakpoint-formats.md#completion-summary-box) | Final breakpoint |
+| stack-guidelines.md | Stack detection and conventions |
+| memory-template.md | MEMORY.md structure |
+| execution-workflow.md | TDD and completion rules |
+| breakpoint-formats.md | Final breakpoint (section #completion-summary-box) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

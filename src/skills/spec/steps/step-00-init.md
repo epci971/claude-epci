@@ -7,12 +7,13 @@ next_step: steps/step-01-analyze.md
 
 # Step 00: Initialization
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md#clarification-box](../references/breakpoint-formats.md#clarification-box) | Clarification breakpoint |
-| [breakpoint-formats.md#source-missing-box](../references/breakpoint-formats.md#source-missing-box) | Source missing breakpoint |
+| breakpoint-formats.md | Clarification breakpoint (#clarification-box), Source missing breakpoint (#source-missing-box) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

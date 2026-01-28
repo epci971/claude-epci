@@ -10,11 +10,13 @@ conditional_next:
 
 # Step 00: Initialization
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#init) | Breakpoint ASCII box |
+| breakpoint-formats.md | Breakpoint ASCII box (section #init) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

@@ -224,7 +224,11 @@ AskUserQuestion({
 
 ## Reference Files
 
-- [references/checklist-validation.md](../references/checklist-validation.md) — Detailed validation rules
+@../references/checklist-validation.md
+
+| Reference | Purpose |
+|-----------|---------|
+| checklist-validation.md | Detailed validation rules |
 
 ## Error Handling
 

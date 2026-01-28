@@ -94,7 +94,9 @@ graph TD
     F --> D
 ```
 
-See [references/mikado-method.md](../references/mikado-method.md).
+@../references/mikado-method.md
+
+See mikado-method.md (imported above).
 
 ### 4. Estimate Impact
 

@@ -59,7 +59,9 @@ Minimal plan with:
 
 ### 3. For TINY Tasks: Generate Inline Plan
 
-Create a lightweight plan following the structure in [references/plan-structure.md](../references/plan-structure.md):
+@../references/plan-structure.md
+
+Create a lightweight plan following the structure in plan-structure.md (imported above):
 
 ```markdown
 # Plan: {Feature Name}

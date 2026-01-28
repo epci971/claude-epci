@@ -7,13 +7,17 @@ next_step: steps/step-05-document.md
 
 # Step 04c: QA Review
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
+@../references/review-checklists.md
+@../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [review-checklists.md](../references/review-checklists.md#qa-validation-checklist) | QA validation checklist |
-| [output-templates.md](../references/output-templates.md#qa-output) | QA output format |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#qa) | Breakpoint ASCII box |
+| review-checklists.md | QA validation checklist (section #qa-validation-checklist) |
+| output-templates.md | QA output format (section #qa-output) |
+| breakpoint-formats.md | Breakpoint ASCII box (section #qa) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

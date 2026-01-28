@@ -18,12 +18,15 @@
 | `codebase_analysis` | From step-02 | No |
 | `--quick` flag | From step-00 | No |
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
+@../references/iteration-rules.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#framing-validation-box) | Framing validation ASCII box template |
-| [iteration-rules.md](../references/iteration-rules.md#quick-mode-adjustments) | Quick mode question limits |
+| breakpoint-formats.md | Framing validation box (section #framing-validation-box) |
+| iteration-rules.md | Quick mode question limits (section #quick-mode-adjustments) |
 
 ## Protocol
 
@@ -64,18 +67,67 @@ Target critical missing information:
 | **Dependencies** | "Does this depend on other work?" |
 | **Priority** | "What's the most critical aspect?" |
 
-Apply [quick mode adjustments](../references/iteration-rules.md#quick-mode-adjustments): limit to 2 questions (Target + Priority) if `--quick` flag active.
+Apply quick mode adjustments from iteration-rules.md (section #quick-mode-adjustments imported above): limit to 2 questions (Target + Priority) if `--quick` flag active.
 
 ### 3. BREAKPOINT: Framing Validation (OBLIGATOIRE)
 
-AFFICHE le format Framing Validation depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#framing-validation-box).
+AFFICHE la boîte Framing Validation (section #framing-validation-box de breakpoint-formats.md importé ci-dessus):
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 📋 VALIDATION DU CADRAGE                                            │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ MÉTRIQUES                                                           │
+│ • Template: {template}                                              │
+│ • EMS initial: {ems_initial}/100                                    │
+│ • Questions HMW: {hmw_count}                                        │
+│ • Contexte codebase: {available|partial|none}                       │
+│                                                                     │
+│ RÉSUMÉ DU BRIEF                                                     │
+│ {brief_v0_condensed}                                                │
+│                                                                     │
+│ QUESTIONS DE CADRAGE                                                │
+│ [Target] {question_target}                                          │
+│   → Suggestion: {suggestion_target}                                 │
+│ [Constraints] {question_constraints}                                │
+│   → Suggestion: {suggestion_constraints}                            │
+│ [Timeline] {question_timeline}                                      │
+│   → Suggestion: {suggestion_timeline}                               │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ SUGGESTIONS PROACTIVES                                              │
+│ [P1] Template '{template}' sélectionné — adapté à votre sujet       │
+│ [P2] EMS départ: {ems.global} — typique pour brief validé           │
+│ [P3] Révisez les questions HMW — elles guident l'exploration        │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Démarrer itérations (Recommended) — Exploration structurée│ │
+│ │  [B] Ajuster cadrage — Modifier template ou brief              │ │
+│ │  [C] Ajouter contexte — Plus de background d'abord             │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{template}`, `{ems_initial}`, `{hmw_count}`
-- `{brief_v0_condensed}`
+- `{template}`, `{ems_initial}`, `{hmw_count}` depuis session state
+- `{brief_v0_condensed}` - résumé du brief
 - Questions de cadrage avec suggestions
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Prêt à démarrer les itérations d'exploration?",
+  "header": "Framing",
+  "multiSelect": false,
+  "options": [
+    { "label": "Démarrer itérations (Recommended)", "description": "Commencer exploration structurée" },
+    { "label": "Ajuster cadrage", "description": "Modifier template ou brief" },
+    { "label": "Ajouter contexte", "description": "Fournir plus de background d'abord" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

@@ -7,11 +7,13 @@ next_step: steps/step-04-review.md
 
 # Step 03: Code [C]
 
-## Reference Files Used
+## Reference Files
+
+@../references/tdd-rules.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [tdd-rules.md](../references/tdd-rules.md) | TDD cycle and coverage rules |
+| tdd-rules.md | TDD cycle and coverage rules |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

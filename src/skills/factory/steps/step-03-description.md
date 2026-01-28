@@ -121,7 +121,11 @@ If user selects [Edit]:
 
 ## Reference Files
 
-- [references/description-formulas.md](../references/description-formulas.md) — Description patterns and examples
+@../references/description-formulas.md
+
+| Reference | Purpose |
+|-----------|---------|
+| description-formulas.md | Description patterns and examples |
 
 ## Examples
 

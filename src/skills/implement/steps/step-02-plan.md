@@ -7,12 +7,15 @@ next_step: steps/step-03-code.md
 
 # Step 02: Plan [P]
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
+@../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [output-templates.md](../references/output-templates.md#plan-output) | Plan output format |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#plan) | Breakpoint ASCII box |
+| output-templates.md | Plan output format (section #plan-output) |
+| breakpoint-formats.md | Breakpoint ASCII box (section #plan) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

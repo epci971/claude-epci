@@ -7,11 +7,13 @@ next_step: steps/step-02-generate-specs.md
 
 # Step 01: Analysis & Decomposition
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md#decomposition-review-box](../references/breakpoint-formats.md#decomposition-review-box) | Review breakpoint |
+| breakpoint-formats.md | Review breakpoint (section #decomposition-review-box) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

@@ -10,13 +10,17 @@ conditional_next:
 
 # Step 04b: Security Review
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
+@../references/review-checklists.md
+@../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [review-checklists.md](../references/review-checklists.md#security-review-checklist) | OWASP Top 10 checklist |
-| [output-templates.md](../references/output-templates.md#security-output) | Security audit output format |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#security) | Breakpoint ASCII box |
+| review-checklists.md | OWASP Top 10 checklist (section #security-review-checklist) |
+| output-templates.md | Security audit output format (section #security-output) |
+| breakpoint-formats.md | Breakpoint ASCII box (section #security) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

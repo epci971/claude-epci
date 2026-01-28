@@ -15,12 +15,13 @@
 | `project_context` | From step-00 | No |
 | `--turbo` flag | From step-00 | No |
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#clarification-box) | Clarification ASCII box template |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#brief-validation-box) | Brief validation ASCII box template |
+| breakpoint-formats.md | Clarification box (section #clarification-box), Brief validation box (section #brief-validation-box) |
 
 ## Protocol
 
@@ -78,13 +79,52 @@ Question categories:
 
 ### 3. BREAKPOINT: Clarification (OBLIGATOIRE)
 
-AFFICHE le format Clarification depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#clarification-box).
+AFFICHE la boîte Clarification (section #clarification-box de breakpoint-formats.md importé ci-dessus):
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ❓ CLARIFICATION                                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Idée originale: {idea_raw}                                          │
+│ Score de clarté: {clarity_score}/1.0                                │
+│                                                                     │
+│ Questions de clarification:                                         │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ [Scope] {question_1}                                            │ │
+│ │   → Suggestion: {suggestion_1}                                  │ │
+│ │                                                                 │ │
+│ │ [Users] {question_2}                                            │ │
+│ │   → Suggestion: {suggestion_2}                                  │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Répondre aux questions (Recommended) — fournir réponses   │ │
+│ │  [B] Ignorer clarification — continuer tel quel                │ │
+│ │  [C] Reformuler l'idée — recommencer                           │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{idea_raw}`, `{clarity_score}`
-- Questions et suggestions de clarification
+- `{idea_raw}`, `{clarity_score}` depuis session state
+- Questions et suggestions de clarification générées
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Répondez aux questions pour clarifier votre idée:",
+  "header": "Clarify",
+  "multiSelect": false,
+  "options": [
+    { "label": "Répondre aux questions (Recommended)", "description": "Fournir réponses inline" },
+    { "label": "Ignorer clarification", "description": "Continuer tel quel" },
+    { "label": "Reformuler l'idée", "description": "Recommencer avec description plus claire" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
@@ -119,12 +159,49 @@ Synthesize into structured brief:
 
 ### 6. BREAKPOINT: Brief Validation (OBLIGATOIRE)
 
-AFFICHE le format Brief Validation depuis [references/breakpoint-formats.md](../references/breakpoint-formats.md#brief-validation-box).
+AFFICHE la boîte Brief Validation (section #brief-validation-box de breakpoint-formats.md importé ci-dessus):
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ ✅ VALIDATION DU BRIEF                                              │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Brief reformulé:                                                    │
+│ ┌─────────────────────────────────────────────────────────────────┐ │
+│ │ {reformulated_brief}                                            │ │
+│ └─────────────────────────────────────────────────────────────────┘ │
+│                                                                     │
+│ Changements par rapport à l'original:                               │
+│ • {diff1}                                                           │
+│ • {diff2}                                                           │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Valider (Recommended) — Continuer avec ce brief           │ │
+│ │  [B] Ajuster — Faire des corrections                           │ │
+│ │  [C] Rejeter — Recommencer                                     │ │
+│ │  [?] Autre réponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 Remplis les variables:
-- `{reformulated_brief}`, `{diff1}`, `{diff2}`
+- `{reformulated_brief}` - le brief reformulé
+- `{diff1}`, `{diff2}` - changements par rapport à l'original
 
-APPELLE AskUserQuestion avec les options depuis la référence.
+APPELLE AskUserQuestion:
+```json
+{
+  "question": "Cette reformulation est-elle correcte?",
+  "header": "Validate",
+  "multiSelect": false,
+  "options": [
+    { "label": "Valider (Recommended)", "description": "Continuer avec ce brief" },
+    { "label": "Ajuster", "description": "Faire des corrections" },
+    { "label": "Rejeter", "description": "Recommencer" }
+  ]
+}
+```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

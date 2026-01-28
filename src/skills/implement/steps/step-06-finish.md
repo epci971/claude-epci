@@ -7,12 +7,15 @@ next_step: steps/step-07-memory.md
 
 # Step 06: Finish
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
+@../references/output-templates.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [output-templates.md](../references/output-templates.md#finish-output) | Completion output format |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#finish) | Completion summary box |
+| output-templates.md | Completion output format (section #finish-output) |
+| breakpoint-formats.md | Completion summary box (section #finish) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

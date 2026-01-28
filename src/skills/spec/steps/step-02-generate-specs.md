@@ -7,13 +7,17 @@ next_step: steps/step-03-generate-ralph.md
 
 # Step 02: Generate Specifications
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
+@../references/task-format.md
+@../references/prd-schema.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [task-format.md](../references/task-format.md) | Task file structure |
-| [prd-schema.md](../references/prd-schema.md) | PRD.json schema |
-| [breakpoint-formats.md#specs-generated-box](../references/breakpoint-formats.md#specs-generated-box) | Review breakpoint |
+| task-format.md | Task file structure |
+| prd-schema.md | PRD.json schema |
+| breakpoint-formats.md | Review breakpoint (section #specs-generated-box) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

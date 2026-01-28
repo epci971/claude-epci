@@ -7,11 +7,13 @@ next_step: steps/step-02-mini-plan.md
 
 # Step 01: Mini-Explore [E]
 
-## Reference Files Used
+## Reference Files
+
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [breakpoint-formats.md](../references/breakpoint-formats.md#complexity) | Complexity alert breakpoint |
+| breakpoint-formats.md | Complexity alert breakpoint (section #complexity) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 

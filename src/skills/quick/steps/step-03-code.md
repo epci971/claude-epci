@@ -7,12 +7,15 @@ next_step: steps/step-04-document.md
 
 # Step 03: Code [C]
 
-## Reference Files Used
+## Reference Files
+
+@../references/tdd-rules.md
+@../references/breakpoint-formats.md
 
 | Reference | Purpose |
 |-----------|---------|
-| [tdd-rules.md](../references/tdd-rules.md) | TDD cycle rules and examples |
-| [breakpoint-formats.md](../references/breakpoint-formats.md#tdd-failure) | TDD failure breakpoint |
+| tdd-rules.md | TDD cycle rules and examples |
+| breakpoint-formats.md | TDD failure breakpoint (section #tdd-failure) |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
