@@ -74,30 +74,7 @@ Structure brief into validatable sections:
 
 ### 3. BREAKPOINT: Section-by-Section Validation (OBLIGATOIRE sauf --quick)
 
-Pour chaque section majeure, AFFICHE la boîte Section Validation (section #section-validation-box de breakpoint-formats.md importé ci-dessus):
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ✅ VALIDATION: {section_name}                                       │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ CONTENU                                                             │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ {section_content}                                               │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ Source: {source_decisions}                                          │
-│ Confiance: {confidence}                                             │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Approuver (Recommended) — Section correcte                │ │
-│ │  [B] Éditer — Faire des modifications                          │ │
-│ │  [C] Ignorer le reste — Auto-approuver suivantes               │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+Pour chaque section majeure, AFFICHE la boîte Section Validation (section #section-validation-box du fichier breakpoint-formats.md importé ci-dessus).
 
 Remplis les variables:
 - `{section_name}` - nom de la section (Executive Summary, Problem Statement, etc.)

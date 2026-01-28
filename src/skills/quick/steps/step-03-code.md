@@ -70,14 +70,14 @@ Red-Green-Verify (skip Refactor)
 
 ### 3. Execute TDD Cycle
 
-Follow the TDD cycle as defined in [tdd-rules.md](../references/tdd-rules.md):
+Follow the TDD cycle as defined in tdd-rules.md (importé ci-dessus):
 
 1. **RED Phase**: Write failing test, run to confirm failure
 2. **GREEN Phase**: Write minimal code to pass, run to confirm pass
 3. **VERIFY Phase**: Run ALL tests + lint, confirm no regressions
 4. **REFACTOR Phase**: SKIP for /quick (speed priority)
 
-See [tdd-rules.md](../references/tdd-rules.md) for detailed rules, examples, and stack-specific commands.
+See tdd-rules.md (importé ci-dessus) for detailed rules, examples, and stack-specific commands.
 
 ### 4. Stack-Specific Commands
 
@@ -112,7 +112,7 @@ RETRY PROTOCOL:
 
 If still failing after 2 retries:
 
-AFFICHE le format depuis [breakpoint-formats.md#tdd-failure](../references/breakpoint-formats.md#tdd-failure)
+AFFICHE la boîte TDD Failure (section #tdd-failure du fichier breakpoint-formats.md importé ci-dessus).
 
 APPELLE:
 ```

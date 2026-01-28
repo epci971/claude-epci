@@ -79,34 +79,7 @@ Question categories:
 
 ### 3. BREAKPOINT: Clarification (OBLIGATOIRE)
 
-AFFICHE la boîte Clarification (section #clarification-box de breakpoint-formats.md importé ci-dessus):
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ❓ CLARIFICATION                                                    │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ Idée originale: {idea_raw}                                          │
-│ Score de clarté: {clarity_score}/1.0                                │
-│                                                                     │
-│ Questions de clarification:                                         │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ [Scope] {question_1}                                            │ │
-│ │   → Suggestion: {suggestion_1}                                  │ │
-│ │                                                                 │ │
-│ │ [Users] {question_2}                                            │ │
-│ │   → Suggestion: {suggestion_2}                                  │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Répondre aux questions (Recommended) — fournir réponses   │ │
-│ │  [B] Ignorer clarification — continuer tel quel                │ │
-│ │  [C] Reformuler l'idée — recommencer                           │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE la boîte Clarification (section #clarification-box du fichier breakpoint-formats.md importé ci-dessus).
 
 Remplis les variables:
 - `{idea_raw}`, `{clarity_score}` depuis session state
@@ -159,31 +132,7 @@ Synthesize into structured brief:
 
 ### 6. BREAKPOINT: Brief Validation (OBLIGATOIRE)
 
-AFFICHE la boîte Brief Validation (section #brief-validation-box de breakpoint-formats.md importé ci-dessus):
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ✅ VALIDATION DU BRIEF                                              │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ Brief reformulé:                                                    │
-│ ┌─────────────────────────────────────────────────────────────────┐ │
-│ │ {reformulated_brief}                                            │ │
-│ └─────────────────────────────────────────────────────────────────┘ │
-│                                                                     │
-│ Changements par rapport à l'original:                               │
-│ • {diff1}                                                           │
-│ • {diff2}                                                           │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Valider (Recommended) — Continuer avec ce brief           │ │
-│ │  [B] Ajuster — Faire des corrections                           │ │
-│ │  [C] Rejeter — Recommencer                                     │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE la boîte Brief Validation (section #brief-validation-box du fichier breakpoint-formats.md importé ci-dessus).
 
 Remplis les variables:
 - `{reformulated_brief}` - le brief reformulé

@@ -62,11 +62,11 @@ next_step: steps/step-07-memory.md
 
 ## OUTPUT FORMAT:
 
-APPLY template from [output-templates.md#finish-output](../references/output-templates.md#finish-output)
+APPLY template from output-templates.md (section #finish-output importé ci-dessus).
 
 ## COMPLETION SUMMARY:
 
-AFFICHE le format depuis [breakpoint-formats.md#finish](../references/breakpoint-formats.md#finish)
+AFFICHE la boîte Finish (section #finish du fichier breakpoint-formats.md importé ci-dessus).
 
 **Note:** Info-only display, no user interaction required.
 

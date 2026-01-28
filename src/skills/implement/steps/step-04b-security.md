@@ -94,15 +94,15 @@ Confirm audit covered:
 
 ## SECURITY CHECKLIST:
 
-APPLY checklist from [review-checklists.md#security-review-checklist](../references/review-checklists.md#security-review-checklist)
+APPLY checklist from review-checklists.md (section #security-review-checklist importé ci-dessus).
 
 ## OUTPUT FORMAT:
 
-APPLY template from [output-templates.md#security-output](../references/output-templates.md#security-output)
+APPLY template from output-templates.md (section #security-output importé ci-dessus).
 
 ## BREAKPOINT: Security Review Complete (OBLIGATOIRE)
 
-AFFICHE le format depuis [breakpoint-formats.md#security](../references/breakpoint-formats.md#security)
+AFFICHE la boîte Security (section #security du fichier breakpoint-formats.md importé ci-dessus).
 
 APPELLE:
 ```

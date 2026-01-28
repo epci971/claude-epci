@@ -99,15 +99,15 @@ Based on review findings:
 
 ## REVIEW CHECKLIST:
 
-APPLY checklist from [review-checklists.md#code-review-checklist](../references/review-checklists.md#code-review-checklist)
+APPLY checklist from review-checklists.md (section #code-review-checklist importé ci-dessus).
 
 ## OUTPUT FORMAT:
 
-APPLY template from [output-templates.md#review-output](../references/output-templates.md#review-output)
+APPLY template from output-templates.md (section #review-output importé ci-dessus).
 
 ## BREAKPOINT: Code Review Complete (OBLIGATOIRE)
 
-AFFICHE le format depuis [breakpoint-formats.md#review](../references/breakpoint-formats.md#review)
+AFFICHE la boîte Review (section #review du fichier breakpoint-formats.md importé ci-dessus).
 
 APPELLE:
 ```

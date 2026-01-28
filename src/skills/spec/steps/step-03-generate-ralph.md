@@ -36,7 +36,7 @@ next_step: null
 
 ### 1. Detect Project Stack
 
-Use detection matrix from [stack-guidelines.md](../references/stack-guidelines.md#stack-detection-matrix).
+Use detection matrix from stack-guidelines.md (section #stack-detection-matrix importé ci-dessus).
 
 Store detected stack for PROMPT.md generation:
 - `STACK_FRAMEWORK`: Django | React | Spring | Symfony | Generic
@@ -57,18 +57,18 @@ Use template from `templates/prompt.md.template`.
 - Feature metadata: slug, complexity, task count, hours
 - Stack info: framework, language, test framework
 - Execution order: from DAG topological sort
-- Stack guidelines: inject content from [stack-guidelines.md](../references/stack-guidelines.md)
+- Stack guidelines: inject content from stack-guidelines.md (importé ci-dessus)
 
 Load appropriate stack section based on detection:
-- Django → [stack-guidelines.md#django-guidelines](../references/stack-guidelines.md#django-guidelines)
-- React → [stack-guidelines.md#react-guidelines](../references/stack-guidelines.md#react-guidelines)
-- Spring → [stack-guidelines.md#spring-boot-guidelines](../references/stack-guidelines.md#spring-boot-guidelines)
-- Symfony → [stack-guidelines.md#symfony-guidelines](../references/stack-guidelines.md#symfony-guidelines)
-- Generic → [stack-guidelines.md#generic-guidelines](../references/stack-guidelines.md#generic-guidelines)
+- Django → stack-guidelines.md section #django-guidelines
+- React → stack-guidelines.md section #react-guidelines
+- Spring → stack-guidelines.md section #spring-boot-guidelines
+- Symfony → stack-guidelines.md section #symfony-guidelines
+- Generic → stack-guidelines.md section #generic-guidelines
 
 ### 4. Generate MEMORY.md
 
-Use template structure from [memory-template.md](../references/memory-template.md#complete-template).
+Use template structure from memory-template.md (section #complete-template importé ci-dessus).
 
 **Initialize:**
 - All tasks as `pending` in Progress table
@@ -193,7 +193,7 @@ Location: .ralph/{feature-slug}/
 
 ## BREAKPOINT: Specification Complete (OBLIGATOIRE)
 
-AFFICHE le format depuis [references/breakpoint-formats.md#completion-summary-box](../references/breakpoint-formats.md#completion-summary-box).
+AFFICHE la boîte Completion Summary (section #completion-summary-box du fichier breakpoint-formats.md importé ci-dessus).
 
 Remplis les variables:
 - `{feature-slug}`: Feature slug from state

@@ -106,11 +106,11 @@ APPROVED or NEEDS_REVISION with specific feedback
 
 ## OUTPUT FORMAT:
 
-APPLY template from [output-templates.md#plan-output](../references/output-templates.md#plan-output)
+APPLY template from output-templates.md (section #plan-output importé ci-dessus).
 
 ## BREAKPOINT: Plan Validation (OBLIGATOIRE)
 
-AFFICHE le format depuis [breakpoint-formats.md#plan](../references/breakpoint-formats.md#plan)
+AFFICHE la boîte Plan (section #plan du fichier breakpoint-formats.md importé ci-dessus).
 
 APPELLE:
 ```

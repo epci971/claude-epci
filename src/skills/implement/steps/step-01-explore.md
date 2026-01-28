@@ -117,7 +117,7 @@ very thorough
 
 ## BREAKPOINT: Exploration Complete (OBLIGATOIRE)
 
-AFFICHE le format depuis [breakpoint-formats.md#explore](../references/breakpoint-formats.md#explore)
+AFFICHE la boîte Explore (section #explore du fichier breakpoint-formats.md importé ci-dessus).
 
 APPELLE:
 ```

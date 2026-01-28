@@ -124,47 +124,7 @@ IF trigger_security_audit:
 
 ### 5. BREAKPOINT: Preview Results (OBLIGATOIRE si preview demandé)
 
-AFFICHE la boîte Preview Implementation (section #preview-implementation-box de breakpoint-formats.md importé ci-dessus):
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 👁️ PREVIEW IMPLÉMENTATION                                           │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ MÉTRIQUES                                                           │
-│ • Complexité estimée: {complexity}                                  │
-│ • Nombre de tâches: {tasks_count}                                   │
-│ • Risques identifiés: {risks_count}                                 │
-│                                                                     │
-│ DÉCOUPAGE TÂCHES                                                    │
-│ | # | Tâche | Complexité | Dépendances |                            │
-│ |---|-------|------------|-------------|                            │
-│ | 1 | {title_1} | {complexity_1} | - |                              │
-│ | 2 | {title_2} | {complexity_2} | T1 |                             │
-│                                                                     │
-│ AUDIT SÉCURITÉ                                                      │
-│ • Déclenché: {triggered}                                            │
-│ • Niveau risque: {risk_level}                                       │
-│ • Préoccupations: {concerns}                                        │
-│                                                                     │
-│ ROUTING RECOMMANDÉ                                                  │
-│ → {routing}                                                         │
-│ → Raison: {routing_reason}                                          │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] Complexité {level} → recommande {skill}                        │
-│ [P2] {concern} — sera noté dans le brief                            │
-│ [P3] Considère {mitigation} pour {risk}                             │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Générer brief (Recommended) — Créer outputs finaux        │ │
-│ │  [B] Ajuster scope — Modifier selon preview                    │ │
-│ │  [C] Ajouter notes sécurité — Inclure recommandations          │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE la boîte Preview Implementation (section #preview-implementation-box du fichier breakpoint-formats.md importé ci-dessus).
 
 Remplis les variables:
 - `{complexity}`, `{tasks_count}`, `{risks_count}` depuis planner results

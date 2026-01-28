@@ -68,7 +68,7 @@ Use template from `templates/index.md.template`.
 
 For each task, use template from `templates/task.md.template`.
 
-Follow structure defined in [task-format.md](../references/task-format.md).
+Follow structure defined in task-format.md (importé ci-dessus).
 
 **Required sections per task:**
 - YAML frontmatter with all fields
@@ -82,7 +82,7 @@ Follow structure defined in [task-format.md](../references/task-format.md).
 
 ### 4. Generate PRD.json
 
-Create machine-readable version following [prd-schema.md](../references/prd-schema.md).
+Create machine-readable version following prd-schema.md (importé ci-dessus).
 
 **Validation before writing:**
 - All required fields present
@@ -128,7 +128,7 @@ Location: docs/specs/{feature-slug}/
 
 ## BREAKPOINT: Specifications Generated (OBLIGATOIRE)
 
-AFFICHE le format depuis [references/breakpoint-formats.md#specs-generated-box](../references/breakpoint-formats.md#specs-generated-box).
+AFFICHE la boîte Specs Generated (section #specs-generated-box du fichier breakpoint-formats.md importé ci-dessus).
 
 Remplis les variables:
 - `{complexity}`: TINY/SMALL/STANDARD/LARGE

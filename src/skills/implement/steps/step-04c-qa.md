@@ -71,15 +71,15 @@ next_step: steps/step-05-document.md
 
 ## QA CHECKLIST:
 
-APPLY checklist from [review-checklists.md#qa-validation-checklist](../references/review-checklists.md#qa-validation-checklist)
+APPLY checklist from review-checklists.md (section #qa-validation-checklist importé ci-dessus).
 
 ## OUTPUT FORMAT:
 
-APPLY template from [output-templates.md#qa-output](../references/output-templates.md#qa-output)
+APPLY template from output-templates.md (section #qa-output importé ci-dessus).
 
 ## BREAKPOINT: QA Review Complete (OBLIGATOIRE)
 
-AFFICHE le format depuis [breakpoint-formats.md#qa](../references/breakpoint-formats.md#qa)
+AFFICHE la boîte QA (section #qa du fichier breakpoint-formats.md importé ci-dessus).
 
 APPELLE:
 ```

@@ -133,7 +133,7 @@ Ready for: Analysis & Decomposition
 
 ## BREAKPOINT (if clarification needed) - OBLIGATOIRE
 
-AFFICHE le format depuis [references/breakpoint-formats.md#clarification-box](../references/breakpoint-formats.md#clarification-box).
+AFFICHE la boîte Clarification (section #clarification-box du fichier breakpoint-formats.md importé ci-dessus).
 
 Remplis les variables:
 - `{feature-slug}`: Kebab-case feature identifier
@@ -146,7 +146,7 @@ APPELLE AskUserQuestion avec les options depuis la reference.
 
 ## BREAKPOINT (if discovery mode and no brief found) - OBLIGATOIRE
 
-AFFICHE le format depuis [references/breakpoint-formats.md#source-missing-box](../references/breakpoint-formats.md#source-missing-box).
+AFFICHE la boîte Source Missing (section #source-missing-box du fichier breakpoint-formats.md importé ci-dessus).
 
 Remplis les variables:
 - `{feature-slug}`: Kebab-case feature identifier

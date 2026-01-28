@@ -79,43 +79,7 @@ IF ems.global < 60 AND NOT finish --force:
 
 ### 3. BREAKPOINT: Finish Validation (OBLIGATOIRE)
 
-AFFICHE la boîte Finish Validation (section #finish-validation-box de breakpoint-formats.md importé ci-dessus):
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 🏁 FIN D'EXPLORATION                                                │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ MÉTRIQUES                                                           │
-│ • Itérations: {count}                                               │
-│ • EMS final: {ems.global}/100                                       │
-│ • Décisions prises: {decisions.length}                              │
-│ • Threads ouverts: {open_threads.length}                            │
-│ • Techniques utilisées: {techniques_applied.length}                 │
-│                                                                     │
-│ RÉSUMÉ                                                              │
-│ Décisions clés:                                                     │
-│ • {decision_1}                                                      │
-│ • {decision_2}                                                      │
-│                                                                     │
-│ Progression EMS: {initial} → {final} (+{delta})                     │
-│ Évaluation qualité: {EXCELLENT|GOOD|ADEQUATE|LOW}                   │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] {open_threads.length} threads ouverts seront notés dans brief  │
-│ [P2] EMS final {score} — {quality_assessment}                       │
-│ [P3] Preview montre le découpage avant validation                   │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Générer outputs (Recommended) — Créer brief et journal    │ │
-│ │  [B] Preview d'abord — Voir découpage @planner                 │ │
-│ │  [C] Continuer itérations — Explorer davantage                 │ │
-│ │  [D] Sauvegarder checkpoint — Pause pour reprise               │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE la boîte Finish Validation (section #finish-validation-box du fichier breakpoint-formats.md importé ci-dessus).
 
 Remplis les variables:
 - `{count}`, `{ems.global}`, `{decisions.length}`, `{open_threads.length}` depuis session state

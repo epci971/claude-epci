@@ -107,7 +107,7 @@ Use `state-manager` to update:
 
 ### 5. Present Completion Summary
 
-AFFICHE le format depuis [breakpoint-formats.md#complete](../references/breakpoint-formats.md#complete)
+AFFICHE la boîte Complete (section #complete du fichier breakpoint-formats.md importé ci-dessus).
 
 **Note:** Info-only display, no user interaction required.
 

@@ -222,7 +222,7 @@ graph LR
 
 ## BREAKPOINT: Decomposition Review (OBLIGATOIRE)
 
-AFFICHE le format depuis [references/breakpoint-formats.md#decomposition-review-box](../references/breakpoint-formats.md#decomposition-review-box).
+AFFICHE la boîte Decomposition Review (section #decomposition-review-box du fichier breakpoint-formats.md importé ci-dessus).
 
 Remplis les variables:
 - `{feature-slug}`: Feature identifier

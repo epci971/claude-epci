@@ -73,7 +73,7 @@ Routing: {next step path}
 
 ## BREAKPOINT (for STANDARD+ only) - OBLIGATOIRE
 
-AFFICHE le format depuis [breakpoint-formats.md#init](../references/breakpoint-formats.md#init)
+AFFICHE la boîte Init (section #init du fichier breakpoint-formats.md importé ci-dessus).
 
 APPELLE:
 ```

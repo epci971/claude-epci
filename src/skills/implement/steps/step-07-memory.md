@@ -93,7 +93,7 @@ For an OAuth feature:
 
 ## COMPLETION SUMMARY:
 
-AFFICHE le format depuis [breakpoint-formats.md#memory](../references/breakpoint-formats.md#memory)
+AFFICHE la boîte Memory (section #memory du fichier breakpoint-formats.md importé ci-dessus).
 
 **Note:** Info-only display, no user interaction required.
 

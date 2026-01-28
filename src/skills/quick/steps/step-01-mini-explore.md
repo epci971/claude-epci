@@ -129,7 +129,7 @@ Stack Context: {stack skill loaded, if any}
 
 If exploration reveals more complexity than expected:
 
-AFFICHE le format depuis [breakpoint-formats.md#complexity](../references/breakpoint-formats.md#complexity)
+AFFICHE la boîte Complexity (section #complexity du fichier breakpoint-formats.md importé ci-dessus).
 
 APPELLE:
 ```
