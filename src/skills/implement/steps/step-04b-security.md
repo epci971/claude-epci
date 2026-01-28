@@ -10,6 +10,14 @@ conditional_next:
 
 # Step 04b: Security Review
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [review-checklists.md](../references/review-checklists.md#security-review-checklist) | OWASP Top 10 checklist |
+| [output-templates.md](../references/output-templates.md#security-output) | Security audit output format |
+| [breakpoint-formats.md](../references/breakpoint-formats.md#security) | Breakpoint ASCII box |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER approve code with HIGH severity vulnerabilities
@@ -42,17 +50,7 @@ Task({
 - API security and input handling
 
 ## OWASP Top 10 Checklist
-Verify against all categories:
-- A01: Broken Access Control
-- A02: Cryptographic Failures
-- A03: Injection
-- A04: Insecure Design
-- A05: Security Misconfiguration
-- A06: Vulnerable Components
-- A07: Auth Failures
-- A08: Data Integrity Failures
-- A09: Logging Failures
-- A10: SSRF
+Verify against all categories (see review-checklists.md#security-review-checklist)
 
 ## Expected Output
 Security audit report with:
@@ -92,97 +90,25 @@ Confirm audit covered:
 
 ## SECURITY CHECKLIST:
 
-```
-### OWASP Top 10
-- [ ] A01: Access control properly enforced
-- [ ] A02: Cryptography correctly implemented
-- [ ] A03: No injection vulnerabilities
-- [ ] A04: Secure design patterns used
-- [ ] A05: No misconfigurations
-- [ ] A06: Dependencies up to date
-- [ ] A07: Authentication robust
-- [ ] A08: Data integrity verified
-- [ ] A09: Proper logging without sensitive data
-- [ ] A10: No SSRF vulnerabilities
-
-### Input Handling
-- [ ] All inputs validated
-- [ ] Inputs sanitized before use
-- [ ] Type checking enforced
-- [ ] Size limits enforced
-
-### Data Protection
-- [ ] Sensitive data encrypted at rest
-- [ ] Sensitive data encrypted in transit
-- [ ] No secrets in code
-- [ ] Proper key management
-```
+APPLY checklist from [review-checklists.md#security-review-checklist](../references/review-checklists.md#security-review-checklist)
 
 ## OUTPUT FORMAT:
 
-```
-## Security Audit Report
-
-### Summary
-- Vulnerabilities: {N}
-- Critical: {N}
-- High: {N}
-- Medium: {N}
-- Low: {N}
-
-### Findings
-| # | Severity | Category | Location | Issue | Remediation |
-|---|----------|----------|----------|-------|-------------|
-| 1 | {sev} | {OWASP} | {file:line} | {desc} | {fix} |
-
-### Required Fixes
-{Critical and High must be fixed before proceeding}
-
-### Verdict
-{PASS | FAIL_CRITICAL | FAIL_HIGH}
-```
+APPLY template from [output-templates.md#security-output](../references/output-templates.md#security-output)
 
 ## BREAKPOINT: Security Review Complete (OBLIGATOIRE)
 
-AFFICHE cette boîte:
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 🔐 SECURITY REVIEW TERMINÉ                                          │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ Audit sécurité par @security-auditor terminé                        │
-│                                                                     │
-│ Feature: {feature-slug}                                             │
-│ Vulnérabilités totales: {N}                                         │
-│ • Critical/High: {N} (à corriger obligatoirement)                   │
-│ • Medium/Low: {N} (recommandé)                                      │
-│                                                                     │
-│ Critère de succès: Aucune vulnérabilité CRITICAL/HIGH non résolue   │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] OWASP Top 10 vérifié                                           │
-│ [P2] Réviser {N} findings avant de continuer                        │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Continuer (Recommended) — Posture sécurité acceptable     │ │
-│ │  [B] Corriger issues critiques — Traiter high-severity d'abord │ │
-│ │  [C] Accepter le risque — Documenter et continuer              │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE le format depuis [breakpoint-formats.md#security](../references/breakpoint-formats.md#security)
 
 APPELLE:
 ```
 AskUserQuestion({
   questions: [{
-    question: "Accepter le résultat de la security review?",
+    question: "Accepter le resultat de la security review?",
     header: "Security",
     multiSelect: false,
     options: [
-      { label: "Continuer (Recommended)", description: "Posture sécurité acceptable" },
+      { label: "Continuer (Recommended)", description: "Posture securite acceptable" },
       { label: "Corriger issues critiques", description: "Traiter les findings high-severity d'abord" },
       { label: "Accepter le risque", description: "Documenter la raison et continuer" }
     ]
@@ -190,7 +116,7 @@ AskUserQuestion({
 })
 ```
 
-⏸️ ATTENDS la réponse utilisateur avant de continuer.
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

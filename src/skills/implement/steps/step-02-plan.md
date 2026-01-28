@@ -7,6 +7,13 @@ next_step: steps/step-03-code.md
 
 # Step 02: Plan [P]
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [output-templates.md](../references/output-templates.md#plan-output) | Plan output format |
+| [breakpoint-formats.md](../references/breakpoint-formats.md#plan) | Breakpoint ASCII box |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER start coding before plan approval
@@ -96,98 +103,29 @@ APPROVED or NEEDS_REVISION with specific feedback
 
 ## OUTPUT FORMAT:
 
-```
-## Implementation Plan
-
-### Phase 1: Foundation
-1. {Component} — {description}
-   - Test: {test approach}
-   - Files: {files to modify/create}
-
-### Phase 2: Core Logic
-2. {Component} — {description}
-   - Test: {test approach}
-   - Files: {files}
-
-### Phase 3: Integration
-3. {Component} — {description}
-   - Test: {test approach}
-   - Files: {files}
-
-### Test Strategy
-- Unit tests: {approach}
-- Integration tests: {approach}
-- Coverage target: {%}
-
-### Acceptance Criteria Mapping
-| Criteria | Component | Test |
-|----------|-----------|------|
-| {AC1} | {component} | {test} |
-```
+APPLY template from [output-templates.md#plan-output](../references/output-templates.md#plan-output)
 
 ## BREAKPOINT: Plan Validation (OBLIGATOIRE)
 
-AFFICHE cette boîte:
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 📋 VALIDATION DU PLAN                                               │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ MÉTRIQUES                                                           │
-│ • Complexité: {complexity} (score: {score})                         │
-│ • Fichiers impactés: {N}                                            │
-│ • Temps estimé: {hours}h                                            │
-│ • Niveau de risque: {LOW|MEDIUM|HIGH}                               │
-│ • Description risque: {risk notes}                                  │
-│                                                                     │
-│ VALIDATIONS                                                         │
-│ • @plan-validator: {APPROVED}                                       │
-│   - Complétude: {phases} phases définies                            │
-│   - Cohérence: Dépendances mappées                                  │
-│   - Faisabilité: Dans le scope                                      │
-│   - Qualité: Stratégie TDD définie                                  │
-│                                                                     │
-│ PREVIEW TÂCHES                                                      │
-│ | Phase 1: {summary_1} | ~{estimate_1} |                            │
-│ | Phase 2: {summary_2} | ~{estimate_2} |                            │
-│ | Phase 3: {summary_3} | ~{estimate_3} |                            │
-│ Tâches restantes: {N}                                               │
-│                                                                     │
-│ Skills chargés: tdd-enforcer, state-manager                         │
-│ Doc feature: .epci/features/{feature-slug}/FEATURE.md               │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] Cycle TDD enforced: RED → GREEN → REFACTOR                     │
-│ [P2] Cible coverage: {%}%                                           │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Approuver et Coder (Recommended) — Passer au TDD          │ │
-│ │  [B] Modifier le plan — Ajuster phases ou approche             │ │
-│ │  [C] Abandonner — Réviser requirements d'abord                 │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE le format depuis [breakpoint-formats.md#plan](../references/breakpoint-formats.md#plan)
 
 APPELLE:
 ```
 AskUserQuestion({
   questions: [{
-    question: "Approuver le plan d'implémentation?",
+    question: "Approuver le plan d'implementation?",
     header: "Plan Review",
     multiSelect: false,
     options: [
-      { label: "Approuver et Coder (Recommended)", description: "Procéder à l'implémentation TDD" },
+      { label: "Approuver et Coder (Recommended)", description: "Proceder a l'implementation TDD" },
       { label: "Modifier le plan", description: "Ajuster phases ou approche" },
-      { label: "Abandonner", description: "Réviser requirements d'abord" }
+      { label: "Abandonner", description: "Reviser requirements d'abord" }
     ]
   }]
 })
 ```
 
-⏸️ ATTENDS la réponse utilisateur avant de continuer.
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

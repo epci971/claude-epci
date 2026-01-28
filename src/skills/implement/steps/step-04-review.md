@@ -12,6 +12,14 @@ conditional_next:
 
 # Step 04: Review [I]
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [review-checklists.md](../references/review-checklists.md#code-review-checklist) | Code quality checklist |
+| [output-templates.md](../references/output-templates.md#review-output) | Review output format |
+| [breakpoint-formats.md](../references/breakpoint-formats.md#review) | Breakpoint ASCII box |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER auto-approve without thorough analysis
@@ -87,110 +95,34 @@ Based on review findings:
 
 ## REVIEW CHECKLIST:
 
-```
-### Code Quality
-- [ ] Follows existing patterns
-- [ ] Proper error handling
-- [ ] No code duplication
-- [ ] Clear naming
-- [ ] No dead code
-
-### Tests
-- [ ] Coverage target met
-- [ ] Edge cases covered
-- [ ] Failure modes tested
-- [ ] Integration tested
-
-### Security
-- [ ] No injection vulnerabilities
-- [ ] Auth/authz correct
-- [ ] No sensitive data exposure
-- [ ] Input validation present
-
-### Performance
-- [ ] No N+1 queries
-- [ ] Appropriate caching
-- [ ] No blocking operations in hot paths
-```
+APPLY checklist from [review-checklists.md#code-review-checklist](../references/review-checklists.md#code-review-checklist)
 
 ## OUTPUT FORMAT:
 
-```
-## Code Review Results
-
-### Summary
-- Files reviewed: {N}
-- Issues found: {N}
-- Severity: {HIGH|MEDIUM|LOW|NONE}
-
-### Findings
-| # | Severity | File | Issue | Recommendation |
-|---|----------|------|-------|----------------|
-| 1 | {severity} | {file} | {issue} | {fix} |
-
-### Test Coverage
-- Achieved: {%}
-- Target: {%}
-- Status: {PASS|FAIL}
-
-### Verdict
-{APPROVED | CHANGES_REQUIRED | SECURITY_REVIEW_NEEDED | QA_NEEDED}
-```
+APPLY template from [output-templates.md#review-output](../references/output-templates.md#review-output)
 
 ## BREAKPOINT: Code Review Complete (OBLIGATOIRE)
 
-AFFICHE cette boîte:
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ✅ CODE REVIEW TERMINÉ [C→I]                                        │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ RÉSUMÉ DE PHASE                                                     │
-│ • Phase terminée: code                                              │
-│ • Phase suivante: inspect                                           │
-│ • Durée: {duration}                                                 │
-│ • Tâches complétées: {N}                                            │
-│ • Fichiers modifiés: {files}                                        │
-│ • Tests: {passing}/{total} passing                                  │
-│                                                                     │
-│ CHECKPOINT                                                          │
-│ • ID: {feature_id}-checkpoint-code                                  │
-│ • Reprise possible: oui                                             │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] Coverage: {%}% atteint                                         │
-│ [P2] {N} issues trouvés ({severity})                                │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Accepter et Documenter (Recommended) — Passer à la doc    │ │
-│ │  [B] Demander Security Review — Audit sécurité approfondi      │ │
-│ │  [C] Demander QA Validation — Tests QA additionnels            │ │
-│ │  [D] Traiter les findings — Corriger avant de continuer        │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE le format depuis [breakpoint-formats.md#review](../references/breakpoint-formats.md#review)
 
 APPELLE:
 ```
 AskUserQuestion({
   questions: [{
-    question: "Procéder avec le résultat de la review?",
-    header: "Phase C→I",
+    question: "Proceder avec le resultat de la review?",
+    header: "Phase C->I",
     multiSelect: false,
     options: [
-      { label: "Accepter et Documenter (Recommended)", description: "Passer à la phase documentation" },
-      { label: "Demander Security Review", description: "Audit sécurité approfondi nécessaire" },
-      { label: "Demander QA Validation", description: "Tests QA additionnels nécessaires" },
+      { label: "Accepter et Documenter (Recommended)", description: "Passer a la phase documentation" },
+      { label: "Demander Security Review", description: "Audit securite approfondi necessaire" },
+      { label: "Demander QA Validation", description: "Tests QA additionnels necessaires" },
       { label: "Traiter les findings", description: "Corriger les issues avant de continuer" }
     ]
   }]
 })
 ```
 
-⏸️ ATTENDS la réponse utilisateur avant de continuer.
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 

@@ -7,6 +7,13 @@ next_step: steps/step-07-memory.md
 
 # Step 06: Finish
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [output-templates.md](../references/output-templates.md#finish-output) | Completion output format |
+| [breakpoint-formats.md](../references/breakpoint-formats.md#finish) | Completion summary box |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER skip final validation
@@ -52,67 +59,13 @@ next_step: steps/step-07-memory.md
 
 ## OUTPUT FORMAT:
 
-```
-## Implementation Complete
-
-### Feature: {feature-slug}
-- Status: ✅ COMPLETED
-- Complexity: {STANDARD|LARGE}
-- Duration: {time}
-
-### Deliverables
-✅ Implementation code
-✅ Unit tests ({coverage}%)
-✅ Integration tests
-✅ Feature Document
-✅ Documentation updates
-
-### Files Summary
-| Action | Count | Files |
-|--------|-------|-------|
-| Created | {N} | {list} |
-| Modified | {N} | {list} |
-
-### Test Summary
-- Total tests: {N}
-- All passing: ✅
-- Coverage: {%}
-
-### Key Decisions
-- {decision 1}
-- {decision 2}
-
-### Known Limitations
-- {limitation 1 if any}
-
-### Next Steps
-1. Review changes: `git diff`
-2. Stage files: `git add {files}`
-3. Commit: `git commit -m "feat({scope}): {description}"`
-4. Create PR (if applicable)
-```
+APPLY template from [output-templates.md#finish-output](../references/output-templates.md#finish-output)
 
 ## COMPLETION SUMMARY:
 
-┌─────────────────────────────────────────────────────────────────────┐
-│ ✅ IMPLEMENTATION COMPLETE                                          │
-├─────────────────────────────────────────────────────────────────────┤
-│ Feature: {feature-slug}                                             │
-│                                                                     │
-│ Summary:                                                            │
-│ • {N} files created                                                 │
-│ • {N} files modified                                                │
-│ • {N} tests added ({coverage}% coverage)                            │
-│ • Documentation complete                                            │
-│                                                                     │
-│ EPCI Phases Completed:                                              │
-│ ✅ [E] Explore                                                      │
-│ ✅ [P] Plan                                                         │
-│ ✅ [C] Code                                                         │
-│ ✅ [I] Inspect                                                      │
-│                                                                     │
-│ Ready for commit and review.                                        │
-└─────────────────────────────────────────────────────────────────────┘
+AFFICHE le format depuis [breakpoint-formats.md#finish](../references/breakpoint-formats.md#finish)
+
+**Note:** Info-only display, no user interaction required.
 
 ## NEXT STEP TRIGGER:
 

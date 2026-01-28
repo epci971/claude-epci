@@ -166,6 +166,8 @@ ELSE IF complexity == LARGE:
 
 - [references/tdd-rules.md](references/tdd-rules.md) — TDD workflow rules
 - [references/review-checklists.md](references/review-checklists.md) — Code review checklists
+- [references/breakpoint-formats.md](references/breakpoint-formats.md) — ASCII box templates for breakpoints
+- [references/output-templates.md](references/output-templates.md) — Output format templates
 
 ## Shared Components Used
 

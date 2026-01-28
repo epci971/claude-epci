@@ -7,6 +7,12 @@ next_step: steps/step-02-plan.md
 
 # Step 01: Explore [E]
 
+## Reference Files Used
+
+| Reference | Purpose |
+|-----------|---------|
+| [breakpoint-formats.md](../references/breakpoint-formats.md#explore) | Breakpoint ASCII box |
+
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER modify any files during exploration
@@ -88,8 +94,8 @@ very thorough
 ## Exploration Findings
 
 ### Relevant Files
-- `path/to/file1.ts` — {purpose}
-- `path/to/file2.ts` — {purpose}
+- `path/to/file1.ts` - {purpose}
+- `path/to/file2.ts` - {purpose}
 
 ### Existing Patterns
 - Pattern 1: {description}
@@ -100,64 +106,34 @@ very thorough
 - External: {list}
 
 ### Files to Modify
-- `path/to/modify1.ts` — {change type}
-- `path/to/modify2.ts` — {change type}
+- `path/to/modify1.ts` - {change type}
+- `path/to/modify2.ts` - {change type}
 
 ### Files to Create
-- `path/to/new1.ts` — {purpose}
+- `path/to/new1.ts` - {purpose}
 ```
 
 ## BREAKPOINT: Exploration Complete (OBLIGATOIRE)
 
-AFFICHE cette boîte:
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ 🔍 EXPLORATION TERMINÉE [E→P]                                       │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ RÉSUMÉ DE PHASE                                                     │
-│ • Phase terminée: explore                                           │
-│ • Phase suivante: plan                                              │
-│ • Durée: {duration}                                                 │
-│ • Fichiers modifiés: aucun (read-only)                              │
-│ • Tests: N/A                                                        │
-│                                                                     │
-│ CHECKPOINT                                                          │
-│ • ID: {feature_id}-checkpoint-explore                               │
-│ • Reprise possible: oui                                             │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] Réviser {N} fichiers à modifier avant planning                 │
-│ [P2] Suivre les patterns identifiés: {patterns}                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Continuer vers Plan (Recommended) — Planifier implémentation│
-│ │  [B] Étendre exploration — Explorer plus de fichiers           │ │
-│ │  [C] Abandonner — Scope trop large                             │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+AFFICHE le format depuis [breakpoint-formats.md#explore](../references/breakpoint-formats.md#explore)
 
 APPELLE:
 ```
 AskUserQuestion({
   questions: [{
-    question: "Passer à la phase Planning?",
-    header: "Phase E→P",
+    question: "Passer a la phase Planning?",
+    header: "Phase E->P",
     multiSelect: false,
     options: [
-      { label: "Continuer vers Plan (Recommended)", description: "Procéder à la planification" },
-      { label: "Étendre exploration", description: "Explorer plus de fichiers avant de planifier" },
-      { label: "Abandonner", description: "Scope trop large, annuler implémentation" }
+      { label: "Continuer vers Plan (Recommended)", description: "Proceder a la planification" },
+      { label: "Etendre exploration", description: "Explorer plus de fichiers avant de planifier" },
+      { label: "Abandonner", description: "Scope trop large, annuler implementation" }
     ]
   }]
 })
 ```
 
-⏸️ ATTENDS la réponse utilisateur avant de continuer.
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
 ## NEXT STEP TRIGGER:
 
