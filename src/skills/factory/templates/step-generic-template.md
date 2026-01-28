@@ -15,6 +15,7 @@
 | `{{protocols}}` | List of protocol steps | `[{verb: "Analyze", description: "..."}]` |
 | `{{has_breakpoint}}` | Whether step has breakpoint | `true/false` |
 | `{{breakpoint_type}}` | Breakpoint type | `validation`, `plan-review` |
+| `{{reference_files}}` | List of referenced files | `[{name, filename, purpose}]` |
 
 ---
 
@@ -53,37 +54,30 @@
 {{/if}}
 {{/each}}
 
-{{#if reference_files}}
 ## Reference Files Used
 
+{{#if reference_files}}
+| Reference | Purpose |
+|-----------|---------|
 {{#each reference_files}}
-- [{{this.name}}](../references/{{this.filename}}) — {{this.purpose}}
+| [{{this.name}}](../references/{{this.filename}}) | {{this.purpose}} |
 {{/each}}
+
+> **Note**: Apply formats/rules from references, don't duplicate inline.
+{{else}}
+*No external references required for this step.*
 {{/if}}
 
 {{#if has_breakpoint}}
 ### X. BREAKPOINT: {{step_title}} Validation (OBLIGATOIRE)
 
-AFFICHE cette boîte:
+AFFICHE le format approprié depuis references/breakpoint-formats.md (si disponible).
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│ ✅ {{step_title}} VALIDATION                                        │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ {Step-specific data to display}                                     │
-│                                                                     │
-├─────────────────────────────────────────────────────────────────────┤
-│ ┌─ Options ──────────────────────────────────────────────────────┐ │
-│ │  [A] Continuer (Recommended) — Proceed to next step            │ │
-│ │  [B] Modifier — Adjust current step                            │ │
-│ │  [C] Annuler — Stop workflow                                   │ │
-│ │  [?] Autre réponse...                                          │ │
-│ └────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────┘
-```
+Remplis les variables requises pour ce breakpoint:
+- Step-specific data placeholders
+- Proactive suggestions (P1/P2/P3)
 
-APPELLE:
+APPELLE AskUserQuestion avec:
 ```
 AskUserQuestion({
   questions: [{
@@ -100,6 +94,8 @@ AskUserQuestion({
 ```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
+
+> **Alternative**: Use `@skill:epci:breakpoint-system` if interactive with type `{{breakpoint_type}}`.
 {{/if}}
 
 ## Outputs

@@ -99,17 +99,50 @@ description: >-
 | 2 | steps/*.md | Declarative procedures | 50-150 each |
 | 3 | references/*.md | Schemas, templates, tables | Variable |
 
+### 7.1 Content Location Matrix
+
+| Content Type | Location | Threshold |
+|--------------|----------|-----------|
+| Procedure (WHAT to do) | steps/ | Always |
+| ASCII templates | references/ | > 10 lines |
+| JSON schemas | references/ | > 5 fields |
+| Lookup tables | references/ | > 10 rows |
+| Business rules | references/ | > 3 rules |
+| Breakpoint formats | references/ | Always centralize |
+| AskUserQuestion options | references/ | If reused across steps |
+
+### Decision Tree
+
+```
+1. Is it a FORMAT (visual display)?
+   → references/ (breakpoint-formats.md pattern)
+
+2. Is it a RULE/THRESHOLD?
+   → references/ if reused, inline if unique to step
+
+3. Is it ORCHESTRATION (IF/FOR/Task)?
+   → steps/ (this is procedural logic)
+
+4. Is it DATA (schema, lookup table)?
+   → references/
+
+5. Is it > 20 lines of inline content?
+   → Extract to references/
+```
+
 ### Rules
 
 **DO**:
 - Link from step to reference: `See [references/file.md](../references/file.md)`
 - Keep step descriptions under 50 words per action
 - Maintain single source of truth in references/
+- Add "Reference Files Used" table in each step
 
 **DO NOT**:
 - Duplicate schemas in steps/
 - Embed full templates in steps/
 - Copy reference tables into procedures
+- Inline ASCII boxes > 10 lines
 
 ### Step Content Guidelines
 
@@ -121,6 +154,7 @@ Steps should be **declarative** (WHAT to do), not **definitional** (data/schema)
 | Template | references/ | Full markdown template |
 | Schema | references/ | JSON/YAML structure |
 | Table > 10 rows | references/ | Scoring criteria, rules |
+| Breakpoint format | references/ | ASCII box with variables |
 
 ---
 

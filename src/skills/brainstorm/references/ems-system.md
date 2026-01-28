@@ -234,14 +234,67 @@ Options:
 
 ## Initialization
 
-EMS starts at **0** and is initialized after brief validation:
+EMS starts at **0** and is initialized after brief validation.
 
-| Condition | Initial Score |
-|-----------|---------------|
-| Brief validated | Clarity: 40, others: 20 |
-| + Sources analyzed | Depth: +10, Coverage: +10 |
-| + History found | Clarity: +10 |
-| + HMW generated | Coverage: +5 |
+### Initial Scores Based on Clarity
+
+| Clarity Score | Initial EMS Clarity | Other Axes |
+|---------------|---------------------|------------|
+| >= 0.8 | 60 | 25 each |
+| 0.6 - 0.79 | 45 | 20 each |
+| 0.4 - 0.59 | 30 | 20 each |
+| < 0.4 | 20 | 15 each |
+
+### Initialization Bonuses
+
+| Condition | Bonus |
+|-----------|-------|
+| Brief validated | Clarity: +20 |
+| Sources analyzed | Depth: +10, Coverage: +10 |
+| History found | Clarity: +10 |
+| HMW generated | Coverage: +5 |
+
+### Example Initialization
+
+```
+Input clarity: 0.7 (medium)
+→ Initial Clarity: 45
+→ After brief validated: 45 + 20 = 65
+→ After HMW generated: Coverage += 5
+
+Starting EMS:
+- Clarity: 65
+- Depth: 20
+- Coverage: 25
+- Decisions: 20
+- Actionability: 20
+- Global: 65×0.25 + 20×0.25 + 25×0.20 + 20×0.20 + 20×0.10 = 32.25 ≈ 32
+```
+
+### Progression Triggers
+
+EMS recalculation occurs when:
+
+| Trigger | Action |
+|---------|--------|
+| User response integrated | Full recalculation |
+| Decision made explicit | +15-20 Decisions axis |
+| Technique applied | Context-dependent bonus |
+| Thread closed | +10 Decisions axis |
+| Deep dive completed | +15-20 Depth axis |
+| New angle explored | +10-15 Coverage axis |
+
+### Delta Interpretation
+
+| Delta | Interpretation | Typical Cause |
+|-------|----------------|---------------|
+| +20 or more | Major breakthrough | Framework applied, key insight |
+| +15 to +19 | Excellent progress | Multiple good answers |
+| +10 to +14 | Good progress | Solid iteration |
+| +5 to +9 | Moderate progress | Standard answers |
+| +3 to +4 | Low progress | Minimal new info |
+| < +3 | Stagnation | Repeat questions, user fatigue |
+| Negative | Regression | Scope expansion, lost clarity |
 
 ## EMS in Checkpoints
 
