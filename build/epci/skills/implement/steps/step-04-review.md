@@ -42,8 +42,7 @@ conditional_next:
 
 Delegate code review to the code-reviewer agent:
 
-```typescript
-Task({
+LANCE Task({
   subagent_type: "code-reviewer",
   model: "opus",
   prompt: `
@@ -70,7 +69,6 @@ Review report with:
 - Verdict: APPROVED / CHANGES_REQUIRED / SECURITY_REVIEW_NEEDED
   `
 })
-```
 
 ### 2. Process Review Results
 

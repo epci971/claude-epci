@@ -40,8 +40,7 @@ conditional_next:
 
 LANCE l'agent planner pour générer un preview de l'implémentation:
 
-```
-Task({
+LANCE Task({
   subagent_type: "planner",
   model: "sonnet",
   prompt: "Génère un preview d'implémentation pour ce brainstorm.
@@ -61,7 +60,6 @@ Task({
       risks: [...]
     }"
 })
-```
 
 ATTENDS le résultat avant de continuer.
 
@@ -109,7 +107,7 @@ IF NOT --no-security flag:
 IF trigger_security_audit:
   LANCE l'agent security-auditor:
 
-  Task({
+  LANCE Task({
     subagent_type: "security-auditor",
     model: "opus",
     prompt: "Effectue un audit de sécurité préventif pour ce brainstorm.

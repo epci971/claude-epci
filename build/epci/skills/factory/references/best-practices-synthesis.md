@@ -380,15 +380,18 @@ Claude Code provides built-in agents optimized for specific tasks:
 
 ### Invocation Example
 
-```typescript
+```markdown
 // Native agent (generic exploration)
-Task({
+LANCE Task({
   subagent_type: "Explore",
   prompt: `Find files related to authentication...`
 })
 
 // Custom agent (EPCI-specific validation)
-Task({
+LANCE Task({
   subagent_type: "plan-validator",
   prompt: `Validate plan against CQNT criteria...`
 })
+```
+
+**Note syntaxe**: Dans les fichiers steps/, `LANCE Task({...})` est **inline** sans backticks.

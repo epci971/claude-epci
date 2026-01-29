@@ -112,8 +112,7 @@ Store for later steps:
 
 ### 4. Launch @Explore (Background)
 
-```typescript
-Task({
+LANCE Task({
   subagent_type: "Explore",
   model: "haiku",
   run_in_background: true,
@@ -132,7 +131,6 @@ Explore codebase for brainstorm context
 medium
   `
 })
-```
 
 ### 5. Check Special Modes
 

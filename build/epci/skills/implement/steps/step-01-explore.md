@@ -34,8 +34,7 @@ next_step: steps/step-02-plan.md
 
 Delegate comprehensive codebase exploration to Claude Code's native Explore agent:
 
-```typescript
-Task({
+LANCE Task({
   subagent_type: "Explore",
   model: "haiku",
   prompt: `
@@ -57,7 +56,6 @@ very thorough
 - Files to modify/create list
   `
 })
-```
 
 **Why Native Explore:**
 - Read-only guaranteed (no accidental modifications)

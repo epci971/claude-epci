@@ -39,8 +39,7 @@ conditional_next:
 
 Delegate security audit to the security-auditor agent:
 
-```typescript
-Task({
+LANCE Task({
   subagent_type: "security-auditor",
   model: "opus",
   prompt: `
@@ -65,7 +64,6 @@ Security audit report with:
 - Verdict: PASS / FAIL_CRITICAL / FAIL_HIGH
   `
 })
-```
 
 ### 2. Process Security Audit Results
 

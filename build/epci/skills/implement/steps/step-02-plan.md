@@ -40,8 +40,7 @@ next_step: steps/step-03-code.md
 
 Delegate task decomposition to the planner agent:
 
-```typescript
-Task({
+LANCE Task({
   subagent_type: "planner",
   model: "sonnet",
   prompt: `
@@ -62,12 +61,10 @@ Atomic tasks (2-15 min each) with dependencies, ordered by implementation sequen
 Include test strategy for each task.
   `
 })
-```
 
 ### 3. Validate Plan with @plan-validator (Opus)
 
-```typescript
-Task({
+LANCE Task({
   subagent_type: "plan-validator",
   model: "opus",
   prompt: `
@@ -87,7 +84,6 @@ Task({
 APPROVED or NEEDS_REVISION with specific feedback
   `
 })
-```
 
 **Handle Result:**
 - If APPROVED: continue to breakpoint

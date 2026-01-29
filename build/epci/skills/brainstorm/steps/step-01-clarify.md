@@ -58,8 +58,7 @@ ELSE:
 **Mode Turbo (--turbo flag)**:
 Lance un agent clarifier pour générer les questions rapidement.
 
-```
-Task({
+LANCE Task({
   subagent_type: "clarifier",
   model: "haiku",
   prompt: "Génère 2-3 questions de clarification pour ce brainstorm.
@@ -68,7 +67,6 @@ Task({
 
     Retourne: questions[] avec catégorie, texte, suggestion."
 })
-```
 
 **Mode Standard**:
 Génère les questions selon le score de clarté:

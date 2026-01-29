@@ -27,8 +27,7 @@ Based on complexity from step-01:
 
 When task is near SMALL complexity limit, delegate to planner agent:
 
-```typescript
-Task({
+LANCE Task({
   subagent_type: "planner",
   model: "sonnet",
   prompt: `
@@ -55,7 +54,6 @@ Minimal plan with:
 - Completion criteria
   `
 })
-```
 
 ### 3. For TINY Tasks: Generate Inline Plan
 
