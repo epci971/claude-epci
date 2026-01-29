@@ -73,6 +73,12 @@ INPUT
 │  Step 00: INIT                                                       │
 │  └─ Detect complexity, validate input                                │
 │     └─ If TINY/SMALL → step-00b-turbo (redirect to /quick)           │
+│     └─ If STANDARD/LARGE → step-00c-worktree                         │
+│                                                                      │
+│  Step 00c: WORKTREE [W] (STANDARD+ only)                             │
+│  └─ Check existing worktree status                                   │
+│  └─ Offer worktree creation (opt-in)                                 │
+│     └─ BREAKPOINT: Worktree setup                                    │
 │                                                                      │
 │  Step 01: EXPLORE [E]                                                │
 │  └─ Read-only codebase analysis                                      │
@@ -107,6 +113,8 @@ INPUT
 │  └─ Collect modified_files list                                      │
 │  └─ Count tests added                                                │
 │  └─ Append/update index.json                                         │
+│  └─ If worktree: offer finalization                                  │
+│     └─ BREAKPOINT: Worktree finalization                             │
 │                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -117,6 +125,7 @@ INPUT
 |------|------|-------|-------------|
 | 00 | init | - | Detect complexity, validate input |
 | 00b | turbo | - | Redirect TINY/SMALL to /quick |
+| 00c | worktree | [W] | Worktree setup for parallel dev (opt-in) |
 | 01 | explore | [E] | Read-only codebase analysis |
 | 02 | plan | [P] | Implementation planning |
 | 03 | code | [C] | TDD implementation |
@@ -133,8 +142,10 @@ INPUT
 IF complexity == TINY or SMALL:
   → Redirect to /quick (step-00b-turbo)
 ELSE IF complexity == STANDARD:
-  → Full EPCI workflow (step-01 → step-06)
+  → Worktree setup (step-00c, opt-in)
+  → Full EPCI workflow (step-01 → step-07)
 ELSE IF complexity == LARGE:
+  → Worktree setup (step-00c, opt-in)
   → Full EPCI workflow with enhanced reviews
   → Always include step-04b-security
 ```
@@ -152,6 +163,7 @@ ELSE IF complexity == LARGE:
 
 - [steps/step-00-init.md](steps/step-00-init.md) — Initialization
 - [steps/step-00b-turbo.md](steps/step-00b-turbo.md) — Turbo redirect
+- [steps/step-00c-worktree.md](steps/step-00c-worktree.md) — Worktree setup [W]
 - [steps/step-01-explore.md](steps/step-01-explore.md) — Exploration [E]
 - [steps/step-02-plan.md](steps/step-02-plan.md) — Planning [P]
 - [steps/step-03-code.md](steps/step-03-code.md) — Coding [C]
@@ -184,13 +196,59 @@ This skill uses `epci:breakpoint-system` at key workflow points.
 | Step | Type | Purpose |
 |------|------|---------|
 | step-00-init | `validation` | Complexity assessment confirmation |
+| step-00c-worktree | `validation` | Worktree opt-in decision |
 | step-01-explore | `phase-transition` | Exploration [E] → Planning [P] |
 | step-02-plan | `plan-review` | Plan validation before coding |
 | step-04-review | `phase-transition` | Coding [C] → Inspection [I] |
 | step-04b-security | `validation` | Security review approval |
 | step-04c-qa | `validation` | QA validation approval |
+| step-07-memory | `validation` | Worktree finalization (if enabled) |
 
 **Note:** Les step files utilisent le format impératif direct (pas `@skill:epci:breakpoint-system`).
+
+## Worktree Support
+
+For STANDARD and LARGE features, /implement offers optional worktree isolation.
+
+| Aspect | Behavior |
+|--------|----------|
+| Location | `../worktrees/{feature-slug}/` |
+| Branch | `feature/{feature-slug}` |
+| Activation | Opt-in via breakpoint at step-00c |
+| Cleanup | Offered at step-07 completion |
+
+### Benefits
+
+- **Parallel development**: Run multiple /implement sessions simultaneously
+- **Clean isolation**: Each feature has its own working directory
+- **Safe rollback**: Abandon worktree without affecting main repo
+- **Branch ready**: Feature branch preserved for PR creation
+
+### Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/worktree-create.sh` | Create worktree with branch |
+| `scripts/worktree-status.sh` | Check worktree status (JSON) |
+| `scripts/worktree-finalize.sh` | Remove worktree, optionally delete branch |
+
+### State Tracking
+
+Worktree metadata is persisted in `state.json`:
+
+```json
+{
+  "worktree": {
+    "enabled": true,
+    "path": "../worktrees/feature-slug",
+    "branch": "feature/feature-slug",
+    "status": "active",
+    "created_at": "2026-01-29T10:00:00Z"
+  }
+}
+```
+
+Status transitions: `active` → `merged` (finalized) or `abandoned` (deleted)
 
 ## INVOCATION PROTOCOL (CRITICAL)
 

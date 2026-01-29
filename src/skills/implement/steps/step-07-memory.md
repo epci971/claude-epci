@@ -14,10 +14,12 @@ next_step: null
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - 🔴 NEVER skip index.json update
+- 🔴 NEVER skip worktree finalization if enabled
 - ✅ ALWAYS generate a concise summary (1-2 sentences)
 - ✅ ALWAYS collect all modified files
 - ✅ ALWAYS count tests added
-- 💭 FOCUS on persistence for future sessions
+- ✅ ALWAYS check worktree status before completion
+- 💭 FOCUS on persistence and cleanup for future sessions
 
 ## EXECUTION PROTOCOLS:
 
@@ -40,6 +42,13 @@ next_step: null
    - Path: `.claude/state/features/index.json`
    - Add/update feature entry with new fields
    - Use state-manager skill for persistence
+
+5. **Check** worktree status
+
+IF state.worktree?.enabled == true:
+  → Proceed to Worktree Finalization Breakpoint (section below)
+ELSE:
+  → Proceed to Completion Summary (normal flow)
 
 ## CONTEXT BOUNDARIES:
 
@@ -91,7 +100,7 @@ For an OAuth feature:
 
 AFFICHE cette boîte (info-only, pas d'interaction):
 
-```
+
 +------------------------------------------------------------------+
 | [M] MEMORY PHASE COMPLETE                                        |
 +------------------------------------------------------------------+
@@ -105,7 +114,7 @@ AFFICHE cette boîte (info-only, pas d'interaction):
 | index.json updated at:                                           |
 | .claude/state/features/index.json                                |
 +------------------------------------------------------------------+
-```
+
 
 Remplis les variables:
 - `{feature-slug}`: Feature identifier
@@ -114,6 +123,74 @@ Remplis les variables:
 - `{tests_count}`: Tests added count
 
 **Note:** Info-only display, no AskUserQuestion needed.
+
+## WORKTREE FINALIZATION BREAKPOINT (if worktree enabled):
+
+IF state.worktree?.enabled == true AND state.worktree.status == "active":
+
+First, check worktree status:
+
+EXECUTE Bash({
+  command: "./scripts/worktree-status.sh {feature-slug}",
+  description: "Check worktree status for finalization"
+})
+
+AFFICHE cette boite:
+
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ WORKTREE FINALIZATION                                               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│ Feature: {feature-slug}                                             │
+│ Worktree: {worktree.path}                                           │
+│ Branch: {worktree.branch}                                           │
+│ Status: {clean/uncommitted changes}                                 │
+│                                                                     │
+│ Feature implementation is complete. Choose how to handle worktree:  │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ ┌─ Options ──────────────────────────────────────────────────────┐ │
+│ │  [A] Finalize (Recommended) - Cleanup worktree, keep branch    │ │
+│ │  [B] Keep worktree - Continue working in worktree              │ │
+│ │  [C] Abandon - Cleanup worktree, delete branch                 │ │
+│ │  [?] Autre reponse...                                          │ │
+│ └────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+
+
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Comment finaliser le worktree?",
+    header: "Worktree",
+    multiSelect: false,
+    options: [
+      { label: "Finalize (Recommended)", description: "Remove worktree, keep branch for PR" },
+      { label: "Keep worktree", description: "Keep working in worktree" },
+      { label: "Abandon", description: "Remove worktree and delete branch" }
+    ]
+  }]
+})
+
+⏸️ ATTENDS la reponse utilisateur avant de continuer.
+
+### Handle Finalization Choice
+
+**IF "Finalize" selected:**
+1. Check for uncommitted changes (warn if present)
+2. Execute: `./scripts/worktree-finalize.sh {feature-slug}`
+3. Update state.worktree.status = "merged"
+4. Change directory back to main repo
+5. Log: "Worktree finalized. Branch {branch} ready for PR."
+
+**IF "Keep worktree" selected:**
+1. Keep state.worktree.status = "active"
+2. Log: "Worktree kept at {path}. Remember to finalize later."
+
+**IF "Abandon" selected:**
+1. Execute: `./scripts/worktree-finalize.sh {feature-slug} --force --delete-branch`
+2. Update state.worktree.status = "abandoned"
+3. Log: "Worktree abandoned and cleaned up."
 
 ## NEXT STEP TRIGGER:
 

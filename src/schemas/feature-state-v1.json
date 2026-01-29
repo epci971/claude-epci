@@ -38,6 +38,36 @@
     "context": {
       "type": "object",
       "description": "Additional context for resumption"
+    },
+    "worktree": {
+      "type": "object",
+      "description": "Git worktree metadata for parallel development",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether worktree is active for this feature"
+        },
+        "path": {
+          "type": "string",
+          "description": "Absolute path to the worktree directory"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Branch name (e.g., feature/feature-slug)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "merged", "abandoned"],
+          "description": "Current worktree status"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the worktree was created"
+        }
+      },
+      "required": ["enabled"],
+      "additionalProperties": false
     }
   }
 }

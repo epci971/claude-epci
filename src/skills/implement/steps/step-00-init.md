@@ -2,10 +2,12 @@
 name: step-00-init
 description: Initialize implement workflow and detect complexity
 prev_step: null
-next_step: steps/step-01-explore.md
+next_step: steps/step-00c-worktree.md
 conditional_next:
   - condition: "complexity == TINY or complexity == SMALL"
     step: steps/step-00b-turbo.md
+  - condition: "complexity == STANDARD or complexity == LARGE"
+    step: steps/step-00c-worktree.md
 ---
 
 # Step 00: Initialization
@@ -44,9 +46,29 @@ conditional_next:
 
 5. **Route** based on complexity
    - TINY/SMALL → step-00b-turbo (redirect to /quick)
-   - STANDARD/LARGE → step-01-explore
+   - STANDARD/LARGE → step-00c-worktree (worktree setup, then explore)
 
-6. **Initialize** Feature Document (STANDARD+ only)
+6. **Resume Worktree Context** (if --continue with existing state)
+
+IF resuming from state AND state.worktree.enabled == true:
+
+EXECUTE Bash({
+  command: "./scripts/worktree-status.sh {feature-slug}",
+  description: "Check existing worktree status"
+})
+
+Parse result:
+- If exists AND status == "active":
+  - Change working directory to state.worktree.path
+  - Log: "Resumed in worktree: {path}"
+- If exists but status != "active":
+  - Warn: "Worktree exists but status is {status}"
+  - Offer to recreate or continue in main repo
+- If not exists:
+  - Warn: "Worktree no longer exists"
+  - Offer to recreate or continue in main repo
+
+7. **Initialize** Feature Document (STANDARD+ only)
    - Create `.epci/features/{feature-slug}/FEATURE.md` skeleton
    - Record complexity, start time, initial scope
 
@@ -115,6 +137,13 @@ APPELLE AskUserQuestion({
 
 ## NEXT STEP TRIGGER:
 
-When complexity is STANDARD or LARGE and user confirms, proceed to `step-01-explore.md`.
+### For STANDARD or LARGE complexity:
+When complexity is STANDARD or LARGE and user confirms, proceed to `step-00c-worktree.md`.
 
-If complexity is TINY or SMALL, proceed to `step-00b-turbo.md`.
+The worktree step will:
+- Offer worktree creation for parallel development
+- If accepted: create worktree, then proceed to explore
+- If declined: proceed to explore in main repo
+
+### For TINY or SMALL complexity:
+Proceed to `step-00b-turbo.md` (redirect to /quick).

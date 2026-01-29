@@ -436,6 +436,100 @@ function showFeatureDashboard() {
 
 ---
 
+## Worktree State Examples
+
+### State with Active Worktree
+
+When a feature uses worktree isolation:
+
+```json
+{
+  "feature_slug": "auth-oauth",
+  "status": "in_progress",
+  "created_at": "2026-01-29T10:00:00Z",
+  "current_phase": "implementation",
+  "worktree": {
+    "enabled": true,
+    "path": "/home/user/projects/worktrees/auth-oauth",
+    "branch": "feature/auth-oauth",
+    "status": "active",
+    "created_at": "2026-01-29T10:05:00Z"
+  }
+}
+```
+
+### State without Worktree (Default)
+
+For features that don't use worktree:
+
+```json
+{
+  "feature_slug": "quick-fix",
+  "status": "in_progress",
+  "created_at": "2026-01-29T14:00:00Z",
+  "current_phase": "implementation",
+  "worktree": {
+    "enabled": false
+  }
+}
+```
+
+### State with Completed Worktree
+
+After worktree finalization:
+
+```json
+{
+  "feature_slug": "user-profile",
+  "status": "completed",
+  "created_at": "2026-01-28T09:00:00Z",
+  "current_phase": "finalization",
+  "worktree": {
+    "enabled": true,
+    "path": "/home/user/projects/worktrees/user-profile",
+    "branch": "feature/user-profile",
+    "status": "merged",
+    "created_at": "2026-01-28T09:10:00Z"
+  }
+}
+```
+
+### Worktree Status Transitions
+
+| Status | Description |
+|--------|-------------|
+| `active` | Worktree is in use, feature in progress |
+| `merged` | Feature completed, worktree removed, branch preserved |
+| `abandoned` | Feature abandoned, worktree and branch deleted |
+
+### Resume with Worktree
+
+When using `--continue` with a worktree-enabled feature:
+
+```typescript
+async function resumeWithWorktree(slug: string) {
+  const state = state_manager.loadFeature(slug);
+
+  if (state.worktree?.enabled && state.worktree.status === "active") {
+    // Verify worktree exists
+    const status = await exec(`./scripts/worktree-status.sh ${slug}`);
+    const wt = JSON.parse(status);
+
+    if (wt.exists) {
+      // Change to worktree directory
+      process.chdir(state.worktree.path);
+      console.log(`Resumed in worktree: ${state.worktree.path}`);
+    } else {
+      console.warn("Worktree no longer exists. Recreate or continue in main repo?");
+    }
+  }
+
+  return state;
+}
+```
+
+---
+
 ## Storage Layout Reference
 
 ```

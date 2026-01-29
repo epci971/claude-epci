@@ -1,0 +1,184 @@
+{
+  "$schema": "../../schemas/prd-v2.json",
+  "version": "1.0.0",
+  "feature": {
+    "slug": "worktree-implement",
+    "title": "Git Worktree Integration in /implement",
+    "description": "Integration des git worktrees dans le skill /implement pour permettre le developpement parallele de plusieurs features",
+    "complexity": "STANDARD",
+    "routing": "/implement"
+  },
+  "source": {
+    "type": "brief",
+    "path": "docs/specs/worktree-implement/brief-worktree-implement-2026-01-29.md",
+    "ems_score": 78
+  },
+  "scope": {
+    "in": [
+      "Creation automatique de worktree par session /implement",
+      "Nettoyage apres merge/abandon",
+      "Gestion etat dans state-manager",
+      "Compatible --continue"
+    ],
+    "out": [
+      "Synchronisation bidirectionnelle entre worktrees",
+      "Integration dans /quick"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "task-001",
+      "slug": "worktree-scripts",
+      "title": "Create worktree shell scripts",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": [],
+      "files": [
+        {"path": "scripts/worktree-create.sh", "action": "create"},
+        {"path": "scripts/worktree-finalize.sh", "action": "create"},
+        {"path": "scripts/worktree-status.sh", "action": "create"}
+      ],
+      "acceptance_criteria": [
+        "Scripts create/remove worktrees correctly",
+        "Error handling covers edge cases",
+        "JSON output from status script"
+      ],
+      "steps": [
+        {"id": "step-1", "title": "Create worktree-create.sh", "duration_minutes": 25},
+        {"id": "step-2", "title": "Create worktree-finalize.sh", "duration_minutes": 25},
+        {"id": "step-3", "title": "Create worktree-status.sh", "duration_minutes": 20},
+        {"id": "step-4", "title": "Add error handling and tests", "duration_minutes": 20}
+      ]
+    },
+    {
+      "id": "task-002",
+      "slug": "state-schema",
+      "title": "Extend state.json schema",
+      "complexity": "S",
+      "estimated_minutes": 60,
+      "dependencies": [],
+      "files": [
+        {"path": "src/schemas/feature-state-v1.json", "action": "modify"},
+        {"path": "src/skills/core/state-manager/references/examples.md", "action": "modify"}
+      ],
+      "acceptance_criteria": [
+        "Schema includes worktree field",
+        "Backward compatible with existing states",
+        "Examples updated"
+      ],
+      "steps": [
+        {"id": "step-1", "title": "Update feature-state-v1.json schema", "duration_minutes": 20},
+        {"id": "step-2", "title": "Update state-manager examples", "duration_minutes": 20},
+        {"id": "step-3", "title": "Verify backward compatibility", "duration_minutes": 20}
+      ]
+    },
+    {
+      "id": "task-003",
+      "slug": "step-00c",
+      "title": "Create step-00c-worktree.md",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-001", "task-002"],
+      "files": [
+        {"path": "src/skills/implement/steps/step-00c-worktree.md", "action": "create"}
+      ],
+      "acceptance_criteria": [
+        "Step file follows conventions",
+        "Worktree creation flow works",
+        "Skip flow works",
+        "Existing worktree detection works"
+      ],
+      "steps": [
+        {"id": "step-1", "title": "Create step file skeleton", "duration_minutes": 20},
+        {"id": "step-2", "title": "Implement detection protocol", "duration_minutes": 25},
+        {"id": "step-3", "title": "Implement main breakpoint", "duration_minutes": 25},
+        {"id": "step-4", "title": "Implement creation and state update", "duration_minutes": 20}
+      ]
+    },
+    {
+      "id": "task-004",
+      "slug": "modify-init",
+      "title": "Modify step-00-init.md",
+      "complexity": "S",
+      "estimated_minutes": 60,
+      "dependencies": ["task-003"],
+      "files": [
+        {"path": "src/skills/implement/steps/step-00-init.md", "action": "modify"}
+      ],
+      "acceptance_criteria": [
+        "Frontmatter routes to worktree step",
+        "Resume logic handles worktree context",
+        "Documentation updated"
+      ],
+      "steps": [
+        {"id": "step-1", "title": "Update frontmatter navigation", "duration_minutes": 15},
+        {"id": "step-2", "title": "Add worktree resume logic", "duration_minutes": 25},
+        {"id": "step-3", "title": "Update next step trigger section", "duration_minutes": 20}
+      ]
+    },
+    {
+      "id": "task-005",
+      "slug": "modify-memory",
+      "title": "Modify step-07-memory.md",
+      "complexity": "S",
+      "estimated_minutes": 60,
+      "dependencies": ["task-003"],
+      "files": [
+        {"path": "src/skills/implement/steps/step-07-memory.md", "action": "modify"}
+      ],
+      "acceptance_criteria": [
+        "Worktree detection works",
+        "Finalization breakpoint presented",
+        "Cleanup execution correct"
+      ],
+      "steps": [
+        {"id": "step-1", "title": "Add worktree detection", "duration_minutes": 15},
+        {"id": "step-2", "title": "Create finalization breakpoint", "duration_minutes": 25},
+        {"id": "step-3", "title": "Implement finalization actions", "duration_minutes": 20}
+      ]
+    },
+    {
+      "id": "task-006",
+      "slug": "documentation",
+      "title": "Update documentation",
+      "complexity": "S",
+      "estimated_minutes": 45,
+      "dependencies": ["task-003", "task-004", "task-005"],
+      "files": [
+        {"path": "src/skills/implement/SKILL.md", "action": "modify"}
+      ],
+      "acceptance_criteria": [
+        "Workflow diagram updated",
+        "Step table includes new step",
+        "Usage examples added"
+      ],
+      "steps": [
+        {"id": "step-1", "title": "Update workflow overview", "duration_minutes": 20},
+        {"id": "step-2", "title": "Update step table and flags", "duration_minutes": 25}
+      ]
+    }
+  ],
+  "dag": {
+    "nodes": ["task-001", "task-002", "task-003", "task-004", "task-005", "task-006"],
+    "edges": [
+      {"from": "task-001", "to": "task-003"},
+      {"from": "task-002", "to": "task-003"},
+      {"from": "task-003", "to": "task-004"},
+      {"from": "task-003", "to": "task-005"},
+      {"from": "task-004", "to": "task-006"},
+      {"from": "task-005", "to": "task-006"}
+    ],
+    "critical_path": ["task-001", "task-003", "task-004", "task-006"]
+  },
+  "metrics": {
+    "total_tasks": 6,
+    "total_steps": 19,
+    "total_minutes": 405,
+    "optimized_minutes": 285,
+    "parallel_opportunities": 2
+  },
+  "generated": {
+    "timestamp": "2026-01-29T16:00:00Z",
+    "tool": "epci:spec v6.0"
+  }
+}
