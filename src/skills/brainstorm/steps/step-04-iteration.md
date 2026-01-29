@@ -61,8 +61,7 @@ FOR each response from previous iteration:
 
 LANCE l'agent ems-evaluator pour recalculer le score:
 
-```
-Task({
+LANCE Task({
   subagent_type: "ems-evaluator",
   model: "haiku",
   prompt: "Calcule l'EMS pour cette session brainstorm.
@@ -80,7 +79,6 @@ Task({
       strong_axes: [axes avec score >= 70]
     }"
 })
-```
 
 ATTENDS le résultat avant de continuer. Update EMS history in session state.
 
@@ -96,7 +94,7 @@ If triggered, update `session.active_persona` and signal switch at message start
 IF weak_axes not empty AND no_recent_technique:
   LANCE l'agent technique-advisor:
 
-  Task({
+  LANCE Task({
     subagent_type: "technique-advisor",
     model: "haiku",
     prompt: "Suggère technique adaptée aux axes faibles: {weak_axes}"

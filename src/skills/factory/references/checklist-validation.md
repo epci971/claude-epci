@@ -249,8 +249,16 @@ grep -l "BREAKPOINT:" steps/ | xargs grep -l "AskUserQuestion"
   init()
 ```
 
-**Correct invocation**:
-- Agents → `Task({ subagent_type: "agent-name", model: "model", prompt: "..." })`
+**Correct invocation** (dans les steps, sans backticks):
+```markdown
+LANCE Task({
+  subagent_type: "agent-name",
+  model: "model",
+  prompt: "..."
+})
+```
+
+- **Dans les steps**: `LANCE Task({...})` inline sans backticks
 - Core skills → Direct logic or Read/Write of state files
 - Stack skills → `Read("src/skills/stack/{stack}/SKILL.md")`
 

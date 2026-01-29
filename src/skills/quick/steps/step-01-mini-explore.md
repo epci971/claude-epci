@@ -25,8 +25,7 @@ next_step: steps/step-02-mini-plan.md
 
 Delegate fast codebase scan to Claude Code's native Explore agent:
 
-```typescript
-Task({
+LANCE Task({
   subagent_type: "Explore",
   model: "haiku",
   prompt: `
@@ -47,7 +46,6 @@ quick
 - Pattern: {key pattern to follow}
   `
 })
-```
 
 **Why Native Explore (Quick):**
 - Haiku model = fastest response

@@ -115,8 +115,7 @@ Implementation (`@implementer`) MUST NOT be delegated because:
 
 Each step that delegates to an agent MUST include:
 
-```typescript
-Task({
+LANCE Task({
   subagent_type: "{agent-name}",
   prompt: `
 ## Objective
@@ -129,7 +128,6 @@ Task({
 {format expected}
   `
 })
-```
 
 ### Anti-pattern: Description without Invocation
 
@@ -141,12 +139,11 @@ Task({
 ```
 
 ✅ REQUIRED:
-```typescript
-Task({
+
+LANCE Task({
   subagent_type: "code-reviewer",
   prompt: "..."
 })
-```
 
 ## 🔵 Native Agents (Built-in Claude Code)
 
@@ -180,9 +177,8 @@ Claude Code provides built-in agents optimized for specific tasks. Use these for
 
 ### Invocation Pattern
 
-```typescript
-Task({
-  subagent_type: "Explore",  // Native agent identifier
+LANCE Task({
+  subagent_type: "Explore",
   prompt: `
 ## Exploration Objective
 {objective}
@@ -200,7 +196,6 @@ Task({
 - Dependencies mapped
   `
 })
-```
 
 ### 3. Auto-Detect Stack Context
 

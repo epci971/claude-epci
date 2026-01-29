@@ -45,8 +45,7 @@ IMPLEMENTATION CONTEXT:
 
 Spawn Task with implementer agent:
 
-```typescript
-Task({
+LANCE Task({
   subagent_type: "implementer",
   model: "sonnet",
   prompt: `
@@ -66,7 +65,6 @@ Task({
 Red-Green-Verify (skip Refactor)
   `
 })
-```
 
 ### 3. Execute TDD Cycle
 
