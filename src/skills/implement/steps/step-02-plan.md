@@ -112,7 +112,6 @@ APPLY template from output-templates.md (section #plan-output importé ci-dessus
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ VALIDATION DU PLAN                                                  │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -152,7 +151,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{complexity}`: `TINY`/`SMALL`/`STANDARD`/`LARGE`
@@ -169,9 +167,7 @@ Remplis les variables:
 - `{feature-slug}`: Feature identifier
 - `{coverage_target}`: Target test coverage percentage
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Approuver le plan d'implementation?",
     header: "Plan Review",
@@ -183,7 +179,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

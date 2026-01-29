@@ -85,7 +85,6 @@ Apply quick mode adjustments from iteration-rules.md (section #quick-mode-adjust
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 📋 VALIDATION DU CADRAGE                                            │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -120,7 +119,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{template}`: Selected template (e.g., `feature-development`)
@@ -131,19 +129,18 @@ Remplis les variables:
 - `{question_constraints}`: Constraints question
 - `{question_timeline}`: Timeline question
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Prêt à démarrer les itérations d'exploration?",
-  "header": "Framing",
-  "multiSelect": false,
-  "options": [
-    { "label": "Démarrer itérations (Recommended)", "description": "Commencer exploration structurée" },
-    { "label": "Ajuster cadrage", "description": "Modifier template ou brief" },
-    { "label": "Ajouter contexte", "description": "Fournir plus de background d'abord" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Prêt à démarrer les itérations d'exploration?",
+    header: "Framing",
+    multiSelect: false,
+    options: [
+      { label: "Démarrer itérations (Recommended)", description: "Commencer exploration structurée" },
+      { label: "Ajuster cadrage", description: "Modifier template ou brief" },
+      { label: "Ajouter contexte", description: "Fournir plus de background d'abord" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

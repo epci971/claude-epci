@@ -130,7 +130,6 @@ Location: docs/specs/{feature-slug}/
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 📋 SPECIFICATIONS GENEREES                                          │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -168,7 +167,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{complexity}`: `TINY`/`SMALL`/`STANDARD`/`LARGE`
@@ -183,20 +181,19 @@ Remplis les variables:
 - `{size}`: PRD.json size in KB
 - `{feature-slug}`: Feature identifier
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Proceder avec les specifications?",
-  "header": "Specs Review",
-  "multiSelect": false,
-  "options": [
-    { "label": "Continuer vers Ralph (Recommended)", "description": "Generer artifacts d'execution" },
-    { "label": "Skip Ralph", "description": "Specs uniquement, pas d'artifacts execution" },
-    { "label": "Editer taches", "description": "Modifier fichiers taches generes" },
-    { "label": "Regenerer", "description": "Regenerer avec modifications" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Proceder avec les specifications?",
+    header: "Specs Review",
+    multiSelect: false,
+    options: [
+      { label: "Continuer vers Ralph (Recommended)", description: "Generer artifacts d'execution" },
+      { label: "Skip Ralph", description: "Specs uniquement, pas d'artifacts execution" },
+      { label: "Editer taches", description: "Modifier fichiers taches generes" },
+      { label: "Regenerer", description: "Regenerer avec modifications" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

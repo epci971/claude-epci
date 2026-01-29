@@ -127,7 +127,6 @@ If exploration reveals more complexity than expected:
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ALERTE COMPLEXITE                                                   │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -152,16 +151,13 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{initial_complexity}`: Original estimate (`TINY` or `SMALL`)
 - `{revised_complexity}`: Revised estimate after exploration (`STANDARD`)
 - `{complexity_reason}`: Why complexity seems higher
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Comment proceder avec la complexite plus elevee?",
     header: "Complexity",
@@ -173,7 +169,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

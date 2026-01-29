@@ -124,7 +124,6 @@ description: >-
 
 AFFICHE cette boîte:
 
-\`\`\`
 ┌─────────────────────────────────────────────────────────────────────┐
 │ {Icon} {TITLE}                                                       │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -136,15 +135,24 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-\`\`\`
 
-APPELLE AskUserQuestion:
-\`\`\`json
-{ "question": "...", "header": "...", "options": [...] }
-\`\`\`
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "...",
+    header: "...",
+    multiSelect: false,
+    options: [
+      { label: "...", description: "..." }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 ```
+
+**Note syntaxe**:
+- La boîte ASCII est **inline** (PAS de backticks autour)
+- `APPELLE AskUserQuestion({...})` est **direct** (PAS de `:` ni de backticks)
 
 **FORBIDDEN Pattern:**
 ```markdown

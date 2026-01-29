@@ -77,9 +77,7 @@ Remplis les variables requises pour ce breakpoint:
 - Step-specific data placeholders
 - Proactive suggestions (P1/P2/P3)
 
-APPELLE AskUserQuestion avec:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "How would you like to proceed?",
     header: "Action",
@@ -91,7 +89,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

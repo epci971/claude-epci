@@ -118,7 +118,6 @@ IF iter >= 2 AND ems.global < 50 AND weak_axes:
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 📊 STATUT ITÉRATION {iteration}                                     │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -152,7 +151,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 **Progress bar format**: `[████████░░] 80/100` (█ = filled, ░ = empty)
 
@@ -167,20 +165,19 @@ Remplis les variables:
 - `{technique}`: Suggested technique or `-`
 - `{weak_axes}`: Axes with score < 50
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Comment voulez-vous continuer?",
-  "header": "EMS {score}",
-  "multiSelect": false,
-  "options": [
-    { "label": "Continuer (Recommended)", "description": "Répondre aux questions et itérer" },
-    { "label": "Dive [sujet]", "description": "Approfondir un point spécifique" },
-    { "label": "Pivoter", "description": "Réorienter vers un sujet émergent" },
-    { "label": "Finir", "description": "Générer les outputs maintenant" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Comment voulez-vous continuer?",
+    header: "EMS {score}",
+    multiSelect: false,
+    options: [
+      { label: "Continuer (Recommended)", description: "Répondre aux questions et itérer" },
+      { label: "Dive [sujet]", description: "Approfondir un point spécifique" },
+      { label: "Pivoter", description: "Réorienter vers un sujet émergent" },
+      { label: "Finir", description: "Générer les outputs maintenant" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

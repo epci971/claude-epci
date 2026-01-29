@@ -54,11 +54,13 @@ SCAN each step using thresholds from best-practices-synthesis.md (section #7.2 i
 
 | Pattern | Threshold | Marker |
 |---------|-----------|--------|
-| ASCII boxes | > 10 lines | `[EXTRACT:breakpoint]` |
+| ASCII boxes (info-only) | > 10 lines | `[EXTRACT:template]` |
 | JSON schemas | > 5 fields | `[EXTRACT:schema]` |
 | Lookup tables | > 10 rows | `[EXTRACT:table]` |
 | Business rules | > 3 rules | `[EXTRACT:rules]` |
 | Output templates | > 20 lines | `[EXTRACT:template]` |
+
+**🔴 EXCEPTION CRITIQUE**: Les **breakpoints interactifs** (avec AskUserQuestion) ne sont **JAMAIS** extraits. Ils doivent rester inline dans les steps/, quelle que soit leur taille.
 
 ### 1.3 Map Extractions
 

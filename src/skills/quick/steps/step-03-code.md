@@ -114,7 +114,6 @@ If still failing after 2 retries:
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ECHEC TDD                                                           │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -142,16 +141,13 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{root_cause}`: Identified cause or `Unknown - needs investigation`
 - `{confidence}`: Confidence percentage in root cause
 - `{last_error}`: Last error message from failed test
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Tests en echec apres 2 tentatives. Comment proceder?",
     header: "TDD Failure",
@@ -163,7 +159,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

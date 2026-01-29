@@ -53,7 +53,6 @@ See solution-scoring.md (imported above) for formula.
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 🔍 ROOT CAUSE ANALYSIS COMPLETE                                     │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -80,11 +79,8 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Quelle solution implémenter?",
     header: "Solution",
@@ -96,7 +92,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

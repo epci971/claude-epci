@@ -105,7 +105,6 @@ Based on template and brief, generate research prompts:
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 🔍 PROMPTS DE RECHERCHE PERPLEXITY                                  │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -130,7 +129,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{topic_1}`: First research topic (e.g., "Authentication patterns")
@@ -139,19 +137,18 @@ Remplis les variables:
 - `{objective_1}`: Why this research helps
 - `{topic_2}`, `{mode_2}`, `{query_2}`, `{objective_2}`: Second research item
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Voulez-vous lancer ces recherches Perplexity?",
-  "header": "Research",
-  "multiSelect": false,
-  "options": [
-    { "label": "Lancer recherche (Recommended)", "description": "Je colle les résultats quand prêt" },
-    { "label": "Ignorer recherche", "description": "Continuer sans recherche externe" },
-    { "label": "Autres prompts", "description": "Ajuster le focus de recherche" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Voulez-vous lancer ces recherches Perplexity?",
+    header: "Research",
+    multiSelect: false,
+    options: [
+      { label: "Lancer recherche (Recommended)", description: "Je colle les résultats quand prêt" },
+      { label: "Ignorer recherche", description: "Continuer sans recherche externe" },
+      { label: "Autres prompts", description: "Ajuster le focus de recherche" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

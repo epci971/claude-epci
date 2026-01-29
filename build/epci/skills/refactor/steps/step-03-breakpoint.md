@@ -34,7 +34,6 @@ conditional_next:
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 📋 VALIDATION PLAN REFACTORING                                      │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -74,11 +73,8 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Procéder avec le plan de refactoring?",
     header: "Plan Review",
@@ -90,7 +86,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

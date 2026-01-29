@@ -195,7 +195,6 @@ Location: .ralph/{feature-slug}/
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ✅ SPECIFICATION COMPLETE                                           │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -222,7 +221,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{feature-slug}`: Feature slug from state
@@ -230,20 +228,19 @@ Remplis les variables:
 - `{slug}`: Same as feature-slug
 - `{skill}`: `/quick` or `/implement` based on complexity routing
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Comment voulez-vous proceder?",
-  "header": "Next Step",
-  "multiSelect": false,
-  "options": [
-    { "label": "Lancer {skill} (Recommended)", "description": "Demarrer workflow implementation" },
-    { "label": "Run Ralph Batch", "description": "Executer ./.ralph/{slug}/ralph.sh" },
-    { "label": "Review fichiers", "description": "Inspecter artifacts generes" },
-    { "label": "Termine", "description": "Fin workflow, implementer plus tard" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Comment voulez-vous proceder?",
+    header: "Next Step",
+    multiSelect: false,
+    options: [
+      { label: "Lancer {skill} (Recommended)", description: "Demarrer workflow implementation" },
+      { label: "Run Ralph Batch", description: "Executer ./.ralph/{slug}/ralph.sh" },
+      { label: "Review fichiers", description: "Inspecter artifacts generes" },
+      { label: "Termine", description: "Fin workflow, implementer plus tard" }
+    ]
+  }]
+})
 
 **Note**: Replace `{skill}` with `/quick` or `/implement` based on complexity routing.
 

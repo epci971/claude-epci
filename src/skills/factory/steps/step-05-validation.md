@@ -173,7 +173,6 @@ allowed-tools: {tools}
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ✅ SKILL PRÊT POUR GÉNÉRATION                                       │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -191,11 +190,8 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Comment voulez-vous procéder?",
     header: "Action",
@@ -207,7 +203,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

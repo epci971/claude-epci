@@ -134,7 +134,6 @@ IF trigger_security_audit:
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 👁️ PREVIEW IMPLÉMENTATION                                           │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -172,7 +171,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{complexity}`: Estimated overall complexity (`STANDARD`, etc.)
@@ -189,19 +187,18 @@ Remplis les variables:
 - `{concern}`: Specific concern for P2
 - `{mitigation}`, `{risk}`: Mitigation suggestion for P3
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Procéder à la génération du brief?",
-  "header": "Preview",
-  "multiSelect": false,
-  "options": [
-    { "label": "Générer brief (Recommended)", "description": "Créer outputs finaux" },
-    { "label": "Ajuster scope", "description": "Modifier selon preview" },
-    { "label": "Ajouter notes sécurité", "description": "Inclure recommandations sécurité" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Procéder à la génération du brief?",
+    header: "Preview",
+    multiSelect: false,
+    options: [
+      { label: "Générer brief (Recommended)", description: "Créer outputs finaux" },
+      { label: "Ajuster scope", description: "Modifier selon preview" },
+      { label: "Ajouter notes sécurité", description: "Inclure recommandations sécurité" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

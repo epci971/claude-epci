@@ -104,7 +104,6 @@ APPLY template from output-templates.md (section #security-output importé ci-de
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ SECURITY REVIEW TERMINE                                             │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -130,7 +129,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{feature-slug}`: Feature identifier
@@ -138,9 +136,7 @@ Remplis les variables:
 - `{vuln_critical}`: Critical/High severity count
 - `{vuln_low}`: Medium/Low severity count
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Accepter le resultat de la security review?",
     header: "Security",
@@ -152,7 +148,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

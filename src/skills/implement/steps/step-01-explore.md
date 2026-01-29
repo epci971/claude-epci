@@ -115,7 +115,6 @@ very thorough
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ EXPLORATION TERMINEE [E->P]                                         │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -143,7 +142,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{duration}`: Time spent in explore phase
@@ -151,9 +149,7 @@ Remplis les variables:
 - `{files_count}`: Number of files identified to modify
 - `{patterns}`: Identified code patterns (e.g., `Repository, Service`)
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Passer a la phase Planning?",
     header: "Phase E->P",
@@ -165,7 +161,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

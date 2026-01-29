@@ -81,7 +81,6 @@ APPLY template from output-templates.md (section #qa-output importé ci-dessus).
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ QA REVIEW TERMINE                                                   │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -107,7 +106,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{feature-slug}`: Feature identifier
@@ -116,9 +114,7 @@ Remplis les variables:
 - `{test_success_rate}`: Test success percentage
 - `{defects_count}`: Number of defects found
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Accepter le resultat de la validation QA?",
     header: "QA Review",
@@ -130,7 +126,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

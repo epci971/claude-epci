@@ -131,7 +131,6 @@ Ready for: Analysis & Decomposition
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ❓ CLARIFICATION NECESSAIRE                                         │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -153,26 +152,24 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{feature-slug}`: Kebab-case feature identifier
 - `{source_type}`: `text` or `discovery`
 - `{clarification_questions}`: List of questions from clarification-engine
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Comment voulez-vous clarifier?",
-  "header": "Clarify",
-  "multiSelect": false,
-  "options": [
-    { "label": "Repondre aux questions (Recommended)", "description": "Fournir clarifications inline" },
-    { "label": "Fournir fichier brief", "description": "Fournir un document brief structure" },
-    { "label": "Annuler", "description": "Annuler et affiner requirements" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Comment voulez-vous clarifier?",
+    header: "Clarify",
+    multiSelect: false,
+    options: [
+      { label: "Repondre aux questions (Recommended)", description: "Fournir clarifications inline" },
+      { label: "Fournir fichier brief", description: "Fournir un document brief structure" },
+      { label: "Annuler", description: "Annuler et affiner requirements" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 
@@ -180,7 +177,6 @@ APPELLE AskUserQuestion:
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 📄 SOURCE REQUISE                                                   │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -202,26 +198,24 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{feature-slug}`: Kebab-case feature identifier
 - `{slug}`: Same as feature-slug
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Comment voulez-vous fournir la source?",
-  "header": "Source",
-  "multiSelect": false,
-  "options": [
-    { "label": "Lancer /brainstorm d'abord (Recommended)", "description": "Explorer l'idee avant de specifier" },
-    { "label": "Fournir chemin brief", "description": "Chemin vers fichier brief existant" },
-    { "label": "Description texte", "description": "Decrire requirements inline" },
-    { "label": "Annuler", "description": "Abandonner le workflow" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Comment voulez-vous fournir la source?",
+    header: "Source",
+    multiSelect: false,
+    options: [
+      { label: "Lancer /brainstorm d'abord (Recommended)", description: "Explorer l'idee avant de specifier" },
+      { label: "Fournir chemin brief", description: "Chemin vers fichier brief existant" },
+      { label: "Description texte", description: "Decrire requirements inline" },
+      { label: "Annuler", description: "Abandonner le workflow" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

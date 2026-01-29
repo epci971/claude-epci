@@ -109,7 +109,6 @@ APPLY template from output-templates.md (section #review-output importé ci-dess
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ CODE REVIEW TERMINE [C->I]                                          │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -139,7 +138,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{duration}`: Time spent in code phase
@@ -152,9 +150,7 @@ Remplis les variables:
 - `{issues_count}`: Number of issues found by @code-reviewer
 - `{severity}`: Highest severity (`Critical`/`Important`/`Minor`)
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Proceder avec le resultat de la review?",
     header: "Phase C->I",
@@ -167,7 +163,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

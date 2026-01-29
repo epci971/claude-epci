@@ -89,7 +89,6 @@ Question categories:
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ❓ CLARIFICATION                                                    │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -114,7 +113,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{idea_raw}`: Original user idea from session state
@@ -122,19 +120,18 @@ Remplis les variables:
 - `{question_1}`, `{question_2}`: Clarification questions generated
 - `{suggestion_1}`, `{suggestion_2}`: Suggestions for each question
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Répondez aux questions pour clarifier votre idée:",
-  "header": "Clarify",
-  "multiSelect": false,
-  "options": [
-    { "label": "Répondre aux questions (Recommended)", "description": "Fournir réponses inline" },
-    { "label": "Ignorer clarification", "description": "Continuer tel quel" },
-    { "label": "Reformuler l'idée", "description": "Recommencer avec description plus claire" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Répondez aux questions pour clarifier votre idée:",
+    header: "Clarify",
+    multiSelect: false,
+    options: [
+      { label: "Répondre aux questions (Recommended)", description: "Fournir réponses inline" },
+      { label: "Ignorer clarification", description: "Continuer tel quel" },
+      { label: "Reformuler l'idée", description: "Recommencer avec description plus claire" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 
@@ -171,7 +168,6 @@ Synthesize into structured brief:
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ✅ VALIDATION DU BRIEF                                              │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -193,25 +189,23 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{reformulated_brief}`: Reformulated brief content
 - `{diff1}`, `{diff2}`: Changes from original
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Cette reformulation est-elle correcte?",
-  "header": "Validate",
-  "multiSelect": false,
-  "options": [
-    { "label": "Valider (Recommended)", "description": "Continuer avec ce brief" },
-    { "label": "Ajuster", "description": "Faire des corrections" },
-    { "label": "Rejeter", "description": "Recommencer" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Cette reformulation est-elle correcte?",
+    header: "Validate",
+    multiSelect: false,
+    options: [
+      { label: "Valider (Recommended)", description: "Continuer avec ce brief" },
+      { label: "Ajuster", description: "Faire des corrections" },
+      { label: "Rejeter", description: "Recommencer" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

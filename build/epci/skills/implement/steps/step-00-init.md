@@ -71,7 +71,6 @@ Routing: {next step path}
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ EVALUATION COMPLEXITE                                               │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -92,7 +91,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{feature-slug}`: Kebab-case feature identifier from input
@@ -100,9 +98,7 @@ Remplis les variables:
 - `{loc}`: Estimated lines of code
 - `{files}`: Estimated number of files
 
-APPELLE:
-```
-AskUserQuestion({
+APPELLE AskUserQuestion({
   questions: [{
     question: "Proceder avec la complexite detectee?",
     header: "Complexity",
@@ -114,7 +110,6 @@ AskUserQuestion({
     ]
   }]
 })
-```
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

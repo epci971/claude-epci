@@ -82,7 +82,6 @@ Structure brief into validatable sections:
 
 Pour chaque section majeure, AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ ✅ VALIDATION: {section_name}                                       │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -103,7 +102,6 @@ Pour chaque section majeure, AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{section_name}`: Name of the section (e.g., `Executive Summary`)
@@ -111,19 +109,18 @@ Remplis les variables:
 - `{source_decisions}`: Decisions that informed this section (e.g., `Decision #3, #5`)
 - `{confidence}`: Confidence level (`HIGH`, `MEDIUM`, `LOW`)
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Cette section {section_name} est-elle correcte?",
-  "header": "{section}",
-  "multiSelect": false,
-  "options": [
-    { "label": "Approuver (Recommended)", "description": "Section correcte" },
-    { "label": "Éditer", "description": "Faire des modifications" },
-    { "label": "Ignorer le reste", "description": "Auto-approuver les sections suivantes" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Cette section {section_name} est-elle correcte?",
+    header: "{section}",
+    multiSelect: false,
+    options: [
+      { label: "Approuver (Recommended)", description: "Section correcte" },
+      { label: "Éditer", description: "Faire des modifications" },
+      { label: "Ignorer le reste", description: "Auto-approuver les sections suivantes" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer à la section suivante.
 

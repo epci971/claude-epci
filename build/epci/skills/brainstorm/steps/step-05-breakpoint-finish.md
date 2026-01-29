@@ -93,7 +93,6 @@ IF ems.global < 60 AND NOT finish --force:
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ 🏁 FIN D'EXPLORATION                                                │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -127,7 +126,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre réponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 **Quality levels**: EXCELLENT (90-100), GOOD (70-89), ADEQUATE (50-69), LOW (<50)
 
@@ -142,20 +140,19 @@ Remplis les variables:
 - `{quality_assessment}`: `EXCELLENT`, `GOOD`, `ADEQUATE`, or `LOW`
 - `{quality_message}`: Quality feedback message
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Prêt à générer les outputs?",
-  "header": "Finish",
-  "multiSelect": false,
-  "options": [
-    { "label": "Générer outputs (Recommended)", "description": "Créer brief et journal" },
-    { "label": "Preview d'abord", "description": "Voir découpage @planner avant finalisation" },
-    { "label": "Continuer itérations", "description": "Ajouter plus d'exploration" },
-    { "label": "Sauvegarder checkpoint", "description": "Pause pour reprise ultérieure" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Prêt à générer les outputs?",
+    header: "Finish",
+    multiSelect: false,
+    options: [
+      { label: "Générer outputs (Recommended)", description: "Créer brief et journal" },
+      { label: "Preview d'abord", description: "Voir découpage @planner avant finalisation" },
+      { label: "Continuer itérations", description: "Ajouter plus d'exploration" },
+      { label: "Sauvegarder checkpoint", description: "Pause pour reprise ultérieure" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 

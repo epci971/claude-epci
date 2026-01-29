@@ -220,7 +220,6 @@ graph LR
 
 AFFICHE cette boîte:
 
-```
 ┌─────────────────────────────────────────────────────────────────────┐
 │ [DECOMPOSITION] Task Breakdown Review                                │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -257,7 +256,6 @@ AFFICHE cette boîte:
 │ │  [?] Autre reponse...                                          │ │
 │ └────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────┘
-```
 
 Remplis les variables:
 - `{feature-slug}`: Feature identifier
@@ -271,21 +269,20 @@ Remplis les variables:
 - `{steps_1}`, `{steps_2}`, `{steps_3}`: Step count per task
 - `{validation_status}`: `APPROVED` or issues found
 
-APPELLE AskUserQuestion:
-```json
-{
-  "question": "Comment proceder avec la decomposition?",
-  "header": "Decomposition",
-  "multiSelect": false,
-  "options": [
-    { "label": "Approve and generate specs (Recommended)", "description": "Valider et generer les fichiers specs" },
-    { "label": "Modify task breakdown", "description": "Ajuster les taches manuellement" },
-    { "label": "View task details", "description": "Voir le detail de chaque tache" },
-    { "label": "Re-decompose with different strategy", "description": "Refaire la decomposition" },
-    { "label": "Cancel", "description": "Annuler le workflow" }
-  ]
-}
-```
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "Comment proceder avec la decomposition?",
+    header: "Decomposition",
+    multiSelect: false,
+    options: [
+      { label: "Approve and generate specs (Recommended)", description: "Valider et generer les fichiers specs" },
+      { label: "Modify task breakdown", description: "Ajuster les taches manuellement" },
+      { label: "View task details", description: "Voir le detail de chaque tache" },
+      { label: "Re-decompose with different strategy", description: "Refaire la decomposition" },
+      { label: "Cancel", description: "Annuler le workflow" }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la reponse utilisateur avant de continuer.
 

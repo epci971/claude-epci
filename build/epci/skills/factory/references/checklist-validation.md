@@ -193,15 +193,28 @@ grep -r "subagent_type:" steps/
 ### X. BREAKPOINT: {Title} (OBLIGATOIRE)
 
 AFFICHE cette boîte:
+
 ┌─────────────────────────────────────────────────────────────────────┐
 │ {CONTENT}                                                           │
 └─────────────────────────────────────────────────────────────────────┘
 
-APPELLE:
-AskUserQuestion({...})
+APPELLE AskUserQuestion({
+  questions: [{
+    question: "...",
+    header: "...",
+    multiSelect: false,
+    options: [
+      { label: "...", description: "..." }
+    ]
+  }]
+})
 
 ⏸️ ATTENDS la réponse utilisateur avant de continuer.
 ```
+
+**Note syntaxe**:
+- La boîte ASCII est **inline** dans le markdown (PAS entourée de backticks)
+- `APPELLE AskUserQuestion({...})` **directement** (PAS `APPELLE:` avec backticks séparés)
 
 **Anti-pattern (will NOT execute)**:
 ```typescript
