@@ -9,9 +9,10 @@ Usage:
 
 Exit Codes:
     0: Success
-    1: Validation failed
+    1: Post-copy validation failed
     2: Copy failed
     3: Version mismatch
+    4: Pre-deployment validation failed
 """
 
 import argparse
@@ -121,32 +122,17 @@ def validate_destination(dst: Path, verbose: bool = True) -> list[str]:
     sys.path.insert(0, str(script_dir))
 
     try:
-        from validate import validate_plugin_json, validate_skill
+        from validate import validate_all, Severity
     except ImportError:
         errors.append("Could not import validation functions from validate.py")
         return errors
 
-    # Validate plugin.json
-    plugin_path = dst / ".claude-plugin" / "plugin.json"
-    plugin_errors = validate_plugin_json(plugin_path)
-    errors.extend(plugin_errors)
+    # Run comprehensive validation on destination
+    summary = validate_all(dst)
 
-    # Validate skills
-    skills_dir = dst / "skills"
-    if skills_dir.exists():
-        for skill_dir in sorted(skills_dir.iterdir()):
-            if skill_dir.is_dir():
-                skill_path = skill_dir / "SKILL.md"
-                if skill_path.exists():
-                    skill_errors = validate_skill(skill_path)
-                    errors.extend(skill_errors)
-                # Check nested skills (core/, stack/)
-                for nested_dir in sorted(skill_dir.iterdir()):
-                    if nested_dir.is_dir():
-                        nested_skill_path = nested_dir / "SKILL.md"
-                        if nested_skill_path.exists():
-                            nested_errors = validate_skill(nested_skill_path)
-                            errors.extend(nested_errors)
+    # Collect error messages
+    for result in summary.errors:
+        errors.append(f"{result.file.name}: {result.message}")
 
     return errors
 
@@ -226,6 +212,7 @@ def deploy(
     force: bool = False,
     verbose: bool = True,
     skip_version_check: bool = False,
+    skip_validation: bool = False,
 ) -> int:
     """
     Main deployment function.
@@ -237,16 +224,17 @@ def deploy(
         force: If True, overwrite existing destination
         verbose: If True, print progress messages
         skip_version_check: If True, skip version consistency check
+        skip_validation: If True, skip pre-deployment validation
 
     Returns:
-        Exit code (0=success, 1=validation failed, 2=copy failed, 3=version mismatch)
+        Exit code (0=success, 1=validation failed, 2=copy failed, 3=version mismatch, 4=pre-validation failed)
     """
     log(f"\n{Colors.BOLD}EPCI Deployment Script{Colors.RESET}", verbose=verbose)
     log("=" * 50, verbose=verbose)
 
     # Check version consistency first (on source)
     if not skip_version_check and not dry_run:
-        log("\n[1/3] Checking version consistency...", Colors.BLUE, verbose)
+        log("\n[1/4] Checking version consistency...", Colors.BLUE, verbose)
         version_errors = check_version_consistency(src, verbose)
         if version_errors:
             for err in version_errors:
@@ -255,10 +243,37 @@ def deploy(
             return 3
         log("  Version check passed.", Colors.GREEN, verbose)
     elif dry_run:
-        log("\n[1/3] [DRY-RUN] Would check version consistency", Colors.BLUE, verbose)
+        log("\n[1/4] [DRY-RUN] Would check version consistency", Colors.BLUE, verbose)
+
+    # Run comprehensive pre-deployment validation
+    if not skip_validation and not dry_run:
+        log("\n[2/4] Running comprehensive validation...", Colors.BLUE, verbose)
+        try:
+            from validate import validate_all, Severity
+            summary = validate_all(src)
+
+            if not summary.passed:
+                log(f"  Pre-deployment validation FAILED ({len(summary.errors)} errors)", Colors.RED, verbose)
+                for r in summary.errors:
+                    log(f"    ERROR: {r.file.name}: {r.message}", Colors.RED, verbose)
+                log("\nFix errors before deploying. Use --skip-validation to override (not recommended).", Colors.YELLOW, verbose)
+                return 4
+
+            # Show warnings count
+            if summary.warnings:
+                log(f"  Validation passed with {len(summary.warnings)} warnings (non-blocking)", Colors.YELLOW, verbose)
+            else:
+                log("  Validation passed.", Colors.GREEN, verbose)
+        except ImportError as e:
+            log(f"  WARNING: Could not import validate module: {e}", Colors.YELLOW, verbose)
+            log("  Skipping pre-deployment validation.", Colors.YELLOW, verbose)
+    elif dry_run:
+        log("\n[2/4] [DRY-RUN] Would run comprehensive validation", Colors.BLUE, verbose)
+    elif skip_validation:
+        log("\n[2/4] Skipping pre-deployment validation (--skip-validation)", Colors.YELLOW, verbose)
 
     # Copy source to destination
-    log("\n[2/3] Copying files...", Colors.BLUE, verbose)
+    log("\n[3/4] Copying files...", Colors.BLUE, verbose)
     try:
         copy_tree_safe(src, dest, force=force, dry_run=dry_run, verbose=verbose)
     except (ValueError, FileExistsError) as e:
@@ -267,12 +282,12 @@ def deploy(
 
     # Skip validation for dry-run
     if dry_run:
-        log("\n[3/3] [DRY-RUN] Would validate destination", Colors.BLUE, verbose)
+        log("\n[4/4] [DRY-RUN] Would validate destination", Colors.BLUE, verbose)
         log(f"\n{Colors.GREEN}[DRY-RUN] Deployment simulation complete.{Colors.RESET}", verbose=verbose)
         return 0
 
-    # Validate destination
-    log("\n[3/3] Validating destination...", Colors.BLUE, verbose)
+    # Validate destination (post-copy check)
+    log("\n[4/4] Validating destination...", Colors.BLUE, verbose)
     validation_errors = validate_destination(dest, verbose)
     if validation_errors:
         for err in validation_errors:
@@ -323,6 +338,11 @@ def main() -> int:
         help="Skip version consistency check",
     )
     parser.add_argument(
+        "--skip-validation",
+        action="store_true",
+        help="Skip pre-deployment comprehensive validation (not recommended)",
+    )
+    parser.add_argument(
         "--src",
         type=Path,
         default=None,
@@ -353,6 +373,7 @@ def main() -> int:
         force=args.force,
         verbose=verbose,
         skip_version_check=args.skip_version_check,
+        skip_validation=args.skip_validation,
     )
 
 
