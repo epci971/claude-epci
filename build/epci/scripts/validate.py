@@ -475,6 +475,7 @@ def validate_skill_trigger_words(skill_path: Path) -> ValidationResult:
     trigger_patterns = [
         r"Use when:",
         r"Triggers?:",
+        r"Trigger words?:",
         r"Not for:",
         r"Do NOT use",
         r"when:.*\b(build|implement|create|fix|debug|refactor)\b",
@@ -750,7 +751,7 @@ def validate_step_task_documentation(step_path: Path) -> list[ValidationResult]:
 
     if has_task:
         # Check if there's documentation about the task
-        has_doc = bool(re.search(r'(###.*invoke|###.*agent|@\w+-\w+)', content, re.IGNORECASE))
+        has_doc = bool(re.search(r'(###.*invoke|###.*agent|@\w+)', content, re.IGNORECASE))
 
         if not has_doc:
             results.append(ValidationResult(

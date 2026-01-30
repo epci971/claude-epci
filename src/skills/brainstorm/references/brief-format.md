@@ -1,304 +1,436 @@
-# Brief Format - PRD v3.0
+# [Titre du Brainstorming]
 
-> Output template for brainstorm synthesis reports.
-
-## Overview
-
-The brief is the main deliverable of a brainstorm session. It serves as input for `/spec` which transforms it into a technical specification.
+> Généré le [date] - [N] itérations - Template: [name] - EMS final: [score]/100
 
 **Filename**: `brief-{slug}-{date}.md`
 **Location**: `docs/briefs/{slug}/`
-**Audience**: Anyone who needs to understand conclusions without attending the session.
-**Principle**: Fully self-contained - a reader with no context should understand everything.
-**Estimated length**: 800-2000 words depending on complexity.
-
-## Template
-
-```markdown
-# [Brainstorming Title]
-
-> Generated on [date] - [N] iterations - Template: [name] - Final EMS: [score]/100
+**Audience**: Toute personne devant comprendre les conclusions sans avoir assisté à la session.
+**Principe**: Entièrement auto-suffisant - un lecteur sans contexte doit tout comprendre.
+**Longueur estimée**: 1000-2500 mots selon complexité.
 
 ---
 
-## 1. Context and Initial Objective
+## 1. Contexte et Objectif
 
-[Clear reformulation of the starting point - 2-4 sentences]
+[Reformulation claire du point de départ - 2-4 phrases]
 
-**Initial question/problem**:
-[What we set out to explore - 1-2 sentences]
+**Question/problème initial**:
+> [Ce qu'on cherchait à explorer - 1-2 phrases, citation directe possible]
 
-**Scope**:
-- In scope: [what was covered]
-- Out of scope: [what was explicitly excluded]
+**Périmètre**:
+- ✅ IN: [ce qui est couvert]
+- ❌ OUT: [ce qui est explicitement exclu]
 
-**Success criteria defined**:
-1. [Criterion 1]
-2. [Criterion 2]
-
----
-
-## 2. Executive Summary
-
-[5-10 lines capturing the essential conclusions. A decision-maker should be able to read only this section and understand the key outcomes.]
-
-**Key insight**: [Single most important takeaway - 1 sentence, bolded]
-
-**Main decisions**:
-- [Decision 1]
-- [Decision 2]
-- [Decision 3]
+**Critères de succès définis**:
+1. [Critère 1 - mesurable si possible]
+2. [Critère 2]
+3. [Critère 3]
 
 ---
 
-## 3. Analysis and Key Findings
+## 2. Synthèse Exécutive
 
-### 3.1 [Major Theme 1]
+[5-10 lignes capturant les conclusions essentielles. Un décideur doit pouvoir lire uniquement cette section.]
 
-[Structured development of findings - 1-3 paragraphs]
+**Insight clé**: [Principale conclusion en 1 phrase, en gras]
 
-**Key points**:
+**Décisions principales**:
+1. [Décision 1]
+2. [Décision 2]
+3. [Décision 3]
+
+**Routing recommandé**: [TINY/SMALL → `/quick` | STANDARD/LARGE → `/implement`]
+
+---
+
+## 3. Personas et Scénarios d'Usage
+
+### 3.1 Persona Principal: [Nom]
+
+| Attribut | Description |
+|----------|-------------|
+| Rôle | [Ex: Administrateur système, Client final] |
+| Objectif | [Ce qu'il cherche à accomplir] |
+| Frustration actuelle | [Pain point principal] |
+| Niveau technique | [Novice / Intermédiaire / Expert] |
+| Contexte d'usage | [Mobile/Desktop, fréquence, environnement] |
+
+**Scénario d'usage typique**:
+> [Narrative de 3-5 phrases décrivant comment ce persona utilise la feature dans un cas concret]
+
+### 3.2 Persona Secondaire: [Nom] (si applicable)
+
+[Même structure, version condensée]
+
+---
+
+## 4. Analyse et Conclusions Clés
+
+### 4.1 [Thème Majeur 1]
+
+[Développement structuré - 1-3 paragraphes]
+
+**Points clés**:
 - [Point 1]
 - [Point 2]
 
-**Implications**:
-[What this means for the decision/project - 1-2 sentences]
+**Implications pour l'implémentation**:
+[Ce que cela signifie concrètement pour le développement - 1-2 phrases]
 
-### 3.2 [Major Theme 2]
+### 4.2 [Thème Majeur 2]
 
-[Same structure...]
+[Même structure...]
 
-### 3.3 [Major Theme N]
+### 4.3 [Thème Majeur N]
 
-[Same structure...]
-
----
-
-## 4. Decisions and Orientations
-
-| Decision | Rationale | Impact | Confidence |
-|----------|-----------|--------|------------|
-| [Decision 1] | [Why this choice] | [Consequences] | High/Medium/Low |
-| [Decision 2] | [Why this choice] | [Consequences] | High/Medium/Low |
-
-### Decisions Deferred
-- [Decision X] - Deferred because: [reason]. To revisit: [when/condition]
+[Même structure...]
 
 ---
 
-## 5. Action Plan
+## 5. User Stories et Critères d'Acceptation
 
-| # | Action | Priority | Effort | Timeline | Owner | Dependencies |
-|---|--------|----------|--------|----------|-------|--------------|
-| 1 | [Action] | High | Low | [Date] | [Who] | [If any] |
-| 2 | [Action] | Medium | Medium | [Date] | [Who] | [If any] |
-| 3 | [Action] | Low | High | [Date] | [Who] | [If any] |
+> Cette section est l'input principal pour `/spec`. Format strict.
 
-### Quick Wins (High Impact, Low Effort)
-1. [Action] - [Why it's a quick win]
-2. [Action] - [Why it's a quick win]
+### US1: [Titre court]
 
-### Strategic Investments (High Impact, High Effort)
-1. [Action] - [Why it's worth the investment]
+**Story**: As a [persona], I want [fonctionnalité] so that [bénéfice].
 
----
+**Priorité**: Must have | Should have | Could have
 
-## 6. Risks and Considerations
+**Critères d'acceptation**:
+```gherkin
+AC1: [Titre du critère]
+Given [précondition/contexte]
+When [action utilisateur]
+Then [résultat attendu]
+And [résultat additionnel si applicable]
 
-| Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
-| [Risk 1] | High/Med/Low | High/Med/Low | [Mitigation strategy] |
-| [Risk 2] | High/Med/Low | High/Med/Low | [Mitigation strategy] |
+AC2: [Titre du critère]
+Given [précondition]
+When [action]
+Then [résultat]
+```
 
-### Assumptions Made
-- [Assumption 1] - If wrong: [consequence]
-- [Assumption 2] - If wrong: [consequence]
-
----
-
-## 7. Unexplored Avenues
-
-[What remains open for future exploration]
-
-| Topic | Why Not Explored | Potential Value | Suggested Next Step |
-|-------|------------------|-----------------|---------------------|
-| [Topic 1] | [Reason] | High/Med/Low | [Action] |
-| [Topic 2] | [Reason] | High/Med/Low | [Action] |
+**Edge cases identifiés**:
+- [Cas limite 1] → [Comportement attendu]
+- [Cas limite 2] → [Comportement attendu]
 
 ---
 
-## 8. Synthesis Mindmap
+### US2: [Titre court]
 
+[Même structure...]
+
+---
+
+### US3: [Titre court]
+
+[Même structure...]
+
+---
+
+## 6. Décisions et Orientations Techniques
+
+| Décision | Rationale | Impact | Confiance |
+|----------|-----------|--------|-----------|
+| [Décision 1] | [Pourquoi ce choix] | [Conséquences] | High/Medium/Low |
+| [Décision 2] | [Pourquoi ce choix] | [Conséquences] | High/Medium/Low |
+
+### Décisions différées
+- [Décision X] - Différée car: [raison]. À revisiter: [quand/condition]
+
+### Choix architecturaux
+- **Pattern retenu**: [Ex: Repository pattern, Event sourcing, etc.]
+- **Justification**: [Pourquoi ce pattern pour ce contexte]
+
+---
+
+## 7. Priorisation MoSCoW
+
+### Must Have (MVP) — ~60% effort
+| # | Feature/Story | Effort estimé | Dépendance |
+|---|---------------|---------------|------------|
+| 1 | [Feature] | S/M/L | - |
+| 2 | [Feature] | S/M/L | #1 |
+
+### Should Have — ~20% effort
+| # | Feature/Story | Effort estimé | Dépendance |
+|---|---------------|---------------|------------|
+| 3 | [Feature] | S/M/L | #2 |
+
+### Could Have — ~20% effort
+| # | Feature/Story | Effort estimé | Dépendance |
+|---|---------------|---------------|------------|
+| 4 | [Feature] | S/M/L | #3 |
+
+### Won't Have (this release)
+- [Feature explicitement exclue] — Raison: [pourquoi]
+- [Feature explicitement exclue] — Raison: [pourquoi]
+
+---
+
+## 8. Contraintes et Dépendances
+
+### Contraintes techniques
+| Type | Contrainte | Impact |
+|------|------------|--------|
+| Stack | [Ex: Symfony 7 obligatoire] | [Conséquence] |
+| Infra | [Ex: Hébergement OVH] | [Conséquence] |
+| Legacy | [Ex: API v1 à maintenir] | [Conséquence] |
+| Performance | [Ex: <2s response time] | [Conséquence] |
+| Sécurité | [Ex: RGPD, données sensibles] | [Conséquence] |
+
+### Dépendances externes
+| Dépendance | Type | SLA/Disponibilité | Fallback |
+|------------|------|-------------------|----------|
+| [API tierce] | Externe | [99.9%] | [Plan B] |
+| [Équipe X] | Interne | [Livraison Q2] | [Plan B] |
+
+### Intégrations requises
+- **Systèmes existants**: [Liste des systèmes à intégrer]
+- **APIs à consommer**: [Liste avec endpoints clés]
+- **APIs à exposer**: [Liste si applicable]
+
+---
+
+## 9. Risques et Hypothèses
+
+### Risques identifiés
+
+| Risque | Probabilité | Impact | Mitigation |
+|--------|-------------|--------|------------|
+| [Risque 1] | High/Med/Low | High/Med/Low | [Stratégie] |
+| [Risque 2] | High/Med/Low | High/Med/Low | [Stratégie] |
+
+### Hypothèses (Assumptions)
+- **[Hypothèse 1]** — Si faux: [conséquence]
+- **[Hypothèse 2]** — Si faux: [conséquence]
+
+---
+
+## 10. Plan d'Action Haut Niveau
+
+> Cette section donne une vision séquentielle pour `/spec`.
+
+| Phase | Livrables | Effort estimé | Owner | Prérequis |
+|-------|-----------|---------------|-------|-----------|
+| 1. Setup | [Fondations, modèles] | ~[X]h | [Qui] | - |
+| 2. Core | [Logique métier] | ~[X]h | [Qui] | Phase 1 |
+| 3. API | [Endpoints] | ~[X]h | [Qui] | Phase 2 |
+| 4. UI | [Interface] | ~[X]h | [Qui] | Phase 3 |
+| 5. Tests | [E2E, intégration] | ~[X]h | [Qui] | Phase 4 |
+
+**Effort total estimé**: ~[X]h ([X] jours)
+**Chemin critique**: Phase 1 → Phase 2 → Phase 3
+
+### Quick Wins (impact élevé, effort faible)
+1. [Action] — Pourquoi c'est un quick win
+2. [Action] — Pourquoi c'est un quick win
+
+### Investissements Stratégiques (impact élevé, effort élevé)
+1. [Action] — Pourquoi c'est un investissement pertinent
+2. [Action] — Pourquoi c'est un investissement pertinent
+
+---
+
+## 11. Mindmap de Synthèse
 ```mermaid
 mindmap
-  root((Topic))
-    Theme 1
-      Finding 1.1
-      Finding 1.2
-    Theme 2
-      Finding 2.1
-      Finding 2.2
-    Decisions
-      Decision 1
-      Decision 2
-    Actions
-      Priority Action 1
-      Priority Action 2
-    Open Questions
-      Question 1
+  root((Feature))
+    Personas
+      Persona 1
+      Persona 2
+    User Stories
+      US1
+      US2
+      US3
+    Décisions
+      Décision 1
+      Décision 2
+    Risques
+      Risque 1
+      Risque 2
+    Phases
+      Setup
+      Core
+      API
 ```
 
 ---
 
-## 9. Success Criteria Verification
-
-| Criterion | Status | Evidence |
-|-----------|--------|----------|
-| [Criterion 1] | Achieved / Partial / Not achieved | [Explanation] |
-| [Criterion 2] | Achieved / Partial / Not achieved | [Explanation] |
-
-**Overall assessment**: [Summary of whether brainstorm achieved its goals - 1-2 sentences]
-
----
-
-## 10. Final EMS Score
+## 12. Score EMS Final
 
 ```
-EMS Final: [SCORE]/100 [STATUS]
+EMS Final: [SCORE]/100 [STATUT]
 
-EMS Score
-100 |                                        [graph]
- 90 | . . . . . . . . . . . . . . . . . . . . . . . .
+Progression EMS
+100 |
+ 90 | . . . . . . . . . . . . . . . . . . . .
  80 |
- 70 |
- 60 | . . . . . . . . . . . . . . . . . . . . . . . .
- 50 |
+ 70 |          ●───────●
+ 60 | . . . . . . . . . . . . . . . . . . . .
+ 50 |    ●────●
  40 |
- 30 | . . . . . . . . . . . . . . . . . . . . . . . .
+ 30 | ●. . . . . . . . . . . . . . . . . . .
  20 |
   0 +----+-----+-----+-----+-----+-----+
-    Init  It.1  It.2  It.3  ...  End
+    Init  It.1  It.2  It.3  ...  Fin
 
-Final axes:
-   Clarity      [BAR] [SCORE]/100
-   Depth        [BAR] [SCORE]/100
-   Coverage     [BAR] [SCORE]/100
-   Decisions    [BAR] [SCORE]/100
-   Actionab.    [BAR] [SCORE]/100
+Axes finaux:
+   Clarté       [████████░░] 80/100
+   Profondeur   [███████░░░] 70/100
+   Couverture   [████████░░] 85/100
+   Décisions    [█████████░] 90/100
+   Actionab.    [████████░░] 80/100
+```
+
+**Évaluation globale**: [Résumé en 1-2 phrases]
+
+### Vérification des Critères de Succès
+
+| Critère | Statut | Évidence |
+|---------|--------|----------|
+| [Critère 1] | ✅ Atteint / 🔶 Partiel / ❌ Non atteint | [Explication] |
+| [Critère 2] | ✅ Atteint / 🔶 Partiel / ❌ Non atteint | [Explication] |
+
+---
+
+## 13. Pistes Non Explorées
+
+| Sujet | Pourquoi non exploré | Valeur potentielle | Prochaine étape |
+|-------|----------------------|-------------------|-----------------|
+| [Sujet 1] | [Raison] | High/Med/Low | [Action suggérée] |
+| [Sujet 2] | [Raison] | High/Med/Low | [Action suggérée] |
+
+---
+
+## 14. Références
+
+### Documents analysés
+- [Document 1]: [Ce qui en a été extrait - 1 ligne]
+
+### Recherches web
+- [URL ou source]: [Information clé obtenue - 1 ligne]
+
+### Conversations passées référencées
+- [Sujet/Date]: [Connexion pertinente]
+
+---
+
+## 15. Prochaines Étapes
+
+**Workflow recommandé**:
+
+| Étape | Skill | Action |
+|-------|-------|--------|
+| 1 | `/spec` | Transformer ce brief en spécifications techniques |
+| 2 | `/implement` ou `/quick` | Implémenter selon routing de complexité |
+
+**Routing de complexité**: [TINY/SMALL/STANDARD/LARGE]
+**Skill suggéré**: [/quick ou /implement]
+
+**Commande suggérée**:
+```
+/spec brief-{slug}-{date}.md
 ```
 
 ---
 
-## 11. Sources and References
+## Guidelines par Section
 
-### Documents Analyzed
-- [Document 1]: [What was extracted/learned]
+### Section 1: Contexte
+- Rester bref (2-4 phrases)
+- Inclure la formulation originale de l'utilisateur
+- Définir clairement les limites du périmètre
 
-### Web Research
-- [URL 1]: [Key information obtained]
+### Section 2: Synthèse Exécutive
+- Écrire en dernier (après toutes les autres sections)
+- Doit être autonome comme résumé complet
+- L'insight clé en une phrase est obligatoire
 
-### Past Conversations Referenced
-- [Topic/Date]: [Relevant connection]
+### Section 3: Personas
+- 1 persona principal obligatoire
+- Persona secondaire si pertinent
+- Scénario d'usage narratif (pas de bullet points)
 
----
+### Section 4: Analyse
+- Grouper les findings par thème
+- Chaque thème: findings + implications pour l'implémentation
+- 3-7 thèmes typiquement
 
-## 12. Next Steps
+### Section 5: User Stories
+- Format Gherkin strict pour les critères d'acceptation
+- Edge cases obligatoires pour chaque US
+- Priorité MoSCoW sur chaque US
 
-**Recommended workflow**:
+### Section 6: Décisions
+- Inclure le rationale pour chaque décision
+- Marquer le niveau de confiance honnêtement
+- Lister les décisions différées séparément
 
-| Step | Skill | Action |
-|------|-------|--------|
-| 1 | `/spec` | Transform this brief into technical specification |
-| 2 | `/implement` or `/quick` | Implement based on complexity routing |
+### Section 7: MoSCoW
+- Must Have = MVP (~60% effort)
+- Should Have (~20% effort)
+- Could Have (~20% effort)
+- Won't Have avec justification
 
-**Complexity routing**: [TINY/SMALL/STANDARD/LARGE]
-**Suggested skill**: [/quick or /implement]
+### Section 8: Contraintes
+- Distinguer technique/infra/legacy/perf/sécurité
+- Inclure SLA pour dépendances externes
+- Fallback pour chaque dépendance critique
 
----
+### Section 9: Risques
+- Être honnête sur les hypothèses
+- Inclure stratégies de mitigation
+- Ne pas sur-alarmer mais ne pas ignorer
 
-*Document generated by Brainstorm v6.0 - Self-contained and independently usable*
-```
+### Section 10: Plan d'Action
+- Phases séquentielles avec prérequis
+- Identifier le chemin critique
+- Assigner un owner par phase (même si "TBD")
+- Séparer quick wins des investissements stratégiques
 
-## Section Guidelines
+### Section 11: Mindmap
+- Utiliser Mermaid pour compatibilité
+- Synthèse visuelle des éléments clés
+- Garder lisible (pas exhaustif)
 
-### Section 1: Context
-- Keep it brief (2-4 sentences)
-- Include original user formulation
-- Define clear scope boundaries
+### Section 12: EMS
+- Inclure progression visuelle
+- Radar final avec les 5 axes
+- ASCII art pour portabilité
 
-### Section 2: Executive Summary
-- Write last (after all other sections)
-- Should stand alone as a complete summary
-- One sentence key insight is mandatory
+### Section 13: Pistes Non Explorées
+- Reconnaître ce qui n'a pas été couvert
+- Aide l'exploration future
+- Montre l'honnêteté intellectuelle
 
-### Section 3: Analysis
-- Group findings by theme
-- Each theme: findings + implications
-- 3-7 themes typically
+### Section 14: Références
+- Créditer toutes les sources externes
+- Inclure ce qui a été appris de chaque source
+- Aide la traçabilité
 
-### Section 4: Decisions
-- Include rationale for each decision
-- Mark confidence level honestly
-- List deferred decisions separately
-
-### Section 5: Action Plan
-- Actionable, specific items
-- Include owner and timeline when known
-- Separate quick wins from strategic investments
-
-### Section 6: Risks
-- Be honest about assumptions
-- Include mitigation strategies
-- Don't over-alarm but don't ignore
-
-### Section 7: Unexplored
-- Acknowledge what wasn't covered
-- Helps future exploration
-- Shows intellectual honesty
-
-### Section 8: Mindmap
-- Use Mermaid for compatibility
-- Visual synthesis of key elements
-- Keep it readable (not exhaustive)
-
-### Section 9: Success Criteria
-- Reference criteria from Phase 1
-- Honest assessment of achievement
-- Evidence-based status
-
-### Section 10: EMS
-- Include visual progression
-- Final radar with all 5 axes
-- ASCII art for portability
-
-### Section 11: Sources
-- Credit all external sources
-- Include what was learned from each
-- Helps traceability
-
-### Section 12: Next Steps
-- Clear routing to next skill
-- Based on complexity-calculator output
-- Actionable recommendation
-
-## Language Adaptation
-
-The brief adapts to user's input language. French section headers:
-
-| English | French |
-|---------|--------|
-| Context and Initial Objective | Contexte et Objectif Initial |
-| Executive Summary | Synthese Executive |
-| Analysis and Key Findings | Analyse et Conclusions Cles |
-| Decisions and Orientations | Decisions et Orientations |
-| Action Plan | Plan d'Action |
-| Risks and Considerations | Risques et Points d'Attention |
-| Unexplored Avenues | Pistes Non Explorees |
-| Success Criteria Verification | Verification des Criteres de Succes |
-| Final EMS Score | Score EMS Final |
-| Sources and References | Sources et References |
-| Next Steps | Prochaines Etapes |
+### Section 15: Prochaines Étapes
+- Routing clair vers le skill suivant
+- Basé sur le complexity-calculator
+- Recommandation actionnable
 
 ---
 
-*Brief Format v3.0 - EPCI Brainstorm v6.0*
+## Adaptation Linguistique
+
+Le brief s'adapte à la langue de l'utilisateur. Headers anglais si input anglais :
+
+| Français | English |
+|----------|---------|
+| Contexte et Objectif | Context and Objective |
+| Synthèse Exécutive | Executive Summary |
+| Personas et Scénarios | Personas and Scenarios |
+| User Stories | User Stories |
+| Décisions Techniques | Technical Decisions |
+| Priorisation MoSCoW | MoSCoW Prioritization |
+| Contraintes et Dépendances | Constraints and Dependencies |
+| Risques et Hypothèses | Risks and Assumptions |
+| Plan d'Action | Action Plan |
+| Score EMS Final | Final EMS Score |
+| Prochaines Étapes | Next Steps |
