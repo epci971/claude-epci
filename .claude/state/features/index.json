@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_update": "2026-02-02T15:55:00Z",
+  "last_update": "2026-02-02T16:15:00Z",
   "features": [
     {
       "id": "deploy-script",
@@ -35,6 +35,22 @@
         "src/scripts/test_circuit_breaker.sh"
       ],
       "test_count": 16
+    },
+    {
+      "id": "ralph-script",
+      "status": "completed",
+      "current_phase": "memory",
+      "complexity": "STANDARD",
+      "branch": "master",
+      "created_at": "2026-02-02T15:55:00Z",
+      "last_update": "2026-02-02T16:15:00Z",
+      "created_by": "/implement",
+      "summary": "Created ralph.sh.template for autonomous batch execution. Includes inline circuit breaker, RALPH_STATUS parser (<<<>>> delimiters), CLI flags (--quiet, --dry-run, --help), progress display with elapsed time, and timestamped logging. Supports MAX_ITERATIONS config and validates PRD v2 schema (userStories[]).",
+      "modified_files": [
+        "src/skills/spec/templates/ralph.sh.template",
+        "src/scripts/test_ralph_template.sh"
+      ],
+      "test_count": 25
     }
   ]
 }
