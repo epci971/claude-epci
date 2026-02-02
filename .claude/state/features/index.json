@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_update": "2026-02-02T17:00:00Z",
+  "last_update": "2026-02-02T17:20:00Z",
   "features": [
     {
       "id": "deploy-script",
@@ -85,6 +85,38 @@
         "src/scripts/test_step03_generate.sh"
       ],
       "test_count": 22
+    },
+    {
+      "id": "ralph-registry",
+      "status": "completed",
+      "current_phase": "memory",
+      "complexity": "SMALL",
+      "branch": "master",
+      "created_at": "2026-02-02T17:05:00Z",
+      "last_update": "2026-02-02T17:10:00Z",
+      "created_by": "/quick",
+      "summary": "Created ralph-registry-v1.json schema for .ralph/index.json feature registry. Defines feature entries with slug, title, status (ready/running/completed/paused/failed), complexity, paths (spec/ralph/prd), and stories_count. Step-03 already has registry update logic from task-006.",
+      "modified_files": [
+        "src/schemas/ralph-registry-v1.json",
+        "src/scripts/test_ralph_registry.sh"
+      ],
+      "test_count": 19
+    },
+    {
+      "id": "ralph-e2e-tests",
+      "status": "completed",
+      "current_phase": "memory",
+      "complexity": "STANDARD",
+      "branch": "master",
+      "created_at": "2026-02-02T17:15:00Z",
+      "last_update": "2026-02-02T17:20:00Z",
+      "created_by": "/quick",
+      "summary": "Created E2E test suite for Ralph integration. Tests all 5 ACs: spec generation (templates/schemas), ralph.sh structure (shebang, vars, claude invocation), status parsing (<<<>>> delimiters, RALPH_STATUS), circuit breaker (hash detection, threshold, exit codes), and PRD updates (userStories, execution). Includes minimal test-brief.md for validation.",
+      "modified_files": [
+        "tests/e2e/test-ralph-integration/run-e2e.sh",
+        "tests/e2e/test-ralph-integration/test-brief.md"
+      ],
+      "test_count": 26
     }
   ]
 }

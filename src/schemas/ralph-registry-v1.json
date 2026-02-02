@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ralph-registry-v1",
+  "title": "Ralph Features Registry Schema",
+  "description": "Registry of all Ralph-enabled features in the project (.ralph/index.json)",
+  "type": "object",
+  "required": ["version", "features"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Schema version"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/feature"
+      },
+      "description": "List of registered features"
+    }
+  },
+  "$defs": {
+    "feature": {
+      "type": "object",
+      "required": ["slug", "title", "created_at", "status", "complexity", "spec_path", "ralph_path", "prd_path"],
+      "properties": {
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Feature slug (kebab-case)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable feature title"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp (ISO-8601)"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp (ISO-8601)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ready", "running", "completed", "paused", "failed"],
+          "description": "Feature execution status"
+        },
+        "complexity": {
+          "type": "string",
+          "enum": ["TINY", "SMALL", "STANDARD", "LARGE"],
+          "description": "Feature complexity level"
+        },
+        "stories_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of user stories in the feature"
+        },
+        "spec_path": {
+          "type": "string",
+          "description": "Path to specification directory (docs/specs/{slug}/)"
+        },
+        "ralph_path": {
+          "type": "string",
+          "description": "Path to Ralph execution directory (.ralph/{slug}/)"
+        },
+        "prd_path": {
+          "type": "string",
+          "description": "Path to PRD JSON file (docs/specs/{slug}/{slug}.prd.json)"
+        }
+      }
+    }
+  }
+}
