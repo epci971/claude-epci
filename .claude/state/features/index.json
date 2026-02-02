@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_update": "2026-02-02T16:15:00Z",
+  "last_update": "2026-02-02T17:00:00Z",
   "features": [
     {
       "id": "deploy-script",
@@ -69,6 +69,22 @@
         "src/scripts/test_templates.sh"
       ],
       "test_count": 24
+    },
+    {
+      "id": "spec-step03-update",
+      "status": "completed",
+      "current_phase": "memory",
+      "complexity": "STANDARD",
+      "branch": "master",
+      "created_at": "2026-02-02T16:45:00Z",
+      "last_update": "2026-02-02T17:00:00Z",
+      "created_by": "/quick",
+      "summary": "Updated step-03-generate-ralph.md to use templates from task-005. Added PRD.json generation with userStories format, explicit template references (prd.json.template, memory.md.template, ralph.sh.template), circuit breaker mention, and correct section numbering (8 steps total).",
+      "modified_files": [
+        "src/skills/spec/steps/step-03-generate-ralph.md",
+        "src/scripts/test_step03_generate.sh"
+      ],
+      "test_count": 22
     }
   ]
 }
