@@ -1,0 +1,76 @@
+{
+  "$comment": "PRD Template v2 for EPCI v6.0 — Variables: {{TITLE}}, {{SLUG}}, {{DESCRIPTION}}, {{COMPLEXITY}}, {{GENERATED_AT}}, {{SOURCE}}, {{USER_STORIES}}, {{META}}, {{CONFIG}}, {{METRICS}}, {{DEPENDENCIES_GRAPH}}, {{CONSTRAINTS}}",
+  "title": "{{TITLE}}",
+  "version": "2.0",
+  "slug": "{{SLUG}}",
+  "description": "{{DESCRIPTION}}",
+  "generated_at": "{{GENERATED_AT}}",
+  "source": "{{SOURCE}}",
+  "complexity": "{{COMPLEXITY}}",
+  "userStories": [
+    {
+      "$comment": "Repeated for each story — Variables: {{STORY_ID}}, {{STORY_TITLE}}, {{STORY_DESCRIPTION}}, {{STORY_CATEGORY}}, {{STORY_TYPE}}, {{STORY_COMPLEXITY}}, {{STORY_PRIORITY}}, {{ACCEPTANCE_CRITERIA}}, {{STORY_TASKS}}, {{DEPENDS_ON}}, {{BLOCKS}}",
+      "id": "{{STORY_ID}}",
+      "title": "{{STORY_TITLE}}",
+      "description": "{{STORY_DESCRIPTION}}",
+      "category": "{{STORY_CATEGORY}}",
+      "type": "{{STORY_TYPE}}",
+      "complexity": "{{STORY_COMPLEXITY}}",
+      "priority": "{{STORY_PRIORITY}}",
+      "status": "pending",
+      "passes": false,
+      "acceptanceCriteria": [
+        {
+          "$comment": "Repeated for each AC — Variables: {{AC_ID}}, {{AC_DESCRIPTION}}",
+          "id": "{{AC_ID}}",
+          "description": "{{AC_DESCRIPTION}}",
+          "done": false
+        }
+      ],
+      "tasks": [
+        {
+          "$comment": "Repeated for each task — Variables: {{TASK_ID}}, {{TASK_DESCRIPTION}}",
+          "id": "{{TASK_ID}}",
+          "description": "{{TASK_DESCRIPTION}}",
+          "done": false
+        }
+      ],
+      "dependencies": {
+        "depends_on": ["{{DEPENDS_ON}}"],
+        "blocks": ["{{BLOCKS}}"]
+      },
+      "execution": {
+        "attempts": 0,
+        "last_error": null,
+        "files_modified": [],
+        "completed_at": null,
+        "iteration": 0
+      }
+    }
+  ],
+  "meta": {
+    "$comment": "Variables: {{BRANCH_NAME}}, {{PROJECT_NAME}}, {{GENERATED_BY}}",
+    "branchName": "{{BRANCH_NAME}}",
+    "projectName": "{{PROJECT_NAME}}",
+    "generatedAt": "{{GENERATED_AT}}",
+    "generatedBy": "{{GENERATED_BY}}",
+    "source": "{{SOURCE}}"
+  },
+  "config": {
+    "$comment": "Variables: {{MAX_ITERATIONS}}, {{TEST_COMMAND}}, {{LINT_COMMAND}}, {{GRANULARITY}}",
+    "max_iterations": {{MAX_ITERATIONS}},
+    "test_command": "{{TEST_COMMAND}}",
+    "lint_command": "{{LINT_COMMAND}}",
+    "granularity": "{{GRANULARITY}}"
+  },
+  "metrics": {
+    "$comment": "Variables: {{TOTAL_STORIES}}, {{CRITICAL_PATH}}",
+    "total_stories": {{TOTAL_STORIES}},
+    "completed": 0,
+    "critical_path": ["{{CRITICAL_PATH}}"]
+  },
+  "dependencies_graph": {
+    "$comment": "DAG structure — Variable: {{DEPENDENCIES_GRAPH}}"
+  },
+  "constraints": ["{{CONSTRAINTS}}"]
+}

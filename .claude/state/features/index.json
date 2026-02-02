@@ -51,6 +51,24 @@
         "src/scripts/test_ralph_template.sh"
       ],
       "test_count": 25
+    },
+    {
+      "id": "generation-templates",
+      "status": "completed",
+      "current_phase": "memory",
+      "complexity": "SMALL",
+      "branch": "master",
+      "created_at": "2026-02-02T16:30:00Z",
+      "last_update": "2026-02-02T16:35:00Z",
+      "created_by": "/quick",
+      "summary": "Created prd.json.template and memory.md.template, updated prompt.md.template with variable documentation. All templates follow {{VARIABLE}} placeholder format with inline $comment or HTML comment documentation.",
+      "modified_files": [
+        "src/skills/spec/templates/prd.json.template",
+        "src/skills/spec/templates/memory.md.template",
+        "src/skills/spec/templates/prompt.md.template",
+        "src/scripts/test_templates.sh"
+      ],
+      "test_count": 24
     }
   ]
 }
