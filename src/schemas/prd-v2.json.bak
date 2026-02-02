@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "prd-v2",
+  "title": "PRD Schema v2",
+  "description": "Product Requirements Document schema for EPCI v6",
+  "type": "object",
+  "required": ["title", "version", "stories"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Feature title"
+    },
+    "version": {
+      "type": "string",
+      "const": "2.0",
+      "description": "Schema version"
+    },
+    "description": {
+      "type": "string",
+      "description": "Feature description"
+    },
+    "stories": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/story"
+      },
+      "description": "User stories"
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Technical or business constraints"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "External dependencies"
+    }
+  },
+  "$defs": {
+    "story": {
+      "type": "object",
+      "required": ["id", "title", "priority"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "priority": {
+          "type": "string",
+          "enum": ["must-have", "should-have", "could-have", "wont-have"]
+        },
+        "complexity": {
+          "type": "string",
+          "enum": ["S", "M", "L", "XL"]
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}
