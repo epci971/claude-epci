@@ -57,11 +57,17 @@ FOR each response from previous iteration:
   - Mark addressed questions
 ```
 
-### 2. Recalculate EMS via Agent ems-evaluator
+### 2. Recalcul EMS (OBLIGATOIRE - NE PAS SAUTER)
 
-LANCE l'agent ems-evaluator pour recalculer le score:
+🔴 **CRITIQUE**: Tu DOIS appeler l'agent ems-evaluator à CHAQUE itération.
+⛔ **NE PAS** simuler le score manuellement.
+⛔ **NE PAS** sauter cette étape.
+⛔ **NE PAS** continuer sans le résultat.
 
-LANCE Task({
+**EXÉCUTE IMMÉDIATEMENT**:
+
+```
+Task({
   subagent_type: "ems-evaluator",
   model: "haiku",
   prompt: "Calcule l'EMS pour cette session brainstorm.
@@ -79,8 +85,39 @@ LANCE Task({
       strong_axes: [axes avec score >= 70]
     }"
 })
+```
 
-ATTENDS le résultat avant de continuer. Update EMS history in session state.
+⏸️ **ATTENDS le résultat avant de continuer.**
+
+**Après réception du résultat EMS**:
+
+```python
+# Mise à jour obligatoire de l'historique
+ems.history.append({
+  "iteration": current_iteration,
+  "global": result.global,
+  "scores": result.scores,
+  "delta": result.delta
+})
+ems.scores = result.scores
+ems.global = result.global
+ems.delta = result.delta
+ems.weak_axes = result.weak_axes
+ems.strong_axes = result.strong_axes
+```
+
+### 2.1 Vérification État EMS (OBLIGATOIRE)
+
+**AVANT de continuer**, vérifie:
+
+| Check | Condition | Action si manquant |
+|-------|-----------|-------------------|
+| `ems.history` | Contient l'itération précédente | ⛔ STOP - Recalcule via ems-evaluator |
+| `ems.scores` | 5 axes remplis (clarity, depth, coverage, decisions, actionability) | ⛔ STOP - Recalcule |
+| `ems.delta` | Calculé vs itération N-1 | ⛔ STOP - Recalcule |
+| `ems.global` | Entre 0-100 | ⛔ STOP - Résultat invalide |
+
+🔴 **SI vérification échoue**: STOP et appelle ems-evaluator AVANT de continuer.
 
 ### 3. Check Auto-Switch Persona
 

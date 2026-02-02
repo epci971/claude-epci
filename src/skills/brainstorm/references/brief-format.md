@@ -10,7 +10,17 @@
 
 ---
 
-## 1. Contexte et Objectif
+## ⚠️ SECTION MARKERS
+
+| Marker | Meaning |
+|--------|---------|
+| `[REQUIRED]` | Section MUST be present with ALL sub-elements |
+| `[REQUIRED - FORMAT STRICT]` | Section requires specific format (Gherkin, ASCII, Mermaid) |
+| `[REQUIRED - DO NOT SIMPLIFY]` | Section cannot be shortened or summarized |
+
+---
+
+## 1. Contexte et Objectif [REQUIRED]
 
 [Reformulation claire du point de départ - 2-4 phrases]
 
@@ -28,7 +38,7 @@
 
 ---
 
-## 2. Synthèse Exécutive
+## 2. Synthèse Exécutive [REQUIRED]
 
 [5-10 lignes capturant les conclusions essentielles. Un décideur doit pouvoir lire uniquement cette section.]
 
@@ -43,7 +53,7 @@
 
 ---
 
-## 3. Personas et Scénarios d'Usage
+## 3. Personas et Scénarios d'Usage [REQUIRED]
 
 ### 3.1 Persona Principal: [Nom]
 
@@ -64,7 +74,7 @@
 
 ---
 
-## 4. Analyse et Conclusions Clés
+## 4. Analyse et Conclusions Clés [REQUIRED]
 
 ### 4.1 [Thème Majeur 1]
 
@@ -87,9 +97,9 @@
 
 ---
 
-## 5. User Stories et Critères d'Acceptation
+## 5. User Stories et Critères d'Acceptation [REQUIRED - FORMAT STRICT]
 
-> Cette section est l'input principal pour `/spec`. Format strict.
+> Cette section est l'input principal pour `/spec`. Format Gherkin OBLIGATOIRE.
 
 ### US1: [Titre court]
 
@@ -129,7 +139,7 @@ Then [résultat]
 
 ---
 
-## 6. Décisions et Orientations Techniques
+## 6. Décisions et Orientations Techniques [REQUIRED]
 
 | Décision | Rationale | Impact | Confiance |
 |----------|-----------|--------|-----------|
@@ -145,7 +155,7 @@ Then [résultat]
 
 ---
 
-## 7. Priorisation MoSCoW
+## 7. Priorisation MoSCoW [REQUIRED]
 
 ### Must Have (MVP) — ~60% effort
 | # | Feature/Story | Effort estimé | Dépendance |
@@ -169,7 +179,7 @@ Then [résultat]
 
 ---
 
-## 8. Contraintes et Dépendances
+## 8. Contraintes et Dépendances [REQUIRED]
 
 ### Contraintes techniques
 | Type | Contrainte | Impact |
@@ -193,7 +203,7 @@ Then [résultat]
 
 ---
 
-## 9. Risques et Hypothèses
+## 9. Risques et Hypothèses [REQUIRED]
 
 ### Risques identifiés
 
@@ -208,7 +218,7 @@ Then [résultat]
 
 ---
 
-## 10. Plan d'Action Haut Niveau
+## 10. Plan d'Action Haut Niveau [REQUIRED]
 
 > Cette section donne une vision séquentielle pour `/spec`.
 
@@ -233,7 +243,10 @@ Then [résultat]
 
 ---
 
-## 11. Mindmap de Synthèse
+## 11. Mindmap de Synthèse [REQUIRED - FORMAT STRICT]
+
+> Mermaid mindmap OBLIGATOIRE. Ne pas remplacer par du texte ou des bullet points.
+
 ```mermaid
 mindmap
   root((Feature))
@@ -258,7 +271,10 @@ mindmap
 
 ---
 
-## 12. Score EMS Final
+## 12. Score EMS Final [REQUIRED - DO NOT SIMPLIFY]
+
+> Cette section DOIT contenir le graphe ASCII de progression ET le radar 5 axes.
+> NE PAS remplacer par un simple score textuel.
 
 ```
 EMS Final: [SCORE]/100 [STATUT]
@@ -295,7 +311,7 @@ Axes finaux:
 
 ---
 
-## 13. Pistes Non Explorées
+## 13. Pistes Non Explorées [REQUIRED]
 
 | Sujet | Pourquoi non exploré | Valeur potentielle | Prochaine étape |
 |-------|----------------------|-------------------|-----------------|
@@ -304,7 +320,7 @@ Axes finaux:
 
 ---
 
-## 14. Références
+## 14. Références [REQUIRED]
 
 ### Documents analysés
 - [Document 1]: [Ce qui en a été extrait - 1 ligne]
@@ -317,7 +333,7 @@ Axes finaux:
 
 ---
 
-## 15. Prochaines Étapes
+## 15. Prochaines Étapes [REQUIRED]
 
 **Workflow recommandé**:
 

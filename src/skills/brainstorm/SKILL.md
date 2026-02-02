@@ -27,6 +27,7 @@ Transform vague ideas into actionable specifications through structured co-explo
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
+### Core Workflow Rules
 - 🔴 NEVER skip EMS calculation between iterations
 - 🔴 NEVER generate outputs with EMS < 60 without --force
 - 🔴 NEVER skip the BREAKPOINT at framing validation (step-03)
@@ -37,6 +38,47 @@ Transform vague ideas into actionable specifications through structured co-explo
 - ✅ ALWAYS use breakpoint-system for interactive breakpoints
 - ⛔ FORBIDDEN proceeding without brief validation
 - 🔵 YOU ARE A PROACTIVE INTELLECTUAL PARTNER
+
+### Brief Generation Rules (CRITICAL)
+- 🔴 NEVER generate brief without ALL 15 sections
+- 🔴 NEVER skip section 12 (EMS Final avec graphe ASCII)
+- 🔴 NEVER use simplified User Story format (Gherkin REQUIRED)
+- 🔴 NEVER omit edge cases in section 5
+- 🔴 NEVER skip journal generation (unless --quick)
+- 🔴 NEVER generate section 12 without EMS history data
+- ✅ ALWAYS include mindmap Mermaid in section 11
+- ✅ ALWAYS include Probabilité AND Impact in section 9
+
+## OUTPUT VALIDATION CHECKLIST:
+
+Before generating files in step-08, Claude MUST verify:
+
+```
+BRIEF VALIDATION (ALL REQUIRED):
+[ ] brief_final contains 15 numbered sections (1-15)
+[ ] Section 1 has Question initiale + Périmètre IN/OUT + Critères
+[ ] Section 2 has Insight clé (bold) + Routing recommandé
+[ ] Section 3 has at least 1 persona with attribute table
+[ ] Section 5 has Gherkin format AC (Given/When/Then) for EACH story
+[ ] Section 5 has edge cases for EACH User Story
+[ ] Section 7 has 4 MoSCoW categories
+[ ] Section 9 has Probabilité AND Impact columns
+[ ] Section 11 has Mermaid mindmap block
+[ ] Section 12 has ASCII EMS progression graph
+[ ] Section 12 has radar with 5 axes bars
+
+EMS VALIDATION:
+[ ] ems.history has at least 2 entries (init + iterations)
+[ ] ems.scores has all 5 axes filled
+[ ] ems.global is calculated
+
+JOURNAL VALIDATION (unless --quick):
+[ ] journal_content exists
+[ ] Contains EMS progression table
+[ ] Contains decisions with timestamps
+```
+
+⛔ **IF ANY CHECK FAILS**: Do NOT call Write(). Fix the issue first.
 
 ## EXECUTION PROTOCOLS:
 
