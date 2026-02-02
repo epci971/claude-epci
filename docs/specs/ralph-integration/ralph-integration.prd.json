@@ -1,0 +1,655 @@
+{
+  "$schema": "https://epci.dev/schemas/prd-v2.json",
+  "version": "2.0",
+  "title": "Ralph Integration v6.1",
+  "slug": "ralph-integration",
+  "generated_at": "2026-02-02T12:00:00Z",
+  "source": "docs/briefs/ralph-integration/brief-ralph-integration-20260202.md",
+  "complexity": "STANDARD",
+  "meta": {
+    "branchName": "feature/ralph-integration",
+    "projectName": "EPCI Plugin",
+    "generatedBy": "EPCI /spec v1.0"
+  },
+  "config": {
+    "max_iterations": 50,
+    "test_command": "python src/scripts/validate_all.py",
+    "lint_command": "python -m flake8 src/",
+    "granularity": "standard"
+  },
+  "metrics": {
+    "total_tasks": 8,
+    "total_steps": 28,
+    "estimated_hours": 8.75,
+    "optimized_hours": 7,
+    "critical_path": ["task-001", "task-002", "task-004", "task-006", "task-007", "task-008"]
+  },
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Update PRD Schema v2",
+      "slug": "schema",
+      "complexity": "M",
+      "estimated_minutes": 60,
+      "dependencies": [],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Schema Structure",
+          "given": "The prd-v2.json schema file",
+          "when": "It is validated",
+          "then": "It must use userStories[] as the main array"
+        },
+        {
+          "id": "AC2",
+          "title": "Execution Tracking Fields",
+          "given": "A userStory object in the schema",
+          "when": "It is defined",
+          "then": "It must include execution object with tracking fields"
+        },
+        {
+          "id": "AC3",
+          "title": "Status Tracking",
+          "given": "A userStory object",
+          "when": "Defined",
+          "then": "It must include status enum and passes boolean"
+        },
+        {
+          "id": "AC4",
+          "title": "AC and Tasks Tracking",
+          "given": "A userStory object",
+          "when": "Defined",
+          "then": "AC and tasks items must have done boolean"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Backup and Analyze Current Schema",
+          "duration_minutes": 15,
+          "input": "Current src/schemas/prd-v2.json",
+          "output": "Backup file, analysis of current structure",
+          "validation": "Backup exists, current fields documented"
+        },
+        {
+          "id": "step-2",
+          "title": "Define userStory Object Schema",
+          "duration_minutes": 20,
+          "input": "v5.6 reference, brief requirements",
+          "output": "Complete userStory JSON Schema definition",
+          "validation": "All ACs covered in schema"
+        },
+        {
+          "id": "step-3",
+          "title": "Update Root Schema Structure",
+          "duration_minutes": 15,
+          "input": "userStory schema, meta/config requirements",
+          "output": "Updated prd-v2.json with new structure",
+          "validation": "JSON Schema valid"
+        },
+        {
+          "id": "step-4",
+          "title": "Write Unit Tests",
+          "duration_minutes": 10,
+          "input": "Updated schema",
+          "output": "Test file validating schema compliance",
+          "validation": "Tests pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/schemas/prd-v2.json", "action": "modify", "description": "Update to userStories format"},
+        {"path": "src/schemas/prd-v2.json.bak", "action": "create", "description": "Backup"},
+        {"path": "src/scripts/test_prd_schema.py", "action": "create", "description": "Schema tests"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-002",
+      "title": "Create Skill /ralph-exec",
+      "slug": "ralph-exec",
+      "complexity": "L",
+      "estimated_minutes": 120,
+      "dependencies": ["task-001"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Skill Structure",
+          "given": "The skill directory",
+          "when": "Created",
+          "then": "Must contain SKILL.md and 3 step files"
+        },
+        {
+          "id": "AC2",
+          "title": "PRD Argument",
+          "given": "The skill is invoked",
+          "when": "--prd argument provided",
+          "then": "Must read and parse the PRD.json file"
+        },
+        {
+          "id": "AC3",
+          "title": "Story Selection",
+          "given": "A parsed PRD with multiple stories",
+          "when": "Selecting next story",
+          "then": "Choose first pending story with satisfied dependencies"
+        },
+        {
+          "id": "AC4",
+          "title": "TDD Execution",
+          "given": "A story to execute",
+          "when": "Implementing",
+          "then": "Follow RED-GREEN cycle"
+        },
+        {
+          "id": "AC5",
+          "title": "PRD Update",
+          "given": "Story execution completes",
+          "when": "Writing results",
+          "then": "Update PRD.json with execution tracking"
+        },
+        {
+          "id": "AC6",
+          "title": "RALPH_STATUS Emission",
+          "given": "Execution completes",
+          "when": "Generating response",
+          "then": "Emit RALPH_STATUS block with 7 fields"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Create SKILL.md",
+          "duration_minutes": 20,
+          "input": "Brief requirements, skill template",
+          "output": "Complete SKILL.md",
+          "validation": "Frontmatter valid"
+        },
+        {
+          "id": "step-2",
+          "title": "Create step-00-init.md",
+          "duration_minutes": 25,
+          "input": "PRD schema, dependency rules",
+          "output": "Init step for PRD parsing",
+          "validation": "Handles edge cases"
+        },
+        {
+          "id": "step-3",
+          "title": "Create step-01-execute.md",
+          "duration_minutes": 30,
+          "input": "TDD enforcer patterns",
+          "output": "Execute step with RED-GREEN",
+          "validation": "Tests first"
+        },
+        {
+          "id": "step-4",
+          "title": "Create step-02-report.md",
+          "duration_minutes": 25,
+          "input": "RALPH_STATUS format",
+          "output": "Report step",
+          "validation": "Status block parseable"
+        },
+        {
+          "id": "step-5",
+          "title": "Create references/status-block.md",
+          "duration_minutes": 20,
+          "input": "Status format from brief",
+          "output": "Reference doc",
+          "validation": "All fields documented"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/ralph-exec/SKILL.md", "action": "create", "description": "Main skill"},
+        {"path": "src/skills/ralph-exec/steps/step-00-init.md", "action": "create", "description": "Init step"},
+        {"path": "src/skills/ralph-exec/steps/step-01-execute.md", "action": "create", "description": "Execute step"},
+        {"path": "src/skills/ralph-exec/steps/step-02-report.md", "action": "create", "description": "Report step"},
+        {"path": "src/skills/ralph-exec/references/status-block.md", "action": "create", "description": "Status format"}
+      ],
+      "test_approach": "Integration"
+    },
+    {
+      "id": "task-003",
+      "title": "Implement Circuit Breaker",
+      "slug": "circuit-breaker",
+      "complexity": "M",
+      "estimated_minutes": 60,
+      "dependencies": [],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Inline Implementation",
+          "given": "The circuit breaker code",
+          "when": "Integrated into ralph.sh",
+          "then": "Must be fully inline"
+        },
+        {
+          "id": "AC2",
+          "title": "No-Progress Detection",
+          "given": "File state tracking",
+          "when": "3 consecutive same hashes",
+          "then": "Trigger circuit breaker"
+        },
+        {
+          "id": "AC3",
+          "title": "Same-Error Detection",
+          "given": "Error tracking",
+          "when": "3 consecutive same errors",
+          "then": "Trigger circuit breaker"
+        },
+        {
+          "id": "AC4",
+          "title": "Exit Codes",
+          "given": "Circuit breaker triggers",
+          "when": "Script exits",
+          "then": "Use exit code 2"
+        },
+        {
+          "id": "AC5",
+          "title": "Logging",
+          "given": "Circuit breaker activation",
+          "when": "Triggered",
+          "then": "Log timestamp and reason"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Design State Tracking",
+          "duration_minutes": 15,
+          "input": "Circuit breaker patterns",
+          "output": "Bash arrays design",
+          "validation": "Efficient tracking"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement check_circuit_breaker",
+          "duration_minutes": 25,
+          "input": "State tracking, thresholds",
+          "output": "Bash function",
+          "validation": "Returns correct values"
+        },
+        {
+          "id": "step-3",
+          "title": "Write Unit Tests",
+          "duration_minutes": 20,
+          "input": "Circuit breaker function",
+          "output": "Test script",
+          "validation": "All triggers tested"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/spec/templates/circuit-breaker.sh.snippet", "action": "create", "description": "Circuit breaker code"},
+        {"path": "src/scripts/test_circuit_breaker.sh", "action": "create", "description": "Tests"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-004",
+      "title": "Create ralph.sh Template",
+      "slug": "ralph-script",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-002", "task-003"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Autonomous Mode",
+          "given": "The script runs",
+          "when": "--dangerously-skip-permissions used",
+          "then": "Execute without intervention"
+        },
+        {
+          "id": "AC2",
+          "title": "Loop with MAX_ITERATIONS",
+          "given": "Script configuration",
+          "when": "MAX_ITERATIONS set",
+          "then": "Loop up to that limit"
+        },
+        {
+          "id": "AC3",
+          "title": "/ralph-exec Invocation",
+          "given": "Each iteration",
+          "when": "Executing",
+          "then": "Call claude /ralph-exec"
+        },
+        {
+          "id": "AC4",
+          "title": "RALPH_STATUS Parsing",
+          "given": "Claude output",
+          "when": "Parsing status",
+          "then": "Extract STATUS and EXIT_SIGNAL"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Create Template Structure",
+          "duration_minutes": 20,
+          "input": "v5.6 template, requirements",
+          "output": "Template with placeholders",
+          "validation": "Placeholders documented"
+        },
+        {
+          "id": "step-2",
+          "title": "Integrate Circuit Breaker",
+          "duration_minutes": 20,
+          "input": "Circuit breaker snippet",
+          "output": "Inline integration",
+          "validation": "No external deps"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement RALPH_STATUS Parser",
+          "duration_minutes": 25,
+          "input": "Status block format",
+          "output": "parse_ralph_status function",
+          "validation": "Handles all values"
+        },
+        {
+          "id": "step-4",
+          "title": "Add CLI Flags and Progress",
+          "duration_minutes": 25,
+          "input": "UX requirements",
+          "output": "Complete template",
+          "validation": "--help works"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/spec/templates/ralph.sh.template", "action": "create", "description": "Complete ralph.sh template"}
+      ],
+      "test_approach": "Integration"
+    },
+    {
+      "id": "task-005",
+      "title": "Create Generation Templates",
+      "slug": "templates",
+      "complexity": "S",
+      "estimated_minutes": 45,
+      "dependencies": ["task-001"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "PRD.json Template",
+          "given": "The template file",
+          "when": "Used by step-03",
+          "then": "Produce valid JSON"
+        },
+        {
+          "id": "AC2",
+          "title": "PROMPT.md Template",
+          "given": "The template file",
+          "when": "Generated",
+          "then": "Include context and stack guidelines"
+        },
+        {
+          "id": "AC3",
+          "title": "MEMORY.md Template",
+          "given": "The template file",
+          "when": "Initialized",
+          "then": "Include progress and tracking tables"
+        },
+        {
+          "id": "AC4",
+          "title": "Variable Documentation",
+          "given": "Each template",
+          "when": "Reviewed",
+          "then": "All placeholders documented"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Create prd.json.template",
+          "duration_minutes": 15,
+          "input": "Updated prd-v2.json schema",
+          "output": "Template with userStories",
+          "validation": "Valid JSON structure"
+        },
+        {
+          "id": "step-2",
+          "title": "Create prompt.md.template",
+          "duration_minutes": 15,
+          "input": "Existing template, stack guidelines",
+          "output": "Updated template",
+          "validation": "All sections present"
+        },
+        {
+          "id": "step-3",
+          "title": "Create memory.md.template",
+          "duration_minutes": 15,
+          "input": "Memory tracking requirements",
+          "output": "Template with tables",
+          "validation": "Headers correct"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/spec/templates/prd.json.template", "action": "create", "description": "PRD template"},
+        {"path": "src/skills/spec/templates/prompt.md.template", "action": "modify", "description": "PROMPT template"},
+        {"path": "src/skills/spec/templates/memory.md.template", "action": "modify", "description": "MEMORY template"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-006",
+      "title": "Update /spec step-03",
+      "slug": "spec-update",
+      "complexity": "M",
+      "estimated_minutes": 60,
+      "dependencies": ["task-004", "task-005"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "PRD.json Generation",
+          "given": "Step-03 executes",
+          "when": "Generating PRD",
+          "then": "Create prd.json using template"
+        },
+        {
+          "id": "AC2",
+          "title": "PROMPT.md Generation",
+          "given": "Step-03 executes",
+          "when": "Generating PROMPT",
+          "then": "Create PROMPT.md with detected stack"
+        },
+        {
+          "id": "AC3",
+          "title": "ralph.sh Generation",
+          "given": "Step-03 executes",
+          "when": "Generating script",
+          "then": "Create executable ralph.sh"
+        },
+        {
+          "id": "AC4",
+          "title": "Registry Update",
+          "given": "Step-03 completes",
+          "when": "Artifacts generated",
+          "then": "Update index.json"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Update Template Loading Logic",
+          "duration_minutes": 15,
+          "input": "New template files",
+          "output": "Step logic for templates",
+          "validation": "All placeholders replaced"
+        },
+        {
+          "id": "step-2",
+          "title": "Update PRD Generation",
+          "duration_minutes": 15,
+          "input": "Task list, DAG, userStories format",
+          "output": "Generation logic",
+          "validation": "Validates against schema"
+        },
+        {
+          "id": "step-3",
+          "title": "Update Script Generation",
+          "duration_minutes": 15,
+          "input": "ralph.sh.template",
+          "output": "Generation with chmod +x",
+          "validation": "Script executable"
+        },
+        {
+          "id": "step-4",
+          "title": "Update Breakpoint Display",
+          "duration_minutes": 15,
+          "input": "Completion requirements",
+          "output": "Breakpoint with commands",
+          "validation": "Routing correct"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/skills/spec/steps/step-03-generate-ralph.md", "action": "modify", "description": "Update generation logic"}
+      ],
+      "test_approach": "Integration"
+    },
+    {
+      "id": "task-007",
+      "title": "Create Registry index.json",
+      "slug": "registry",
+      "complexity": "S",
+      "estimated_minutes": 30,
+      "dependencies": ["task-006"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Schema Definition",
+          "given": "The schema file",
+          "when": "Validated",
+          "then": "Include all required fields"
+        },
+        {
+          "id": "AC2",
+          "title": "Status Enum",
+          "given": "A feature entry",
+          "when": "Status is set",
+          "then": "Must be valid enum value"
+        },
+        {
+          "id": "AC3",
+          "title": "No Duplicates",
+          "given": "Step-03 runs",
+          "when": "Adding a feature",
+          "then": "Check for existing slug"
+        },
+        {
+          "id": "AC4",
+          "title": "Auto-Creation",
+          "given": "No index.json exists",
+          "when": "Step-03 runs",
+          "then": "Create new file"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Create JSON Schema",
+          "duration_minutes": 15,
+          "input": "Registry requirements",
+          "output": "ralph-index-v1.json",
+          "validation": "Schema valid"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement Update Logic",
+          "duration_minutes": 15,
+          "input": "Schema, step-03 context",
+          "output": "Read/create/update logic",
+          "validation": "All cases handled"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/schemas/ralph-index-v1.json", "action": "create", "description": "Registry schema"},
+        {"path": "src/skills/spec/steps/step-03-generate-ralph.md", "action": "modify", "description": "Add registry logic"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-008",
+      "title": "E2E Test Flow",
+      "slug": "e2e-test",
+      "complexity": "M",
+      "estimated_minutes": 60,
+      "dependencies": ["task-007"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Spec Generation",
+          "given": "A test brief",
+          "when": "/spec runs",
+          "then": "All artifacts generated"
+        },
+        {
+          "id": "AC2",
+          "title": "Ralph Script Execution",
+          "given": "Generated ralph.sh",
+          "when": "Executed (simulated)",
+          "then": "Starts and loads PRD"
+        },
+        {
+          "id": "AC3",
+          "title": "Status Parsing",
+          "given": "Mock /ralph-exec output",
+          "when": "ralph.sh parses",
+          "then": "Correctly extracts status"
+        },
+        {
+          "id": "AC4",
+          "title": "Circuit Breaker Trigger",
+          "given": "Simulated stuck loop",
+          "when": "Circuit breaker checks",
+          "then": "Exits with code 2"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Create Test Brief",
+          "duration_minutes": 15,
+          "input": "Test scenario requirements",
+          "output": "Minimal test brief",
+          "validation": "Brief parses"
+        },
+        {
+          "id": "step-2",
+          "title": "Run /spec and Verify Artifacts",
+          "duration_minutes": 25,
+          "input": "Test brief",
+          "output": "Generated specs",
+          "validation": "All files exist"
+        },
+        {
+          "id": "step-3",
+          "title": "Simulate Ralph Execution",
+          "duration_minutes": 20,
+          "input": "Generated ralph.sh",
+          "output": "Execution log",
+          "validation": "All checks pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "tests/e2e/test-ralph-integration/", "action": "create", "description": "Test directory"},
+        {"path": "tests/e2e/test-ralph-integration/test-brief.md", "action": "create", "description": "Test brief"},
+        {"path": "tests/e2e/test-ralph-integration/run-e2e.sh", "action": "create", "description": "E2E runner"}
+      ],
+      "test_approach": "E2E"
+    }
+  ],
+  "dependencies_graph": {
+    "nodes": ["task-001", "task-002", "task-003", "task-004", "task-005", "task-006", "task-007", "task-008"],
+    "edges": [
+      {"from": "task-001", "to": "task-002"},
+      {"from": "task-001", "to": "task-005"},
+      {"from": "task-002", "to": "task-004"},
+      {"from": "task-003", "to": "task-004"},
+      {"from": "task-004", "to": "task-006"},
+      {"from": "task-005", "to": "task-006"},
+      {"from": "task-006", "to": "task-007"},
+      {"from": "task-007", "to": "task-008"}
+    ]
+  },
+  "routing": {
+    "recommended_skill": "/implement",
+    "reason": "STANDARD complexity with 8 interdependent tasks requiring full EPCI workflow"
+  }
+}
