@@ -219,13 +219,34 @@ IF rejected:
     → Iterate on reformulation
 ```
 
+### 7.5 Persist Session State (OBLIGATOIRE)
+
+🔴 **CRITIQUE**: Après validation du brief, SAUVEGARDE dans le fichier session.
+
+```
+# Load current session
+session = JSON.parse(Read(session_path))
+
+# Update with clarification data
+session.context.idea_refined = idea_refined
+session.context.brief_v0 = brief_v0
+session.context.clarity_score = clarity_score
+session.timestamps.last_update = NOW()
+
+# Persist to disk
+Write(session_path, JSON.stringify(session, indent=2))
+
+DISPLAY: "Session updated with refined brief"
+```
+
 ## Outputs
 
 | Output | Destination |
 |--------|-------------|
-| `idea_refined` | Session state |
-| `clarity_score` | Session state |
-| `brief_v0` | Session state |
+| Session JSON (updated) | `.claude/state/sessions/{session_id}.json` |
+| `idea_refined` | Session state + JSON |
+| `clarity_score` | Session state + JSON |
+| `brief_v0` | Session state + JSON |
 
 ## Next Step
 

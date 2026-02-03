@@ -199,6 +199,7 @@ JOURNAL VALIDATION (unless --quick):
 - [references/personas.md](references/personas.md) — 4 personas and auto-switch rules
 - [references/brief-format.md](references/brief-format.md) — PRD v3.0 output template
 - [references/journal-format.md](references/journal-format.md) — Exploration journal template
+- [references/decisions-format.md](references/decisions-format.md) — Incremental decisions log template
 
 ## Shared Components Used
 
@@ -279,11 +280,32 @@ See [references/personas.md](references/personas.md) for complete specifications
 
 ```
 .claude/state/sessions/
-  brainstorm-{slug}-{timestamp}.json
+  brainstorm-{slug}-{timestamp}.json    # Session state (persisted incrementally)
 
 docs/briefs/{slug}/
-  brief-{slug}-{date}.md
-  journal-{slug}-{date}.md
+  brief-{slug}-{date}.md                # Final brief (generated at end)
+  journal-{slug}-{date}.md              # Full journal (generated at end)
+  decisions-{slug}.md                   # Decisions log (updated incrementally)
+```
+
+### Persistence Points
+
+| Step | What is saved |
+|------|---------------|
+| step-00 | Initial session JSON created |
+| step-01 | idea_refined, brief_v0 |
+| step-02 | template, HMW, Perplexity, EMS baseline |
+| step-04 | EMS after each iteration, decisions, threads |
+| step-08 | Final state, output files references |
+
+### Resume Capability
+
+```bash
+# List available sessions
+ls .claude/state/sessions/brainstorm-*.json
+
+# Resume a paused session
+/brainstorm --continue {slug}-{timestamp}
 ```
 
 ## INVOCATION PROTOCOL (CRITICAL)

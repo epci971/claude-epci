@@ -45,11 +45,71 @@ conditional_next:
 Extract from user input:
   - idea: The quoted string (main topic)
   - flags: All --flag arguments
+```
 
+### 1.5 Handle --continue Flag (Session Resume)
+
+```
 IF --continue <id> provided:
-  → Load session from .claude/state/sessions/brainstorm-{id}.json
-  → Restore EMS, phase, persona, iteration
-  → Skip to step-04-iteration.md at iteration N+1
+  session_path = ".claude/state/sessions/brainstorm-{id}.json"
+
+  IF file exists at session_path:
+    session = Read(session_path)
+    session = JSON.parse(session)
+
+    # Validate session integrity
+    IF session.version != "1.0":
+      WARN: "Session version mismatch, may have compatibility issues"
+
+    IF session.status == "completed":
+      DISPLAY: "Session already completed. Start a new brainstorm."
+      → Exit
+
+    # Update session status for resumption
+    session.status = "active"
+    session.timestamps.last_update = NOW()
+    Write(session_path, JSON.stringify(session, indent=2))
+
+    # Display resumption summary
+    DISPLAY:
+    ┌─────────────────────────────────────────────────────┐
+    │  🔄 RESUMING BRAINSTORM SESSION                     │
+    ├─────────────────────────────────────────────────────┤
+    │  Session: {session.session_id}                      │
+    │  Phase: {session.phase}                             │
+    │  Iteration: {session.iteration}                     │
+    │  EMS: {session.ems.global}/100                      │
+    │  Decisions made: {len(session.decisions)}           │
+    │  Open threads: {len(session.open_threads)}          │
+    └─────────────────────────────────────────────────────┘
+
+    # Restore state variables
+    store("session_id", session.session_id)
+    store("session_path", session_path)
+    store("slug", session.slug)
+    store("ems", session.ems)
+    store("phase", session.phase)
+    store("persona", session.persona)
+    store("iteration", session.iteration)
+    store("decisions", session.decisions)
+    store("open_threads", session.open_threads)
+    store("context", session.context)
+
+    → Skip to step-04-iteration.md at iteration N+1
+
+  ELSE:
+    # List available sessions
+    available = Glob(".claude/state/sessions/brainstorm-*.json")
+
+    IF available is empty:
+      DISPLAY: "No saved brainstorm sessions found."
+      → Ask user to start a new brainstorm
+    ELSE:
+      DISPLAY: "Session '{id}' not found. Available sessions:"
+      FOR each file in available:
+        session = JSON.parse(Read(file))
+        DISPLAY: "  - {session.slug} (EMS: {session.ems.global}, iteration {session.iteration})"
+      → Ask user to select or provide correct ID
 ```
 
 ### 2. Load Project Context (SI DISPONIBLE)
@@ -77,12 +137,25 @@ Store for later steps:
 - User preferences (verbose, quick mode default, etc.)
 - Related past features for context
 
-### 3. Generate Session ID
+### 3. Generate Session ID and Initial State
+
+```
+# Generate identifiers
+timestamp = NOW().format("YYYYMMDD-HHmmss")
+slug = slugify(idea)  # lowercase, hyphenated, max 30 chars
+session_id = "brainstorm-{slug}-{timestamp}"
+session_path = ".claude/state/sessions/{session_id}.json"
+```
+
+### 3.5 Create and Persist Initial Session File
+
+🔴 **OBLIGATOIRE**: Créer le fichier session AVANT de continuer.
 
 ```json
 {
   "session_id": "brainstorm-{slug}-{timestamp}",
-  "slug": "{slugified-idea}",
+  "version": "1.0",
+  "slug": "{slug}",
   "status": "initialized",
   "template": null,
   "flags": {
@@ -93,6 +166,11 @@ Store for later steps:
     "no_hmw": false,
     "no_security": false,
     "no_clarify": false
+  },
+  "timestamps": {
+    "created_at": "{ISO8601}",
+    "last_update": "{ISO8601}",
+    "ended_at": null
   },
   "phase": "INIT",
   "persona": "architecte",
@@ -105,9 +183,31 @@ Store for later steps:
   "context": {
     "idea_raw": "<user input>",
     "idea_refined": null,
-    "codebase_analysis": null
-  }
+    "brief_v0": null,
+    "codebase_analysis": null,
+    "hmw_questions": [],
+    "perplexity_prompts": [],
+    "perplexity_results": []
+  },
+  "decisions": [],
+  "open_threads": [],
+  "techniques_applied": [],
+  "persona_history": [
+    { "persona": "architecte", "iteration": 0, "trigger": "default" }
+  ]
 }
+```
+
+```
+# Persist initial session
+Write(session_path, JSON.stringify(initial_session, indent=2))
+
+# Store references for subsequent steps
+store("session_id", session_id)
+store("session_path", session_path)
+store("slug", slug)
+
+DISPLAY: "Session created: {session_id}"
 ```
 
 ### 4. Launch @Explore (Background)
@@ -144,7 +244,10 @@ medium
 
 | Output | Destination |
 |--------|-------------|
-| Session state | `state-manager` |
+| Session JSON | `.claude/state/sessions/{session_id}.json` |
+| `session_id` | Stored for subsequent steps |
+| `session_path` | Stored for subsequent steps |
+| `slug` | Stored for subsequent steps |
 | Project context | Loaded for subsequent steps |
 | @Explore task | Running in background |
 
