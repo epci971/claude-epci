@@ -26,7 +26,7 @@ Systeme de gestion du developpement avec skills, subagents et hooks.
 ```
 src/
 ├── agents/           # 15 subagents (validateurs, reviewers, turbo, brainstorm)
-├── hooks/            # Systeme hooks (runner.py)
+├── hooks/            # Systeme hooks (runner.py - placeholder, logs only)
 ├── mcp/              # MCP Integration (config, activation)
 ├── orchestration/    # Wave orchestration
 ├── project-memory/   # Gestion memoire projet (Python)
@@ -54,7 +54,7 @@ python src/scripts/validate_subagent.py src/agents/code-reviewer.md
 # Tests orchestration
 python src/scripts/test_orchestration.py
 
-# Hooks
+# Hooks (placeholder - logs only, not yet fully implemented)
 python src/hooks/runner.py post-phase-3 --context '{...}'
 ```
 

@@ -14,6 +14,10 @@ conditional_next:
 
 > Generate implementation preview and optional security audit.
 
+**⚠️ IMPORTANT**: This step generates a **preview only**, NOT an actual implementation plan.
+The preview helps estimate complexity and routing, but does NOT trigger any implementation.
+The user must explicitly invoke `/implement` or `/quick` after brainstorm completes.
+
 ## Trigger
 
 - Previous step: `step-05-breakpoint-finish.md` completed
@@ -66,11 +70,14 @@ ATTENDS le résultat avant de continuer.
 ### 2. Display Preview (if requested)
 
 ```markdown
-## Implementation Preview
+## Implementation Preview (Estimation Only)
+
+> ℹ️ This is a **complexity estimation**, not an implementation plan.
+> No code will be generated until you explicitly run `/implement` or `/quick`.
 
 **Estimated Complexity**: {TINY|SMALL|STANDARD|LARGE}
 
-### Tasks Breakdown
+### Tasks Breakdown (Estimated)
 | # | Task | Complexity | Dependencies |
 |---|------|------------|--------------|
 | 1 | {title} | {complexity} | - |
@@ -81,7 +88,7 @@ ATTENDS le résultat avant de continuer.
 - {risk_1}
 - {risk_2}
 
-### Recommended Approach
+### Suggested Next Step (after brainstorm)
 {routing recommendation: /implement or /quick}
 ```
 
@@ -133,15 +140,19 @@ IF trigger_security_audit:
 AFFICHE cette boîte:
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│ 👁️ PREVIEW IMPLÉMENTATION                                           │
+│ 👁️ PREVIEW IMPLÉMENTATION (Estimation uniquement)                   │
+├─────────────────────────────────────────────────────────────────────┤
+│ ℹ️  Ceci est une ESTIMATION de complexité, pas un plan exécuté.     │
+│     Aucun code ne sera généré tant que vous n'invoquez pas          │
+│     explicitement /implement ou /quick après le brainstorm.         │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│ MÉTRIQUES                                                           │
+│ MÉTRIQUES ESTIMÉES                                                  │
 │ • Complexité estimée: {complexity}                                  │
 │ • Nombre de tâches: {tasks_count}                                   │
 │ • Risques identifiés: {risks_count}                                 │
 │                                                                     │
-│ DÉCOUPAGE TÂCHES                                                    │
+│ DÉCOUPAGE ESTIMÉ                                                    │
 │ | # | Tâche | Complexité | Dépendances |                            │
 │ |---|-------|------------|-------------|                            │
 │ | 1 | {title_1} | {complexity_1} | - |                              │
@@ -152,13 +163,13 @@ AFFICHE cette boîte:
 │ • Niveau risque: {risk_level}                                       │
 │ • Préoccupations: {concerns}                                        │
 │                                                                     │
-│ ROUTING RECOMMANDÉ                                                  │
+│ SUGGESTION APRÈS BRAINSTORM                                         │
 │ → {routing}                                                         │
 │ → Raison: {routing_reason}                                          │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
-│ SUGGESTIONS PROACTIVES                                              │
-│ [P1] Complexité {complexity} → recommande {skill}                   │
+│ NOTES                                                               │
+│ [P1] Complexité {complexity} → suggère {skill} après brainstorm     │
 │ [P2] {concern} — sera noté dans le brief                            │
 │ [P3] Considère {mitigation} pour {risk}                             │
 ├─────────────────────────────────────────────────────────────────────┤

@@ -65,11 +65,12 @@ Routing rules:
 | STANDARD | `/implement` | Multiple files, requires planning |
 | LARGE | `/implement` | Multi-phase, architectural |
 
-### 2. Execute Hook: post-brainstorm
+### 2. Log Session Completion
 
 ```python
-hook_data = {
-  "hook": "post-brainstorm",
+# Log session completion data (hooks system not yet implemented)
+session_data = {
+  "event": "brainstorm-complete",
   "timestamp": datetime.now().isoformat(),
   "data": {
     "feature_slug": slug,
@@ -85,8 +86,8 @@ hook_data = {
   }
 }
 
-# Execute hook
-Bash("python src/hooks/runner.py post-brainstorm --context '{json}'")
+# Note: Hook system (src/hooks/runner.py) not yet implemented
+# Data is stored in session state and index.json instead
 ```
 
 ### 3. Store Metrics in Project State (SI DISPONIBLE)
@@ -97,15 +98,24 @@ Sauvegarder les métriques pour référence future:
 SI le dossier `.claude/state/features/` existe:
   Read(".claude/state/features/index.json")
 
-  Ajouter entrée pour cette session:
+  Ajouter entrée pour cette session (format compatible avec implement):
   {
-    "slug": "{slug}",
-    "type": "brainstorm",
-    "ems_final": {ems.global},
-    "iterations": {iteration},
-    "techniques": {techniques_applied},
-    "duration_minutes": {duration_minutes},
-    "timestamp": "{ISO8601}"
+    "id": "{slug}",
+    "status": "brainstorm-complete",
+    "current_phase": "brainstorm",
+    "complexity": "{complexity_estimate}",
+    "branch": null,
+    "created_at": "{session_start_timestamp}",
+    "last_update": "{ISO8601}",
+    "summary": "{brief_summary_1_sentence}",
+    "modified_files": ["{brief_path}", "{journal_path}"],
+    "test_count": 0,
+    "brainstorm_data": {
+      "ems_final": {ems.global},
+      "iterations": {iteration},
+      "techniques": {techniques_applied},
+      "duration_minutes": {duration_minutes}
+    }
   }
 
   Write(".claude/state/features/index.json", updated_index)
@@ -158,19 +168,22 @@ Actionability --- Depth
 - `{brief_path}`
 - `{journal_path}` (if not --quick)
 
-### Recommended Next Steps
+### Suggested Next Steps (Manual)
+
+> ℹ️ **Brainstorm is complete.** The commands below are **suggestions only**.
+> No implementation will start until you explicitly run one of these commands.
 
 **Complexity**: {complexity_estimate}
-**Recommended workflow**: `{routing}`
+**Suggested workflow**: `{routing}`
 
 ```bash
-# Option 1: Generate specifications
+# Option 1: Generate specifications first
 /spec docs/briefs/{slug}/brief-{slug}-{date}.md
 
 # Option 2: Direct implementation (if TINY/SMALL)
 /quick "{summary}" @{brief_path}
 
-# Option 3: Full implementation
+# Option 3: Full implementation (if STANDARD/LARGE)
 /implement {slug} @{brief_path}
 ```
 
@@ -187,10 +200,10 @@ Actionability --- Depth
   "status": "completed",
   "completion_time": "{timestamp}",
   "output_files": [...],
-  "routing": {
+  "suggested_routing": {
     "complexity": "{level}",
-    "recommended_skill": "{/quick|/implement}",
-    "next_command": "/spec {brief_path}"
+    "suggested_skill": "{/quick|/implement}",
+    "note": "User must explicitly invoke next skill"
   }
 }
 ```
@@ -199,8 +212,8 @@ Actionability --- Depth
 
 | Output | Destination |
 |--------|-------------|
-| Hook execution | `src/hooks/runner.py` |
-| Metrics | `project-memory` |
+| Session data | Session state (logged, hooks not yet implemented) |
+| Metrics | `.claude/state/features/index.json` |
 | Session archive | `.claude/state/archive/` |
 | Completion summary | User display |
 
