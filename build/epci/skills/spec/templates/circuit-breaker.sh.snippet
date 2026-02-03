@@ -1,0 +1,235 @@
+#!/usr/bin/env bash
+# circuit-breaker.sh.snippet - Inline circuit breaker for ralph.sh
+# Detects stuck loops (no progress, repeated errors) and stops execution gracefully
+#
+# Usage: Source this file in ralph.sh, then call check_circuit_breaker() each iteration
+#
+# Exit codes (when integrated into ralph.sh):
+#   0 = success (all stories completed)
+#   1 = max iterations reached
+#   2 = circuit breaker triggered
+#   3 = blocked (dependency issue)
+#
+# Dependencies: bash 4+, md5sum or md5
+
+# ------------------------------------------------------------------
+# Configuration
+# ------------------------------------------------------------------
+
+# Threshold for triggering circuit breaker
+CB_THRESHOLD=${CB_THRESHOLD:-3}
+
+# State tracking arrays (must be initialized by caller if not already)
+declare -a FILE_HASHES
+declare -a ERROR_HASHES
+
+# Current iteration (set by caller)
+CURRENT_ITERATION=${CURRENT_ITERATION:-0}
+
+# Progress file for logging (set by caller)
+PROGRESS_FILE=${PROGRESS_FILE:-"progress.txt"}
+
+# ------------------------------------------------------------------
+# Hash Calculation Functions
+# ------------------------------------------------------------------
+
+# Calculate hash of current file state using git diff
+# Returns: MD5 hash string (or "empty" if no changes)
+calculate_file_hash() {
+    local diff_output
+    local hash
+
+    # Try git diff first (most accurate)
+    if git rev-parse --git-dir &>/dev/null; then
+        diff_output=$(git diff 2>/dev/null || echo "")
+        if [[ -z "$diff_output" ]]; then
+            # Also check staged changes
+            diff_output=$(git diff --cached 2>/dev/null || echo "")
+        fi
+    else
+        # Fallback: use find to list recent modifications
+        diff_output=$(find . -type f -newer /tmp/cb_marker 2>/dev/null || echo "")
+    fi
+
+    if [[ -z "$diff_output" ]]; then
+        echo "empty_state"
+        return
+    fi
+
+    # Calculate hash (prefer md5sum, fallback to md5 on macOS)
+    if command -v md5sum &>/dev/null; then
+        hash=$(echo "$diff_output" | md5sum | cut -d' ' -f1)
+    elif command -v md5 &>/dev/null; then
+        hash=$(echo "$diff_output" | md5)
+    else
+        # Last resort: simple checksum
+        hash=$(echo "$diff_output" | cksum | cut -d' ' -f1)
+    fi
+
+    echo "$hash"
+}
+
+# Calculate hash of an error message
+# Args: $1 = error message string
+# Returns: MD5 hash string
+calculate_error_hash() {
+    local error_msg="${1:-}"
+    local hash
+
+    if [[ -z "$error_msg" ]]; then
+        echo "no_error"
+        return
+    fi
+
+    # Normalize: remove timestamps, line numbers that might vary
+    local normalized
+    normalized=$(echo "$error_msg" | sed -E 's/[0-9]{2}:[0-9]{2}:[0-9]{2}//g' | sed -E 's/line [0-9]+/line N/g')
+
+    if command -v md5sum &>/dev/null; then
+        hash=$(echo "$normalized" | md5sum | cut -d' ' -f1)
+    elif command -v md5 &>/dev/null; then
+        hash=$(echo "$normalized" | md5)
+    else
+        hash=$(echo "$normalized" | cksum | cut -d' ' -f1)
+    fi
+
+    echo "$hash"
+}
+
+# ------------------------------------------------------------------
+# Circuit Breaker Logic
+# ------------------------------------------------------------------
+
+# Log circuit breaker event with timestamp
+# Args: $1 = reason, $2 = details
+_cb_log() {
+    local reason="$1"
+    local details="${2:-}"
+    local timestamp
+    timestamp=$(date -Iseconds 2>/dev/null || date '+%Y-%m-%dT%H:%M:%S')
+
+    local log_entry="[$timestamp] CIRCUIT BREAKER: $reason at iteration $CURRENT_ITERATION"
+    [[ -n "$details" ]] && log_entry="$log_entry - $details"
+
+    # Create directory if needed and append to file
+    local log_dir
+    log_dir=$(dirname "$PROGRESS_FILE")
+    [[ "$log_dir" != "." ]] && mkdir -p "$log_dir" 2>/dev/null || true
+    echo "$log_entry" >> "$PROGRESS_FILE"
+
+    # Also output to stderr for visibility
+    echo "$log_entry" >&2
+}
+
+# Count consecutive identical items at the end of an array
+# Args: $1 = array name (passed by reference)
+# Returns: count of consecutive identical items at end
+_count_consecutive_same() {
+    local arr_name=$1
+
+    # Get array length safely using eval
+    local len
+    eval "len=\${#${arr_name}[@]}"
+
+    # Handle empty or single-item arrays
+    if [[ $len -eq 0 ]]; then
+        echo "0"
+        return
+    fi
+    if [[ $len -eq 1 ]]; then
+        echo "1"
+        return
+    fi
+
+    # Get last element
+    local last
+    eval "last=\${${arr_name}[$((len - 1))]}"
+    local count=1
+
+    # Count consecutive same from the end
+    for ((i = len - 2; i >= 0; i--)); do
+        local current
+        eval "current=\${${arr_name}[$i]}"
+        if [[ "$current" == "$last" ]]; then
+            count=$((count + 1))
+        else
+            break
+        fi
+    done
+
+    echo "$count"
+}
+
+# Check if circuit breaker should trigger
+# Returns: 0 = continue, 1 = stop (circuit breaker triggered)
+check_circuit_breaker() {
+    local file_consecutive
+    local error_consecutive
+
+    # Check file state stagnation (no progress)
+    file_consecutive=$(_count_consecutive_same FILE_HASHES)
+    if [[ $file_consecutive -ge $CB_THRESHOLD ]]; then
+        _cb_log "no progress" "same file state for $file_consecutive consecutive iterations"
+        return 1
+    fi
+
+    # Check error repetition
+    error_consecutive=$(_count_consecutive_same ERROR_HASHES)
+    if [[ $error_consecutive -ge $CB_THRESHOLD ]]; then
+        _cb_log "repeated error" "same error for $error_consecutive consecutive iterations"
+        return 1
+    fi
+
+    # All checks passed, continue
+    return 0
+}
+
+# ------------------------------------------------------------------
+# Integration Helper
+# ------------------------------------------------------------------
+
+# Record current state and check circuit breaker
+# Args: $1 = last error message (optional, empty if success)
+# Returns: 0 = continue, 1 = stop
+record_and_check() {
+    local last_error="${1:-}"
+
+    # Calculate and record file hash
+    local file_hash
+    file_hash=$(calculate_file_hash)
+    FILE_HASHES+=("$file_hash")
+
+    # Calculate and record error hash
+    local error_hash
+    error_hash=$(calculate_error_hash "$last_error")
+    ERROR_HASHES+=("$error_hash")
+
+    # Check circuit breaker
+    check_circuit_breaker
+}
+
+# Reset circuit breaker state (call at start of execution)
+reset_circuit_breaker() {
+    FILE_HASHES=()
+    ERROR_HASHES=()
+    CURRENT_ITERATION=0
+
+    # Create marker file for fallback file tracking
+    touch /tmp/cb_marker 2>/dev/null || true
+}
+
+# ------------------------------------------------------------------
+# Example Usage (commented out - uncomment for testing)
+# ------------------------------------------------------------------
+
+# # Initialize
+# reset_circuit_breaker
+#
+# # Each iteration
+# CURRENT_ITERATION=$((CURRENT_ITERATION + 1))
+# last_error=$(run_claude_command 2>&1) || true
+#
+# if ! record_and_check "$last_error"; then
+#     echo "Circuit breaker triggered!"
+#     exit 2
+# fi

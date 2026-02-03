@@ -1,5 +1,27 @@
 # Ralph Execution Context — {{FEATURE_TITLE}}
 
+<!--
+PROMPT.md Template v1.0 for EPCI v6.0
+
+Variables (all required unless noted):
+  - {{FEATURE_TITLE}}: Human-readable feature name
+  - {{FEATURE_SLUG}}: URL-friendly identifier (kebab-case)
+  - {{COMPLEXITY}}: TINY | SMALL | STANDARD | LARGE
+  - {{TASK_COUNT}}: Number of tasks
+  - {{TOTAL_HOURS}}: Estimated total effort in hours
+  - {{STACK_FRAMEWORK}}: Primary framework (e.g., Django, React)
+  - {{STACK_LANGUAGE}}: Primary language (e.g., Python, TypeScript)
+  - {{TEST_FRAMEWORK}}: Test framework (e.g., pytest, Jest)
+  - {{TEST_COMMAND}}: Command to run tests (e.g., pytest src/)
+  - {{DATE}}: ISO-8601 date
+  - {{STACK_GUIDELINES}}: Stack-specific best practices (optional)
+
+Loop variables:
+  - {{#each TASKS}}: { file, title }
+  - {{#each EXECUTION_ORDER}}: { order, id, title, deps }
+  - {{#if PARALLEL_GROUPS}} {{#each PARALLEL_GROUPS}}: { number, tasks }
+-->
+
 ## Feature
 
 | Property | Value |

@@ -1,6 +1,6 @@
 ---
 name: step-03-generate-ralph
-description: Generate Ralph execution artifacts
+description: Generate Ralph execution artifacts using templates
 prev_step: steps/step-02-generate-specs.md
 next_step: null
 ---
@@ -19,7 +19,14 @@ next_step: null
 | memory-template.md | MEMORY.md structure |
 | execution-workflow.md | TDD and completion rules |
 
-*(Breakpoint templates are inline in this file)*
+## Templates (from task-005)
+
+| Template | Output | Location |
+|----------|--------|----------|
+| `templates/prd.json.template` | PRD v2 with userStories | `docs/specs/{slug}/{slug}.prd.json` |
+| `templates/prompt.md.template` | Execution context | `.ralph/{slug}/PROMPT.md` |
+| `templates/memory.md.template` | Progress tracking | `.ralph/{slug}/MEMORY.md` |
+| `templates/ralph.sh.template` | Autonomous executor | `.ralph/{slug}/ralph.sh` |
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
@@ -29,6 +36,7 @@ next_step: null
 - ✅ ALWAYS use templates from templates/
 - ✅ ALWAYS update .ralph/index.json
 - ✅ ALWAYS make ralph.sh executable
+- ✅ ALWAYS include circuit breaker in ralph.sh (from template)
 - 🔵 YOU ARE A DEVOPS ENGINEER preparing execution
 - 💭 FOCUS on stack-awareness and automation
 
@@ -47,9 +55,45 @@ Store detected stack for PROMPT.md generation:
 
 ```bash
 mkdir -p .ralph/{feature-slug}/
+mkdir -p docs/specs/{feature-slug}/
 ```
 
-### 3. Generate PROMPT.md
+### 3. Generate PRD.json (PRD v2 with userStories)
+
+Use template from `templates/prd.json.template`.
+
+**Output location:** `docs/specs/{slug}/{slug}.prd.json`
+
+**Template variables to fill:**
+- `{{TITLE}}`: Feature title
+- `{{SLUG}}`: Feature slug (kebab-case)
+- `{{DESCRIPTION}}`: Feature description
+- `{{COMPLEXITY}}`: TINY | SMALL | STANDARD | LARGE
+- `{{GENERATED_AT}}`: ISO-8601 timestamp
+- `{{SOURCE}}`: Source document (brief, PRD, etc.)
+- `{{BRANCH_NAME}}`: Git branch name
+- `{{PROJECT_NAME}}`: Project name
+- `{{GENERATED_BY}}`: Generator (/spec v1.0)
+- `{{MAX_ITERATIONS}}`: Max Ralph iterations (default: 50)
+- `{{TEST_COMMAND}}`: Test command from stack detection
+- `{{LINT_COMMAND}}`: Lint command (optional)
+- `{{GRANULARITY}}`: Task granularity (hour)
+- `{{TOTAL_STORIES}}`: Number of userStories
+
+**userStories array structure:**
+Each task from step-02 becomes a userStory with:
+- `id`: Story ID (US1, US2, etc.)
+- `title`: Task title
+- `description`: Task description
+- `acceptanceCriteria`: Array of ACs from task spec
+- `tasks`: Sub-tasks from task spec steps
+- `dependencies`: { depends_on: [], blocks: [] }
+- `execution`: { attempts: 0, last_error: null, files_modified: [], completed_at: null, iteration: 0 }
+
+**Schema validation:**
+PRD must validate against `src/schemas/prd-v2.json`.
+
+### 4. Generate PROMPT.md
 
 Use template from `templates/prompt.md.template`.
 
@@ -66,9 +110,18 @@ Load appropriate stack section based on detection:
 - Symfony → stack-guidelines.md section #symfony-guidelines
 - Generic → stack-guidelines.md section #generic-guidelines
 
-### 4. Generate MEMORY.md
+### 5. Generate MEMORY.md
 
-Use template structure from memory-template.md (section #complete-template importé ci-dessus).
+Use template from `templates/memory.md.template`.
+
+**Template variables to fill:**
+- `{{FEATURE_TITLE}}`: Human-readable feature name
+- `{{FEATURE_SLUG}}`: URL-friendly identifier
+- `{{TASK_COUNT}}`: Number of tasks
+- `{{GENERATED_AT}}`: ISO-8601 timestamp
+- `{{FIRST_TASK_ID}}`: First task ID (e.g., task-001)
+- `{{TASKS}}`: Array for Handlebars loop `{{#each TASKS}}`
+- `{{STACK_FRAMEWORK}}`, `{{STACK_LANGUAGE}}`, `{{TEST_COMMAND}}`: From stack detection
 
 **Initialize:**
 - All tasks as `pending` in Progress table
@@ -78,52 +131,39 @@ Use template structure from memory-template.md (section #complete-template impor
 - Empty tables for Files/Tests/Issues/Decisions
 - Context Notes placeholder
 
-### 5. Generate ralph.sh
+### 6. Generate ralph.sh
 
-**Runner Script Structure:**
+Use template from `templates/ralph.sh.template`.
+
+**Template variables to fill:**
+- `{{FEATURE_SLUG}}`: Feature identifier (kebab-case)
+- `{{PRD_FILE}}`: Path to PRD JSON file (`docs/specs/{slug}/{slug}.prd.json`)
+- `{{SPEC_DIR}}`: Spec directory path (`docs/specs/{slug}`)
+- `{{RALPH_DIR}}`: Ralph execution directory (`.ralph/{slug}`)
+
+**Features included from template:**
+- Inline circuit breaker (detects stuck loops via file/error hash)
+- RALPH_STATUS parser (<<<>>> delimiters)
+- CLI flags (--quiet, --dry-run, --help)
+- Progress display with elapsed time
+- Timestamped logging
+- MAX_ITERATIONS config (default: 50)
+- CB_THRESHOLD config (default: 3)
+
+**Generation:**
 
 ```bash
-#!/bin/bash
-# Ralph Runner — {Feature Title}
-# Generated: {timestamp}
+# Read template
+TEMPLATE=$(cat templates/ralph.sh.template)
 
-set -e
+# Replace placeholders
+OUTPUT="${TEMPLATE//\{\{FEATURE_SLUG\}\}/$FEATURE_SLUG}"
+OUTPUT="${OUTPUT//\{\{PRD_FILE\}\}/$PRD_FILE}"
+OUTPUT="${OUTPUT//\{\{SPEC_DIR\}\}/$SPEC_DIR}"
+OUTPUT="${OUTPUT//\{\{RALPH_DIR\}\}/$RALPH_DIR}"
 
-FEATURE_SLUG="{feature-slug}"
-SPEC_DIR="docs/specs/${FEATURE_SLUG}"
-RALPH_DIR=".ralph/${FEATURE_SLUG}"
-
-echo "=== Ralph Execution: ${FEATURE_SLUG} ==="
-echo "Specs: ${SPEC_DIR}/"
-echo "Memory: ${RALPH_DIR}/MEMORY.md"
-echo ""
-
-# Check prerequisites
-if [[ ! -d "${SPEC_DIR}" ]]; then
-    echo "Error: Spec directory not found: ${SPEC_DIR}"
-    exit 1
-fi
-
-if [[ ! -f "${RALPH_DIR}/PROMPT.md" ]]; then
-    echo "Error: PROMPT.md not found"
-    exit 1
-fi
-
-# Display context
-echo "Starting Claude Code with Ralph context..."
-echo ""
-echo "Context loaded:"
-echo "- PROMPT.md: ${RALPH_DIR}/PROMPT.md"
-echo "- MEMORY.md: ${RALPH_DIR}/MEMORY.md"
-echo "- Specs: ${SPEC_DIR}/"
-echo ""
-
-# Launch Claude Code
-claude --resume-with-context "${RALPH_DIR}/PROMPT.md" \
-       --memory "${RALPH_DIR}/MEMORY.md"
-
-echo ""
-echo "=== Ralph Execution Complete ==="
+# Write output
+echo "$OUTPUT" > .ralph/{feature-slug}/ralph.sh
 ```
 
 Make executable:
@@ -131,7 +171,7 @@ Make executable:
 chmod +x .ralph/{feature-slug}/ralph.sh
 ```
 
-### 6. Update .ralph/index.json
+### 7. Update .ralph/index.json
 
 **Registry entry:**
 
@@ -154,7 +194,7 @@ chmod +x .ralph/{feature-slug}/ralph.sh
 - If not: create new with this feature
 - Check for duplicates by slug
 
-### 7. Calculate Routing Recommendation
+### 8. Calculate Routing Recommendation
 
 Based on complexity from Step 01:
 

@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "prd-v2",
   "title": "PRD Schema v2",
-  "description": "Product Requirements Document schema for EPCI v6",
+  "description": "Product Requirements Document schema for EPCI v6 with Ralph integration",
   "type": "object",
-  "required": ["title", "version", "stories"],
+  "required": ["title", "version", "userStories", "meta", "config", "metrics"],
   "properties": {
     "title": {
       "type": "string",
@@ -15,47 +15,292 @@
       "const": "2.0",
       "description": "Schema version"
     },
+    "slug": {
+      "type": "string",
+      "description": "URL-friendly feature identifier"
+    },
     "description": {
       "type": "string",
       "description": "Feature description"
     },
-    "stories": {
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when PRD was generated"
+    },
+    "source": {
+      "type": "string",
+      "description": "Source file path or 'text' for inline input"
+    },
+    "complexity": {
+      "type": "string",
+      "enum": ["TINY", "SMALL", "STANDARD", "LARGE"],
+      "description": "Overall feature complexity"
+    },
+    "userStories": {
       "type": "array",
       "items": {
-        "$ref": "#/$defs/story"
+        "$ref": "#/$defs/userStory"
       },
-      "description": "User stories"
+      "description": "User stories with execution tracking"
+    },
+    "meta": {
+      "$ref": "#/$defs/meta",
+      "description": "Metadata for Ralph execution"
+    },
+    "config": {
+      "$ref": "#/$defs/config",
+      "description": "Execution configuration"
+    },
+    "metrics": {
+      "$ref": "#/$defs/metrics",
+      "description": "Progress metrics"
+    },
+    "dependencies_graph": {
+      "type": "object",
+      "description": "DAG of story dependencies"
+    },
+    "routing": {
+      "type": "object",
+      "description": "Workflow routing information"
     },
     "constraints": {
       "type": "array",
       "items": { "type": "string" },
       "description": "Technical or business constraints"
-    },
-    "dependencies": {
-      "type": "array",
-      "items": { "type": "string" },
-      "description": "External dependencies"
     }
   },
   "$defs": {
-    "story": {
+    "userStory": {
       "type": "object",
-      "required": ["id", "title", "priority"],
+      "required": [
+        "id",
+        "title",
+        "category",
+        "type",
+        "complexity",
+        "priority",
+        "status",
+        "passes",
+        "acceptanceCriteria",
+        "tasks",
+        "dependencies",
+        "execution"
+      ],
       "properties": {
-        "id": { "type": "string" },
-        "title": { "type": "string" },
-        "description": { "type": "string" },
-        "priority": {
+        "id": {
           "type": "string",
-          "enum": ["must-have", "should-have", "could-have", "wont-have"]
+          "description": "Unique story identifier (e.g., US1)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Story title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed story description"
+        },
+        "category": {
+          "type": "string",
+          "description": "Story category (e.g., core, integration)"
+        },
+        "type": {
+          "type": "string",
+          "description": "Story type (e.g., feature, bugfix)"
         },
         "complexity": {
           "type": "string",
-          "enum": ["S", "M", "L", "XL"]
+          "enum": ["S", "M", "L", "XL"],
+          "description": "Story complexity"
         },
-        "acceptance_criteria": {
+        "priority": {
+          "type": "string",
+          "enum": ["must-have", "should-have", "could-have", "wont-have"],
+          "description": "MoSCoW priority"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "completed", "failed", "blocked"],
+          "description": "Current execution status"
+        },
+        "passes": {
+          "type": "boolean",
+          "description": "Whether all tests pass for this story"
+        },
+        "acceptanceCriteria": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "$ref": "#/$defs/acceptanceCriterion"
+          },
+          "description": "List of acceptance criteria"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/storyTask"
+          },
+          "description": "Implementation tasks"
+        },
+        "dependencies": {
+          "$ref": "#/$defs/storyDependencies",
+          "description": "Story dependencies"
+        },
+        "execution": {
+          "$ref": "#/$defs/execution",
+          "description": "Execution tracking data"
+        }
+      }
+    },
+    "acceptanceCriterion": {
+      "type": "object",
+      "required": ["id", "description", "done"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "AC identifier (e.g., AC1)"
+        },
+        "description": {
+          "type": "string",
+          "description": "AC description"
+        },
+        "done": {
+          "type": "boolean",
+          "description": "Whether this AC is satisfied"
+        }
+      }
+    },
+    "storyTask": {
+      "type": "object",
+      "required": ["id", "description", "done"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Task identifier (e.g., T1)"
+        },
+        "description": {
+          "type": "string",
+          "description": "Task description"
+        },
+        "done": {
+          "type": "boolean",
+          "description": "Whether this task is completed"
+        }
+      }
+    },
+    "storyDependencies": {
+      "type": "object",
+      "required": ["depends_on", "blocks"],
+      "properties": {
+        "depends_on": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Story IDs this story depends on"
+        },
+        "blocks": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Story IDs blocked by this story"
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "required": ["attempts", "last_error", "files_modified", "completed_at", "iteration"],
+      "properties": {
+        "attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of execution attempts"
+        },
+        "last_error": {
+          "type": ["string", "null"],
+          "description": "Last error message or null"
+        },
+        "files_modified": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of modified file paths"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO-8601 completion timestamp or null"
+        },
+        "iteration": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Current iteration number"
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "required": ["branchName", "projectName", "generatedAt", "generatedBy", "source"],
+      "properties": {
+        "branchName": {
+          "type": "string",
+          "description": "Git branch name"
+        },
+        "projectName": {
+          "type": "string",
+          "description": "Project name"
+        },
+        "generatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 generation timestamp"
+        },
+        "generatedBy": {
+          "type": "string",
+          "description": "Generator identifier"
+        },
+        "source": {
+          "type": "string",
+          "description": "Source file or input type"
+        }
+      }
+    },
+    "config": {
+      "type": "object",
+      "required": ["max_iterations", "test_command", "lint_command", "granularity"],
+      "properties": {
+        "max_iterations": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum Ralph iterations"
+        },
+        "test_command": {
+          "type": "string",
+          "description": "Command to run tests"
+        },
+        "lint_command": {
+          "type": "string",
+          "description": "Command to run linter"
+        },
+        "granularity": {
+          "type": "string",
+          "description": "Task granularity level"
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["total_stories", "completed", "critical_path"],
+      "properties": {
+        "total_stories": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of user stories"
+        },
+        "completed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of completed stories"
+        },
+        "critical_path": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Story IDs on critical path"
         }
       }
     }

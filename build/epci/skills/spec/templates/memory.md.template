@@ -1,0 +1,114 @@
+# Ralph Execution Memory — {{FEATURE_TITLE}}
+
+<!--
+MEMORY.md Template v1.0 for EPCI v6.0
+Variables:
+  - {{FEATURE_TITLE}}: Human-readable feature name
+  - {{FEATURE_SLUG}}: URL-friendly identifier
+  - {{TASK_COUNT}}: Number of tasks
+  - {{GENERATED_AT}}: ISO-8601 timestamp
+  - {{TASK_TABLE}}: Progress table rows (generated)
+-->
+
+## Status
+
+| Property | Value |
+|----------|-------|
+| Status | PENDING |
+| Current Task | {{FIRST_TASK_ID}} |
+| Started | {{GENERATED_AT}} |
+| Last Updated | {{GENERATED_AT}} |
+
+---
+
+## Progress
+
+| Task | Title | Status | Started | Completed |
+|------|-------|--------|---------|-----------|
+{{#each TASKS}}
+| {{this.id}} | {{this.title}} | pending | - | - |
+{{/each}}
+
+<!--
+Status values: pending, in_progress, completed, failed, blocked
+Update "Current Task" when changing task
+-->
+
+---
+
+## Files Modified
+
+| File | Action | Task | Timestamp |
+|------|--------|------|-----------|
+<!-- Add entries as files are created/modified -->
+<!-- Actions: created, modified, deleted -->
+
+---
+
+## Tests Created
+
+| Test File | Tests Count | Task | Timestamp |
+|-----------|-------------|------|-----------|
+<!-- Add entries as test files are created -->
+<!-- Track test count for summary -->
+
+---
+
+## Issues Encountered
+
+| Issue | Task | Resolution | Timestamp |
+|-------|------|------------|-----------|
+<!-- Log issues and their resolutions -->
+<!-- Helps with debugging and future reference -->
+
+---
+
+## Decisions Made
+
+| Decision | Rationale | Task | Timestamp |
+|----------|-----------|------|-----------|
+<!-- Document architectural/technical decisions -->
+<!-- Important for maintaining context across sessions -->
+
+---
+
+## Context Notes
+
+<!-- Add freeform notes during execution -->
+<!-- Useful for resumption after interruption -->
+
+### Current Context
+
+```
+Last working on: {{FIRST_TASK_ID}}
+Stack context: {{STACK_FRAMEWORK}} / {{STACK_LANGUAGE}}
+Test command: {{TEST_COMMAND}}
+```
+
+### Resumption Checklist
+
+- [ ] Read current task status above
+- [ ] Check git log for recent commits: `git log --oneline -5`
+- [ ] Verify test status: `{{TEST_COMMAND}}`
+- [ ] Continue from "Current Task" if incomplete
+
+---
+
+## Execution Summary
+
+<!--
+Fill this section when feature is complete:
+
+| Metric | Value |
+|--------|-------|
+| Total Tasks | {{TASK_COUNT}} |
+| Completed | X |
+| Failed | 0 |
+| Total Tests | Y |
+| Duration | Zh |
+-->
+
+---
+
+*Memory initialized by /spec v1.0 — EPCI v6.0*
+*Feature: {{FEATURE_SLUG}} | {{GENERATED_AT}}*
