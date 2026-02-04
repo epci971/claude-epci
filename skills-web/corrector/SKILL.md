@@ -131,6 +131,8 @@ Ready to copy-paste, no modifications needed.
 4. **Audience adaptation**: Technical jargon only for technical recipients
 5. **Actionable output**: Every email must be usable without modification
 6. **Signature placeholder**: Always end with `[Signature]` unless user provides one
+7. **No code blocks for emails**: Never wrap email content in code blocks (```). Output emails as regular markdown text to preserve formatting when user copies. Code blocks are only for technical snippets or example prompts.
+
 
 ## Tone Reference Examples
 
