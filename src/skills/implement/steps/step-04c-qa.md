@@ -32,6 +32,30 @@ next_step: steps/step-05-document.md
 
 ## EXECUTION PROTOCOLS:
 
+### 0. Check for Parallel QA Review Results (Team Mode)
+
+IF team_config.mode == "active" AND team_config.parallel_agents.qa_reviewer:
+
+The QA Reviewer was launched in background during step-03b-team (parallel review).
+
+```
+CHECK background task status for qa_reviewer_task_id:
+  IF completed:
+    READ results from background task output
+    LOG "Using parallel QA Reviewer results (ran during coding)"
+    SKIP to Section 2 (Verify acceptance criteria)
+  IF still_running:
+    WAIT for completion (with timeout)
+    READ results when available
+    SKIP to Section 2
+  IF failed:
+    WARN "Parallel QA Reviewer failed, running synchronous review"
+    PROCEED to Section 1 (synchronous invocation)
+```
+
+IF team_config.mode != "active" OR no background task:
+  PROCEED to Section 1 (standard synchronous invocation)
+
 1. **Invoke** @qa-reviewer agent
    - Pass feature requirements
    - Pass acceptance criteria

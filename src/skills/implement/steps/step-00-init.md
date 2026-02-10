@@ -36,10 +36,15 @@ conditional_next:
 1. **Parse** input arguments
    - Extract feature-slug (required)
    - Extract spec-path (optional, prefixed with @)
+   - Extract flags:
+     - `--team`: Force team mode (multi-agent orchestration)
+     - `--no-team`: Disable team mode (classic sequential execution)
 
 2. **Validate** input
    - feature-slug must be kebab-case
    - If spec-path provided, verify file exists
+   - If both `--team` AND `--no-team` provided: ERROR "Conflicting flags: --team and --no-team cannot be used together"
+   - Store flags in execution context: `{ flag_team: bool, flag_no_team: bool }`
 
 3. **Load** spec if provided
    - Read spec file content

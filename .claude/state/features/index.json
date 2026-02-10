@@ -117,6 +117,31 @@
         "tests/e2e/test-ralph-integration/test-brief.md"
       ],
       "test_count": 26
+    },
+    {
+      "id": "agent-team-implement",
+      "status": "completed",
+      "current_phase": "memory",
+      "complexity": "STANDARD",
+      "branch": "feature/agent-team-implement",
+      "created_at": "2026-02-10T15:00:00Z",
+      "last_update": "2026-02-10T16:30:00Z",
+      "created_by": "/implement",
+      "summary": "Added agent team orchestration to /implement with step-03b-team.md for multi-domain parallel execution, --team/--no-team flags, parallel Code Reviewer, conditional Security/QA reviewers, and experimental Agent Teams support.",
+      "modified_files": [
+        "src/skills/implement/steps/step-03b-team.md",
+        "src/skills/implement/references/domain-mapping.md",
+        "src/skills/implement/SKILL.md",
+        "src/skills/implement/steps/step-00-init.md",
+        "src/skills/implement/steps/step-02-plan.md",
+        "src/skills/implement/steps/step-03-code.md",
+        "src/skills/implement/steps/step-04-review.md",
+        "src/skills/implement/steps/step-04b-security.md",
+        "src/skills/implement/steps/step-04c-qa.md",
+        "src/skills/implement/references/feature-document-template.md"
+      ],
+      "test_count": 0,
+      "feature_doc": "docs/features/agent-team-implement-20260210-150000.md"
     }
   ]
 }
