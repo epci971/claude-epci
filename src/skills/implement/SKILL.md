@@ -8,7 +8,7 @@ description: >-
   Triggers: implement feature, build, develop, create feature.
   Not for: quick fixes (use /quick), debugging (use /debug), refactoring (use /refactor).
 user-invocable: true
-argument-hint: "<feature-slug> [@spec-path | @plan-path]"
+argument-hint: "<feature-slug> [@spec-path | @plan-path] [--team | --no-team]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, AskUserQuestion, Task
 ---
 
@@ -22,6 +22,8 @@ Full implementation workflow for STANDARD and LARGE features using EPCI phases.
 /epci:implement feature-slug
 /epci:implement feature-slug @docs/specs/feature.md
 /epci:implement feature-slug @.claude/plans/feature-plan.md
+/epci:implement feature-slug --team          # Force team mode
+/epci:implement feature-slug --no-team       # Force classic mode
 ```
 
 ## Input Detection
@@ -91,12 +93,23 @@ INPUT
 │  └─ Define test strategy                                             │
 │     └─ BREAKPOINT: Plan validation                                   │
 │                                                                      │
+│  Step 03b: TEAM [T] (conditional)                                    │
+│  └─ Detect domains from plan files                                   │
+│  └─ If STANDARD+ AND >=2 domains (or --team flag):                   │
+│     └─ Activate team mode                                            │
+│     └─ Launch parallel Code Reviewer (background)                    │
+│     └─ Launch Security/QA reviewers if applicable                    │
+│     └─ BREAKPOINT: Team mode activation                              │
+│  └─ Else: skip to step-03 (classic mode)                             │
+│                                                                      │
 │  Step 03: CODE [C]                                                   │
 │  └─ TDD cycle: RED → GREEN → REFACTOR                                │
 │  └─ Implement feature incrementally                                  │
+│  └─ If team mode: background reviewer runs during coding             │
 │                                                                      │
 │  Step 04: REVIEW [I]                                                 │
-│  └─ Code review with @code-reviewer                                  │
+│  └─ If team mode: aggregate parallel review results                  │
+│  └─ Else: invoke @code-reviewer synchronously                        │
 │     └─ If security concerns → step-04b-security                      │
 │     └─ If QA needed → step-04c-qa                                    │
 │     └─ BREAKPOINT: Review approval                                   │
@@ -152,6 +165,7 @@ See [references/feature-document-template.md](references/feature-document-templa
 | 00c | worktree | [W] | Worktree setup for parallel dev (opt-in) |
 | 01 | explore | [E] | Read-only codebase analysis |
 | 02 | plan | [P] | Implementation planning |
+| 03b | team | [T] | Agent team orchestration (conditional) |
 | 03 | code | [C] | TDD implementation |
 | 04 | review | [I] | Code review |
 | 04b | security | [I] | Security-focused review |
@@ -168,10 +182,20 @@ IF complexity == TINY or SMALL:
 ELSE IF complexity == STANDARD:
   → Worktree setup (step-00c, opt-in)
   → Full EPCI workflow (step-01 → step-07)
+  → IF --team flag OR (>=2 domains detected):
+    → step-03b-team activates (parallel agents)
 ELSE IF complexity == LARGE:
   → Worktree setup (step-00c, opt-in)
   → Full EPCI workflow with enhanced reviews
   → Always include step-04b-security
+  → step-03b-team activates by default (multi-domain likely)
+  → IF CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1:
+    → Agent Teams mode (teammates) instead of subagents
+
+TEAM MODE OVERRIDE:
+  --team flag   → Force team mode regardless of auto-detect
+  --no-team flag → Force classic mode regardless of auto-detect
+  Both flags    → Error
 ```
 
 ## Complexity Routing
@@ -190,6 +214,7 @@ ELSE IF complexity == LARGE:
 - [steps/step-00c-worktree.md](steps/step-00c-worktree.md) — Worktree setup [W]
 - [steps/step-01-explore.md](steps/step-01-explore.md) — Exploration [E]
 - [steps/step-02-plan.md](steps/step-02-plan.md) — Planning [P]
+- [steps/step-03b-team.md](steps/step-03b-team.md) — Agent team orchestration [T]
 - [steps/step-03-code.md](steps/step-03-code.md) — Coding [C]
 - [steps/step-04-review.md](steps/step-04-review.md) — Review [I]
 - [steps/step-04b-security.md](steps/step-04b-security.md) — Security review
@@ -204,6 +229,7 @@ ELSE IF complexity == LARGE:
 - [references/review-checklists.md](references/review-checklists.md) — Code review checklists
 - [references/breakpoint-formats.md](references/breakpoint-formats.md) — ASCII box templates for breakpoints
 - [references/output-templates.md](references/output-templates.md) — Output format templates
+- [references/domain-mapping.md](references/domain-mapping.md) — File extension to domain mapping for team mode
 - [references/feature-document-template.md](references/feature-document-template.md) — Feature Document structure (§0-§5)
 
 ## Shared Components Used
@@ -224,12 +250,68 @@ This skill uses `epci:breakpoint-system` at key workflow points.
 | step-00c-worktree | `validation` | Worktree opt-in decision |
 | step-01-explore | `phase-transition` | Exploration [E] → Planning [P] |
 | step-02-plan | `plan-review` | Plan validation before coding |
+| step-03b-team | `validation` | Team mode activation (conditional) |
 | step-04-review | `phase-transition` | Coding [C] → Inspection [I] |
 | step-04b-security | `validation` | Security review approval |
 | step-04c-qa | `validation` | QA validation approval |
 | step-07-memory | `validation` | Worktree finalization (if enabled) |
 
 **Note:** Les step files utilisent le format impératif direct (pas `@skill:epci:breakpoint-system`).
+
+## Team Mode (Multi-Agent Orchestration)
+
+For STANDARD and LARGE features spanning multiple technology domains, /implement can activate team mode to parallelize reviews and (experimentally) coding.
+
+### Activation
+
+Team mode activates when:
+- **Auto-detect**: complexity >= STANDARD AND >= 2 distinct domains in plan files
+- **Override**: `--team` flag forces activation, `--no-team` flag forces classic mode
+
+### Domain Detection
+
+Domains are detected from file extensions in the approved plan:
+
+| Domain | Extensions |
+|--------|-----------|
+| `backend` | `*.py`, `*.php`, `*.java` |
+| `frontend` | `*.tsx`, `*.jsx`, `*.ts`, `*.js`, `*.css`, `*.scss`, `*.html` |
+| `database` | `*.sql` |
+
+See [references/domain-mapping.md](references/domain-mapping.md) for full mapping.
+
+### Orchestration Modes
+
+| Mode | Condition | Mechanism |
+|------|-----------|-----------|
+| **Subagents** (default) | STANDARD+ with >=2 domains | Task tool with `run_in_background` |
+| **Agent Teams** (experimental) | LARGE + `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` | TeammateTool with shared task list |
+
+### Parallel Agents (Subagents Mode)
+
+| Agent | Trigger | Model | When |
+|-------|---------|-------|------|
+| Code Reviewer | Always in team mode | Opus | During step-03 coding |
+| Security Auditor | Auth/security patterns in plan | Opus | During step-03 coding |
+| QA Reviewer | Complex test strategy | Sonnet | During step-03 coding |
+
+Results are aggregated in step-04-review (and step-04b/04c if applicable).
+
+### Agent Teams Mode (Experimental)
+
+When enabled, spawns specialized implementer teammates per domain:
+- Each teammate gets exclusive file access (no conflicts)
+- Shared task list with DAG dependencies
+- Plan approval workflow before coding starts
+- Requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+
+### Flags
+
+| Flag | Effect |
+|------|--------|
+| `--team` | Force team mode (even on single-domain features) |
+| `--no-team` | Force classic mode (even on multi-domain features) |
+| Both | Error: "Conflicting flags" |
 
 ## Worktree Support
 

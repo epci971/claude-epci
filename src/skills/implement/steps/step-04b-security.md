@@ -35,6 +35,30 @@ conditional_next:
 
 ## EXECUTION PROTOCOLS:
 
+### 0. Check for Parallel Security Review Results (Team Mode)
+
+IF team_config.mode == "active" AND team_config.parallel_agents.security_auditor:
+
+The Security Auditor was launched in background during step-03b-team (parallel review).
+
+```
+CHECK background task status for security_auditor_task_id:
+  IF completed:
+    READ results from background task output
+    LOG "Using parallel Security Auditor results (ran during coding)"
+    SKIP to Section 2 (Process Security Audit Results)
+  IF still_running:
+    WAIT for completion (with timeout)
+    READ results when available
+    SKIP to Section 2
+  IF failed:
+    WARN "Parallel Security Auditor failed, running synchronous audit"
+    PROCEED to Section 1 (synchronous invocation)
+```
+
+IF team_config.mode != "active" OR no background task:
+  PROCEED to Section 1 (standard synchronous invocation)
+
 ### 1. Invoke @security-auditor (Opus)
 
 Delegate security audit to the security-auditor agent:

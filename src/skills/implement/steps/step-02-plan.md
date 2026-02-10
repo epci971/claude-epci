@@ -2,7 +2,7 @@
 name: step-02-plan
 description: Create implementation plan phase [P]
 prev_step: steps/step-01-explore.md
-next_step: steps/step-03-code.md
+next_step: steps/step-03b-team.md
 ---
 
 # Step 02: Plan [P]
@@ -190,4 +190,5 @@ APPELLE AskUserQuestion({
 
 ## NEXT STEP TRIGGER:
 
-When plan is approved by user, proceed to `step-03-code.md`.
+When plan is approved by user, proceed to `step-03b-team.md` (agent team orchestration).
+Step-03b will detect domains and decide team/classic mode before proceeding to `step-03-code.md`.
