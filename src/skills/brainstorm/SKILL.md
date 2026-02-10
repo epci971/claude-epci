@@ -27,6 +27,13 @@ Transform vague ideas into actionable specifications through structured co-explo
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
+### Anti-Plan-Mode Guard (CRITICAL)
+- 🔴 NEVER call EnterPlanMode during brainstorm execution
+- 🔴 NEVER generate files in .claude/plans/ directory
+- 🔴 NEVER switch to Claude Code native plan mode
+- ✅ ALWAYS generate output as brief in docs/briefs/{slug}/
+- ⛔ This skill produces a BRIEF (PRD v3.0), NOT a native Claude Code plan
+
 ### Core Workflow Rules
 - 🔴 NEVER skip EMS calculation between iterations
 - 🔴 NEVER generate outputs with EMS < 60 without --force

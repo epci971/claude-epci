@@ -43,6 +43,7 @@ INPUT
 - 🔴 NEVER execute on STANDARD/LARGE complexity (suggest /implement)
 - 🔴 NEVER skip TDD cycle (Red-Green-Verify required)
 - 🔴 NEVER skip MEMORY phase (index.json must be updated)
+- 🔴 NEVER call EnterPlanMode during skill execution
 - ✅ ALWAYS start with step-00-detect.md
 - ✅ ALWAYS follow next_step from each step
 - ✅ ALWAYS detect stack skills at initialization

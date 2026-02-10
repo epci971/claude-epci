@@ -33,6 +33,7 @@ Restructure code without changing external behavior using TDD discipline.
 - 🔴 NEVER skip tests (TDD Red-Green-Refactor enforced)
 - 🔴 NEVER continue if tests fail (revert immediately)
 - 🔴 NEVER skip the BREAKPOINT at plan validation (step-03)
+- 🔴 NEVER call EnterPlanMode during skill execution
 - ✅ ALWAYS start with step-00-init.md
 - ✅ ALWAYS follow next_step from each step
 - ✅ ALWAYS detect stack skills at initialization

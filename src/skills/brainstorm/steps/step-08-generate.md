@@ -146,6 +146,11 @@ CHECKLIST PRÉ-ÉCRITURE:
 [ ] Section 15: Commande suggérée avec slug
 ```
 
+ANTI-PLAN-MODE CHECK:
+[ ] Output target is docs/briefs/{slug}/ (NOT .claude/plans/)
+[ ] Using Write() tool (NOT EnterPlanMode)
+[ ] Generating brief PRD v3.0 format (15 sections, NOT plan format)
+
 ⛔ **SI sections manquantes**: ALERTE et COMPLÈTE avant écriture.
 ⛔ **NE PAS écrire un brief incomplet**.
 
@@ -280,3 +285,5 @@ IF file_exists(decisions_path):
 🔴 **NE JAMAIS générer un brief avec moins de 15 sections.**
 🔴 **NE JAMAIS omettre le graphe EMS ASCII en section 12.**
 🔴 **NE JAMAIS utiliser un format simplifié pour les User Stories.**
+🔴 **NE JAMAIS utiliser EnterPlanMode pour generer les outputs.**
+🔴 **NE JAMAIS ecrire dans .claude/plans/ — output = docs/briefs/{slug}/**

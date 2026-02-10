@@ -47,6 +47,14 @@ conditional_next:
 
 ## Protocol
 
+### 0. Anti-Plan-Mode Checkpoint (MANDATORY)
+
+🔴 AVANT de proceder :
+- VERIFIE que tu n'es PAS en plan mode natif Claude Code
+- L'output cible est `docs/briefs/{slug}/brief-{slug}-{date}.md`
+- SI tu detectes une tendance a basculer en plan mode → STOP, continue le workflow brainstorm
+- NE JAMAIS appeler EnterPlanMode — ce skill produit un BRIEF, pas un plan natif
+
 ### 1. Compile Exploration Summary
 
 ```markdown

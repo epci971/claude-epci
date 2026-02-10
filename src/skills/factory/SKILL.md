@@ -32,6 +32,7 @@ Create production-ready skills for EPCI v6.0 following best practices.
 - 🔴 NEVER skip the BREAKPOINT at validation (step-05)
 - 🔴 NEVER generate skills without 12-point checklist pass
 - 🔴 NEVER create vague descriptions (must have 3+ triggers)
+- 🔴 NEVER call EnterPlanMode during skill execution
 - ✅ ALWAYS start with step-00-init.md
 - ✅ ALWAYS follow next_step from each step
 - ✅ ALWAYS use APEX style format for generated skills
