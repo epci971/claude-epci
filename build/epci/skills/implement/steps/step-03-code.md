@@ -1,7 +1,7 @@
 ---
 name: step-03-code
 description: TDD implementation phase [C]
-prev_step: steps/step-02-plan.md
+prev_step: steps/step-03b-team.md
 next_step: steps/step-04-review.md
 ---
 
@@ -94,7 +94,49 @@ For each component in the implementation plan:
 
    Also update Coverage section and Deviations if any occurred.
 
-4. **Invoke** tdd-enforcer periodically
+4. **Launch background Code Reviewer** (Team Mode only)
+
+   IF team_config.mode == "active" AND team_config.parallel_agents.code_reviewer.enabled:
+
+   After the first complete component (or at 50% plan completion), launch the Code Reviewer in background:
+
+   ```
+   LANCE Task({
+     subagent_type: "code-reviewer",
+     model: "opus",
+     run_in_background: true,
+     prompt: `
+   ## Files to Review
+   {files_completed_so_far}
+
+   ## Original Requirements
+   {feature_requirements}
+
+   ## Implementation Plan Summary
+   {plan_summary}
+
+   ## Review Focus
+   - Code quality: patterns, naming, error handling
+   - Test coverage: target {coverage_target}% minimum
+   - Security: OWASP Top 10 awareness
+   - Plan alignment: implementation matches plan
+
+   ## Expected Output
+   Review report with:
+   - Files reviewed count
+   - Issues found (Critical/Important/Minor)
+   - Test coverage assessment
+   - Verdict: APPROVED / CHANGES_REQUIRED / SECURITY_REVIEW_NEEDED
+     `
+   })
+   ```
+
+   Store the background task ID for step-04-review aggregation.
+   LOG "Code Reviewer launched in background (team mode)"
+
+   Continue implementing remaining components while reviewer runs.
+
+5. **Invoke** tdd-enforcer periodically
    - Verify TDD compliance
    - Check coverage targets
 

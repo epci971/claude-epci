@@ -38,6 +38,31 @@ conditional_next:
 
 ## EXECUTION PROTOCOLS:
 
+### 0. Check for Parallel Review Results (Team Mode)
+
+IF team_config.mode == "active" AND team_config.parallel_agents.code_reviewer.enabled:
+
+The Code Reviewer was launched in background during step-03 coding (by step-03b-team).
+
+```
+CHECK background task status for code_reviewer_task_id:
+  IF completed:
+    READ results from background task output
+    LOG "Using parallel Code Reviewer results (ran during coding)"
+    SKIP to Section 2 (Process Review Results)
+  IF still_running:
+    WAIT for completion (with timeout)
+    READ results when available
+    LOG "Parallel Code Reviewer completed (waited for results)"
+    SKIP to Section 2
+  IF failed:
+    WARN "Parallel Code Reviewer failed, running synchronous review"
+    PROCEED to Section 1 (synchronous invocation)
+```
+
+IF team_config.mode != "active" OR no background task:
+  PROCEED to Section 1 (standard synchronous invocation)
+
 ### 1. Invoke @code-reviewer (Opus)
 
 Delegate code review to the code-reviewer agent:
