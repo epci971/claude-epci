@@ -90,10 +90,24 @@ Based on review findings:
 - QA validation required? → step-04c-qa
 - Performance concerns? → note for documentation
 
+### 5. Update Feature Document §4
+
+**MANDATORY**: After all reviews complete, use **Edit tool** to fill §4 in the Feature Document.
+
+Path: `docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md` (from `artifacts.feature_doc`)
+
+EXECUTE Edit({
+  file_path: "{feature_doc_path}",
+  old_string: "## §4 — Revue & Validation\n> Section remplie par step-04-review [I]\n\n*En attente de la phase Inspect...*",
+  new_string: "## §4 — Revue & Validation\n> Rempli par step-04-review [I]\n\n### @code-reviewer\n- Verdict: {cr_verdict}\n- Issues critiques: {cr_critical_count}\n- Issues resolues: {cr_resolved_count}\n- Resume: {cr_summary}\n\n### @security-auditor {si_applicable}\n- Verdict: {sa_verdict}\n- Findings: {sa_findings}\n\n### @qa-reviewer {si_applicable}\n- Verdict: {qa_verdict}\n- Findings: {qa_findings}"
+})
+
+Fill variables from actual agent outputs. Omit @security-auditor and @qa-reviewer sections if not invoked (use "N/A - non invoque" as verdict).
+
 ## CONTEXT BOUNDARIES:
 
-- This step expects: Implemented code, passing tests
-- This step produces: Review findings, approval or revision requests
+- This step expects: Implemented code, passing tests, feature_doc_path (from step-00)
+- This step produces: Review reports, Feature Document §4 filled
 
 ## REVIEW CHECKLIST:
 

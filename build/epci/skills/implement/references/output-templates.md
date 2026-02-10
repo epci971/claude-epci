@@ -122,7 +122,7 @@
 ## Documentation Complete
 
 ### Feature Document
-- Location: `.epci/features/{feature-slug}/FEATURE.md`
+- Location: `docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md`
 - Status: COMPLETED
 
 ### Updated Docs

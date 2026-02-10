@@ -120,6 +120,29 @@ INPUT
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+## Feature Document
+
+**Location**: `docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md` (in target project)
+
+The Feature Document is a human-readable Markdown file that serves as the **traceability thread** throughout the entire implementation lifecycle. Each step fills its section using the Edit tool.
+
+| Section | Filled by | Phase |
+|---------|-----------|-------|
+| §0 Metadata | step-00-init | Init |
+| §1 Contexte & Objectif | step-00-init | Init |
+| §2 Plan d'implementation | step-02-plan | [P] |
+| §3 Implementation | step-03-code | [C] |
+| §4 Revue & Validation | step-04-review | [I] |
+| §5 Finalisation | step-05-document | Doc |
+
+**Rules**:
+- Created by step-00-init using **Write tool**
+- Updated by each step using **Edit tool** (never overwrite, only edit sections)
+- Path stored in `artifacts.feature_doc` in state.json
+- Status updated to COMPLETED by step-06-finish
+
+See [references/feature-document-template.md](references/feature-document-template.md) for the full template.
+
 ## Steps
 
 | Step | Name | Phase | Description |
@@ -133,7 +156,7 @@ INPUT
 | 04 | review | [I] | Code review |
 | 04b | security | [I] | Security-focused review |
 | 04c | qa | [I] | QA validation |
-| 05 | document | - | Documentation updates |
+| 05 | document | - | Feature Document §5 + related docs |
 | 06 | finish | - | Finalization |
 | 07 | memory | [M] | Update index.json with summary |
 
@@ -181,6 +204,7 @@ ELSE IF complexity == LARGE:
 - [references/review-checklists.md](references/review-checklists.md) — Code review checklists
 - [references/breakpoint-formats.md](references/breakpoint-formats.md) — ASCII box templates for breakpoints
 - [references/output-templates.md](references/output-templates.md) — Output format templates
+- [references/feature-document-template.md](references/feature-document-template.md) — Feature Document structure (§0-§5)
 
 ## Shared Components Used
 

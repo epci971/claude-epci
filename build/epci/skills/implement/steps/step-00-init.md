@@ -14,6 +14,12 @@ conditional_next:
 
 ## Reference Files
 
+@../references/feature-document-template.md
+
+| Reference | Purpose |
+|-----------|---------|
+| feature-document-template.md | Feature Document structure and section ownership |
+
 *(Breakpoint templates are inline in this file)*
 
 ## MANDATORY EXECUTION RULES (READ FIRST):
@@ -69,13 +75,37 @@ Parse result:
   - Offer to recreate or continue in main repo
 
 7. **Initialize** Feature Document (STANDARD+ only)
-   - Create `.epci/features/{feature-slug}/FEATURE.md` skeleton
-   - Record complexity, start time, initial scope
+
+Generate timestamp: `YYYYMMDD-HHmmss` format (e.g., `20260210-143052`)
+Construct path: `feature_doc_path = docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md`
+
+EXECUTE Bash({
+  command: "mkdir -p docs/features",
+  description: "Ensure docs/features directory exists"
+})
+
+EXECUTE Write({
+  file_path: "{feature_doc_path}",
+  content: "Feature Document template from @feature-document-template.md with:
+    - §0 filled: slug, complexity, date, branch, spec source
+    - §1 filled: IF @spec-path provided, extract objective + criteria from spec
+                  ELSE write placeholder for user to complete
+    - §2-§5: placeholder text (will be filled by subsequent steps)"
+})
+
+Store `feature_doc_path` for all subsequent steps.
+
+Update state-manager:
+```
+state_manager.updateFeature("{feature-slug}", {
+  artifacts: { feature_doc: "{feature_doc_path}" }
+})
+```
 
 ## CONTEXT BOUNDARIES:
 
 - This step expects: User input (feature-slug, optional @spec-path)
-- This step produces: Validated context, complexity level, routing decision
+- This step produces: Validated context, complexity level, routing decision, feature_doc_path
 
 ## OUTPUT FORMAT:
 

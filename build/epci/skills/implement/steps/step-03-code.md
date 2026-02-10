@@ -72,10 +72,27 @@ For each component in the implementation plan:
    - **GREEN Phase**: Write minimal implementation to pass
    - **REFACTOR Phase**: Improve code quality, run tests to confirm
 
-3. **Update** progress in Feature Document
-   - Mark components as completed
-   - Record test coverage
-   - Note any deviations from plan
+3. **Update** Feature Document §3 (after EACH completed component)
+
+   Path: `docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md` (from `artifacts.feature_doc`)
+
+   **First component** — Replace the placeholder:
+
+   EXECUTE Edit({
+     file_path: "{feature_doc_path}",
+     old_string: "## §3 — Implementation\n> Section remplie progressivement par step-03-code [C]\n\n*En attente de la phase Code...*",
+     new_string: "## §3 — Implementation\n> Rempli progressivement par step-03-code [C]\n\n### Composants implementes\n| Composant | Fichier | Tests | Status |\n|-----------|---------|-------|--------|\n| {component_name} | {file_path} | {test_count} passing | DONE |\n\n### Deviations du plan\nAucune\n\n### Coverage\n- Actuelle: {current_coverage}%\n- Cible: {target_coverage}%"
+   })
+
+   **Subsequent components** — Append row to table:
+
+   EXECUTE Edit({
+     file_path: "{feature_doc_path}",
+     old_string: "| {previous_component} | {prev_path} | {prev_tests} passing | DONE |",
+     new_string: "| {previous_component} | {prev_path} | {prev_tests} passing | DONE |\n| {new_component} | {new_path} | {new_tests} passing | DONE |"
+   })
+
+   Also update Coverage section and Deviations if any occurred.
 
 4. **Invoke** tdd-enforcer periodically
    - Verify TDD compliance
@@ -83,8 +100,8 @@ For each component in the implementation plan:
 
 ## CONTEXT BOUNDARIES:
 
-- This step expects: Approved implementation plan, test strategy
-- This step produces: Working code, passing tests, updated Feature Document
+- This step expects: Approved implementation plan, test strategy, feature_doc_path (from step-00)
+- This step produces: Working code, passing tests, Feature Document §3 filled incrementally
 
 ## TDD CYCLE TEMPLATE:
 
