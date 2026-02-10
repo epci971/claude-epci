@@ -114,7 +114,7 @@ See [references/state-schema.md](references/state-schema.md) for full schema.
   },
 
   "artifacts": {
-    "feature_doc": "docs/features/auth-oauth-google.md",
+    "feature_doc": "docs/features/auth-oauth-google-20260122-100000.md",
     "test_files": ["tests/integration/oauth.test.ts"],
     "modified_files": ["src/auth/oauth.ts", "src/auth/types.ts"]
   },
@@ -123,6 +123,9 @@ See [references/state-schema.md](references/state-schema.md) for full schema.
   "improvements": []
 }
 ```
+
+**Note**: `artifacts.feature_doc` is set by `/implement` step-00-init when creating the Feature Document.
+Path format: `docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md`
 
 ## Index Schema
 
@@ -151,7 +154,7 @@ Invoked automatically by skills:
 
 | Skill | Action | Function Called |
 |-------|--------|-----------------|
-| `/implement` | Start new feature | `createFeature()` |
+| `/implement` | Start new feature + Feature Document | `createFeature()` + set `artifacts.feature_doc` |
 | `/implement --continue` | Resume feature | `loadFeature()`, `restoreCheckpoint()` |
 | `/quick` | Optional lightweight tracking | `createFeature()` (minimal) |
 | `/brainstorm` | Save exploration session | `saveSession()` |

@@ -89,16 +89,26 @@ APPROVED or NEEDS_REVISION with specific feedback
 - If APPROVED: continue to breakpoint
 - If NEEDS_REVISION: apply feedback and re-invoke @planner
 
-### 4. Update Feature Document
+### 4. Update Feature Document §2
 
-- Add implementation plan section
-- Add test strategy section
-- Add acceptance criteria mapping
+**MANDATORY**: Use **Edit tool** to replace the §2 placeholder in the Feature Document.
+
+Path: `docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md` (from `artifacts.feature_doc` in state.json)
+
+EXECUTE Edit({
+  file_path: "{feature_doc_path}",
+  old_string: "## §2 — Plan d'implementation\n> Section remplie par step-02-plan [P]\n\n*En attente de la phase Planning...*",
+  new_string: "## §2 — Plan d'implementation\n> Rempli par step-02-plan [P]\n\n### Taches atomiques\n| # | Tache | Estimation | Dependances | Status |\n|---|-------|-----------|-------------|--------|\n{plan_tasks_table}\n\n### Strategie de test\n{test_strategy}\n\n### Validation @plan-validator\n- Verdict: {validation_verdict}\n- Completude: {completeness}\n- Coherence: {consistency}\n- Faisabilite: {feasibility}\n- Qualite: {quality}"
+})
+
+Fill `{plan_tasks_table}` with the atomic tasks from the planner agent output.
+Fill `{test_strategy}` with the TDD strategy.
+Fill validation fields from @plan-validator output.
 
 ## CONTEXT BOUNDARIES:
 
-- This step expects: Exploration findings, dependency map
-- This step produces: Implementation plan, test strategy, updated Feature Document
+- This step expects: Exploration findings, dependency map, feature_doc_path (from step-00)
+- This step produces: Implementation plan, test strategy, Feature Document §2 filled
 
 ## OUTPUT FORMAT:
 
@@ -133,7 +143,7 @@ AFFICHE cette boîte:
 │ Taches restantes: {remaining_tasks}                                 │
 │                                                                     │
 │ Skills charges: tdd-enforcer, state-manager                         │
-│ Doc feature: .epci/features/{feature-slug}/FEATURE.md               │
+│ Doc feature: docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md      │
 │                                                                     │
 ├─────────────────────────────────────────────────────────────────────┤
 │ SUGGESTIONS PROACTIVES                                              │

@@ -41,59 +41,27 @@ next_step: steps/step-06-finish.md
    - Code examples where helpful
    - No outdated references
 
+5. **Complete** Feature Document §5
+
+**MANDATORY**: Use **Edit tool** to fill §5 in the Feature Document.
+
+Path: `docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md` (from `artifacts.feature_doc`)
+
+EXECUTE Edit({
+  file_path: "{feature_doc_path}",
+  old_string: "## §5 — Finalisation\n> Section remplie par step-05-document / step-06-finish\n\n*En attente de la phase Finalization...*",
+  new_string: "## §5 — Finalisation\n> Rempli par step-05-document / step-06-finish\n\n### Resume\n{1-2 sentence summary}\n\n### Fichiers modifies\n{list of modified files with - prefix}\n\n### Tests ajoutes : {test_count}\n\n### Documentation mise a jour\n{list of updated docs}\n\n### Prochaines etapes\n- [ ] Commit\n- [ ] PR\n- [ ] Deploiement"
+})
+
 ## CONTEXT BOUNDARIES:
 
-- This step expects: Reviewed and approved code
-- This step produces: Complete Feature Document, updated related docs
+- This step expects: Reviewed and approved code, feature_doc_path (from step-00)
+- This step produces: Feature Document §5 filled, related docs updated
 
-## FEATURE DOCUMENT TEMPLATE:
+## FEATURE DOCUMENT REFERENCE:
 
-```markdown
-# Feature: {feature-slug}
-
-## Status: COMPLETED
-
-## Overview
-{Brief description of what this feature does}
-
-## Implementation Details
-
-### Architecture
-{Key architectural decisions}
-
-### Components
-| Component | File | Purpose |
-|-----------|------|---------|
-| {name} | {path} | {purpose} |
-
-### Dependencies
-- {dependency 1}
-- {dependency 2}
-
-## Testing
-
-### Coverage
-- Unit: {%}
-- Integration: {%}
-
-### Key Test Cases
-- {test case 1}
-- {test case 2}
-
-## Usage
-
-### Example
-```{language}
-{usage example}
-```
-
-## Changelog
-- {date}: Initial implementation
-
-## Related Docs
-- {link to related doc 1}
-- {link to related doc 2}
-```
+The Feature Document template is defined in `@../references/feature-document-template.md`.
+This step fills §5 (Finalisation) using Edit tool. The document was created at step-00-init.
 
 ## OUTPUT FORMAT:
 
@@ -101,7 +69,7 @@ next_step: steps/step-06-finish.md
 ## Documentation Complete
 
 ### Feature Document
-- Location: `.epci/features/{feature-slug}/FEATURE.md`
+- Location: `docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md`
 - Status: COMPLETED
 
 ### Updated Docs

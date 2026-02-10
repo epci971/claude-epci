@@ -36,21 +36,45 @@ next_step: steps/step-07-memory.md
 2. **Verify** all outputs exist
    - Implementation code complete
    - Tests in place
-   - Feature Document complete
+   - Feature Document complete (docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md)
    - Related docs updated
 
-3. **Update** state-manager
+3. **Verify** Feature Document completeness
+
+Path: `docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md` (from `artifacts.feature_doc`)
+
+Check that the Feature Document contains all sections:
+- §0 Metadata: slug, complexity, date filled
+- §1 Contexte: objective and criteria present
+- §2 Plan: tasks table filled (not placeholder)
+- §3 Implementation: components table filled
+- §4 Revue: review verdicts present
+- §5 Finalisation: summary and files list present
+
+IF any section still contains placeholder text ("*En attente de..."):
+  WARN: "Feature Document incomplete - section {X} not filled"
+  Attempt to fill from available data
+
+Update §0 Status from IN_PROGRESS to COMPLETED:
+
+EXECUTE Edit({
+  file_path: "{feature_doc_path}",
+  old_string: "| Status | IN_PROGRESS |",
+  new_string: "| Status | COMPLETED |"
+})
+
+4. **Update** state-manager
    - Mark feature as COMPLETED
    - Record completion time
    - Record final metrics
 
-4. **Generate** completion summary
+5. **Generate** completion summary
    - Files created/modified
    - Test coverage
    - Key decisions made
    - Any known limitations
 
-5. **Suggest** next steps
+6. **Suggest** next steps
    - Commit preparation
    - PR creation
    - Deployment considerations

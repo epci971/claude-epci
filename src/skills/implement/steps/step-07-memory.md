@@ -68,7 +68,8 @@ ELSE:
   "last_update": "{ISO-8601}",
   "summary": "{1-2 sentence summary, max 200 chars}",
   "modified_files": ["{path1}", "{path2}"],
-  "test_count": {N}
+  "test_count": {N},
+  "feature_doc": "docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md"
 }
 ```
 
@@ -92,7 +93,8 @@ For an OAuth feature:
     "src/auth/session.ts",
     "tests/auth/oauth.test.ts"
   ],
-  "test_count": 8
+  "test_count": 8,
+  "feature_doc": "docs/features/auth-oauth-google-20260120-100000.md"
 }
 ```
 
@@ -113,6 +115,7 @@ AFFICHE cette boîte (info-only, pas d'interaction):
 |                                                                  |
 | index.json updated at:                                           |
 | .claude/state/features/index.json                                |
+| Feature Document: docs/features/{feature-slug}-{YYYYMMDD-HHmmss}.md |
 +------------------------------------------------------------------+
 
 
