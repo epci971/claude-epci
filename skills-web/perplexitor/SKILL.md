@@ -101,6 +101,10 @@ Patterns par type → [prompt-patterns.md](references/prompt-patterns.md)
 
 ```
 [Prompt optimisé - HERO, immédiatement copiable]
+
+Termine ta réponse par une section "📎 Sources NotebookLM" 
+listant toutes les URLs sources utilisées, une par ligne, 
+sans numérotation ni markdown.
 ```
 
 ⏱️ ~[temps] | 📊 [nb sources]
@@ -111,6 +115,10 @@ Patterns par type → [prompt-patterns.md](references/prompt-patterns.md)
 
 ```
 [Prompt optimisé]
+
+Termine ta réponse par une section "📎 Sources NotebookLM" 
+listant toutes les URLs sources utilisées, une par ligne, 
+sans numérotation ni markdown.
 ```
 
 ⏱️ ~[temps] | 📊 [nb sources]
@@ -121,6 +129,10 @@ Patterns par type → [prompt-patterns.md](references/prompt-patterns.md)
 
 ```
 [Prompt optimisé]
+
+Termine ta réponse par une section "📎 Sources NotebookLM" 
+listant toutes les URLs sources utilisées, une par ligne, 
+sans numérotation ni markdown.
 ```
 
 ⏱️ ~[temps] | 📊 [nb sources]
@@ -155,6 +167,7 @@ Patterns par type → [prompt-patterns.md](references/prompt-patterns.md)
 5. **Enrichir automatiquement** : temporalité, critères, format
 6. **Neutre** : Pas d'enrichissement basé sur le profil utilisateur
 7. **Prompts en français** : Toujours générer les prompts Perplexity en français
+8. **Instruction NotebookLM** : Chaque prompt doit se terminer par l'instruction de lister toutes les URLs sources
 
 ## Examples
 
@@ -186,6 +199,10 @@ Types de tests (unitaires, intégration, E2E, performance),
 outils populaires, tendances (tests assistés par IA, shift-left).
 Focus : développement web et applications.
 Sources récentes (2024-2025) en français et anglais.
+
+Termine ta réponse par une section "📎 Sources NotebookLM" 
+listant toutes les URLs sources utilisées, une par ligne, 
+sans numérotation ni markdown.
 ```
 
 ⏱️ ~3-5 min | 📊 20-30 sources
@@ -221,9 +238,10 @@ Ce skill ne fait PAS :
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.1.0 | 2025-02-05 | Added NotebookLM sources instruction to all generated prompts |
 | 1.0.0 | 2025-01-23 | Initial release |
 
-## Current: v1.0.0
+## Current: v1.1.0
 
 ## Owner
 

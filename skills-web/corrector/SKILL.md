@@ -1,175 +1,188 @@
 ---
 name: corrector
 description: >-
-  Transform raw audio transcriptions or rough drafts into polished professional 
-  emails. Cleans hesitations, repetitions, and filler words. Structures content 
-  and generates multiple tone variants. Use when user says "corrige", "reformule", 
-  "mail pro", "transcription mail", "rédige un mail", "email professionnel", 
-  "transforme en mail", "correct this", "write a professional email".
-  Not for translation, long documents (reports, specs), non-email content, 
+  Transform raw text, voice transcriptions, or rough drafts into polished,
+  ready-to-send messages across any channel (email, WhatsApp, SMS, Slack,
+  Teams, LinkedIn). Generates 2-4 strategic variants with goal-oriented
+  labels using the message_compose tool. Cleans dictation artifacts and
+  adapts length, structure, and tone to the target channel.
+  Use when user says "corrige", "reformule", "aide-moi à tourner",
+  "message pour", "mail à", "rends ça plus pro", "correct this",
+  "help me word this", "reply to this".
+  Not for translation, long documents (reports, specs), code generation,
   or simple spell-checking without restructuring.
 ---
 
-# Corrector
+# Corrector v2
 
 ## Overview
 
-Professional email writing skill that transforms any input (raw audio transcription, draft, scattered notes) into a finalized professional email with tone variants. Optimized for web project managers and developers communicating with clients, colleagues, or contractors.
+Universal message reformulator that transforms any input (voice transcription, rough draft, scattered notes) into ready-to-send messages with multiple strategic variants. Supports all communication channels: email, chat (WhatsApp/SMS), professional messaging (Slack/Teams), and social networks (LinkedIn).
+
+**Core differentiator**: Variants differ by **communication strategy** (what each prioritizes), not just formality level.
 
 ## Quick Decision
 
 ```
-Input received
+INPUT RECEIVED
       │
-      ├─ Raw transcription (hesitations, repetitions)?
-      │     → Clean first, then structure as email
+      ├─ Contains heavy dictation artifacts (fillers, false starts)?
+      │     → Phase 0: Clean first, show cleaned version
       │
-      ├─ Rough draft or notes?
-      │     → Structure directly as email
+      ├─ Channel detectable or specified?
+      │     │
+      │     ├─ YES → Phase 1: Analyze intent + stakes
+      │     └─ NO  → Ask ONE question to clarify channel
       │
-      └─ Already structured email?
-            → Polish and generate variants only
+      └─ All clear → Phase 2-3: Generate variants via message_compose
 ```
 
 ## Workflow
 
-### Step 1: Analyze Input
+### Phase 0 — Transcription Cleanup (conditional)
 
-Identify input type and extract:
-- **Intent**: What is the email trying to achieve?
-- **Recipients**: Who is the target audience? (technical/non-technical)
-- **Key information**: Facts, dates, actions, deliverables mentioned
-- **Implicit tone**: Formal request? Friendly update? Urgent matter?
+**Trigger**: Input has ≥3 dictation artifacts (fillers + false starts + self-corrections).
 
-### Step 2: Clean (if transcription)
+When triggered:
+1. Clean using patterns from [transcription-patterns.md](references/transcription-patterns.md)
+2. Display: "Here's what I understood: [cleaned version]" before variants
+3. If input is too confused to interpret → ask for clarification instead
 
-If input contains transcription artifacts:
-- Remove filler words: "euh", "donc euh", "voilà", "en fait", "du coup"
-- Remove false starts and repetitions
-- Remove self-corrections ("non en fait", "je veux dire")
-- Preserve all meaningful content and intent
+When NOT triggered: skip silently to Phase 1.
 
-Reference: [transcription-patterns.md](references/transcription-patterns.md)
+---
 
-### Step 3: Determine Tone
+### Phase 1 — Input Analysis
 
-If tone is explicitly requested → use that tone for main version.
-If no tone specified → default to **Standard-Relaxed**.
+Extract from input:
 
-| Tone | Description | Use Case |
-|------|-------------|----------|
-| **Relaxed** | Informal, friendly, casual | Close colleagues, internal chat |
-| **Standard-Relaxed** | Professional with lightness, natural flow | DEFAULT - Trusted partners, regular clients |
-| **Standard** | Neutral, professional, balanced | New contacts, formal requests |
-| **Formal** | Polished, conventional, respectful | Senior executives, official matters |
-| **Very Formal** | Ceremonial, protocol-heavy | Legal, institutional, high-stakes |
+| Element | How |
+|---------|-----|
+| **Channel** | Explicit cue ("pour un WhatsApp", "mail à") or infer from context. See [channel-adaptation.md](references/channel-adaptation.md) |
+| **Intent** | Action verb: inform, follow up, decline, propose, confirm, negotiate, thank, apologize, escalate, request... |
+| **Recipient** | Name, relationship, context. If a known profile exists in Claude's memories → enrich automatically |
+| **Stakes** | Transactional / Relational / High-tension (drives variant count) |
+| **Key info** | Facts, dates, amounts, expected actions — NEVER invent these |
 
-### Step 4: Structure Email
+#### Stakes Detection
 
-Apply standard email structure:
+| Stakes level | Signals | Variant count |
+|-------------|---------|---------------|
+| **Transactional** | Simple info, confirmation, thanks, routine update | 2 |
+| **Relational** | Follow-up, request, proposal, invitation, soft decline | 3 |
+| **High-tension** | Hard decline, bad news, negotiation, conflict, escalation, boundary-setting | 3-4 |
+
+---
+
+### Phase 2 — Recipient Profile Enrichment (conditional)
+
+If a recipient name is mentioned AND a profile exists in Claude's memories:
+- Retrieve: relationship type, preferred channel, preferred tone, context
+- Auto-adapt variants accordingly
+
+Profiles are stored via `memory_user_edits`, not in this skill. The skill only leverages them when available.
+
+---
+
+### Phase 3 — Variant Generation
+
+#### Variant Strategy
+
+Each variant must have a **goal-oriented label** (2-4 words) describing what it prioritizes or trades off. Never use generic labels like "Formal" or "Informal".
+
+Reference: [strategy-labels.md](references/strategy-labels.md) for label catalog by intent × stakes.
+
+#### Channel Adaptation
+
+Apply channel-specific rules for length, structure, and sign-off formulas:
+
+| Channel | Length | Structure | `message_compose` kind |
+|---------|--------|-----------|----------------------|
+| WhatsApp/SMS | 2-6 lines | None, fluid prose | `textMessage` |
+| Slack/Teams | 3-10 lines | Light (dashes if needed) | `other` |
+| Email | Free | Full (hook → body → close) | `email` (with `subject`) |
+| LinkedIn/Social | 3-15 lines | Strong hook, short paragraphs | `other` |
+
+Full rules: [channel-adaptation.md](references/channel-adaptation.md)
+
+#### Output Format
+
+**Always** use the `message_compose` tool:
 
 ```
-1. GREETING
-   - Adapted to recipient and tone
-   
-2. HOOK / CONTEXT
-   - Why am I writing? (1-2 sentences max)
-   - Reference to previous exchange if relevant
-   
-3. BODY
-   - Main content, organized logically
-   - Technical details adapted to audience
-   - Clear action items if any
-   
-4. CLOSING
-   - Next steps or call to action
-   - Availability for questions
-   
-5. SIGN-OFF
-   - Politeness formula matching tone
-   
-6. SIGNATURE
-   - [Signature] placeholder
+message_compose(
+  kind: "email" | "textMessage" | "other",
+  summary_title: "[Short context]",
+  variants: [
+    { label: "Strategy A", body: "...", subject: "..." },  // subject only for email
+    { label: "Strategy B", body: "..." },
+    { label: "Strategy C", body: "..." }
+  ]
+)
 ```
 
-### Step 5: Generate Output
-
-Produce exactly 3 blocks:
-
 ---
 
-**🟩 BLOCK 1 — Final Email**
+### Phase 4 — Notes (conditional)
 
-The main version using requested tone (or Standard-Relaxed by default).
-Ready to copy-paste, no modifications needed.
+Display notes in conversational text AFTER the message_compose widget **only if**:
+- Critical information is missing (date, amount, name)
+- Ambiguity detected in the input
+- Risk identified (inappropriate tone, sensitive info, contradiction)
 
----
-
-**🟨 BLOCK 2 — Tone Variants**
-
-2-3 alternative versions with different tones:
-- If main is Standard-Relaxed → provide Standard + Formal
-- If main is Formal → provide Standard-Relaxed + Very Formal
-- Label each variant clearly
-
----
-
-**🟦 BLOCK 3 — Notes & Suggestions**
-
-- Missing information that would improve the email
-- Ambiguities detected in the input
-- Alternative phrasings for sensitive parts
-- Attachments to mention if implied
-
----
+Do NOT display notes if everything is clear and variants are self-sufficient.
 
 ## Critical Rules
 
-1. **Language**: Output MUST be in the same language as user input
-2. **No invention**: Never add facts, dates, or commitments not in the input
-3. **Preserve intent**: The email must convey exactly what the user wanted to say
-4. **Audience adaptation**: Technical jargon only for technical recipients
-5. **Actionable output**: Every email must be usable without modification
-6. **Signature placeholder**: Always end with `[Signature]` unless user provides one
-7. **No code blocks for emails**: Never wrap email content in code blocks (```). Output emails as regular markdown text to preserve formatting when user copies. Code blocks are only for technical snippets or example prompts.
+1. **Language**: Output messages in the SAME language as user input
+2. **No invention**: NEVER add facts, dates, amounts, or commitments not present in input
+3. **Preserve intent**: Messages must convey exactly what the user wanted to say
+4. **Always use message_compose**: Never output variants as raw markdown blocks
+5. **Labels over tones**: Variant labels describe communication strategy, not formality
+6. **Channel respect**: Adapt length and structure strictly to channel constraints
+7. **Audience adaptation**: Technical jargon only for technical recipients
+8. **Actionable output**: Every message must be usable without modification
 
+## Triggers
 
-## Tone Reference Examples
-
-These examples define the **Standard-Relaxed** default style:
-
-> "Quick update following yesterday's audit: I ran an audio transcription and generated two summaries, sharing them here so we can cross-reference."
-
-> "Brief note on the Symfony version upgrade: we're still on 5.4 while LTS is 7.4. I've handled similar upgrades before, and I know it's never trivial, so I'm planning a realistic budget."
-
-> "We can discuss this Wednesday no problem, but I wanted to lay the groundwork so we can start thinking ahead."
-
-**Characteristics**: Concrete, accessible, precise, neither too formal nor familiar, collaborative tone.
+| French | English |
+|--------|---------|
+| "corrige", "reformule" | "correct", "rephrase" |
+| "aide-moi à tourner" | "help me word this" |
+| "rends ça plus pro" | "make this more professional" |
+| "message pour [nom]" | "message for [name]" |
+| "mail à", "email pour" | "email to", "mail for" |
+| "réponds à ça" | "reply to this" |
+| "transforme ça en [canal]" | "turn this into a [channel]" |
+| "corrige =>" | "correct =>" |
 
 ## Edge Cases
 
 | Situation | Behavior |
 |-----------|----------|
-| Input too vague | Ask for: intent, recipient, key points |
-| Multiple topics mixed | Suggest splitting into separate emails |
-| Conflicting information | Flag ambiguity in Block 3 |
-| Sensitive content detected | Propose softer alternatives |
-| No clear action/purpose | Ask what outcome user expects |
+| Channel not detectable | Ask one question (prefer `ask_user_input_v0`) |
+| Input < 10 characters | Ask for context |
+| Input extremely confused | Phase 0 + confirmation before variants |
+| Multiple recipients | Produce group message OR suggest splitting |
+| Input is a reply to received message | Understand received message context to adapt response |
+| User requests additional variant | Generate it if stakes justify |
+| Input already well-written | Still produce variants with different strategies |
 
 ## Limitations
 
 This skill does NOT:
-- Translate emails between languages
+- Translate messages between languages
 - Write long documents (reports, specifications, proposals)
-- Generate non-email content (LinkedIn posts, articles, SMS)
-- Send emails automatically
-- Handle attachments or file references beyond mentioning them
+- Generate code or technical documentation
+- Send messages automatically
+- Handle attachments beyond mentioning them
+- Maintain conversation threads across sessions
 
 ## References
 
-- [Transcription Patterns](references/transcription-patterns.md) - Common artifacts to clean
-- [Tone Examples](references/tone-examples.md) - Full examples for each tone level
-- [Email Templates](references/email-templates.md) - Structure templates by intent
+- [Transcription Patterns](references/transcription-patterns.md) — Dictation artifacts to clean
+- [Strategy Labels](references/strategy-labels.md) — Label catalog by intent × stakes
+- [Channel Adaptation](references/channel-adaptation.md) — Rules per communication channel
 
 ---
 
@@ -177,6 +190,7 @@ This skill does NOT:
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0.0 | 2025-12-11 | Initial release - migrated from GPT "My Corrector v2.1" |
+| 1.0.0 | 2025-12-11 | Initial release — email-only, migrated from GPT "My Corrector v2.1" |
+| 2.0.0 | 2025-02-05 | **BREAKING**: Multi-channel support, strategic variants via message_compose, conditional cleanup, recipient profiles |
 
-## Current: v1.0.0
+## Current: v2.0.0
