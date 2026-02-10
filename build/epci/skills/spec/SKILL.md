@@ -31,6 +31,7 @@ Transform CDC/brief documents into executable technical specifications with Ralp
 - 🔴 NEVER skip @decompose-validator before generation
 - 🔴 NEVER create circular dependencies in task DAG
 - 🔴 NEVER exceed granularity limits (tasks 1-2h, steps 15-30min)
+- 🔴 NEVER call EnterPlanMode during skill execution
 - ✅ ALWAYS start with step-00-init.md
 - ✅ ALWAYS follow next_step from each step
 - ✅ ALWAYS present breakpoints at phase transitions

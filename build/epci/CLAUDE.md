@@ -204,6 +204,13 @@ All user-invocable skills MUST use `@skill:epci:breakpoint-system` for interacti
 python src/scripts/validate.py
 ```
 
+### Anti-Plan-Mode Protection
+
+When an EPCI skill is active (/brainstorm, /spec, /implement, etc.):
+- NEVER call EnterPlanMode — each skill manages its own output format
+- NEVER generate files in .claude/plans/ unless explicitly requested by user
+- ALWAYS follow the skill's workflow to completion
+
 ---
 
 ## 7. Quick Reference

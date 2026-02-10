@@ -189,17 +189,56 @@ ems["global"] = calculate_weighted_ems(ems)
 }
 ```
 
+### 7.5 Persist Session State (OBLIGATOIRE)
+
+🔴 **CRITIQUE**: Après le framing, SAUVEGARDE complète dans le fichier session.
+
+```
+# Load current session
+session = JSON.parse(Read(session_path))
+
+# Update with framing data
+session.template = detected_template
+session.context.hmw_questions = hmw_questions
+session.context.perplexity_prompts = perplexity_prompts
+session.context.codebase_analysis = codebase_analysis
+
+# Initialize EMS with baseline and add first history entry
+session.ems.global = ems.global
+session.ems.axes = ems
+session.ems.history.append({
+  "iteration": 0,
+  "global": ems.global,
+  "scores": ems,
+  "delta": 0,
+  "timestamp": NOW()
+})
+
+# Set phase and status
+session.phase = "DIVERGENT"
+session.persona = "architecte"
+session.status = "active"
+session.timestamps.last_update = NOW()
+
+# Persist to disk
+Write(session_path, JSON.stringify(session, indent=2))
+
+DISPLAY: "Session updated with framing data (EMS baseline: {ems.global})"
+```
+
 ## Outputs
 
 | Output | Destination |
 |--------|-------------|
-| `template` | Session state |
-| `hmw_questions` | Session state |
-| `perplexity_prompts` | Session state |
-| `ems` | Session state |
-| `phase` | Session state |
-| `persona` | Session state |
-| `codebase_analysis` | Session state |
+| Session JSON (updated) | `.claude/state/sessions/{session_id}.json` |
+| `template` | Session state + JSON |
+| `hmw_questions` | Session state + JSON |
+| `perplexity_prompts` | Session state + JSON |
+| `ems` (baseline) | Session state + JSON |
+| `ems.history[0]` | JSON (first entry) |
+| `phase` | Session state + JSON |
+| `persona` | Session state + JSON |
+| `codebase_analysis` | Session state + JSON |
 
 ## Next Step
 

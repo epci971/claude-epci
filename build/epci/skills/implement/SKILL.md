@@ -42,6 +42,7 @@ INPUT
 - 🔴 NEVER skip the planning phase
 - 🔴 NEVER modify files during exploration (Step 01)
 - 🔴 NEVER skip TDD for STANDARD+ complexity
+- 🔴 NEVER call EnterPlanMode during skill execution
 - ✅ ALWAYS start with step-00-init.md
 - ✅ ALWAYS follow next_step from each step
 - ✅ ALWAYS present breakpoints at phase transitions

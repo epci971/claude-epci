@@ -146,6 +146,11 @@ CHECKLIST PRÉ-ÉCRITURE:
 [ ] Section 15: Commande suggérée avec slug
 ```
 
+ANTI-PLAN-MODE CHECK:
+[ ] Output target is docs/briefs/{slug}/ (NOT .claude/plans/)
+[ ] Using Write() tool (NOT EnterPlanMode)
+[ ] Generating brief PRD v3.0 format (15 sections, NOT plan format)
+
 ⛔ **SI sections manquantes**: ALERTE et COMPLÈTE avant écriture.
 ⛔ **NE PAS écrire un brief incomplet**.
 
@@ -191,14 +196,74 @@ Write(journal_path, journal_content)
 }
 ```
 
+### 8.5 Finalize Session File (OBLIGATOIRE)
+
+🔴 **CRITIQUE**: Marquer la session comme terminée dans le fichier JSON.
+
+```
+# Load session
+session = JSON.parse(Read(session_path))
+
+# Mark as completed
+session.status = "completed"
+session.timestamps.ended_at = NOW()
+session.timestamps.last_update = NOW()
+
+# Add output file references
+session.output_files = [brief_path, journal_path]
+IF file_exists(decisions_path):
+  session.output_files.append(decisions_path)
+
+session.generation_complete = true
+session.ems_final = ems.global
+session.brief_sections_count = 15
+
+# Persist final state
+Write(session_path, JSON.stringify(session, indent=2))
+
+DISPLAY: "Session finalized: {session_id}"
+```
+
+### 8.6 Finalize Decisions File
+
+Si le fichier decisions.md existe, mettre à jour le statut final:
+
+```
+IF file_exists(decisions_path):
+  content = Read(decisions_path)
+
+  # Update summary with final EMS
+  content = update_summary(content, len(session.decisions), ems.global, iteration)
+
+  # Add completion note
+  completion_note = """
+---
+
+## Session Completed
+
+| Attribute | Value |
+|-----------|-------|
+| **Final EMS** | {ems.global}/100 |
+| **Total iterations** | {iteration} |
+| **Brief generated** | {brief_path} |
+| **Journal generated** | {journal_path} |
+| **Completed at** | {NOW()} |
+"""
+  content = append_section(content, completion_note)
+
+  Write(decisions_path, content)
+```
+
 ## Outputs
 
 | Output | Destination |
 |--------|-------------|
 | `brief-{slug}-{date}.md` | `docs/briefs/{slug}/` |
 | `journal-{slug}-{date}.md` | `docs/briefs/{slug}/` |
-| `generation_complete` | Session state |
-| `output_files` | Session state |
+| `decisions-{slug}.md` (finalized) | `docs/briefs/{slug}/` |
+| Session JSON (completed) | `.claude/state/sessions/{session_id}.json` |
+| `generation_complete` | Session state + JSON |
+| `output_files` | Session state + JSON |
 
 ## Next Step
 
@@ -220,3 +285,5 @@ Write(journal_path, journal_content)
 🔴 **NE JAMAIS générer un brief avec moins de 15 sections.**
 🔴 **NE JAMAIS omettre le graphe EMS ASCII en section 12.**
 🔴 **NE JAMAIS utiliser un format simplifié pour les User Stories.**
+🔴 **NE JAMAIS utiliser EnterPlanMode pour generer les outputs.**
+🔴 **NE JAMAIS ecrire dans .claude/plans/ — output = docs/briefs/{slug}/**

@@ -57,6 +57,136 @@ FOR each response from previous iteration:
   - Mark addressed questions
 ```
 
+### 1.5 Extract and Persist Decisions
+
+🔴 **OBLIGATOIRE**: Extraire les décisions des réponses utilisateur et les persister.
+
+```
+# Decision markers to detect
+DECISION_MARKERS = [
+  "decided", "choosing", "going with", "let's do", "we'll use",
+  "the approach will be", "I'm choosing", "definitely", "yes, that works"
+]
+
+FOR each response in user_responses:
+  IF contains_decision_markers(response):
+    # Load current session
+    session = JSON.parse(Read(session_path))
+
+    # Create decision record
+    decision = {
+      "id": "D{len(session.decisions) + 1:03d}",
+      "text": extract_decision_text(response),
+      "iteration": current_iteration,
+      "ems_at_time": ems.global,
+      "rationale": extract_rationale(response),
+      "confidence": assess_confidence(response),  # high/medium/low
+      "timestamp": NOW()
+    }
+
+    session.decisions.append(decision)
+    session.timestamps.last_update = NOW()
+
+    # Persist session
+    Write(session_path, JSON.stringify(session, indent=2))
+
+    # Append to incremental decisions file
+    append_to_decisions_file(decision, session)
+
+# Check for thread closures
+FOR each thread in session.open_threads:
+  IF response closes thread:
+    thread.status = "closed"
+    thread.closed_at_iteration = current_iteration
+    # Update decisions file with closed thread
+```
+
+**Helper: append_to_decisions_file**
+
+```
+def append_to_decisions_file(decision, session):
+  decisions_dir = "docs/briefs/{slug}/"
+  decisions_path = "{decisions_dir}decisions-{slug}.md"
+
+  # Create directory if needed
+  IF NOT directory_exists(decisions_dir):
+    Bash("mkdir -p {decisions_dir}")
+
+  IF NOT file_exists(decisions_path):
+    # Create file with header (see references/decisions-format.md)
+    header = """# Decisions - {session.context.idea_raw}
+
+> Incremental decisions log - Session `{session.session_id}`
+> Started: {session.timestamps.created_at}
+
+---
+
+## Summary
+
+| Metric | Value |
+|--------|-------|
+| **Total decisions** | 0 |
+| **Current EMS** | {ems.global}/100 |
+| **Current iteration** | {iteration} |
+| **Last updated** | {NOW()} |
+
+---
+
+## Decisions Log
+
+---
+
+## Open Threads
+
+| ID | Thread | Opened | Priority | Status | Notes |
+|----|--------|--------|----------|--------|-------|
+
+---
+
+*Last updated: {NOW()}*
+*Resume with: `/brainstorm --continue {slug}-{timestamp}`*
+"""
+    Write(decisions_path, header)
+
+  # Read current content
+  content = Read(decisions_path)
+
+  # Update summary section
+  content = update_summary(content, len(session.decisions), ems.global, iteration)
+
+  # Insert decision entry before "## Open Threads"
+  entry = """
+### D{decision.id}: {decision.text[:50]}...
+
+| Attribute | Value |
+|-----------|-------|
+| **Iteration** | {decision.iteration} |
+| **EMS at time** | {decision.ems_at_time}/100 |
+| **Confidence** | {decision.confidence} |
+| **Timestamp** | {decision.timestamp} |
+
+**Decision**: {decision.text}
+
+**Rationale**: {decision.rationale}
+
+---
+"""
+  content = insert_before_section(content, "## Open Threads", entry)
+
+  # Update timestamp
+  content = update_last_updated(content, NOW())
+
+  Write(decisions_path, content)
+```
+
+**Confidence Assessment**:
+
+| Confidence | Trigger Words |
+|------------|---------------|
+| **High** | "definitely", "absolutely", "we must", "decided", "going with" |
+| **Medium** | "probably", "likely", "should", "let's try" |
+| **Low** | "maybe", "perhaps", "could", "might consider" |
+
 ### 2. Recalcul EMS (OBLIGATOIRE - NE PAS SAUTER)
 
 🔴 **CRITIQUE**: Tu DOIS appeler l'agent ems-evaluator à CHAQUE itération.
@@ -118,6 +248,51 @@ ems.strong_axes = result.strong_axes
 | `ems.global` | Entre 0-100 | ⛔ STOP - Résultat invalide |
 
 🔴 **SI vérification échoue**: STOP et appelle ems-evaluator AVANT de continuer.
+
+### 2.2 Persist Session State (OBLIGATOIRE)
+
+🔴 **CRITIQUE**: Après CHAQUE recalcul EMS, SAUVEGARDE la session pour éviter toute perte.
+
+```
+# Load current session
+session = JSON.parse(Read(session_path))
+
+# Update EMS data
+session.ems.history.append({
+  "iteration": current_iteration,
+  "global": ems.global,
+  "scores": ems.scores,
+  "delta": ems.delta,
+  "timestamp": NOW()
+})
+session.ems.global = ems.global
+session.ems.axes = ems.scores
+
+# Update iteration and timestamps
+session.iteration = current_iteration
+session.timestamps.last_update = NOW()
+session.status = "active"
+
+# Update phase and persona if changed
+session.phase = phase
+session.persona = persona
+
+# Append persona change to history if switched
+IF persona != previous_persona:
+  session.persona_history.append({
+    "persona": persona,
+    "iteration": current_iteration,
+    "trigger": switch_trigger
+  })
+
+# Persist to disk
+Write(session_path, JSON.stringify(session, indent=2))
+
+# Log confirmation
+DISPLAY: "Session saved (EMS: {ems.global}, iteration {current_iteration})"
+```
+
+🔴 **SI Write échoue**: Retry once, then continue with warning.
 
 ### 3. Check Auto-Switch Persona
 
@@ -263,6 +438,71 @@ Based on weak axes and current phase:
 
 Apply quick mode adjustments from iteration-rules.md (section #quick-mode-adjustments imported above) if `--quick` flag active.
 
+### 10.5 Handle Checkpoint Command
+
+Si l'utilisateur tape `checkpoint`:
+
+```
+IF user_input == "checkpoint":
+  # Load and update session
+  session = JSON.parse(Read(session_path))
+  session.status = "paused"
+  session.timestamps.last_update = NOW()
+
+  # Persist final state
+  Write(session_path, JSON.stringify(session, indent=2))
+
+  # Update decisions file with pause note
+  IF file_exists(decisions_path):
+    content = Read(decisions_path)
+    content = update_last_updated(content, NOW())
+    content = append_note(content, "Session paused at iteration {iteration}")
+    Write(decisions_path, content)
+
+  # Display checkpoint confirmation
+  DISPLAY:
+  ┌─────────────────────────────────────────────────────────────────────┐
+  │ ✅ CHECKPOINT SAVED                                                  │
+  ├─────────────────────────────────────────────────────────────────────┤
+  │                                                                     │
+  │ Session ID: {session.session_id}                                    │
+  │ Current EMS: {session.ems.global}/100                               │
+  │ Iteration: {session.iteration}                                      │
+  │ Decisions: {len(session.decisions)}                                 │
+  │ Open threads: {len(session.open_threads)}                           │
+  │                                                                     │
+  │ Files saved:                                                        │
+  │   • .claude/state/sessions/{session_id}.json                        │
+  │   • docs/briefs/{slug}/decisions-{slug}.md                          │
+  │                                                                     │
+  ├─────────────────────────────────────────────────────────────────────┤
+  │ Resume with:                                                        │
+  │   /brainstorm --continue {slug}-{timestamp}                         │
+  └─────────────────────────────────────────────────────────────────────┘
+
+  → Exit session (no next step)
+```
+
+### 10.6 Handle Status Command
+
+Si l'utilisateur tape `status`:
+
+```
+IF user_input == "status":
+  # Load session
+  session = JSON.parse(Read(session_path))
+
+  DISPLAY complete state:
+  - Session ID
+  - EMS history graph
+  - All decisions made
+  - Open threads
+  - Persona history
+  - Files created
+
+  → Continue iteration (no state change)
+```
+
 ## Loop Conditions
 
 See iteration-rules.md (section #loop-conditions-summary imported above) for complete table.
@@ -276,12 +516,15 @@ See iteration-rules.md (section #loop-conditions-summary imported above) for com
 
 | Output | Destination |
 |--------|-------------|
-| Updated `ems` | Session state |
-| Updated `phase` | Session state |
-| Updated `persona` | Session state |
-| `decisions[]` | Session state |
-| `open_threads[]` | Session state |
-| `techniques_applied[]` | Session state |
+| Session JSON (updated) | `.claude/state/sessions/{session_id}.json` |
+| Decisions file (incremental) | `docs/briefs/{slug}/decisions-{slug}.md` |
+| Updated `ems` | Session state + JSON |
+| Updated `phase` | Session state + JSON |
+| Updated `persona` | Session state + JSON |
+| `decisions[]` | Session state + JSON + decisions.md |
+| `open_threads[]` | Session state + JSON + decisions.md |
+| `techniques_applied[]` | Session state + JSON |
+| `persona_history[]` | Session state + JSON |
 
 ## Next Step
 

@@ -34,6 +34,7 @@ Structured debugging with Tree of Thought (ToT) hypothesis-driven investigation.
 - 🔴 NEVER guess root cause without evidence
 - 🔴 NEVER skip hypothesis generation (min 2 hypotheses)
 - 🔴 NEVER apply fix without regression test (Quick/Complex routes)
+- 🔴 NEVER call EnterPlanMode during skill execution
 - ✅ ALWAYS start with step-00-clarify.md (unless --no-clarify)
 - ✅ ALWAYS follow next_step from each step
 - ✅ ALWAYS use scientific method: Observe → Hypothesize → Test → Verify
