@@ -34,6 +34,8 @@ Extract from the invocation prompt:
 - `@spec-path` (required) — path to spec/PRD file
 - `--validate-plan` (optional) — enable plan validation with Opus
 - `--with-review` (optional) — enable deep code review with Opus
+- `--skip-publish` (optional) — skip push/PR/cleanup (orchestrator handles)
+- `--auto-merge` (optional) — enable auto-merge after PR creation
 
 Store in execution context:
 
@@ -42,7 +44,9 @@ context = {
   feature_slug: string,
   spec_path: string,
   flag_validate_plan: boolean,
-  flag_with_review: boolean
+  flag_with_review: boolean,
+  flag_skip_publish: boolean,
+  flag_auto_merge: boolean
 }
 ```
 
@@ -166,7 +170,7 @@ Output to stdout (for pipeline logging):
   Worktree: {worktree_path}
   Branch: feature/{feature-slug}
   Feature Doc: {feature_doc_path}
-  Flags: validate-plan={flag}, with-review={flag}
+  Flags: validate-plan={flag}, with-review={flag}, skip-publish={flag}, auto-merge={flag}
 ```
 
 ## CONTEXT BOUNDARIES:

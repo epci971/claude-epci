@@ -2,7 +2,7 @@
 name: step-07-output-auto
 description: Final JSON output write and stdout summary
 prev_step: steps/step-06-finish-auto.md
-next_step: null
+next_step: steps/step-08-publish-auto.md
 ---
 
 # Step 07: Output (Auto)
@@ -56,10 +56,10 @@ Ensure JSON reflects the failure state:
 - `phases.current` = null
 - `errors[]` contains details of the failure
 
-### 4. Cleanup
+### 4. Handoff to Publish
 
-No cleanup needed for worktree (orchestrator manages lifecycle).
-The worktree and branch are preserved for PR creation by the pipeline.
+The worktree, branch, and JSON output are preserved for step-08-publish-auto.
+Step-08 handles: push to origin, PR creation, optional auto-merge, and worktree cleanup.
 
 ## CONTEXT BOUNDARIES:
 
@@ -68,4 +68,5 @@ The worktree and branch are preserved for PR creation by the pipeline.
 
 ## NEXT STEP TRIGGER:
 
-This is the final step. Execution ends here.
+Proceed to step-08-publish-auto.md for branch push, PR creation, and worktree cleanup.
+If --skip-publish flag is set, step-08 will skip all post-processing.
