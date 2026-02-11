@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "projects": [
+    {
+      "slug": "gardel",
+      "directory": "/home/pipeline/apps/gardel",
+      "github_repo": "epci971/gardel",
+      "notion_project_id": "xxx-xxx-xxx",
+      "defaults": {
+        "model": "sonnet",
+        "timeout": 1800,
+        "flags": ["validate_plan"]
+      }
+    }
+  ]
+}
