@@ -9,7 +9,7 @@ description: >-
   Triggers: pipeline automation, cron job, autonomous implementation, batch processing.
   Not for: interactive development (use /implement), quick fixes (use /quick), debugging (use /debug).
 user-invocable: true
-argument-hint: "<feature-slug> @<spec-path> [--validate-plan] [--with-review]"
+argument-hint: "<feature-slug> @<spec-path> [--validate-plan] [--with-review] [--skip-publish] [--auto-merge]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Task
 ---
 
@@ -42,6 +42,8 @@ No other dependencies required. The skill uses the target project's CLAUDE.md an
 | `@spec-path` | Yes | Path to spec/PRD file (Markdown) |
 | `--validate-plan` | No | Invoke plan-validator (Opus) for plan review |
 | `--with-review` | No | Invoke code-reviewer (Opus) in addition to self-review |
+| `--skip-publish` | No | Skip push/PR/cleanup (orchestrator handles post-processing) |
+| `--auto-merge` | No | Enable GitHub auto-merge on created PR |
 
 ## Output
 
@@ -79,6 +81,8 @@ step-05-document-auto Feature Document completion + executive summary
 step-06-finish-auto   Final validation, commit, status determination
        |
 step-07-output-auto   Final JSON write
+       |
+step-08-publish-auto  Push branch, create PR, cleanup worktree
 ```
 
 ## EXECUTION PROTOCOLS:
@@ -121,6 +125,7 @@ See [references/review-checklist.md](references/review-checklist.md).
 | 05 | document-auto | - | Feature Document + summary |
 | 06 | finish-auto | - | Finalization + commit |
 | 07 | output-auto | - | Final JSON output |
+| 08 | publish-auto | - | Push, PR, worktree cleanup |
 
 ## Step Files
 
@@ -132,6 +137,7 @@ See [references/review-checklist.md](references/review-checklist.md).
 - [steps/step-05-document-auto.md](steps/step-05-document-auto.md)
 - [steps/step-06-finish-auto.md](steps/step-06-finish-auto.md)
 - [steps/step-07-output-auto.md](steps/step-07-output-auto.md)
+- [steps/step-08-publish-auto.md](steps/step-08-publish-auto.md)
 
 ## Reference Files
 
@@ -147,6 +153,8 @@ See [references/review-checklist.md](references/review-checklist.md).
 |------|--------|
 | `--validate-plan` | Invoke plan-validator (Opus) to review the plan before coding |
 | `--with-review` | Invoke code-reviewer (Opus) after self-review for deep analysis |
+| `--skip-publish` | Skip push, PR creation, and worktree cleanup (orchestrator handles) |
+| `--auto-merge` | Enable GitHub auto-merge (`gh pr merge --auto --squash`) after PR creation |
 
 ## Conventions
 
@@ -165,3 +173,4 @@ No stack skills are embedded. This makes the skill portable across any stack.
 - No complexity routing (always STANDARD)
 - Timeout managed externally by orchestrator
 - Self-review is lighter than full code-reviewer
+- Auto-merge requires gh CLI installed + GitHub repo setting "Allow auto-merge" enabled

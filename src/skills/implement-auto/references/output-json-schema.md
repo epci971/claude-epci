@@ -74,7 +74,17 @@ Written incrementally at each step completion. Always valid JSON.
       "phase": "string",
       "message": "string"
     }
-  ]
+  ],
+  "publish": {
+    "pushed": "boolean",
+    "push_error": "string | null",
+    "pr_url": "string | null",
+    "pr_draft": "boolean",
+    "pr_error": "string | null",
+    "auto_merge_enabled": "boolean",
+    "worktree_cleaned": "boolean",
+    "skipped": "boolean"
+  }
 }
 ```
 
@@ -133,6 +143,19 @@ Each component from the implementation plan:
 | `retries` | number | Number of retry attempts (0-2) |
 | `error` | string? | Error message if FAILED |
 
+### publish Object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `pushed` | boolean | Whether branch was pushed to origin |
+| `push_error` | string? | Error message if push failed |
+| `pr_url` | string? | GitHub PR URL (null if skipped or failed) |
+| `pr_draft` | boolean | Whether PR was created as draft (PARTIAL status) |
+| `pr_error` | string? | Error message if PR creation failed |
+| `auto_merge_enabled` | boolean | Whether auto-merge was activated on the PR |
+| `worktree_cleaned` | boolean | Whether worktree was successfully removed |
+| `skipped` | boolean | True if --skip-publish flag was used |
+
 ## Incremental Write Protocol
 
 The JSON file is written (overwritten) at each step transition:
@@ -146,7 +169,18 @@ step-04-review-auto  -> Update checks.self_review
 step-05-document-auto -> Update feature_doc path
 step-06-finish-auto  -> Update final status, metrics
 step-07-output-auto  -> Final write with complete data
+step-08-publish-auto -> Update publish section, phases.completed += "publish"
 ```
+
+## File Persistence
+
+After step-08, the worktree is removed. The JSON output is copied to a persistent location:
+
+```
+{main_repo}/.implement-auto-results/{feature-slug}.json
+```
+
+The orchestrator should read from this location after execution completes.
 
 ## Parsing Notes (for Orchestrator)
 
@@ -155,3 +189,4 @@ step-07-output-auto  -> Final write with complete data
 - If `phases.current` is set, that step is in progress
 - `errors[]` accumulates — check length for failure count
 - `metrics` may be incomplete during execution
+- After completion, read from `.implement-auto-results/` (worktree is removed)
