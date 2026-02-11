@@ -1,0 +1,118 @@
+{
+  "session_id": "brainstorm-implement-auto-20260211-140000",
+  "version": "1.0",
+  "slug": "implement-auto",
+  "status": "completed",
+  "template": "feature",
+  "flags": {
+    "quick": false,
+    "turbo": false,
+    "party": false,
+    "panel": false,
+    "no_hmw": false,
+    "no_security": false,
+    "no_clarify": false
+  },
+  "timestamps": {
+    "created_at": "2026-02-11T14:00:00Z",
+    "last_update": "2026-02-11T15:30:00Z",
+    "ended_at": "2026-02-11T15:30:00Z"
+  },
+  "phase": "COMPLETED",
+  "persona": "architecte",
+  "iteration": 5,
+  "ems": {
+    "global": 86,
+    "axes": {
+      "clarity": 90,
+      "depth": 88,
+      "coverage": 85,
+      "decisions": 85,
+      "actionability": 78
+    },
+    "history": [
+      { "iteration": 0, "global": 45, "event": "baseline" },
+      { "iteration": 1, "global": 53, "event": "standalone architecture clarified" },
+      { "iteration": 2, "global": 62, "event": "spec invocation + stack skills decided" },
+      { "iteration": 3, "global": 72, "event": "circuit breaker 3 levels designed" },
+      { "iteration": 4, "global": 79, "event": "JSON output schema defined" },
+      { "iteration": 5, "global": 86, "event": "sanity check + self-review designed" }
+    ]
+  },
+  "context": {
+    "idea_raw": "Creer un skill implement-auto: variante headless de /implement sans breakpoints, sans questions, pour execution autonome par pipeline. Specs bien definies en entree, JSON structure en sortie.",
+    "idea_refined": "Skill EPCI standalone completement autonome (0 breakpoint, 0 dependance EPCI), executable via claude -p, avec circuit breaker 3 niveaux, JSON output incremental, et self-review integre. Portable par copie dans .claude/skills/ de tout projet.",
+    "brief_v0": null,
+    "codebase_analysis": "13 step files analyses dans /implement. 8 breakpoints identifies et supprimes. Stack loading dynamique remplace par CLAUDE.md/rules du projet.",
+    "hmw_questions": [
+      "HMW rendre le skill totalement autonome tout en maintenant la qualite TDD ?",
+      "HMW gerer les echecs silencieusement sans perdre la tracabilite ?",
+      "HMW structurer les steps pour maximiser la portabilite standalone ?",
+      "HMW garantir que le JSON couvre tous les cas ?",
+      "HMW dimensionner le circuit breaker ?"
+    ],
+    "perplexity_prompts": [],
+    "perplexity_results": []
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "iteration": 1,
+      "decision": "Skill 100% standalone, zero dependance EPCI",
+      "rationale": "Portabilite, installation par simple copie",
+      "confidence": "high"
+    },
+    {
+      "id": "D2",
+      "iteration": 2,
+      "decision": "Invocation par @spec-path (fichier spec dans le prompt)",
+      "rationale": "Specs longues, fichier reusable, propre pour pipeline",
+      "confidence": "high"
+    },
+    {
+      "id": "D3",
+      "iteration": 2,
+      "decision": "Pas de stack skills embarques — CLAUDE.md/rules du projet",
+      "rationale": "Le projet cible fournit ses conventions, plus portable",
+      "confidence": "high"
+    },
+    {
+      "id": "D4",
+      "iteration": 3,
+      "decision": "Circuit breaker 3 niveaux (composant/tache/timeout)",
+      "rationale": "Protection token-burning en mode autonome",
+      "confidence": "high"
+    },
+    {
+      "id": "D5",
+      "iteration": 4,
+      "decision": "JSON output incremental a chaque step",
+      "rationale": "Resilience timeout/crash",
+      "confidence": "high"
+    },
+    {
+      "id": "D6",
+      "iteration": 5,
+      "decision": "Sanity check post-explore (seuil 30%)",
+      "rationale": "Protection contre hallucinations Explore",
+      "confidence": "high"
+    },
+    {
+      "id": "D7",
+      "iteration": 5,
+      "decision": "Self-review par checklist, @code-reviewer optionnel",
+      "rationale": "Economie tokens, qualite suffisante pour pipeline",
+      "confidence": "medium"
+    }
+  ],
+  "open_threads": [],
+  "techniques_applied": [],
+  "persona_history": [
+    { "persona": "architecte", "iteration": 0, "trigger": "default" },
+    { "persona": "sparring", "iteration": 3, "trigger": "circuit breaker critical subject" },
+    { "persona": "architecte", "iteration": 4, "trigger": "schema design" }
+  ],
+  "outputs": {
+    "brief": "docs/briefs/implement-auto/brief-implement-auto-20260211.md"
+  }
+}
