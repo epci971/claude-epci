@@ -1,0 +1,706 @@
+{
+  "title": "Pipeline Orchestration — OpenClaw",
+  "version": "2.0",
+  "slug": "openclaw",
+  "generated_at": "2026-02-11T12:00:00Z",
+  "source": "docs/briefs/clawdbot/brief-orchestrator-pipeline-20260211.md",
+  "complexity": "STANDARD",
+  "metrics": {
+    "total_tasks": 9,
+    "total_steps": 30,
+    "estimated_hours": 14.5,
+    "critical_path": ["task-002", "task-005", "task-006", "task-007"],
+    "optimized_hours": 7.5
+  },
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Create shared utilities and project configuration",
+      "slug": "shared-utilities",
+      "complexity": "S",
+      "estimated_minutes": 75,
+      "dependencies": [],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Logging functions work correctly",
+          "given": "A script sources lib/common.sh",
+          "when": "It calls log_info, log_warn, log_error, log_debug",
+          "then": "Messages are timestamped, color-coded (if terminal), and written to both stdout and a log file"
+        },
+        {
+          "id": "AC2",
+          "title": "Environment loading validates secrets",
+          "given": "A .env file with required variables",
+          "when": "load_env() is called",
+          "then": "All required variables are exported, missing variables cause a named error"
+        },
+        {
+          "id": "AC3",
+          "title": "projects.json is validated on load",
+          "given": "A projects.json with entries for multiple projects",
+          "when": "load_projects() is called",
+          "then": "Each entry is validated for required fields, invalid entries are reported"
+        },
+        {
+          "id": "AC4",
+          "title": "Project lookup resolves correctly",
+          "given": "A valid projects.json and a project slug",
+          "when": "get_project_config is called",
+          "then": "Returns the project's directory, github_repo, notion_project_id, and default flags"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Create lib/common.sh — Logging and utility functions",
+          "duration_minutes": 25,
+          "input": "Pipeline requirements for consistent logging",
+          "output": "lib/common.sh with all utility functions",
+          "validation": "Source the file and call each function without errors"
+        },
+        {
+          "id": "step-2",
+          "title": "Create lib/config.sh — Environment and project loading",
+          "duration_minutes": 25,
+          "input": ".env format and projects.json schema",
+          "output": "lib/config.sh with config management functions",
+          "validation": "Load a sample .env and projects.json successfully"
+        },
+        {
+          "id": "step-3",
+          "title": "Create projects.json schema and .env.example",
+          "duration_minutes": 25,
+          "input": "Section 4.5 of brief",
+          "output": "projects.json, .env.example, and test scripts",
+          "validation": "All unit tests pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "lib/common.sh", "action": "create", "description": "Shared logging and utility functions"},
+        {"path": "lib/config.sh", "action": "create", "description": "Environment and project configuration loader"},
+        {"path": "projects.json", "action": "create", "description": "Multi-project configuration"},
+        {"path": ".env.example", "action": "create", "description": "Template for required environment variables"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-002",
+      "title": "Implement Notion API client library",
+      "slug": "notion-api",
+      "complexity": "L",
+      "estimated_minutes": 120,
+      "dependencies": [],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Query tasks with filter and sort",
+          "given": "A configured NOTION_API_KEY and NOTION_DB_ID",
+          "when": "notion_query is called with a filter",
+          "then": "Returns JSON array of matching tasks, handling pagination"
+        },
+        {
+          "id": "AC2",
+          "title": "Update task properties",
+          "given": "A valid Notion page ID and properties",
+          "when": "notion_update is called",
+          "then": "Page properties are updated via PATCH"
+        },
+        {
+          "id": "AC3",
+          "title": "Read page body and convert to Markdown",
+          "given": "A Notion page with body content",
+          "when": "notion_read_body is called",
+          "then": "Returns Markdown converted from Notion blocks"
+        },
+        {
+          "id": "AC4",
+          "title": "Create new page with properties and content",
+          "given": "A database ID, properties, and body content",
+          "when": "notion_create_page is called",
+          "then": "A new page is created with correct properties and body"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement notion_query — Database query with pagination",
+          "duration_minutes": 30,
+          "input": "Notion API documentation",
+          "output": "notion_query function in lib/notion.sh",
+          "validation": "Query returns correctly filtered results"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement notion_update — Property PATCH",
+          "duration_minutes": 30,
+          "input": "Notion PATCH API docs",
+          "output": "notion_update function in lib/notion.sh",
+          "validation": "Successfully updates a test page property"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement notion_read_body — Block reading with Markdown conversion",
+          "duration_minutes": 30,
+          "input": "Notion blocks API docs",
+          "output": "notion_read_body function with block-to-Markdown conversion",
+          "validation": "Known page body converts to expected Markdown"
+        },
+        {
+          "id": "step-4",
+          "title": "Implement notion_create_page — Page creation with body",
+          "duration_minutes": 30,
+          "input": "Notion POST /v1/pages docs",
+          "output": "notion_create_page function and test file",
+          "validation": "Creates a test page with correct properties and body"
+        }
+      ],
+      "files_affected": [
+        {"path": "lib/notion.sh", "action": "create", "description": "Notion API client"},
+        {"path": "tests/test-notion.sh", "action": "create", "description": "Unit tests with mock curl"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-003",
+      "title": "Implement Telegram notification wrapper",
+      "slug": "telegram-notify",
+      "complexity": "S",
+      "estimated_minutes": 75,
+      "dependencies": [],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Send formatted notification",
+          "given": "Valid TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID",
+          "when": "notify_task_start is called",
+          "then": "A formatted message is sent via Telegram sendMessage API"
+        },
+        {
+          "id": "AC2",
+          "title": "Kill switch detection",
+          "given": "A recent Telegram message containing /kill",
+          "when": "check_kill_switch is called",
+          "then": "Returns exit code 0 (kill requested)"
+        },
+        {
+          "id": "AC3",
+          "title": "Heartbeat summary",
+          "given": "A completed pipeline cycle with stats",
+          "when": "notify_heartbeat is called",
+          "then": "A summary message is sent with task counts"
+        },
+        {
+          "id": "AC4",
+          "title": "Graceful degradation on Telegram failure",
+          "given": "Telegram API is unreachable",
+          "when": "Any notify function is called",
+          "then": "WARNING is logged, function returns success, pipeline continues"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement sendMessage wrapper and formatters",
+          "duration_minutes": 25,
+          "input": "Telegram Bot API docs",
+          "output": "notify.sh with all send functions",
+          "validation": "Each function produces correct curl command"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement kill switch check via getUpdates",
+          "duration_minutes": 25,
+          "input": "Telegram getUpdates API docs",
+          "output": "check_kill_switch function",
+          "validation": "Correctly detects /kill message"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement heartbeat and tests",
+          "duration_minutes": 25,
+          "input": "US3-AC3 requirements",
+          "output": "Complete notify.sh with heartbeat and tests",
+          "validation": "All unit tests pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "notify.sh", "action": "create", "description": "Telegram notification wrapper"},
+        {"path": "tests/test-notify.sh", "action": "create", "description": "Unit tests with mock Telegram API"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-004",
+      "title": "Implement quota management",
+      "slug": "quota-checker",
+      "complexity": "S",
+      "estimated_minutes": 60,
+      "dependencies": [],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Detect throttle patterns in logs",
+          "given": "Claude Code log containing rate_limit, 429, or too_many_requests",
+          "when": "check_quota_status is called",
+          "then": "Returns throttled status with detected pattern"
+        },
+        {
+          "id": "AC2",
+          "title": "Apply cooldown timer",
+          "given": "A throttle has been detected",
+          "when": "start_cooldown is called",
+          "then": "Cooldown file created with 30min expiry, subsequent checks return cooldown"
+        },
+        {
+          "id": "AC3",
+          "title": "Return quota status ok",
+          "given": "No throttle detected and no active cooldown",
+          "when": "check_quota_status is called",
+          "then": "Returns ok status"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement throttle detection",
+          "duration_minutes": 30,
+          "input": "Claude Code log patterns",
+          "output": "Throttle detection and cooldown management functions",
+          "validation": "Correctly identifies throttle patterns"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement status API and tests",
+          "duration_minutes": 30,
+          "input": "Integration requirements from pipeline-runner",
+          "output": "Complete quota-checker.sh with status API and tests",
+          "validation": "All unit tests pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "quota-checker.sh", "action": "create", "description": "Reactive quota management"},
+        {"path": "tests/test-quota.sh", "action": "create", "description": "Unit tests for quota checking"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-005",
+      "title": "Implement single task executor",
+      "slug": "run-task",
+      "complexity": "L",
+      "estimated_minutes": 120,
+      "dependencies": ["task-001", "task-002"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Hybrid spec reading works (Notion body)",
+          "given": "A Notion task with spec in page body (Spec Path empty)",
+          "when": "extract_spec_content is called",
+          "then": "Returns Markdown content from Notion page body"
+        },
+        {
+          "id": "AC2",
+          "title": "Git spec fallback works",
+          "given": "A Notion task with Spec Path set",
+          "when": "extract_spec_content is called",
+          "then": "Returns content of the Git file"
+        },
+        {
+          "id": "AC3",
+          "title": "Successful execution creates PR",
+          "given": "A valid spec and available quota",
+          "when": "run_task executes",
+          "then": "Worktree created, Claude runs, PR created, Notion updated to En review"
+        },
+        {
+          "id": "AC4",
+          "title": "Failed execution handled properly",
+          "given": "A task where Claude Code fails",
+          "when": "run_task detects failure",
+          "then": "Worktree cleaned, Notion set to Echoue with error message"
+        },
+        {
+          "id": "AC5",
+          "title": "Partial execution creates draft PR",
+          "given": "implement-auto returns PARTIAL",
+          "when": "run_task processes result",
+          "then": "Draft PR created, Notion set to En review (partiel)"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement spec content extraction",
+          "duration_minutes": 30,
+          "input": "Notion API, brief section 4.1",
+          "output": "extract_spec_content function",
+          "validation": "Correctly reads from both Notion body and Git file"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement worktree management",
+          "duration_minutes": 30,
+          "input": "Git worktree docs",
+          "output": "Worktree management functions",
+          "validation": "Create and cleanup worktrees without artifacts"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement Claude Code headless execution",
+          "duration_minutes": 30,
+          "input": "Claude Code CLI docs, implement-auto schema",
+          "output": "execute_claude function with JSON parsing",
+          "validation": "Parses sample implement-auto JSON correctly"
+        },
+        {
+          "id": "step-4",
+          "title": "Implement PR creation and Notion updates",
+          "duration_minutes": 30,
+          "input": "GitHub CLI docs, Notion update API",
+          "output": "Complete run-task.sh with all handlers",
+          "validation": "Full flow works with mock Claude output"
+        }
+      ],
+      "files_affected": [
+        {"path": "run-task.sh", "action": "create", "description": "Single task executor"},
+        {"path": "tests/test-run-task.sh", "action": "create", "description": "Integration tests with mock Claude output"}
+      ],
+      "test_approach": "Integration"
+    },
+    {
+      "id": "task-006",
+      "title": "Implement pipeline orchestrator",
+      "slug": "pipeline-runner",
+      "complexity": "L",
+      "estimated_minutes": 120,
+      "dependencies": ["task-003", "task-004", "task-005"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Lockfile prevents concurrent execution",
+          "given": "A pipeline-runner process already running",
+          "when": "A second instance starts",
+          "then": "Detects lockfile, verifies PID, exits cleanly"
+        },
+        {
+          "id": "AC2",
+          "title": "Kill switch stops the pipeline",
+          "given": "Pipeline is processing tasks",
+          "when": "check_kill_switch returns 0",
+          "then": "Current task finishes, no new task started, confirmation sent"
+        },
+        {
+          "id": "AC3",
+          "title": "Health check recovers orphan tasks",
+          "given": "Task in Notion with status En cours but no running process",
+          "when": "Health check runs",
+          "then": "Worktree cleaned, status set to Echoue with crash recovery message"
+        },
+        {
+          "id": "AC4",
+          "title": "Dependency filtering works",
+          "given": "Task B blocked by task A (status En cours)",
+          "when": "Pipeline queries available tasks",
+          "then": "Task B filtered out, Notion status updated to Bloque"
+        },
+        {
+          "id": "AC5",
+          "title": "Circuit breaker activates after 3 failures",
+          "given": "3 consecutive tasks failed",
+          "when": "Pipeline reaches 4th task",
+          "then": "Cycle stops, notification sent, pipeline exits"
+        },
+        {
+          "id": "AC6",
+          "title": "Heartbeat sent at cycle end",
+          "given": "At least one task processed",
+          "when": "Cycle completes",
+          "then": "Heartbeat with stats: processed, succeeded, failed, elapsed time"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement lock management and health check",
+          "duration_minutes": 30,
+          "input": "US2-AC4 (lockfile), US2-AC2 (health check)",
+          "output": "Lock management and health check functions",
+          "validation": "Lock prevents concurrent runs, health check detects orphans"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement task querying and dependency filtering",
+          "duration_minutes": 30,
+          "input": "US5, section 4.6",
+          "output": "Task querying and dependency filtering",
+          "validation": "Blocked tasks correctly filtered"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement main execution loop",
+          "duration_minutes": 30,
+          "input": "US1, US2-AC3",
+          "output": "Main execution loop",
+          "validation": "Loop processes tasks in order, respects all guards"
+        },
+        {
+          "id": "step-4",
+          "title": "Implement CLI interface and cron integration",
+          "duration_minutes": 30,
+          "input": "US3-AC2, cron requirements",
+          "output": "Complete pipeline-runner.sh with CLI and cron support",
+          "validation": "Full pipeline cycle runs with mock data"
+        }
+      ],
+      "files_affected": [
+        {"path": "pipeline-runner.sh", "action": "create", "description": "Main pipeline orchestrator"},
+        {"path": "tests/test-pipeline.sh", "action": "create", "description": "Integration tests for pipeline flow"}
+      ],
+      "test_approach": "Integration"
+    },
+    {
+      "id": "task-007",
+      "title": "Implement auto-merge system",
+      "slug": "auto-merge",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-006"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Level 2 — GitHub auto-merge activated",
+          "given": "A PR created by pipeline, no no_auto_merge flag",
+          "when": "enable_auto_merge is called",
+          "then": "gh pr merge --auto --squash executed"
+        },
+        {
+          "id": "AC2",
+          "title": "Level 3 — Safe PRs get auto-approve label",
+          "given": "Simple task, SUCCESS status, tests pass, 0 errors, <=2 warnings",
+          "when": "evaluate_pr_safety runs",
+          "then": "Label pipeline-safe added, triggering auto-approve"
+        },
+        {
+          "id": "AC3",
+          "title": "Merge detection updates Notion",
+          "given": "A previously En review PR that has been merged",
+          "when": "Health check runs",
+          "then": "Notion updated to Termine with Auto-merged checkbox"
+        },
+        {
+          "id": "AC4",
+          "title": "no_auto_merge flag disables everything",
+          "given": "Task with no_auto_merge flag",
+          "when": "Task is processed",
+          "then": "No auto-merge, no label, 100% manual review"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement auto-merge functions",
+          "duration_minutes": 30,
+          "input": "GitHub CLI docs, brief section 4.7",
+          "output": "Auto-merge helper functions",
+          "validation": "Correct label applied based on safety criteria"
+        },
+        {
+          "id": "step-2",
+          "title": "Create GitHub Action for auto-approve",
+          "duration_minutes": 30,
+          "input": "GitHub Actions docs, brief D11",
+          "output": "GitHub Action workflow file",
+          "validation": "YAML is valid, action triggers on correct label"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement merge detection and integration",
+          "duration_minutes": 30,
+          "input": "GitHub CLI PR status, pipeline health check",
+          "output": "Complete auto-merge system with integration",
+          "validation": "Full flow: PR → auto-merge → safe label → merged → Notion"
+        }
+      ],
+      "files_affected": [
+        {"path": "lib/automerge.sh", "action": "create", "description": "Auto-merge helper functions"},
+        {"path": ".github/workflows/auto-merge-safe.yml", "action": "create", "description": "GitHub Action for auto-approve"},
+        {"path": "pipeline-runner.sh", "action": "modify", "description": "Add merge detection to health check"},
+        {"path": "run-task.sh", "action": "modify", "description": "Add auto-merge to handle_success"},
+        {"path": "tests/test-automerge.sh", "action": "create", "description": "Tests for auto-merge logic"}
+      ],
+      "test_approach": "Integration"
+    },
+    {
+      "id": "task-008",
+      "title": "Implement spec-to-Notion sync",
+      "slug": "spec-notion-sync",
+      "complexity": "L",
+      "estimated_minutes": 120,
+      "dependencies": ["task-002"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Pages created with correct properties",
+          "given": "A /spec output with 5 task files",
+          "when": "sync_to_notion is called",
+          "then": "5 pages created with Name, Complexite, Priorite, Projet, Statut A faire"
+        },
+        {
+          "id": "AC2",
+          "title": "Spec content written in page body",
+          "given": "A task file with Objective, Context, AC, Steps",
+          "when": "Page is created",
+          "then": "Page body contains full spec as Notion blocks"
+        },
+        {
+          "id": "AC3",
+          "title": "Dependencies created as relations",
+          "given": "task-002 and task-003 depend on task-001",
+          "when": "All pages created and dependency patching runs",
+          "then": "Bloque par relation correctly points to task-001 page"
+        },
+        {
+          "id": "AC4",
+          "title": "Graceful degradation",
+          "given": "NOTION_API_KEY not configured",
+          "when": "sync_to_notion is called",
+          "then": "WARNING logged, local files unaffected, no error"
+        },
+        {
+          "id": "AC5",
+          "title": "Duplicate detection",
+          "given": "Task with same Name and Projet exists",
+          "when": "sync_to_notion tries to create",
+          "then": "Existing page skipped with WARNING"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement property mapping and page creation",
+          "duration_minutes": 30,
+          "input": "Section 4.8 mapping table",
+          "output": "Property mapping and page creation functions",
+          "validation": "Created page has correct properties"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement Markdown to Notion blocks conversion",
+          "duration_minutes": 30,
+          "input": "Notion blocks API format",
+          "output": "Markdown to Notion blocks converter",
+          "validation": "Sample task body converts to correct block JSON"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement dependency resolution",
+          "duration_minutes": 30,
+          "input": "Section 4.8 sync algorithm",
+          "output": "Dependency resolution and duplicate detection",
+          "validation": "Relations correctly link dependent pages"
+        },
+        {
+          "id": "step-4",
+          "title": "Implement main sync function and tests",
+          "duration_minutes": 30,
+          "input": "Full sync algorithm",
+          "output": "Complete sync module with tests",
+          "validation": "Full sync flow works with mock API"
+        }
+      ],
+      "files_affected": [
+        {"path": "lib/notion-sync.sh", "action": "create", "description": "Spec-to-Notion sync module"},
+        {"path": "tests/test-notion-sync.sh", "action": "create", "description": "Integration tests with mock Notion API"}
+      ],
+      "test_approach": "Integration"
+    },
+    {
+      "id": "task-009",
+      "title": "Implement dry-run mode and E2E testing",
+      "slug": "dry-run-e2e",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-006"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Dry-run lists tasks without executing",
+          "given": "--dry-run flag passed",
+          "when": "Pipeline runs",
+          "then": "Tasks listed but not executed, no side effects, [DRY-RUN] prefix"
+        },
+        {
+          "id": "AC2",
+          "title": "Dry-run exercises full code path",
+          "given": "--dry-run active",
+          "when": "Pipeline runs with tasks",
+          "then": "Lock acquired/released, health check read-only, tasks filtered, no execution"
+        },
+        {
+          "id": "AC3",
+          "title": "E2E test validates complete flow",
+          "given": "Mock fixtures with 5 tasks (3 ready, 1 blocked, 1 dependent)",
+          "when": "E2E test runs with mock APIs",
+          "then": "3 executed, 1 skipped, 1 waits, expected notifications sent"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement DRY_RUN mode in all scripts",
+          "duration_minutes": 30,
+          "input": "US3-AC2, all existing scripts",
+          "output": "DRY_RUN mode in all scripts",
+          "validation": "Pipeline runs without any external API calls"
+        },
+        {
+          "id": "step-2",
+          "title": "Create test fixtures and mock framework",
+          "duration_minutes": 30,
+          "input": "E2E test requirements, API response formats",
+          "output": "Test fixtures and mock framework",
+          "validation": "Mock functions return expected data"
+        },
+        {
+          "id": "step-3",
+          "title": "Create E2E test scenarios",
+          "duration_minutes": 30,
+          "input": "Full pipeline flow, all edge cases",
+          "output": "Complete E2E test suite (6 scenarios)",
+          "validation": "All 6 scenarios pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "pipeline-runner.sh", "action": "modify", "description": "Add --dry-run flag and DRY_RUN checks"},
+        {"path": "run-task.sh", "action": "modify", "description": "Add DRY_RUN checks"},
+        {"path": "notify.sh", "action": "modify", "description": "Add DRY_RUN checks"},
+        {"path": "tests/e2e-test.sh", "action": "create", "description": "E2E test scenarios"},
+        {"path": "tests/mock-api.sh", "action": "create", "description": "Mock API framework"},
+        {"path": "tests/fixtures/mock-notion-tasks.json", "action": "create", "description": "Mock Notion task data"},
+        {"path": "tests/fixtures/mock-notion-blocks.json", "action": "create", "description": "Mock Notion page body"},
+        {"path": "tests/fixtures/mock-implement-auto-result.json", "action": "create", "description": "Mock Claude results"},
+        {"path": "tests/fixtures/mock-projects.json", "action": "create", "description": "Mock project config"},
+        {"path": "tests/fixtures/mock.env", "action": "create", "description": "Mock environment variables"}
+      ],
+      "test_approach": "E2E"
+    }
+  ],
+  "dependencies_graph": {
+    "nodes": ["task-001", "task-002", "task-003", "task-004", "task-005", "task-006", "task-007", "task-008", "task-009"],
+    "edges": [
+      {"from": "task-001", "to": "task-005"},
+      {"from": "task-002", "to": "task-005"},
+      {"from": "task-002", "to": "task-008"},
+      {"from": "task-003", "to": "task-006"},
+      {"from": "task-004", "to": "task-006"},
+      {"from": "task-005", "to": "task-006"},
+      {"from": "task-006", "to": "task-007"},
+      {"from": "task-006", "to": "task-009"}
+    ]
+  },
+  "routing": {
+    "recommended_skill": "/implement",
+    "reason": "STANDARD complexity with 9 interdependent tasks requiring full EPCI workflow"
+  }
+}
