@@ -1,0 +1,80 @@
+{
+  "$schema": "implement-auto-output-v1",
+  "version": 1,
+  "timestamp": "2026-02-11T15:59:00Z",
+  "status": "SUCCESS",
+  "exit_reason": null,
+  "feature": {
+    "slug": "shared-utilities",
+    "branch": "feature/shared-utilities",
+    "spec_source": "docs/specs/openclaw/task-001-shared-utilities.md"
+  },
+  "phases": {
+    "completed": ["init", "explore", "plan", "code", "review", "document", "finish"],
+    "failed": [],
+    "current": null,
+    "skipped": []
+  },
+  "plan": {
+    "total_components": 4,
+    "components": [
+      {
+        "name": "common-sh",
+        "file": "lib/common.sh",
+        "status": "SUCCESS",
+        "tests_added": 12,
+        "retries": 0,
+        "error": null
+      },
+      {
+        "name": "projects-json",
+        "file": "projects.json",
+        "status": "SUCCESS",
+        "tests_added": 0,
+        "retries": 0,
+        "error": null
+      },
+      {
+        "name": "env-example",
+        "file": ".env.example",
+        "status": "SUCCESS",
+        "tests_added": 0,
+        "retries": 0,
+        "error": null
+      },
+      {
+        "name": "config-sh",
+        "file": "lib/config.sh",
+        "status": "SUCCESS",
+        "tests_added": 9,
+        "retries": 0,
+        "error": null
+      }
+    ]
+  },
+  "metrics": {
+    "files_created": 6,
+    "files_modified": 0,
+    "tests_added": 21,
+    "tests_passing": 21,
+    "tests_failing": 0
+  },
+  "checks": {
+    "tests": { "status": "pass", "count": 21, "failures": 0 },
+    "self_review": {
+      "status": "pass",
+      "items_checked": 10,
+      "items_passed": 10,
+      "items_warned": 0,
+      "findings": []
+    }
+  },
+  "feature_doc": "docs/features/shared-utilities-20260211-155321.md",
+  "errors": [],
+  "warnings": [
+    {
+      "phase": "explore",
+      "message": "Some explore paths were inaccurate (archive vs root). Greenfield creation - conventions extracted from archive references."
+    }
+  ]
+}
