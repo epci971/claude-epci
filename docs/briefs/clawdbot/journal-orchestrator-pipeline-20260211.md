@@ -1,7 +1,7 @@
 # Journal d'Exploration — Pipeline Orchestration
 
 > Session: brainstorm-orchestrator-pipeline-20260211-162100
-> 4 iterations | EMS: 20 → 76 | 8 decisions
+> 5 iterations | EMS: 20 → 76 | 13 decisions
 
 ---
 
@@ -14,6 +14,7 @@
 | It.2 | 57 | +15 | SPEC-03 Notion explore, D1+D2+D3 verrouillees |
 | It.3 | 67 | +10 | Interfaces mappees, D4+D5, zones grises fermees |
 | It.4 | 76 | +9 | Config multi-projet, securite, D6+D7+D8 |
+| It.5 (post) | 76 | - | D1 revisee + D9/D10/D11 ajoutees (post-brainstorm) |
 
 ## Decisions chronologiques
 
@@ -27,6 +28,12 @@
 | D6 | It.4 | Telegram polling (pas webhook) | Analyse polling vs webhook |
 | D7 | It.4 | Export brainstorm = script manuel | Analyse scope pipeline auto |
 | D8 | It.4 | Kill switch = getUpdates (pas daemon) | Question architecture kill switch |
+| D1r | Post | Specs dans Notion body (defaut), Git optionnel | Challenge : body Notion sans limite, 70+ pages testees |
+| D9 | Post | Dependances via relation "Bloque par" | Question : que faire si tache B depend de tache A non mergee ? |
+| D10 | Post | Auto-merge GitHub natif (gh pr merge --auto) | Question : comment eviter le merge manuel de chaque PR ? |
+| D11 | Post | PRs "safe" auto-approuvees (label + GitHub Action) | Extension D10 : PRs simples n'ont pas besoin de review humaine |
+| D12 | Post | /spec sync direct vers Notion via API | Automatiser creation backlog depuis spec, zero etape manuelle |
+| D13 | Post | Projet = relation vers table Projets existante | Table Projets deja dans Notion, eviter duplication select |
 
 ## Persona switches
 
@@ -48,6 +55,8 @@
 1. **Limite rich_text Notion** — Decouverte en It.2, resolue par D1 (specs dans Git)
 2. **Quota estimation** — Le BRIEF donnait des chiffres speculatifs, resolue par D4 (reactif seulement)
 3. **Kill switch architecture** — Daemon vs polling, resolue par D8 (integre au cycle cron)
+4. **D1 revisee (Notion body vs Git)** — La limite 2000 chars concerne les proprietes rich_text, pas le body de page. Notion body est sans limite pratique. Resolue par D1r (hybride : Notion defaut, Git optionnel)
+5. **Auto-merge et dependances** — Les taches peuvent dependre les unes des autres, le merge manuel bloque la chaine. Resolue par D9+D10+D11 (3 niveaux auto-merge)
 
 ## Sources consultees
 

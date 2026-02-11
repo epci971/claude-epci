@@ -12,8 +12,8 @@ Le pipeline de developpement semi-automatise ClawdBot transforme un backlog Noti
 > Mettre en place les specs pour la partie orchestration du pipeline ClawdBot (Notion + Claude Code + GitHub), sachant que implement-auto est deja fait.
 
 **Perimetre**:
-- IN: `pipeline-runner.sh`, `run-task.sh`, `quota-checker.sh`, schema Notion "Dev Tasks", Notion API (query/update), bot Telegram (notifications + kill switch), config multi-projet, securite secrets
-- OUT: Skill implement-auto (fait), dashboard web, auto-merge, parallelisme (V2), commandes Telegram avancees (/status, /pause, /resume)
+- IN: `pipeline-runner.sh`, `run-task.sh`, `quota-checker.sh`, schema Notion "OpenClawTasks", Notion API (query/update), bot Telegram (notifications + kill switch), config multi-projet, securite secrets, dependances inter-taches (relation Notion), auto-merge PRs (3 niveaux), sync automatique spec→Notion
+- OUT: Skill implement-auto (fait), dashboard web, parallelisme (V2), commandes Telegram avancees (/status, /pause, /resume)
 
 **Criteres de succes definis**:
 1. Les 3 specs sont suffisamment detaillees pour etre implementees via `/implement`
@@ -27,12 +27,14 @@ Le pipeline de developpement semi-automatise ClawdBot transforme un backlog Noti
 
 Le pipeline se decompose en 3 specs complementaires : l'orchestrateur Bash (SPEC-02) qui coordonne l'ensemble, le schema Notion (SPEC-03) qui sert de source de verite, et les notifications Telegram (SPEC-04) qui assurent l'observabilite. L'architecture est intentionnellement simple : Bash + jq + curl, pas de Python, pas de framework, pas de base de donnees locale.
 
-**Insight cle**: **Le choix de stocker les specs dans Git (pas dans Notion rich_text) simplifie radicalement l'architecture et elimine la contrainte de 2000 chars/block Notion. Notion devient un tableau de bord leger, pas un depot de contenu.**
+**Insight cle**: **L'approche hybride Notion body + Git optionnel centralise les specs dans Notion par defaut (pas de limite de taille sur le contenu de page) tout en preservant la possibilite d'utiliser des fichiers Git pour les cas complexes. Le systeme de dependances + auto-merge 3 niveaux transforme le pipeline d'un systeme "execute et attends" en une chaine de traitement quasi-autonome.**
 
 **Decisions principales**:
-1. Specs dans fichiers Git, chemin reference dans Notion (propriete `Spec Path` type text)
+1. Specs dans Notion page body par defaut, fichier Git optionnel (si `Spec Path` renseigne) (D1 revisee)
 2. API Notion en curl/jq pur (pas de MCP, pas de dependance Claude Code pour les queries)
-3. Quota checker V1 = reactif seulement (detection throttle + cooldown, pas de tracking speculatif)
+3. Dependances inter-taches via relation Notion "Bloque par" (D9)
+4. Auto-merge 3 niveaux : dependances Notion + `gh pr merge --auto` + label `pipeline-safe` pour PRs simples (D10+D11)
+5. Sync direct spec→Notion : `/spec` cree les pages dans la DB Notion via API apres generation des fichiers (D12)
 
 **Routing recommande**: STANDARD → `/spec` puis `/implement` (3 composants a implementer sequentiellement)
 
@@ -66,14 +68,39 @@ Le pipeline se decompose en 3 specs complementaires : l'orchestrateur Bash (SPEC
 
 ## 4. Analyse et Conclusions Cles
 
-### 4.1 Notion comme tableau de bord, pas depot de contenu
+### 4.1 Notion comme source de verite (hybride)
 
-La decision de stocker les specs dans Git plutot que dans Notion (D1) est structurante. Elle signifie que Notion devient un systeme de tracking leger : statuts, metadonnees, liens. Le contenu technique reste dans Git, versionne et diffable.
+La decision revisee (D1r) etablit Notion comme source de contenu par defaut. Le body d'une page Notion n'a pas de limite pratique de taille (contrairement aux proprietes rich_text limitees a 2000 chars/block). Edouard ecrit deja des documents de 70+ pages dans Notion. L'option Git reste disponible pour les specs qui beneficient du versioning ou du diffing.
+
+**Lecture hybride** : `run-task.sh` lit d'abord la propriete `Spec Path`. Si elle est renseignee et pointe vers un fichier existant, il lit le fichier Git. Sinon, il lit le body de la page Notion via `GET /v1/blocks/{page_id}/children` et convertit les blocks en Markdown.
 
 **Implications pour l'implementation**:
-- Le champ `Spec PRD` (rich_text) du BRIEF original est remplace par `Spec Path` (text) contenant un chemin relatif (ex: `docs/specs/pipeline/task-auth-login.md`)
-- L'orchestrateur lit le path depuis Notion, puis lit le fichier depuis le repo projet
-- L'export brainstorm→Notion = creer le fichier spec + l'entree Notion avec le path
+- Propriete `Spec Path` (text) = optionnelle. Si vide, le body Notion fait foi
+- Fonction `extract_spec_content()` dans `run-task.sh` gere les 2 sources
+- API Notion blocks : pagination via `next_cursor` si > 100 blocks
+- Conversion blocks→Markdown : paragraph, heading_1/2/3, bulleted/numbered_list_item, code, divider
+- L'export brainstorm→Notion = ecrire le contenu dans le body de la page Notion
+
+**Schema de la DB "OpenClawTasks" (16 proprietes)** :
+
+| Propriete | Type Notion | Rempli par | Notes |
+|-----------|-------------|------------|-------|
+| Name | title | /spec (sync) | Titre de la tache |
+| Spec Path | text | /spec (optionnel) | Chemin fichier Git si spec hors Notion |
+| Projet | relation | /spec (sync) | Relation vers la table "Projets" existante |
+| Priorite | select | /spec (sync) | P0, P1, P2, P3 |
+| Complexite | select | /spec (sync) | Simple, Moyenne, Complexe |
+| Statut | select | Pipeline (auto) | A faire, Bloque, En cours, En review, En review (partiel), Echoue, Termine |
+| Bloque par | relation (self) | /spec (sync) | Relation vers d'autres taches de la meme DB |
+| Branch | text | Pipeline (auto) | feature/{slug} |
+| PR URL | url | Pipeline (auto) | Lien PR GitHub |
+| Cout tokens | number | Pipeline (auto) | Tokens consommes |
+| Duree | number | Pipeline (auto) | Secondes d'execution |
+| Flags | multi_select | /spec ou manuel | validate_plan, with_review, no_auto_merge |
+| Erreurs | text | Pipeline (auto) | Dernier message d'erreur |
+| Demarre le | date | Pipeline (auto) | Timestamp debut execution |
+| Termine le | date | Pipeline (auto) | Timestamp fin |
+| Auto-merged | checkbox | Pipeline (auto) | True si PR auto-mergee |
 
 ### 4.2 Quota management pragmatique
 
@@ -108,7 +135,64 @@ Tous les tokens (Notion, GitHub, Telegram) sont dans un fichier `.env` avec perm
 
 ### 4.5 Configuration multi-projet
 
-Un fichier `projects.json` mappe chaque projet Notion a son repertoire local, son repo GitHub, et ses parametres par defaut (modele, flags, timeout). Ajouter un projet = ajouter une entree JSON + configurer la propriete "Projet" dans Notion.
+Un fichier `projects.json` mappe chaque projet a son repertoire local, son repo GitHub, son page ID Notion (dans la table "Projets"), et ses parametres par defaut (modele, flags, timeout). Ajouter un projet = ajouter une entree JSON avec le `notion_project_id` de la fiche projet existante.
+
+### 4.6 Dependances inter-taches
+
+Le pipeline gere les dependances via une relation "Bloque par" (self-relation dans la meme DB Notion). Quand une tache A bloque une tache B, le pipeline ignore B tant que A n'est pas "Termine". Le deblocage est naturel : au cycle cron suivant, la tache B est re-evaluee. Si A est "Termine" (PR mergee), B est executee normalement.
+
+**Implications pour l'implementation**:
+- `notion_query` enrichit chaque tache avec le statut de ses dependances
+- `filter_blocked_tasks()` filtre les taches dont les dependances ne sont pas toutes "Termine"
+- Le statut "Bloque" dans Notion est informatif (mis a jour par le pipeline pour visibilite)
+
+### 4.7 Auto-merge a 3 niveaux
+
+Le systeme d'auto-merge opere en 3 niveaux complementaires :
+
+| Niveau | Mecanisme | Quand | Prerequis |
+|--------|-----------|-------|-----------|
+| 1 — Dependances | Relation "Bloque par" dans Notion | Toujours | Schema Notion avec relation self |
+| 2 — GitHub auto-merge | `gh pr merge --auto --squash` | Apres creation PR (sauf flag `no_auto_merge`) | Settings repo: Allow auto-merge ON |
+| 3 — PRs "safe" | Label `pipeline-safe` + GitHub Action auto-approve | Si tache Simple + SUCCESS + tests pass + 0 erreur + <=2 warnings | GitHub Action + Allow Actions to approve PRs |
+
+**Cycle complet** :
+1. Pipeline execute tache non-bloquee → cree PR → active auto-merge (niveau 2)
+2. Si PR safe → label `pipeline-safe` → GitHub Action auto-approve + merge (niveau 3)
+3. Sinon → attend approbation Edouard → GitHub merge auto apres CI (niveau 2)
+4. Health check debut cycle suivant → detecte PR mergee → Notion "Termine"
+5. Taches bloquees par cette tache → debloquees au cycle suivant (niveau 1)
+
+### 4.8 Sync automatique spec→Notion (D12)
+
+Le skill `/spec` ecrit directement les taches dans la base Notion "OpenClawTasks" via l'API (curl/jq, coherent avec D2). Apres generation des fichiers spec (index.md, task-XXX.md, PRD.json), `/spec` cree une page Notion par tache avec :
+- Les **proprietes** mappees depuis le frontmatter des task files
+- Le **contenu spec** (objectif, contexte, AC, steps) ecrit dans le body de la page Notion (coherent avec D1r)
+- Les **dependances** comme relations entre pages Notion (coherent avec D9)
+
+**Mapping spec→Notion** :
+
+| Source (/spec) | Propriete Notion | Transformation |
+|----------------|------------------|----------------|
+| task frontmatter `title` | Name (title) | Direct |
+| task frontmatter `complexity` S/M/L | Complexite (select) | S→Simple, M→Moyenne, L→Complexe |
+| PRD.json `priority` | Priorite (select) | must-have→P1, should-have→P2, could-have→P3 |
+| PRD.json `dependencies.depends_on` | Bloque par (relation) | Resolu apres creation de toutes les pages |
+| PRD.json `meta.projectName` | Projet (relation) | Lookup dans projects.json → notion_project_id → relation page |
+| task body (Objective, Context, AC, Steps) | Page body (blocks) | Markdown→Notion blocks via API |
+| — | Statut | "A faire" (defaut) |
+| — | Flags | Depuis brief ou config |
+
+**Algorithme de sync** :
+0. Resoudre le `notion_project_id` depuis `projects.json` pour le projet courant
+1. Creer toutes les pages avec la relation Projet (+ collecter les page IDs retournes)
+2. Mapper task-ID → page-ID
+3. Patcher les relations "Bloque par" avec les page IDs resolus
+4. Log: "{N} taches creees dans Notion pour {feature-slug}"
+
+**Prerequis** : Variables d'environnement `NOTION_API_KEY` et `NOTION_DB_ID` configurees dans `.env` du projet ou du VPS.
+
+**Gestion d'erreur** : Si Notion API indisponible, log WARNING et continuer (les fichiers spec locaux restent la source de verite). Le sync peut etre relance manuellement.
 
 ---
 
@@ -123,7 +207,7 @@ Un fichier `projects.json` mappe chaque projet Notion a son repertoire local, so
 **Criteres d'acceptation**:
 ```gherkin
 AC1: Tache simple executee avec succes
-Given une tache "A faire" dans Notion avec un Spec Path valide
+Given une tache "A faire" dans Notion avec un contenu spec (body Notion ou Spec Path valide)
 And le quota Claude Code est disponible
 When le cron declenche pipeline-runner.sh
 Then la tache passe "En cours" dans Notion
@@ -148,7 +232,8 @@ And la notification inclut le nombre de composants en echec
 ```
 
 **Edge cases identifies**:
-- Spec Path pointe vers un fichier inexistant → marquer FAILED + notifier "Spec not found: {path}"
+- Spec Path renseigne mais fichier inexistant → marquer FAILED + notifier "Spec not found: {path}"
+- Body Notion vide ET Spec Path vide → marquer FAILED + notifier "No spec content: body empty and no Spec Path"
 - Le repo projet n'existe pas sur le VPS → marquer FAILED + notifier "Project not found: {project}"
 - Claude Code crash sans produire de JSON → fallback JSON genere par run-task.sh
 
@@ -229,26 +314,104 @@ Then un resume est envoye via Telegram: taches traitees/reussies/echouees
 
 ---
 
-### US4: Export brainstorm vers Notion
+### US4: Sync automatique spec→Notion
 
-**Story**: As Edouard, I want to export specs from a brainstorm session to Notion tasks so that the pipeline can process them automatically.
+**Story**: As Edouard, I want `/spec` to automatically create tasks in Notion so that the pipeline backlog is populated without any manual step.
 
-**Priorite**: Could have
+**Priorite**: Must have
 
 **Criteres d'acceptation**:
 ```gherkin
-AC1: Export manuel
-Given des fichiers task-XXX.md dans docs/specs/pipeline/ du repo projet
-When Edouard execute export-specs-to-notion.sh {project}
-Then une entree Notion est creee pour chaque fichier spec
-And le champ Spec Path contient le chemin relatif du fichier
-And le statut est "A faire"
-And la priorite et complexite sont extraites du frontmatter du fichier spec
+AC1: Sync apres generation des specs
+Given un brief traite par /spec generant 5 task files
+And les variables NOTION_API_KEY et NOTION_DB_ID sont configurees
+When /spec termine la generation
+Then 5 pages sont creees dans la DB Notion "OpenClawTasks"
+And chaque page a le titre, la priorite, la complexite et le projet remplis
+And le body de chaque page contient la spec complete (objectif, AC, steps)
+And le statut de chaque page est "A faire"
+
+AC2: Dependances comme relations
+Given les tasks task-002 et task-003 dependent de task-001
+When /spec cree les pages Notion
+Then les pages task-002 et task-003 ont une relation "Bloque par" pointant vers la page task-001
+
+AC3: Notion indisponible
+Given les variables Notion ne sont pas configurees ou l'API est indisponible
+When /spec termine la generation
+Then les fichiers spec locaux sont generes normalement
+And un WARNING est affiche "Notion sync skipped: {raison}"
+And aucune erreur ne bloque le workflow
 ```
 
 **Edge cases identifies**:
-- Tache deja existante dans Notion (meme nom) → skip + warning
-- Fichier spec sans frontmatter → utiliser des valeurs par defaut (P2, Moyenne)
+- Tache deja existante dans Notion (meme nom + meme projet) → skip + warning "Task already exists: {name}"
+- DB Notion n'a pas toutes les proprietes attendues → log ERROR pour les proprietes manquantes, creer ce qui est possible
+- Plus de 100 taches dans un batch → paginer les creations (rate limit Notion: 3 req/s)
+
+---
+
+### US5: Dependances inter-taches
+
+**Story**: As Edouard, I want to define task dependencies in Notion so that the pipeline executes tasks in the correct order.
+
+**Priorite**: Must have
+
+**Criteres d'acceptation**:
+```gherkin
+AC1: Tache bloquee ignoree
+Given une tache B "A faire" avec "Bloque par" pointant vers tache A "En cours"
+When le pipeline query les taches "A faire"
+Then la tache B est filtree (non executee)
+And la tache B passe en statut "Bloque" dans Notion
+
+AC2: Tache debloquee automatiquement
+Given une tache A "Termine" (PR mergee)
+And une tache B "Bloque" dont l'unique dependance est A
+When le prochain cycle cron demarre
+Then la tache B est debloquee et executee normalement
+```
+
+**Edge cases identifies**:
+- Dependance circulaire (A bloque B, B bloque A) → les deux restent "Bloque" indefiniment, notification warning
+- Dependance vers tache "Echoue" → la tache reste "Bloque", notification "Blocked by failed task: {name}"
+- Tache avec 3+ dependances → toutes doivent etre "Termine" pour debloquer
+
+---
+
+### US6: Auto-merge des PRs
+
+**Story**: As Edouard, I want pipeline PRs to be auto-merged when safe so that dependent tasks can execute without waiting for my manual review.
+
+**Priorite**: Should have
+
+**Criteres d'acceptation**:
+```gherkin
+AC1: Auto-merge active par defaut
+Given une PR creee par le pipeline
+And le flag "no_auto_merge" n'est pas present
+When handle_success termine
+Then gh pr merge --auto --squash est execute
+And le log indique "Auto-merge enabled for PR {url}"
+
+AC2: PR safe auto-approuvee
+Given une PR creee pour une tache Simple
+And le JSON implement-auto indique SUCCESS + tests pass + 0 erreur + <=2 warnings
+When le pipeline evalue la PR
+Then le label "pipeline-safe" est ajoute a la PR
+And la GitHub Action auto-approve et merge la PR
+And Notion est mis a jour avec "Auto-merged: true"
+
+AC3: PR non-safe attend approbation
+Given une PR pour une tache Moyenne ou Complexe
+When le pipeline evalue la PR
+Then seul gh pr merge --auto est active (pas de label)
+And la PR attend l'approbation d'Edouard pour merger
+```
+
+**Edge cases identifies**:
+- GitHub Action echoue (permissions) → PR reste ouverte, log ERROR, pas de retry
+- Flag no_auto_merge → ni gh pr merge --auto ni label, review 100% manuelle
 
 ---
 
@@ -256,7 +419,7 @@ And la priorite et complexite sont extraites du frontmatter du fichier spec
 
 | Decision | Rationale | Impact | Confiance |
 |----------|-----------|--------|-----------|
-| D1: Specs dans Git, chemin dans Notion | Pas de limite taille, versionne, diffable | SPEC-02 lit le fichier, SPEC-03 simplifie | High |
+| D1r: Specs dans Notion body (defaut), Git optionnel | Body Notion sans limite, 70+ pages testees, centralise | run-task.sh lit body OU fichier selon Spec Path | High |
 | D2: API Notion en curl/jq pur | Portable, previsible, pas de dependance MCP | Scripts autonomes | High |
 | D3: Telegram basique (notifs + kill) | V1 minimaliste, commandes avancees en V2 | SPEC-04 simple | High |
 | D4: Quota V1 = reactif M2+M3 | Seuils proactifs speculatifs, reactif suffit | quota-checker.sh simplifie | High |
@@ -264,6 +427,11 @@ And la priorite et complexite sont extraites du frontmatter du fichier spec
 | D6: Telegram polling (getUpdates) | Pas de daemon, integre au cycle cron | Delai max = intervalle cron | High |
 | D7: Export brainstorm→Notion = script manuel | Hors pipeline auto, outil de commodite | Composant optionnel | Medium |
 | D8: Kill switch via getUpdates (pas daemon) | Simple, suffisant pour V1 weekend | Integre dans pipeline-runner.sh | High |
+| D9: Dependances via relation "Bloque par" | Naturel dans Notion, pas de DAG externe | filter_blocked_tasks() dans pipeline-runner.sh | High |
+| D10: Auto-merge GitHub natif | gh pr merge --auto --squash apres creation PR | Prerequis: Allow auto-merge ON dans settings repo | High |
+| D11: PRs "safe" auto-approuvees via label | pipeline-safe + GitHub Action, zero intervention | Prerequis: GitHub Action + Allow Actions to approve PRs | High |
+| D12: /spec sync direct vers Notion | Automatise backlog, zero etape manuelle, coherent D1r+D2 | /spec ecrit body + proprietes via curl/jq | High |
+| D13: Projet = relation vers table Projets | Evite duplication select, fiches projet riches, navigation bidirectionnelle | projects.json inclut notion_project_id par projet | High |
 
 ### Decisions differees
 - **Tracking proactif quota (M1)**: Differe apres calibration avec donnees reelles. A revisiter apres 3-4 weekends de production.
@@ -282,11 +450,13 @@ And la priorite et complexite sont extraites du frontmatter du fichier spec
 
 | # | Feature/Story | Effort estime | Dependance |
 |---|---------------|---------------|------------|
-| 1 | Schema Notion "Dev Tasks" (SPEC-03) | S (2h) | - |
+| 1 | Schema Notion "OpenClawTasks" (SPEC-03) | S (2h) | - |
 | 2 | notify.sh - wrapper Telegram (SPEC-04) | S (2-3h) | Bot Telegram cree |
 | 3 | quota-checker.sh - reactif M2+M3 (SPEC-02) | S (2h) | - |
 | 4 | run-task.sh - execution unitaire (SPEC-02) | M (3-4h) | #1, implement-auto |
 | 5 | pipeline-runner.sh - boucle principale (SPEC-02) | M (4-5h) | #1, #2, #3, #4 |
+| 5b | Dependances inter-taches (relation Notion) | S (2h) | #1 |
+| 5c | Sync spec→Notion (dans /spec) | M (3-4h) | #1 |
 
 ### Should Have — ~20% effort
 
@@ -295,20 +465,22 @@ And la priorite et complexite sont extraites du frontmatter du fichier spec
 | 6 | Dry-run mode (--dry-run) | S (2h) | #5 |
 | 7 | Config multi-projet (projects.json) | S (2h) | #5 |
 | 8 | Health check tokens (Notion, GitHub, Telegram) | S (1h) | #5 |
+| 8b | Auto-merge niveau 2 (gh pr merge --auto) | S (1h) | #5 |
+| 8c | Auto-merge niveau 3 (label + GitHub Action) | M (2-3h) | #5, GitHub Action deploye |
+| 8d | Detection PRs mergees (health check) | S (2h) | #5, #8b |
 
 ### Could Have — ~15% effort
 
 | # | Feature/Story | Effort estime | Dependance |
 |---|---------------|---------------|------------|
-| 9 | export-specs-to-notion.sh | S (2h) | #1 |
-| 10 | Log rotation (7 jours) | S (1h) | #5 |
+| 9 | Log rotation (7 jours) | S (1h) | #5 |
 
 ### Won't Have (cette release)
 - **Commandes Telegram avancees** (/status, /pause, /resume) — V2, complexite injustifiee pour V1
 - **Tracking proactif quota (M1)** — Donnees insuffisantes pour calibrer les seuils
 - **Parallelisme** — V2, le quota est une ressource partagee
 - **Dashboard web** — Notion + Telegram suffisent pour un operateur unique
-- **Auto-merge** — Review humaine obligatoire
+- **Auto-merge niveau 4** (merge toutes les PRs sans exception) — Trop risque, meme les PRs non-safe meritent un regard
 
 ---
 
@@ -332,6 +504,7 @@ And la priorite et complexite sont extraites du frontmatter du fichier spec
 | Claude Code CLI | Externe | Depends on Max plan | Auth check + cooldown |
 | GitHub API (via gh) | Externe | 99.95% | Retry manuelle post-pipeline |
 | Telegram Bot API | Externe | 99.9% | Log WARNING, pipeline continue sans notifs |
+| GitHub Actions | Interne | Per-project | Workflow auto-merge-safe.yml dans chaque repo |
 
 ### Integrations requises
 - **Notion API v2022-06-28**: Query (filter/sort), Update (properties)
@@ -356,6 +529,8 @@ And la priorite et complexite sont extraites du frontmatter du fichier spec
 | VPS reboot pendant execution | Low | Medium | Health check post-crash, cleanup worktree, recovery auto |
 | Specs incorrectes (hallucination implement-auto) | Medium | Medium | Review humaine des PRs, Feature Document pour tracabilite |
 | GitHub PAT expire | Medium | Bloquant | Health check tokens, notification, procedure de renouvellement |
+| Auto-merge d'une PR bugguee (faux positif safe) | Low | High | Criteres stricts (Simple + SUCCESS + tests pass + 0 erreur), label visible dans PR |
+| Dependance circulaire bloque des taches indefiniment | Low | Medium | Warning dans les logs + notification Telegram si tache "Bloque" depuis > 2 cycles |
 
 ### Hypotheses (Assumptions)
 - **Claude Max 5x permet ~15-30 taches/weekend** — Si faux: ajuster max_tasks_per_run et intervalle cron
@@ -369,16 +544,19 @@ And la priorite et complexite sont extraites du frontmatter du fichier spec
 
 | Phase | Livrables | Effort estime | Owner | Prerequis |
 |-------|-----------|---------------|-------|-----------|
-| 1. Setup Notion | DB "Dev Tasks" avec 14 proprietes | ~2h | Edouard | - |
+| 1. Setup Notion | DB "OpenClawTasks" avec 16 proprietes (schema detaille en section 4.1) | ~2h | Edouard | - |
+| 1b. Sync spec→Notion | Integration API Notion dans /spec (curl/jq, creation pages + relations) | ~3-4h | Pipeline | Phase 1 |
 | 2. Telegram Bot | Bot cree, notify.sh operationnel | ~2-3h | Edouard | BotFather Telegram |
 | 3. Quota Checker | quota-checker.sh (M2+M3) | ~2h | Pipeline | - |
-| 4. Run Task | run-task.sh (worktree, claude -p, parse) | ~3-4h | Pipeline | Phase 1 + implement-auto |
-| 5. Pipeline Runner | pipeline-runner.sh complet | ~4-5h | Pipeline | Phases 1-4 |
+| 4. Run Task | run-task.sh (lecture hybride Notion body/Git) | ~4h | Pipeline | Phase 1 + implement-auto |
+| 5. Pipeline Runner | pipeline-runner.sh (dependances + auto-merge) | ~5h | Pipeline | Phases 1-4 |
 | 6. Config Multi-Projet | projects.json + integration | ~2h | Pipeline | Phase 5 |
-| 7. Test E2E | Run complet avec 3-5 taches test | ~2-3h | Edouard | Phases 1-6 |
+| 7. GitHub Action | auto-merge-safe.yml + config repos | ~1-2h | Edouard | Phase 5 |
+| 8. Detection Merge | Health check PRs mergees → Notion "Termine" | ~2h | Pipeline | Phases 5, 7 |
+| 9. Test E2E | Dry-run + run reel avec dependances + auto-merge | ~3h | Edouard | Tout |
 
-**Effort total estime**: ~17-21h (~3-4 jours)
-**Chemin critique**: Phase 1 → Phase 4 → Phase 5 → Phase 7
+**Effort total estime**: ~26-31h (~5-6 jours)
+**Chemin critique**: Phase 1 → Phase 4 → Phase 5 → Phase 7 → Phase 8 → Phase 9
 
 ### Quick Wins (impact eleve, effort faible)
 1. Schema Notion (Phase 1) — Prerequis pour tout, faisable en 2h sur l'interface Notion
@@ -402,7 +580,11 @@ mindmap
         Health check recovery
         Boucle taches
         Circuit breaker 3 echecs
+        Dependances filter_blocked
+        Auto-merge 3 niveaux
+        Detection PRs mergees
       run-task.sh
+        Lecture hybride Notion body/Git
         Worktree fan-out
         Claude Code headless
         Parse JSON resultat
@@ -411,17 +593,28 @@ mindmap
         M2 Detection throttle
         M3 Cooldown 30min
     SPEC-03 Notion
-      DB Dev Tasks
-        14 proprietes
-        Spec Path vers Git
-        6 statuts
+      DB OpenClawTasks
+        16 proprietes
+        Spec dans body Notion defaut
+        Spec Path Git optionnel
+        Relation Bloque par
+        7 statuts dont Bloque
       notion_query curl/jq
       notion_update PATCH
       Export brainstorm optionnel
+      Sync depuis /spec
+        Mapping frontmatter → proprietes
+        Body spec → page content
+        Relations dependances
     SPEC-04 Telegram
       notify.sh wrapper
       Kill switch getUpdates
       Heartbeat fin de cycle
+    Auto-merge
+      Niveau 2 gh pr merge --auto
+      Niveau 3 label pipeline-safe
+      GitHub Action auto-approve
+      Detection merge health check
     Config
       projects.json
       .env secrets
@@ -482,8 +675,9 @@ Axes finaux:
 | Parallelisme multi-taches | Explicitement V2 (quota partage) | High | Mesurer quota reel, evaluer faisabilite |
 | Dashboard web monitoring | Notion + Telegram suffisent pour 1 operateur | Medium | Si equipe grandit |
 | Tracking proactif quota (M1) | Seuils speculatifs, besoin donnees reelles | Medium | Calibrer apres 3-4 weekends |
-| Auto-merge PRs safe | Review humaine obligatoire en V1 | Medium | Ajouter criteres auto-merge (100% tests, < 50 lignes) |
+| Auto-merge niveau 4 (sans exception) | V1 conserve review humaine pour non-safe | Low | Evaluer apres 3-4 weekends si taux faux-positif safe < 5% |
 | Caching Notion (eviter re-queries) | Rate limit Notion largement suffisant | Low | Si latence problematique |
+| Sync bidirectionnel Notion↔Git | V1 = push only (spec→Notion), pas de pull Notion→Git | Medium | Si besoin de modifier les specs dans Notion et retrouver les changements dans Git |
 | Metriques de performance cumulees | Pas prioritaire V1 | Medium | Ajouter un dashboard Notion avec formules |
 
 ---
@@ -512,18 +706,23 @@ Axes finaux:
 
 | Etape | Skill | Action |
 |-------|-------|--------|
-| 1 | `/spec` | Transformer ce brief en specifications techniques (task files) |
-| 2 | `/implement` | Implementer SPEC-03 (Notion schema) en premier |
-| 3 | `/implement` | Implementer SPEC-04 (notify.sh) |
-| 4 | `/implement` | Implementer SPEC-02 (orchestrateur complet) |
-| 5 | Test E2E | Run pilote avec 3-5 taches Gardel |
+| 1 | Manuel | Creer la DB Notion "OpenClawTasks" avec 16 proprietes |
+| 1b | `/implement` | Implementer sync spec→Notion dans le skill /spec |
+| 2 | `/implement` | Implementer SPEC-04 (notify.sh) |
+| 3 | `/implement` | Implementer quota-checker.sh |
+| 4 | `/implement` | Implementer run-task.sh (lecture hybride Notion/Git) |
+| 5 | `/implement` | Implementer pipeline-runner.sh (dependances + auto-merge) |
+| 6 | `/implement` | Config multi-projet + secrets |
+| 7 | Manuel | Deployer GitHub Action + config repos |
+| 8 | `/implement` | Detection merge + update Notion |
+| 9 | Test E2E | Run pilote avec 3-5 taches Gardel (dont 1 avec dependance) |
 
-**Routing de complexite**: STANDARD (3 composants, 17-21h estimees, multi-fichier)
-**Skill suggere**: `/spec` puis `/implement` pour chaque composant
+**Routing de complexite**: STANDARD (10 phases, 26-31h estimees, multi-fichier)
+**Skill suggere**: `/implement` pour chaque composant
 
 **Commande suggeree**:
 ```
-/spec brief-orchestrator-pipeline-20260211.md
+/implement notify-sh @brief-orchestrator-pipeline-20260211.md
 ```
 
 ---
