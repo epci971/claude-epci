@@ -1,0 +1,89 @@
+{
+  "session_id": "brainstorm-orchestrator-pipeline-20260211-162100",
+  "version": "1.0",
+  "slug": "orchestrator-pipeline",
+  "status": "completed",
+  "template": "feature",
+  "flags": {
+    "quick": false,
+    "turbo": false,
+    "party": false,
+    "panel": false,
+    "no_hmw": false,
+    "no_security": false,
+    "no_clarify": false
+  },
+  "timestamps": {
+    "created_at": "2026-02-11T16:21:00Z",
+    "last_update": "2026-02-11T16:45:00Z",
+    "ended_at": "2026-02-11T16:45:00Z"
+  },
+  "phase": "COMPLETED",
+  "persona": "pragmatique",
+  "iteration": 4,
+  "ems": {
+    "global": 76,
+    "axes": {
+      "clarity": 85,
+      "depth": 75,
+      "coverage": 70,
+      "decisions": 78,
+      "actionability": 55
+    },
+    "history": [
+      { "iteration": 0, "score": 20, "delta": 0 },
+      { "iteration": 1, "score": 42, "delta": 22 },
+      { "iteration": 2, "score": 57, "delta": 15 },
+      { "iteration": 3, "score": 67, "delta": 10 },
+      { "iteration": 4, "score": 76, "delta": 9 }
+    ]
+  },
+  "context": {
+    "idea_raw": "Mettre en place la spec pour la partie orchestration du pipeline ClawdBot (Notion + Claude Code + GitHub). Implement-auto deja fait.",
+    "idea_refined": "Specifier la couche orchestration complete du pipeline ClawdBot : SPEC-02 (scripts Bash), SPEC-03 (schema Notion), SPEC-04 (notifications Telegram). Interfaces et contrats entre composants.",
+    "brief_v0": "Pipeline orchestration: scripts Bash (pipeline-runner, run-task, quota-checker) + Notion Dev Tasks DB + Telegram notifications + kill switch",
+    "codebase_analysis": "implement-auto: 8 steps + 5 references, contrat JSON defini. Pas de code orchestrateur existant.",
+    "hmw_questions": [
+      "HMW connecter Notion a l'orchestrateur de maniere fiable ?",
+      "HMW gerer le quota Claude Max sans API officielle ?",
+      "HMW assurer l'observabilite du pipeline sans dashboard ?",
+      "HMW decomposer l'implementation pour que chaque spec soit testable isolement ?"
+    ],
+    "perplexity_prompts": [
+      "Notion API 2025 2026 database query filter rich_text limitations rate limiting best practices bash curl jq",
+      "Telegram Bot API 2025 2026 bash implementation webhook vs polling kill switch pattern DevOps pipeline notifications"
+    ],
+    "perplexity_results": [],
+    "source_docs": [
+      "docs/briefs/clawdbot/spec/BRIEF-Pipeline-V3.md",
+      "docs/briefs/clawdbot/spec/SPEC-02-orchestrator.md"
+    ]
+  },
+  "decisions": [
+    { "id": "D1", "iteration": 2, "decision": "Specs dans Git, chemin dans Notion", "rationale": "Pas de limite taille, versionne, diffable", "confidence": "high" },
+    { "id": "D2", "iteration": 2, "decision": "API Notion en curl/jq pur (pas MCP)", "rationale": "Portable, previsible, moins de dependances", "confidence": "high" },
+    { "id": "D3", "iteration": 2, "decision": "Telegram basique (notifs + kill)", "rationale": "V1 minimaliste", "confidence": "high" },
+    { "id": "D4", "iteration": 3, "decision": "Quota V1 = reactif M2+M3", "rationale": "Seuils proactifs speculatifs, reactif suffit", "confidence": "high" },
+    { "id": "D5", "iteration": 3, "decision": "Specs dans docs/specs/pipeline/", "rationale": "Repertoire dedie, clair, versionne", "confidence": "high" },
+    { "id": "D6", "iteration": 4, "decision": "Telegram polling getUpdates", "rationale": "Pas de daemon, integre au cycle cron", "confidence": "high" },
+    { "id": "D7", "iteration": 4, "decision": "Export brainstorm = script manuel separe", "rationale": "Hors pipeline auto, outil de commodite", "confidence": "medium" },
+    { "id": "D8", "iteration": 4, "decision": "Kill switch = getUpdates (pas daemon)", "rationale": "Simple, suffisant pour V1 weekend", "confidence": "high" }
+  ],
+  "open_threads": [],
+  "techniques_applied": [
+    "decomposition_par_composant",
+    "challenge_assumptions",
+    "progressive_disclosure",
+    "risk_first_exploration"
+  ],
+  "persona_history": [
+    { "persona": "architecte", "iteration": 0, "trigger": "default" },
+    { "persona": "architecte", "iteration": 2, "trigger": "structuring_3_specs" },
+    { "persona": "sparring", "iteration": 3, "trigger": "challenge_quota_m1" },
+    { "persona": "pragmatique", "iteration": 4, "trigger": "convergence" }
+  ],
+  "outputs": {
+    "brief": "docs/briefs/clawdbot/brief-orchestrator-pipeline-20260211.md",
+    "journal": "docs/briefs/clawdbot/journal-orchestrator-pipeline-20260211.md"
+  }
+}
