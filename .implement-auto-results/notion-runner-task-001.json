@@ -1,0 +1,57 @@
+{
+  "$schema": "implement-auto-output-v1",
+  "version": 1,
+  "timestamp": "2026-02-13T16:15:00Z",
+  "status": "SUCCESS",
+  "exit_reason": null,
+  "feature": {
+    "slug": "notion-runner-task-001",
+    "branch": "feature/notion-runner-task-001",
+    "spec_source": "docs/specs/notion-runner/task-001-notion-api-client.md"
+  },
+  "phases": {
+    "completed": ["init", "explore", "plan", "code", "review", "document", "finish", "publish"],
+    "failed": [],
+    "current": null,
+    "skipped": []
+  },
+  "plan": {
+    "total_components": 4,
+    "components": [
+      {"name": "config-module", "file": "src/openclaw/config.py", "status": "SUCCESS", "tests_added": 6, "retries": 0, "error": null},
+      {"name": "http-helper", "file": "src/openclaw/notion_client.py", "status": "SUCCESS", "tests_added": 5, "retries": 0, "error": null},
+      {"name": "query-database", "file": "src/openclaw/notion_client.py", "status": "SUCCESS", "tests_added": 5, "retries": 0, "error": null},
+      {"name": "update-page", "file": "src/openclaw/notion_client.py", "status": "SUCCESS", "tests_added": 8, "retries": 0, "error": null}
+    ]
+  },
+  "metrics": {
+    "files_created": 5,
+    "files_modified": 0,
+    "tests_added": 24,
+    "tests_passing": 24,
+    "tests_failing": 0
+  },
+  "checks": {
+    "tests": { "status": "pass", "count": 24, "failures": 0 },
+    "self_review": {
+      "status": "pass",
+      "items_checked": 15,
+      "items_passed": 15,
+      "items_warned": 0,
+      "findings": []
+    }
+  },
+  "feature_doc": "docs/features/notion-runner-task-001-20260213-160500.md",
+  "errors": [],
+  "warnings": [],
+  "publish": {
+    "pushed": true,
+    "push_error": null,
+    "pr_url": "https://github.com/epci971/claude-epci/pull/8",
+    "pr_draft": false,
+    "pr_error": null,
+    "auto_merge_enabled": false,
+    "worktree_cleaned": true,
+    "skipped": false
+  }
+}
