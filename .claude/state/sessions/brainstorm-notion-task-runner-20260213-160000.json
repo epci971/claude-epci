@@ -1,0 +1,81 @@
+{
+  "session_id": "brainstorm-notion-task-runner-20260213-160000",
+  "version": "1.0",
+  "slug": "openclaw-notion-runner",
+  "status": "completed",
+  "template": "feature",
+  "flags": {
+    "quick": false,
+    "turbo": false,
+    "party": false,
+    "panel": false,
+    "no_hmw": false,
+    "no_security": false,
+    "no_clarify": false
+  },
+  "timestamps": {
+    "created_at": "2026-02-13T16:00:00.000Z",
+    "last_update": "2026-02-13T16:45:00.000Z",
+    "ended_at": "2026-02-13T16:45:00.000Z"
+  },
+  "phase": "COMPLETED",
+  "persona": "architecte",
+  "iteration": 3,
+  "ems": {
+    "global": 82,
+    "axes": { "clarity": 85, "depth": 78, "coverage": 76, "decisions": 88, "actionability": 82 },
+    "history": [
+      { "iteration": 0, "global": 25, "trigger": "init" },
+      { "iteration": 1, "global": 56, "trigger": "clarification + schema discovery" },
+      { "iteration": 2, "global": 68, "trigger": "decisions locked (D1-D9)" },
+      { "iteration": 3, "global": 82, "trigger": "worktree exploration + D10-D11" }
+    ]
+  },
+  "context": {
+    "idea_raw": "Systeme d'orchestration de taches Python, inspire de Ralph, pilote par Notion. Boucle automatique: recuperer taches, selectionner la plus eligible, executer via claude -p, review, merge, mettre a jour Notion. Python stdlib uniquement, pas de dependance externe.",
+    "idea_refined": "OpenClaw - Orchestrateur Python stdlib-only qui pilote l'execution automatique de taches depuis Notion via implement-auto. Client Notion API (urllib), selecteur de taches (priorite+dependances), boucle autonome avec circuit breaker, et libs reutilisables par /spec pour injection PRD->Notion.",
+    "brief_v0": "Orchestrateur leger Python connectant Notion (source de verite) au moteur implement-auto (execution EPCI headless).",
+    "codebase_analysis": "Ralph (bash loop), implement-auto (9 steps EPCI headless), OpenClawTasks schema (24 props), worktree-create/finalize scripts, project-memory system",
+    "hmw_questions": [
+      "Comment gerer un crash en pleine execution?",
+      "Quel circuit breaker pour la boucle Python?",
+      "Ou placer le code dans EPCI?",
+      "Comment gerer les specs: Notion body vs Git?",
+      "Faut-il un mode dry-run?",
+      "Quel format de logging?"
+    ],
+    "perplexity_prompts": [],
+    "perplexity_results": []
+  },
+  "decisions": [
+    { "id": "D1", "decision": "Python stdlib uniquement (urllib, json, subprocess)", "rationale": "Zero dependance, portabilite", "confidence": "high" },
+    { "id": "D2", "decision": "Notion API via urllib + NOTION_API_KEY env var", "rationale": "Standalone, pas de MCP", "confidence": "high" },
+    { "id": "D3", "decision": "implement-auto comme executeur via subprocess", "rationale": "Deja complet (worktree, EPCI, review, merge, push)", "confidence": "high" },
+    { "id": "D4", "decision": "Recovery au demarrage (orphelines En cours)", "rationale": "Robustesse face aux crashes", "confidence": "high" },
+    { "id": "D5", "decision": "Code dans src/openclaw/", "rationale": "Coherent avec le naming OpenClawTasks", "confidence": "high" },
+    { "id": "D6", "decision": "Spec Path (Git) prioritaire, fallback body Notion", "rationale": "Specs Git plus riches et versionnees", "confidence": "high" },
+    { "id": "D7", "decision": "Circuit breaker: 3 echecs consecutifs = arret", "rationale": "Eviter le token burning", "confidence": "high" },
+    { "id": "D8", "decision": "Logging fichier + stdout colore", "rationale": "Debug facile + historique persistant", "confidence": "medium" },
+    { "id": "D9", "decision": "Dry-run via --dry-run flag", "rationale": "Validation sans execution", "confidence": "high" },
+    { "id": "D10", "decision": "Libs reutilisables par /spec pour injection PRD->Notion", "rationale": "Evite la duplication, composant partage", "confidence": "high" },
+    { "id": "D11", "decision": "Worktrees delegues a implement-auto + cleanup orphelins", "rationale": "Separation des responsabilites", "confidence": "high" }
+  ],
+  "open_threads": [],
+  "techniques_applied": [
+    "structured_checklist",
+    "schema_analysis",
+    "hmw_questions"
+  ],
+  "persona_history": [
+    { "persona": "architecte", "iteration": 0, "trigger": "default" },
+    { "persona": "architecte", "iteration": 1, "trigger": "complex_topic" },
+    { "persona": "architecte", "iteration": 2, "trigger": "decision_making" },
+    { "persona": "architecte", "iteration": 3, "trigger": "finalization" }
+  ],
+  "output": {
+    "brief_path": "docs/briefs/openclaw-notion-runner/brief-openclaw-notion-runner-2026-02-13.md",
+    "journal_path": "docs/briefs/openclaw-notion-runner/journal-openclaw-notion-runner-2026-02-13.md",
+    "routing": "STANDARD",
+    "next_skill": "/spec"
+  }
+}

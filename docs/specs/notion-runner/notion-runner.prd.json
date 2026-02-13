@@ -1,0 +1,609 @@
+{
+  "title": "OpenClaw — Notion Task Runner",
+  "version": "2.0",
+  "slug": "notion-runner",
+  "generated_at": "2026-02-13T17:00:00Z",
+  "source": "docs/briefs/openclaw-notion-runner/brief-openclaw-notion-runner-2026-02-13.md",
+  "complexity": "STANDARD",
+  "metrics": {
+    "total_tasks": 7,
+    "total_steps": 30,
+    "estimated_hours": 11.25,
+    "critical_path": ["task-001", "task-003", "task-005", "task-007"],
+    "optimized_hours": 7.0
+  },
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Create Notion API client with query and update operations",
+      "slug": "notion-api-client",
+      "complexity": "M",
+      "estimated_minutes": 120,
+      "dependencies": [],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Query database with filtering",
+          "given": "A valid NOTION_API_KEY and database ID",
+          "when": "query_database is called with a status filter 'A faire'",
+          "then": "Returns a list of task dicts with all Notion properties parsed"
+        },
+        {
+          "id": "AC2",
+          "title": "Update page properties",
+          "given": "A valid page ID and a properties dict",
+          "when": "update_page is called",
+          "then": "The Notion page properties are updated via PATCH API call"
+        },
+        {
+          "id": "AC3",
+          "title": "Pagination handling",
+          "given": "A database query returns more than 100 results",
+          "when": "query_database is called",
+          "then": "Pagination is handled automatically via has_more/start_cursor"
+        },
+        {
+          "id": "AC4",
+          "title": "Missing API key error",
+          "given": "NOTION_API_KEY environment variable is not set",
+          "when": "Any API call is made",
+          "then": "A clear ConfigError is raised with message 'NOTION_API_KEY not set'"
+        },
+        {
+          "id": "AC5",
+          "title": "Config loading with validation",
+          "given": "A config.json with database_id and optional settings",
+          "when": "load_config is called",
+          "then": "Returns config dict with defaults applied for optional fields"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Create project structure and config module",
+          "duration_minutes": 20,
+          "input": "Brief section 5, decision D5",
+          "output": "Package structure with config module",
+          "validation": "from openclaw.config import load_config imports without error"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement HTTP request helper with urllib",
+          "duration_minutes": 25,
+          "input": "Notion API documentation, decision D1",
+          "output": "HTTP helper function in notion_client.py",
+          "validation": "Function callable with mock urllib"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement query_database with pagination and filtering",
+          "duration_minutes": 25,
+          "input": "Notion API POST /databases/{id}/query documentation",
+          "output": "query_database function with full pagination",
+          "validation": "Returns correct results with mock multi-page responses"
+        },
+        {
+          "id": "step-4",
+          "title": "Implement update_page with property type mapping",
+          "duration_minutes": 25,
+          "input": "Notion API PATCH /pages/{id}, OpenClawTasks schema",
+          "output": "update_page function with property type mapping",
+          "validation": "Correctly formats all property types for Notion API"
+        },
+        {
+          "id": "step-5",
+          "title": "Write unit tests with mock urllib",
+          "duration_minutes": 25,
+          "input": "Functions from steps 1-4",
+          "output": "Complete unit test file",
+          "validation": "All tests pass with pytest"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/openclaw/__init__.py", "action": "create", "description": "Package init"},
+        {"path": "src/openclaw/config.py", "action": "create", "description": "Config loading and env var management"},
+        {"path": "src/openclaw/notion_client.py", "action": "create", "description": "Notion API client"},
+        {"path": "src/openclaw/tests/__init__.py", "action": "create", "description": "Test package init"},
+        {"path": "src/openclaw/tests/test_notion_client.py", "action": "create", "description": "Unit tests"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-002",
+      "title": "Implement Notion page blocks reading and page creation",
+      "slug": "notion-blocks",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-001"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Read page body as Markdown",
+          "given": "A Notion page with blocks (headings, paragraphs, bulleted lists, to-do items, code blocks)",
+          "when": "read_page_body(page_id) is called",
+          "then": "Returns Markdown string with correct formatting for each block type"
+        },
+        {
+          "id": "AC2",
+          "title": "Create page with properties and body",
+          "given": "A database ID, properties dict, and body content as Markdown string",
+          "when": "create_page(database_id, properties, body_markdown) is called",
+          "then": "A new page is created with correct properties and body blocks"
+        },
+        {
+          "id": "AC3",
+          "title": "Blocks pagination",
+          "given": "A page body with more than 100 blocks",
+          "when": "read_page_body is called",
+          "then": "Pagination is handled automatically via has_more/start_cursor"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement read_page_blocks with pagination",
+          "duration_minutes": 25,
+          "input": "Notion blocks API documentation",
+          "output": "read_page_blocks function in notion_client.py",
+          "validation": "Returns all blocks from a multi-page mock response"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement blocks_to_markdown converter",
+          "duration_minutes": 25,
+          "input": "Notion block types specification",
+          "output": "blocks_to_markdown and read_page_body functions",
+          "validation": "Known block structures produce expected Markdown output"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement create_page with properties and body",
+          "duration_minutes": 25,
+          "input": "Notion POST /pages documentation, OpenClawTasks schema",
+          "output": "create_page and markdown_to_blocks functions",
+          "validation": "Creates page with correct JSON payload structure"
+        },
+        {
+          "id": "step-4",
+          "title": "Write unit tests",
+          "duration_minutes": 15,
+          "input": "Functions from steps 1-3",
+          "output": "Complete test file",
+          "validation": "All tests pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/openclaw/notion_client.py", "action": "modify", "description": "Add blocks reading and page creation"},
+        {"path": "src/openclaw/tests/test_notion_blocks.py", "action": "create", "description": "Unit tests for blocks"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-003",
+      "title": "Implement task selector with priority and dependency resolution",
+      "slug": "task-selector",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-001"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Selection by priority",
+          "given": "3 tasks 'A faire': T1 (P2), T2 (P0), T3 (P1)",
+          "when": "select_next_task(tasks) is called",
+          "then": "Returns T2 (P0 is highest priority)"
+        },
+        {
+          "id": "AC2",
+          "title": "Dependency respect",
+          "given": "T1 (P0) depends on T2 (P1, 'A faire') via 'Bloque par'",
+          "when": "select_next_task(tasks) is called",
+          "then": "T2 is selected (T1 is blocked by unfinished T2)"
+        },
+        {
+          "id": "AC3",
+          "title": "Circular dependency detection",
+          "given": "T1 depends on T2, T2 depends on T1 (circular)",
+          "when": "select_next_task(tasks) evaluates these tasks",
+          "then": "Both are marked 'Bloque' and neither is selected"
+        },
+        {
+          "id": "AC4",
+          "title": "Story ID tiebreaker",
+          "given": "T1 (P1, Story ID 'US-003') and T2 (P1, Story ID 'US-001')",
+          "when": "select_next_task(tasks) is called with equal priority tasks",
+          "then": "T2 is selected (US-001 < US-003)"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement eligible task filtering and data parsing",
+          "duration_minutes": 20,
+          "input": "Raw Notion query results",
+          "output": "Task parsing and filtering functions",
+          "validation": "Correctly parses mock Notion page objects"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement priority sorting with Story ID tiebreaker",
+          "duration_minutes": 20,
+          "input": "Parsed task list",
+          "output": "Priority sorting function",
+          "validation": "Correctly orders tasks by priority then Story ID"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement dependency resolution and circular detection",
+          "duration_minutes": 25,
+          "input": "Parsed task list with dependency relations",
+          "output": "Dependency resolution and main selector function",
+          "validation": "Correctly handles all dependency scenarios"
+        },
+        {
+          "id": "step-4",
+          "title": "Write unit tests for all selection scenarios",
+          "duration_minutes": 25,
+          "input": "Functions from steps 1-3",
+          "output": "Complete test file",
+          "validation": "All tests pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/openclaw/task_selector.py", "action": "create", "description": "Task selection algorithm"},
+        {"path": "src/openclaw/tests/test_task_selector.py", "action": "create", "description": "Unit tests"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-004",
+      "title": "Implement execution runner (implement-auto subprocess wrapper)",
+      "slug": "execution-runner",
+      "complexity": "S",
+      "estimated_minutes": 75,
+      "dependencies": [],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Execute implement-auto via subprocess",
+          "given": "A valid spec path and feature slug",
+          "when": "run_task(slug, spec_path, flags) is called",
+          "then": "claude --print -p '/implement-auto ...' is executed via subprocess"
+        },
+        {
+          "id": "AC2",
+          "title": "Parse SUCCESS output",
+          "given": "implement-auto completes with status=SUCCESS and PR URL",
+          "when": "parse_output(worktree_path) is called",
+          "then": "Returns dict with status='SUCCESS', pr_url, branch, files_modified, duration"
+        },
+        {
+          "id": "AC3",
+          "title": "Parse FAILED output",
+          "given": "implement-auto returns status=FAILED with error message",
+          "when": "parse_output(worktree_path) is called",
+          "then": "Returns dict with status='FAILED', error message"
+        },
+        {
+          "id": "AC4",
+          "title": "Parse PARTIAL output",
+          "given": "implement-auto returns status=PARTIAL",
+          "when": "parse_output(worktree_path) is called",
+          "then": "Returns dict with status='PARTIAL', partial results"
+        },
+        {
+          "id": "AC5",
+          "title": "Map results to Notion properties",
+          "given": "A parsed result dict with status, pr_url, branch, files, duration",
+          "when": "result_to_notion_properties(result) is called",
+          "then": "Returns Notion-ready properties dict with correct type mappings"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement subprocess wrapper for claude CLI invocation",
+          "duration_minutes": 20,
+          "input": "implement-auto SKILL.md, decision D3",
+          "output": "run_task function",
+          "validation": "Correct command string built from inputs"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement output JSON parsing",
+          "duration_minutes": 20,
+          "input": "implement-auto output schema",
+          "output": "parse_output function",
+          "validation": "Correctly parses sample output files"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement result-to-Notion property mapping",
+          "duration_minutes": 15,
+          "input": "OpenClawTasks schema, parsed results",
+          "output": "result_to_notion_properties function",
+          "validation": "Correct Notion property format for each status"
+        },
+        {
+          "id": "step-4",
+          "title": "Write unit tests with mock subprocess",
+          "duration_minutes": 20,
+          "input": "Functions from steps 1-3",
+          "output": "Complete test file",
+          "validation": "All tests pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/openclaw/runner.py", "action": "create", "description": "implement-auto subprocess wrapper"},
+        {"path": "src/openclaw/tests/test_runner.py", "action": "create", "description": "Unit tests"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-005",
+      "title": "Implement main orchestration loop",
+      "slug": "main-loop",
+      "complexity": "L",
+      "estimated_minutes": 120,
+      "dependencies": ["task-001", "task-003", "task-004"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Full execution loop",
+          "given": "3 tasks 'A faire' (P0, P1, P2) in Notion",
+          "when": "python src/openclaw/loop.py runs",
+          "then": "Tasks execute in order P0 -> P1 -> P2 with Notion status transitions"
+        },
+        {
+          "id": "AC2",
+          "title": "Dry-run mode",
+          "given": "--dry-run flag is passed",
+          "when": "loop.py runs",
+          "then": "Ordered task list is printed without execution or Notion modifications"
+        },
+        {
+          "id": "AC3",
+          "title": "Circuit breaker",
+          "given": "3 consecutive task failures",
+          "when": "Circuit breaker checks after 3rd failure",
+          "then": "Loop stops with 'Circuit breaker triggered' message and exit code 1"
+        },
+        {
+          "id": "AC4",
+          "title": "Orphaned task recovery",
+          "given": "A task with status 'En cours' without active process",
+          "when": "loop.py starts",
+          "then": "Task status is reset to 'A faire', warning logged"
+        },
+        {
+          "id": "AC5",
+          "title": "Orphaned worktree cleanup",
+          "given": "Orphaned git worktrees exist",
+          "when": "loop.py starts",
+          "then": "Worktrees cleaned up via git worktree prune"
+        },
+        {
+          "id": "AC6",
+          "title": "Lock file prevents concurrent execution",
+          "given": "Lock file exists with active PID",
+          "when": "A second instance of loop.py starts",
+          "then": "Exits with 'Another instance running' message"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement CLI argument parsing and config loading",
+          "duration_minutes": 20,
+          "input": "Decision D9, config.py from task-001",
+          "output": "CLI entry point with config loading",
+          "validation": "python loop.py --help shows all options"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement lock file management",
+          "duration_minutes": 20,
+          "input": "Concurrent execution prevention requirements",
+          "output": "Lock management functions",
+          "validation": "Second instance detected correctly"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement recovery at startup",
+          "duration_minutes": 25,
+          "input": "Decision D4, D11",
+          "output": "Recovery functions for orphaned tasks and worktrees",
+          "validation": "Orphaned tasks detected and reset"
+        },
+        {
+          "id": "step-4",
+          "title": "Implement main loop with circuit breaker",
+          "duration_minutes": 30,
+          "input": "Selector, runner, notion_client components",
+          "output": "Main orchestration loop",
+          "validation": "Full loop with mock components"
+        },
+        {
+          "id": "step-5",
+          "title": "Implement logging and entry point",
+          "duration_minutes": 25,
+          "input": "Decision D8, Python logging module",
+          "output": "Complete loop.py with formatted logging",
+          "validation": "Full execution with formatted output"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/openclaw/loop.py", "action": "create", "description": "Main orchestration loop"},
+        {"path": "src/openclaw/tests/test_loop.py", "action": "create", "description": "Integration tests"}
+      ],
+      "test_approach": "Integration"
+    },
+    {
+      "id": "task-006",
+      "title": "Implement PRD-to-Notion injector",
+      "slug": "prd-injector",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-002"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Create pages from PRD.json",
+          "given": "A PRD.json with 5 tasks generated by /spec",
+          "when": "inject_prd(prd_path, database_id, project_id) is called",
+          "then": "5 pages created with correct Name, Story ID, Description, Priorite, Complexite"
+        },
+        {
+          "id": "AC2",
+          "title": "Acceptance criteria in page body",
+          "given": "A task with 3 acceptance criteria",
+          "when": "The page is created",
+          "then": "Page body contains 'Criteres d'acceptation' section with 3 checklist items"
+        },
+        {
+          "id": "AC3",
+          "title": "Dependency relations resolved",
+          "given": "task-002 depends on task-001 in PRD.json",
+          "when": "Dependency resolution runs (second pass)",
+          "then": "'Bloque par' relation points to task-001 page ID"
+        },
+        {
+          "id": "AC4",
+          "title": "Duplicate detection",
+          "given": "A Story ID already exists in Notion for this project",
+          "when": "inject_prd tries to create a page with same Story ID",
+          "then": "Existing page skipped with WARNING log"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Implement PRD.json parser and property mapping",
+          "duration_minutes": 25,
+          "input": "PRD v2.0 schema, OpenClawTasks schema",
+          "output": "PRD parser and property mapper",
+          "validation": "Correct Notion property format from sample PRD task"
+        },
+        {
+          "id": "step-2",
+          "title": "Implement page creation with acceptance criteria body",
+          "duration_minutes": 25,
+          "input": "create_page from task-002, page content template",
+          "output": "Page creation with structured body",
+          "validation": "Created page has correct properties and body"
+        },
+        {
+          "id": "step-3",
+          "title": "Implement dependency resolution (two-pass algorithm)",
+          "duration_minutes": 25,
+          "input": "PRD dependencies_graph, created page IDs",
+          "output": "Complete injection with dependency resolution",
+          "validation": "Dependencies correctly linked between pages"
+        },
+        {
+          "id": "step-4",
+          "title": "Write unit tests including duplicate detection",
+          "duration_minutes": 15,
+          "input": "Functions from steps 1-3",
+          "output": "Complete test file",
+          "validation": "All tests pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/openclaw/prd_injector.py", "action": "create", "description": "PRD to Notion injection"},
+        {"path": "src/openclaw/tests/test_prd_injector.py", "action": "create", "description": "Unit tests"}
+      ],
+      "test_approach": "Unit"
+    },
+    {
+      "id": "task-007",
+      "title": "Integration tests and validation",
+      "slug": "integration-tests",
+      "complexity": "M",
+      "estimated_minutes": 90,
+      "dependencies": ["task-005", "task-006"],
+      "acceptance_criteria": [
+        {
+          "id": "AC1",
+          "title": "Loop integration test",
+          "given": "Mock Notion API returning 3 tasks and mock subprocess",
+          "when": "Full loop integration test runs",
+          "then": "Tasks selected, mock-executed, Notion updated correctly"
+        },
+        {
+          "id": "AC2",
+          "title": "PRD injection integration test",
+          "given": "A sample PRD.json fixture with 3 tasks and dependencies",
+          "when": "PRD injection integration test runs",
+          "then": "3 pages created, dependency relations patched, no errors"
+        },
+        {
+          "id": "AC3",
+          "title": "Circuit breaker integration test",
+          "given": "Mock subprocess returning FAILED for all executions",
+          "when": "Loop runs with 3 tasks",
+          "then": "Loop stops after 3 consecutive failures"
+        }
+      ],
+      "steps": [
+        {
+          "id": "step-1",
+          "title": "Create test fixtures",
+          "duration_minutes": 20,
+          "input": "OpenClawTasks schema, implement-auto output schema, PRD v2.0",
+          "output": "Test fixtures directory with JSON files",
+          "validation": "Fixtures parse correctly as JSON"
+        },
+        {
+          "id": "step-2",
+          "title": "Create mock urllib framework",
+          "duration_minutes": 25,
+          "input": "Notion API endpoints used by openclaw modules",
+          "output": "conftest.py with reusable test fixtures",
+          "validation": "Fixtures integrate correctly with pytest"
+        },
+        {
+          "id": "step-3",
+          "title": "Write loop integration test",
+          "duration_minutes": 25,
+          "input": "loop.py from task-005, mock fixtures",
+          "output": "Loop integration tests (4 scenarios)",
+          "validation": "All tests pass"
+        },
+        {
+          "id": "step-4",
+          "title": "Write PRD injection integration test",
+          "duration_minutes": 20,
+          "input": "prd_injector.py from task-006, mock fixtures",
+          "output": "PRD injection integration tests (3 scenarios)",
+          "validation": "All tests pass"
+        }
+      ],
+      "files_affected": [
+        {"path": "src/openclaw/tests/conftest.py", "action": "create", "description": "Shared test fixtures"},
+        {"path": "src/openclaw/tests/test_integration.py", "action": "create", "description": "Integration tests"},
+        {"path": "src/openclaw/tests/fixtures/mock_notion_tasks.json", "action": "create", "description": "Mock Notion responses"},
+        {"path": "src/openclaw/tests/fixtures/mock_implement_auto_output.json", "action": "create", "description": "Mock implement-auto output"},
+        {"path": "src/openclaw/tests/fixtures/sample_prd.json", "action": "create", "description": "Sample PRD for tests"}
+      ],
+      "test_approach": "Integration"
+    }
+  ],
+  "dependencies_graph": {
+    "nodes": ["task-001", "task-002", "task-003", "task-004", "task-005", "task-006", "task-007"],
+    "edges": [
+      {"from": "task-001", "to": "task-002"},
+      {"from": "task-001", "to": "task-003"},
+      {"from": "task-001", "to": "task-005"},
+      {"from": "task-003", "to": "task-005"},
+      {"from": "task-004", "to": "task-005"},
+      {"from": "task-002", "to": "task-006"},
+      {"from": "task-005", "to": "task-007"},
+      {"from": "task-006", "to": "task-007"}
+    ]
+  },
+  "routing": {
+    "recommended_skill": "/implement",
+    "reason": "STANDARD complexity with 7 interdependent tasks requiring full EPCI workflow"
+  }
+}

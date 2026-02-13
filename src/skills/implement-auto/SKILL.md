@@ -20,8 +20,7 @@ Standalone headless EPCI skill for autonomous feature implementation without use
 ## Quick Start
 
 ```bash
-claude -p "/implement-auto feature-slug @path/to/spec.md" \
-  --permission-mode bypassPermissions
+claude --dangerously-skip-permissions  -p "/implement-auto feature-slug @path/to/spec.md" \
 ```
 
 ## Installation
