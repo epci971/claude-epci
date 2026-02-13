@@ -1,0 +1,47 @@
+{
+  "$schema": "implement-auto-output-v1",
+  "version": 1,
+  "timestamp": "2026-02-13T10:42:00Z",
+  "status": "SUCCESS",
+  "exit_reason": null,
+  "feature": {
+    "slug": "notion-blocks",
+    "branch": "feature/notion-blocks",
+    "spec_source": "docs/specs/notion-runner/task-002-notion-blocks.md"
+  },
+  "phases": {
+    "completed": ["init", "explore", "plan", "code", "review", "document", "finish"],
+    "failed": [],
+    "current": "output",
+    "skipped": []
+  },
+  "plan": {
+    "total_components": 4,
+    "components": [
+      {"name": "read-page-blocks", "file": "src/openclaw/notion_client.py", "status": "SUCCESS", "tests_added": 3, "retries": 0, "error": null},
+      {"name": "blocks-to-markdown", "file": "src/openclaw/notion_client.py", "status": "SUCCESS", "tests_added": 11, "retries": 0, "error": null},
+      {"name": "markdown-to-blocks", "file": "src/openclaw/notion_client.py", "status": "SUCCESS", "tests_added": 7, "retries": 0, "error": null},
+      {"name": "create-page", "file": "src/openclaw/notion_client.py", "status": "SUCCESS", "tests_added": 4, "retries": 0, "error": null}
+    ]
+  },
+  "metrics": {
+    "files_created": 1,
+    "files_modified": 1,
+    "tests_added": 25,
+    "tests_passing": 49,
+    "tests_failing": 0
+  },
+  "checks": {
+    "tests": { "status": "pass", "count": 49, "failures": 0 },
+    "self_review": {
+      "status": "pass",
+      "items_checked": 9,
+      "items_passed": 9,
+      "items_warned": 0,
+      "findings": []
+    }
+  },
+  "feature_doc": "docs/features/notion-blocks-20260213-103934.md",
+  "errors": [],
+  "warnings": []
+}
