@@ -170,17 +170,31 @@ Record: `publish.pr_url` = PR URL, `publish.pr_draft` = true/false.
 
 ### 5. Auto-Merge (Optional)
 
-**Precondition:** `flag_auto_merge` is true AND `publish.pr_url` is not null.
+**Preconditions:** `flag_auto_merge` is true AND `status == SUCCESS` AND `publish.pr_url` is not null.
+
+If `status == PARTIAL`: skip merge, log `[implement-auto] Auto-merge skipped (PARTIAL status)`, `publish.merged` = false, `publish.merge_error` = "skipped_partial_status".
+
+If `flag_auto_merge` is false: `publish.auto_merge_enabled` = false, `publish.merged` = false, `publish.merge_error` = null.
+
+**Execution (SUCCESS only):**
 
 ```bash
-gh pr merge "feature/{feature-slug}" --auto --squash
+gh pr merge "feature/{feature-slug}" --squash --delete-branch
 ```
 
-Record: `publish.auto_merge_enabled` = true/false.
+If merge fails, retry once after 2 seconds:
 
-If the command fails (auto-merge not enabled in repo settings): add warning, `publish.auto_merge_enabled` = false. The PR stays open for manual merge.
+```bash
+sleep 2
+gh pr merge "feature/{feature-slug}" --squash --delete-branch
+```
 
-If `flag_auto_merge` is false: `publish.auto_merge_enabled` = false.
+Record:
+- `publish.auto_merge_enabled` = true
+- `publish.merged` = true/false (whether merge succeeded)
+- `publish.merge_error` = error message or null
+
+If both attempts fail: add warning, `publish.merged` = false, `publish.merge_error` = error message. The PR stays open for manual merge.
 
 ### 6. Update JSON and Persist Results
 
@@ -197,6 +211,8 @@ Update `.implement-auto-output.json` with the publish section:
     "pr_draft": false,
     "pr_error": null,
     "auto_merge_enabled": false,
+    "merged": false,
+    "merge_error": null,
     "worktree_cleaned": false,
     "skipped": false
   }
@@ -250,6 +266,7 @@ Output to stdout:
   PR: {pr_url or "skipped" or "failed"}
   PR Draft: {yes/no}
   Auto-merge: {enabled/disabled}
+  Merged: {yes/no}
   Worktree: {cleaned/preserved}
   Results: {main_repo}/.implement-auto-results/{feature-slug}.json
 ```

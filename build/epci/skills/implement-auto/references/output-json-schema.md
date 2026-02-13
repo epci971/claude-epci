@@ -82,6 +82,8 @@ Written incrementally at each step completion. Always valid JSON.
     "pr_draft": "boolean",
     "pr_error": "string | null",
     "auto_merge_enabled": "boolean",
+    "merged": "boolean",
+    "merge_error": "string | null",
     "worktree_cleaned": "boolean",
     "skipped": "boolean"
   }
@@ -153,6 +155,8 @@ Each component from the implementation plan:
 | `pr_draft` | boolean | Whether PR was created as draft (PARTIAL status) |
 | `pr_error` | string? | Error message if PR creation failed |
 | `auto_merge_enabled` | boolean | Whether auto-merge was activated on the PR |
+| `merged` | boolean | Whether PR was immediately squash-merged (SUCCESS only) |
+| `merge_error` | string? | Error message if merge failed, or `"skipped_partial_status"` for PARTIAL |
 | `worktree_cleaned` | boolean | Whether worktree was successfully removed |
 | `skipped` | boolean | True if --skip-publish flag was used |
 
@@ -169,7 +173,7 @@ step-04-review-auto  -> Update checks.self_review
 step-05-document-auto -> Update feature_doc path
 step-06-finish-auto  -> Update final status, metrics
 step-07-output-auto  -> Final write with complete data
-step-08-publish-auto -> Update publish section, phases.completed += "publish"
+step-08-publish-auto -> Update publish section (incl. merge status), phases.completed += "publish"
 ```
 
 ## File Persistence

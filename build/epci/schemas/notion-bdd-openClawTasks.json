@@ -1,0 +1,173 @@
+{
+  "database": "OpenClawTasks",
+  "properties": {
+    "Name": {
+      "type": "title",
+      "description": "Titre de la tâche",
+      "json_source": "title"
+    },
+    "Story ID": {
+      "type": "text",
+      "description": "Identifiant technique de la user story (ex: US-001)",
+      "json_source": "id"
+    },
+    "Description": {
+      "type": "text",
+      "description": "Description détaillée de la user story",
+      "json_source": "description"
+    },
+    "Category": {
+      "type": "select",
+      "description": "Catégorie fonctionnelle de la story",
+      "options": [],
+      "json_source": "category",
+      "note": "Options créées dynamiquement à l'injection"
+    },
+    "Type": {
+      "type": "select",
+      "description": "Type de story (feature, bugfix, refacto, etc.)",
+      "options": [],
+      "json_source": "type",
+      "note": "Options créées dynamiquement à l'injection"
+    },
+    "Complexite": {
+      "type": "select",
+      "description": "Niveau de complexité",
+      "options": ["Simple", "Moyenne", "Complexe"],
+      "json_source": "complexity"
+    },
+    "Priorite": {
+      "type": "select",
+      "description": "Niveau de priorité",
+      "options": ["P0", "P1", "P2", "P3"],
+      "json_source": "priority"
+    },
+    "Statut": {
+      "type": "select",
+      "description": "État actuel de la tâche",
+      "options": ["A faire", "Bloque", "En cours", "En review", "En review (partiel)", "Echoue", "Termine"],
+      "json_source": "status",
+      "mapping": {
+        "pending": "A faire",
+        "blocked": "Bloque",
+        "in_progress": "En cours",
+        "in_review": "En review",
+        "in_review_partial": "En review (partiel)",
+        "failed": "Echoue",
+        "done": "Termine"
+      }
+    },
+    "Passes": {
+      "type": "checkbox",
+      "description": "Tous les critères d'acceptation sont validés",
+      "json_source": "passes"
+    },
+    "Bloque par": {
+      "type": "relation",
+      "description": "Dépendances — tâches dont cette tâche dépend",
+      "target": "self (OpenClawTasks)",
+      "direction": "two_way",
+      "inverse_property": "Bloque",
+      "json_source": "dependencies.depends_on",
+      "note": "Résoudre Story ID → page URL Notion avant injection"
+    },
+    "Bloque": {
+      "type": "relation",
+      "description": "Tâches bloquées par cette tâche (inverse auto de Bloque par)",
+      "target": "self (OpenClawTasks)",
+      "direction": "two_way",
+      "inverse_property": "Bloque par",
+      "json_source": "dependencies.blocks",
+      "note": "Rempli automatiquement via la bidirectionnalité"
+    },
+    "Attempts": {
+      "type": "number",
+      "description": "Nombre de tentatives d'exécution",
+      "json_source": "execution.attempts"
+    },
+    "Iteration": {
+      "type": "number",
+      "description": "Numéro d'itération courante",
+      "json_source": "execution.iteration"
+    },
+    "Erreurs": {
+      "type": "text",
+      "description": "Dernier message d'erreur",
+      "json_source": "execution.last_error"
+    },
+    "Files Modified": {
+      "type": "text",
+      "description": "Liste JSON des fichiers modifiés lors de l'exécution",
+      "json_source": "execution.files_modified",
+      "note": "Stocker comme JSON stringifié: json.dumps(files_modified)"
+    },
+    "Demarre le": {
+      "type": "date",
+      "description": "Timestamp de début d'exécution",
+      "json_source": null,
+      "note": "Rempli par OpenClaw au lancement"
+    },
+    "Termine le": {
+      "type": "date",
+      "description": "Timestamp de fin d'exécution",
+      "json_source": "execution.completed_at"
+    },
+    "Branch": {
+      "type": "text",
+      "description": "Nom de la branche feature/{slug}",
+      "json_source": null,
+      "note": "Rempli par OpenClaw post-création"
+    },
+    "PR URL": {
+      "type": "url",
+      "description": "Lien vers la PR GitHub",
+      "json_source": null,
+      "note": "Rempli par OpenClaw post-PR"
+    },
+    "Auto-merged": {
+      "type": "checkbox",
+      "description": "True si PR auto-mergée",
+      "json_source": null
+    },
+    "Cout tokens": {
+      "type": "number",
+      "description": "Nombre de tokens consommés",
+      "json_source": null
+    },
+    "Duree": {
+      "type": "number",
+      "description": "Durée d'exécution en secondes",
+      "json_source": null
+    },
+    "Flags": {
+      "type": "multi_select",
+      "description": "Options de configuration",
+      "options": ["validate_plan", "with_review", "no_auto_merge"],
+      "json_source": null
+    },
+    "Spec Path": {
+      "type": "text",
+      "description": "Chemin fichier Git si spec hors Notion",
+      "json_source": null
+    },
+    "Projet": {
+      "type": "relation",
+      "description": "Relation vers la table Projets",
+      "target": "Projets",
+      "json_source": null,
+      "note": "À remplir avec l'URL du projet Notion concerné"
+    }
+  },
+  "page_content": {
+    "acceptance_criteria": {
+      "json_source": "acceptanceCriteria",
+      "format": "checklist",
+      "template": "## Critères d'acceptation\n#each acceptanceCriteria\n- [ ] id: description\n/each"
+    },
+    "tasks": {
+      "json_source": "tasks",
+      "format": "todo_list",
+      "template": "## Sous-tâches\n#each tasks\n- [ ] id: description\n/each"
+    }
+  }
+}

@@ -20,7 +20,7 @@ conditional_next:
 - NEVER call AskUserQuestion
 - NEVER display breakpoint boxes
 - ALWAYS parse and validate all arguments
-- ALWAYS create worktree from origin/main
+- ALWAYS create worktree from origin's default branch (dynamically detected)
 - ALWAYS create Feature Document
 - ALWAYS initialize JSON output file
 
@@ -81,7 +81,8 @@ Create an isolated worktree for this feature:
 
 ```bash
 git fetch origin
-git worktree add ../worktrees/{feature-slug} -b feature/{feature-slug} origin/main
+DEFAULT_BRANCH=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null || echo "main")
+git worktree add ../worktrees/{feature-slug} -b feature/{feature-slug} origin/$DEFAULT_BRANCH
 ```
 
 If worktree already exists:

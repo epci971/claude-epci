@@ -20,8 +20,7 @@ Standalone headless EPCI skill for autonomous feature implementation without use
 ## Quick Start
 
 ```bash
-claude -p "/implement-auto feature-slug @path/to/spec.md" \
-  --permission-mode bypassPermissions
+claude --dangerously-skip-permissions  -p "/implement-auto feature-slug @path/to/spec.md" \
 ```
 
 ## Installation
@@ -43,7 +42,7 @@ No other dependencies required. The skill uses the target project's CLAUDE.md an
 | `--validate-plan` | No | Invoke plan-validator (Opus) for plan review |
 | `--with-review` | No | Invoke code-reviewer (Opus) in addition to self-review |
 | `--skip-publish` | No | Skip push/PR/cleanup (orchestrator handles post-processing) |
-| `--auto-merge` | No | Enable GitHub auto-merge on created PR |
+| `--auto-merge` | No | Squash-merge PR immediately after creation (SUCCESS only). Ensures code is in base branch for dependent tasks |
 
 ## Output
 
@@ -154,7 +153,7 @@ See [references/review-checklist.md](references/review-checklist.md).
 | `--validate-plan` | Invoke plan-validator (Opus) to review the plan before coding |
 | `--with-review` | Invoke code-reviewer (Opus) after self-review for deep analysis |
 | `--skip-publish` | Skip push, PR creation, and worktree cleanup (orchestrator handles) |
-| `--auto-merge` | Enable GitHub auto-merge (`gh pr merge --auto --squash`) after PR creation |
+| `--auto-merge` | Immediately squash-merge PR (`gh pr merge --squash --delete-branch`) after creation. SUCCESS only — PARTIAL keeps draft PR, FAILED skips |
 
 ## Conventions
 
@@ -173,4 +172,4 @@ No stack skills are embedded. This makes the skill portable across any stack.
 - No complexity routing (always STANDARD)
 - Timeout managed externally by orchestrator
 - Self-review is lighter than full code-reviewer
-- Auto-merge requires gh CLI installed + GitHub repo setting "Allow auto-merge" enabled
+- Auto-merge requires gh CLI installed + merge permissions on the repository. Merges immediately on SUCCESS only; PARTIAL status keeps the PR as draft
