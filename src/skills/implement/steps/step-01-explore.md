@@ -63,7 +63,33 @@ very thorough
 - Context isolation (doesn't pollute main thread)
 - Supports thoroughness levels: quick, medium, very thorough
 
-3. **Identify** existing patterns
+3. **Sanity Check** explore results (hallucination detection)
+
+After the Explore agent returns, verify that reported files actually exist:
+
+```
+hallucinated = 0
+verified = 0
+total = len(relevant_files + files_to_modify)
+
+FOR each file in explore_results.relevant_files + files_to_modify:
+  exists = Glob(pattern: file.path)
+  IF exists:
+    verified += 1
+  ELSE:
+    hallucinated += 1
+    Remove file from explore results
+    Log: "File not found (hallucinated): {file.path}"
+
+hallucination_rate = hallucinated / total (if total > 0, else 0)
+```
+
+**Action based on rate:**
+- `rate == 0`: OK, proceed normally
+- `0 < rate <= 0.30`: WARN — cleaned results, note in breakpoint summary: "{hallucinated} files not found, removed from results"
+- `rate > 0.30`: HIGH WARN — flag in breakpoint with strong recommendation to re-explore or manually verify. Do NOT auto-abort (interactive mode lets user decide)
+
+4. **Identify** existing patterns
    - Architecture patterns in use
    - Coding conventions
    - Testing patterns

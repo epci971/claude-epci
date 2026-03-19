@@ -63,9 +63,22 @@ For each component in the implementation plan:
 
 ## EXECUTION PROTOCOLS:
 
+### 0. Initialize Circuit Breaker Tracking
+
+Track component failures to detect cascading problems early:
+
+```
+consecutive_failures = 0
+total_failed = 0
+total_attempted = 0
+total_skipped = 0
+```
+
 1. **Follow** implementation plan order
    - Start with Phase 1 components
    - Complete each component before moving to next
+   - **Check dependencies**: Before each component, verify its depends_on components are SUCCESS
+     - If any dependency is FAILED or SKIPPED: mark component as SKIPPED, total_skipped += 1, warn user
 
 2. **For each component**, execute TDD cycle (see tdd-rules.md importé ci-dessus):
    - **RED Phase**: Write failing test, verify it fails for the right reason
@@ -136,7 +149,38 @@ For each component in the implementation plan:
 
    Continue implementing remaining components while reviewer runs.
 
-5. **Invoke** tdd-enforcer periodically
+5. **Update Circuit Breaker** after each component
+
+   ```
+   total_attempted += 1
+
+   IF component.status == "SUCCESS":
+     consecutive_failures = 0
+   ELIF component.status == "FAILED":
+     consecutive_failures += 1
+     total_failed += 1
+   ```
+
+   **Circuit Breaker Alert** (breakpoint `diagnostic`):
+
+   IF consecutive_failures >= 3 OR (total_attempted >= 4 AND total_failed / total_attempted > 0.5):
+
+   Present a diagnostic breakpoint via AskUserQuestion:
+
+   ```
+   "3 consecutive component failures detected" OR ">50% failure rate ({total_failed}/{total_attempted})"
+
+   Options:
+   [A] Continuer malgre les echecs — Keep implementing remaining components
+   [B] Investiguer — Switch to /debug for root cause analysis
+   [C] Abandonner — Stop implementation, proceed to review with partial results
+   ```
+
+   - If user chooses Continue: reset consecutive_failures, continue
+   - If user chooses Investigate: invoke /debug skill, then resume
+   - If user chooses Abandon: skip remaining components, proceed to step-04-review
+
+6. **Invoke** tdd-enforcer periodically
    - Verify TDD compliance
    - Check coverage targets
 

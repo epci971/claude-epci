@@ -1,6 +1,6 @@
 ---
 name: step-03-code-auto
-description: TDD implementation with 3-level circuit breaker [C]
+description: TDD implementation with stack skills, circuit breaker, and background reviewer [C]
 prev_step: steps/step-02-plan-auto.md
 next_step: steps/step-04-review-auto.md
 conditional_next:
@@ -14,6 +14,7 @@ conditional_next:
 
 @../references/tdd-rules.md
 @../references/circuit-breaker-rules.md
+@../references/domain-mapping.md
 
 ## MANDATORY EXECUTION RULES:
 
@@ -21,10 +22,11 @@ conditional_next:
 - NEVER write implementation before test (TDD RED first)
 - NEVER skip circuit breaker checks after each component
 - NEVER continue after task-level circuit breaker triggers
+- ALWAYS load stack skill before implementing a component (per file extension)
 - ALWAYS follow TDD cycle: RED -> GREEN -> REFACTOR
 - ALWAYS update JSON output after each component
 - ALWAYS check dependencies before starting a component
-- ALWAYS follow patterns identified in exploration
+- ALWAYS follow patterns identified in exploration and stack skills
 
 ## EXECUTION PROTOCOLS:
 
@@ -35,6 +37,8 @@ consecutive_failures = 0
 total_failed = 0
 total_attempted = 0
 total_skipped = 0
+stack_cache = {}  # Cache loaded stack skills (load once per type)
+background_reviewer_task_id = null
 ```
 
 ### 2. For Each Component (in plan order)
@@ -56,7 +60,34 @@ FOR each dep in component.depends_on:
     CONTINUE to next component
 ```
 
-#### 2b. TDD Cycle
+#### 2b. Load Stack Skill (per file extension)
+
+Before implementing the component, identify the target file extension and load the corresponding stack skill:
+
+```
+ext = get_extension(component.file)
+stack = extension_to_stack(ext)  # See domain-mapping.md
+
+IF stack AND stack NOT IN stack_cache:
+  ## Load stack skill SKILL.md + all references/
+  Read(src/skills/stack/{stack}/SKILL.md)
+  FOR each ref_file in Glob("src/skills/stack/{stack}/references/*.md"):
+    Read(ref_file)
+  stack_cache[stack] = true
+  LOG: "Loaded stack skill: {stack}"
+
+## Extension to stack mapping:
+## *.py           → python-django
+## *.php          → php-symfony
+## *.java         → java-springboot
+## *.tsx,*.jsx,*.ts,*.js → javascript-react
+## *.css,*.scss,*.html   → frontend-editor
+## Other          → No stack skill (use project CLAUDE.md/rules only)
+```
+
+Apply ALL loaded stack patterns for this component: architecture, ORM/data, API, testing conventions.
+
+#### 2c. TDD Cycle
 
 Execute for this component (max 2 attempts per circuit-breaker-rules.md):
 
@@ -72,15 +103,21 @@ WHILE attempts < MAX_ATTEMPTS:
   - Define expected behavior based on spec requirements
   - Use project test framework (detected in explore)
   - Follow project conventions from CLAUDE.md/rules/
+  - Apply stack skill testing patterns (e.g., pytest fixtures for Django, @SpringBootTest for Spring)
 
   Run tests: execute test command for this component
+  - Stack-specific commands:
+    - python-django: pytest {test_file} -v
+    - php-symfony: ./vendor/bin/phpunit --filter {test}
+    - java-springboot: ./gradlew test --tests "{TestClass}"
+    - javascript-react: npm test -- {file} or npx vitest run {file}
   - Expected: test FAILS (exit code != 0)
   - If test PASSES: implementation already exists, mark SUCCESS, break
   - If syntax error: fix test, do NOT count as attempt
 
   ## GREEN Phase
   Write minimal implementation at component.file
-  - Follow patterns from exploration
+  - Follow patterns from exploration and stack skill
   - Use project conventions from CLAUDE.md/rules/
   - Write only enough code to make the test pass
 
@@ -96,7 +133,8 @@ WHILE attempts < MAX_ATTEMPTS:
 
   ## REFACTOR Phase
   Review implementation for quality:
-  - Apply identified patterns
+  - Apply identified patterns from stack skill
+  - Check against stack anti-patterns
   - Remove duplication
   - Improve naming
 
@@ -105,7 +143,7 @@ WHILE attempts < MAX_ATTEMPTS:
   - If FAIL: Revert refactor changes, mark SUCCESS (GREEN was passing)
 ```
 
-#### 2c. Update Component Status
+#### 2d. Update Component Status
 
 ```
 total_attempted += 1
@@ -117,7 +155,7 @@ ELIF component.status == "FAILED":
   total_failed += 1
 ```
 
-#### 2d. Circuit Breaker Check (Level 2 - Task)
+#### 2e. Circuit Breaker Check (Level 2 - Task)
 
 ```
 ## Check consecutive failures
@@ -135,7 +173,50 @@ IF total_attempted >= 4 AND (total_failed / total_attempted) > 0.5:
   GOTO step-06-finish-auto
 ```
 
-#### 2e. Update JSON Output (Incremental)
+#### 2f. Launch Background Code Reviewer (once at 50%)
+
+```
+IF flag_skip_review == false
+   AND background_reviewer_task_id == null
+   AND total_attempted >= (plan.total_components / 2):
+
+  ## Get list of files modified so far
+  completed_files = [c.file for c in plan.components if c.status == "SUCCESS"]
+
+  LANCE Task({
+    subagent_type: "code-reviewer",
+    model: "opus",
+    run_in_background: true,
+    prompt: "
+      ## Code Review Request (Background - Partial)
+      Feature: {feature_slug}
+      Requirements: {spec_requirements}
+
+      ## Files to Review
+      {completed_files}
+
+      ## Context
+      - Patterns from exploration: {patterns}
+      - Stack skills loaded: {stack_cache.keys()}
+      - Plan: {plan_summary}
+
+      ## Review Focus
+      - Code quality: patterns, naming, error handling
+      - Test coverage: verify meaningful tests (target {70% or 80%})
+      - Security: OWASP Top 10 awareness
+      - Plan alignment: implementation matches plan
+
+      ## Expected Output
+      Verdict: APPROVED | CHANGES_REQUIRED | SECURITY_REVIEW_NEEDED
+      Findings list with severity (Critical, High, Medium, Low, Info)
+    "
+  })
+
+  background_reviewer_task_id = {task_id}
+  LOG: "Background code reviewer launched at {total_attempted}/{plan.total_components} components"
+```
+
+#### 2g. Update JSON Output (Incremental)
 
 After each component, update `.implement-auto-output.json`:
 - Update `plan.components[i].status`
@@ -145,17 +226,17 @@ After each component, update `.implement-auto-output.json`:
 - Update `metrics.files_created` / `metrics.files_modified`
 - Update `metrics.tests_added`
 
-#### 2f. Update Feature Document §3 (Incremental)
+#### 2h. Update Feature Document §3 (Incremental)
 
-Use Edit tool to update Implementation Log section:
+Use Edit tool to update Implementation section:
 
 For the first component, replace the placeholder:
 ```
 old: "*En attente de la phase Code...*"
-new: "### Component: {name}\n- Status: {status}\n- Tests: {count}\n- File: {file}"
+new: "| {name} | {file} | {test_count} passing | {stack_skill} | {status} |"
 ```
 
-For subsequent components, append after the last component entry.
+For subsequent components, append row after the last component entry in the table.
 
 ### 3. Run Full Test Suite
 
@@ -189,10 +270,12 @@ Update `.implement-auto-output.json`:
 - `phases.current` = "review"
 - Update all metrics
 
+Store `background_reviewer_task_id` in execution context for step-04.
+
 ## CONTEXT BOUNDARIES:
 
-- This step expects: Ordered component plan from step-02, exploration patterns
-- This step produces: Implemented components, test results, updated JSON and Feature Doc
+- This step expects: Ordered component plan from step-02, exploration patterns, complexity level
+- This step produces: Implemented components with stack-specific patterns, test results, background reviewer (if launched), updated JSON and Feature Doc
 
 ## NEXT STEP TRIGGER:
 

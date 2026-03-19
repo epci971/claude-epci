@@ -1,48 +1,55 @@
 ---
 name: epci:implement-auto
 description: >-
-  Standalone headless EPCI workflow for autonomous feature implementation via claude -p.
+  Headless EPCI workflow for autonomous feature implementation via claude -p.
   Executes Explore-Plan-Code-Inspect without interaction. Produces incremental JSON output.
   3-level circuit breaker protects against token-burning. TDD enforced per component.
-  Zero dependency on EPCI core skills — portable to any project via copy.
-  Use when: automated pipeline, headless execution, pre-qualified STANDARD tasks, CI/CD.
+  Uses @planner, @plan-validator, @code-reviewer, @security-auditor, @qa-reviewer and stack skills
+  for quality parity with interactive /implement.
+  Use when: automated pipeline, headless execution, CI/CD.
   Triggers: pipeline automation, cron job, autonomous implementation, batch processing.
   Not for: interactive development (use /implement), quick fixes (use /quick), debugging (use /debug).
 user-invocable: true
-argument-hint: "<feature-slug> @<spec-path> [--validate-plan] [--with-review] [--skip-publish] [--auto-merge]"
+argument-hint: "<feature-slug> [@<spec-path> | @<plan-path>] [--skip-plan-validation] [--skip-review] [--skip-security] [--skip-qa] [--skip-publish] [--auto-merge]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Task
 ---
 
 # implement-auto
 
-Standalone headless EPCI skill for autonomous feature implementation without user interaction.
+Headless EPCI skill for autonomous feature implementation without user interaction.
+Functionally equivalent to `/implement` — same subagents, stack skills, and review depth — with zero breakpoints.
 
 ## Quick Start
 
 ```bash
-claude --dangerously-skip-permissions  -p "/implement-auto feature-slug @path/to/spec.md" \
+# With spec (full EPCI workflow)
+claude --dangerously-skip-permissions -p "/implement-auto feature-slug @path/to/spec.md"
+
+# With plan (skip Explore + Plan phases)
+claude --dangerously-skip-permissions -p "/implement-auto feature-slug @.claude/plans/feature-plan.md"
+
+# With all quality gates disabled (fast mode)
+claude --dangerously-skip-permissions -p "/implement-auto feature-slug @spec.md --skip-plan-validation --skip-review --skip-security --skip-qa"
 ```
-
-## Installation
-
-Copy the entire `implement-auto/` directory into the target project:
-
-```bash
-cp -r implement-auto/ /path/to/project/.claude/skills/implement-auto/
-```
-
-No other dependencies required. The skill uses the target project's CLAUDE.md and rules/.
 
 ## Input
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `feature-slug` | Yes | Kebab-case feature identifier |
-| `@spec-path` | Yes | Path to spec/PRD file (Markdown) |
-| `--validate-plan` | No | Invoke plan-validator (Opus) for plan review |
-| `--with-review` | No | Invoke code-reviewer (Opus) in addition to self-review |
-| `--skip-publish` | No | Skip push/PR/cleanup (orchestrator handles post-processing) |
-| `--auto-merge` | No | Squash-merge PR immediately after creation (SUCCESS only). Ensures code is in base branch for dependent tasks |
+| `@spec-path` | Yes* | Path to spec/PRD file (Markdown). *Required unless @plan-path provided |
+| `@plan-path` | No | Path to Claude Code plan (.claude/plans/*.md). Skips Explore + Plan phases |
+
+### Input Detection
+
+```
+INPUT
+├── @.claude/plans/*.md → PLAN-FIRST workflow (skip E-P)
+│   └─ Plan already done, go directly to CODE
+├── @docs/specs/*.md or @*.md → SPEC-FIRST workflow (full E-P-C-I)
+│   └─ Full Explore + Plan phases
+└── No path → ERROR (spec or plan required in headless mode)
+```
 
 ## Output
 
@@ -60,24 +67,27 @@ Status values: `SUCCESS`, `PARTIAL`, `FAILED`.
 - ALWAYS follow step order sequentially
 - ALWAYS enforce TDD per component (RED-GREEN-REFACTOR)
 - ALWAYS apply circuit breaker rules on failure
+- ALWAYS load stack skills per file extension before implementation
 - FOCUS on autonomous execution from start to finish
 
 ## Workflow
 
 ```
-step-00-init-auto     Parse args, create worktree, Feature Doc, JSON init
+step-00-init-auto     Parse args, complexity detection, worktree, Feature Doc, JSON init
+       |
+       ├── @plan-path provided? → Skip to step-03-code-auto
        |
 step-01-explore-auto  Explore codebase + sanity check (30% threshold)
        |
-step-02-plan-auto     Create implementation plan (no breakpoint)
+step-02-plan-auto     @planner + @plan-validator + implementation plan
        |
-step-03-code-auto     TDD implementation + circuit breaker 3 levels
+step-03-code-auto     TDD implementation + stack skills + circuit breaker + background reviewer
        |
-step-04-review-auto   Self-review checklist (+ optional --with-review)
+step-04-review-auto   Self-review + @code-reviewer + @security-auditor + @qa-reviewer
        |
 step-05-document-auto Feature Document completion + executive summary
        |
-step-06-finish-auto   Final validation, commit, status determination
+step-06-finish-auto   Final validation, commit, index.json update, status determination
        |
 step-07-output-auto   Final JSON write
        |
@@ -92,6 +102,34 @@ step-08-publish-auto  Push branch, create PR, cleanup worktree
 4. **Evaluate** circuit breaker conditions
 5. **Proceed** to next_step or abort if circuit breaker triggers
 
+## Subagents
+
+| Agent | Model | Step | Default | Skip Flag |
+|-------|-------|------|---------|-----------|
+| Explore | Haiku | 01 | Always | - |
+| @planner | Sonnet | 02 | Always | - |
+| @plan-validator | Opus | 02 | Always | `--skip-plan-validation` |
+| @code-reviewer | Opus | 03 (background) + 04 | Always | `--skip-review` |
+| @security-auditor | Opus | 04 | Conditional* | `--skip-security` |
+| @qa-reviewer | Sonnet | 04 | Conditional** | `--skip-qa` |
+
+\* Triggered when auth/security patterns detected OR complexity is LARGE.
+\** Triggered when >3 acceptance criteria OR >5 components OR complexity is LARGE.
+
+## Stack Skills
+
+Dynamic per-file loading via domain-mapping. See [references/domain-mapping.md](references/domain-mapping.md).
+
+| Extension | Stack Skill |
+|-----------|-------------|
+| `*.py` | python-django |
+| `*.php` | php-symfony |
+| `*.java` | java-springboot |
+| `*.tsx`, `*.jsx`, `*.ts`, `*.js` | javascript-react |
+| `*.css`, `*.scss`, `*.html` | frontend-editor |
+
+Each stack skill is loaded once per type (cached). Provides architecture patterns, testing conventions, and anti-patterns.
+
 ## Circuit Breaker (3 Levels)
 
 | Level | Scope | Threshold | Action |
@@ -105,24 +143,29 @@ See [references/circuit-breaker-rules.md](references/circuit-breaker-rules.md).
 ## TDD Rules
 
 Self-contained TDD workflow: RED -> GREEN -> REFACTOR -> VERIFY.
-No dependency on epci:tdd-enforcer. See [references/tdd-rules.md](references/tdd-rules.md).
+Coverage targets adapt to complexity: STANDARD (70%/60%), LARGE (80%/70%).
+See [references/tdd-rules.md](references/tdd-rules.md).
 
-## Self-Review
+## Review Pipeline
 
-Built-in checklist covering tests, code quality, architecture, security basics.
+1. **Self-review** (always): Automated grep-based checks (tests, code quality, architecture, security basics)
+2. **@code-reviewer** (default): Deep Opus analysis — quality, tests, performance, architecture, plan alignment
+3. **@security-auditor** (conditional): OWASP Top 10 — triggered on auth/security patterns or LARGE complexity
+4. **@qa-reviewer** (conditional): Acceptance criteria, edge cases, error handling — triggered on >3 AC or >5 components
+
 See [references/review-checklist.md](references/review-checklist.md).
 
 ## Steps
 
 | Step | Name | Phase | Description |
 |------|------|-------|-------------|
-| 00 | init-auto | - | Parse args, worktree, Feature Doc, JSON |
-| 01 | explore-auto | [E] | Explore + sanity check |
-| 02 | plan-auto | [P] | Implementation plan |
-| 03 | code-auto | [C] | TDD + circuit breaker |
-| 04 | review-auto | [I] | Self-review checklist |
+| 00 | init-auto | - | Parse args, complexity detection, worktree, Feature Doc, JSON |
+| 01 | explore-auto | [E] | Explore + sanity check (skippable via @plan-path) |
+| 02 | plan-auto | [P] | @planner + @plan-validator (skippable via @plan-path) |
+| 03 | code-auto | [C] | TDD + stack skills + circuit breaker + background reviewer |
+| 04 | review-auto | [I] | Self-review + @code-reviewer + @security-auditor + @qa-reviewer |
 | 05 | document-auto | - | Feature Document + summary |
-| 06 | finish-auto | - | Finalization + commit |
+| 06 | finish-auto | - | Finalization + commit + index.json update |
 | 07 | output-auto | - | Final JSON output |
 | 08 | publish-auto | - | Push, PR, worktree cleanup |
 
@@ -143,33 +186,29 @@ See [references/review-checklist.md](references/review-checklist.md).
 - [references/tdd-rules.md](references/tdd-rules.md) — TDD workflow (self-contained)
 - [references/circuit-breaker-rules.md](references/circuit-breaker-rules.md) — Circuit breaker logic
 - [references/output-json-schema.md](references/output-json-schema.md) — JSON output contract
-- [references/review-checklist.md](references/review-checklist.md) — Self-review items
-- [references/feature-document-template.md](references/feature-document-template.md) — Feature Document
+- [references/review-checklist.md](references/review-checklist.md) — Review checklists (self-review + code + security + QA)
+- [references/feature-document-template.md](references/feature-document-template.md) — Feature Document template
+- [references/domain-mapping.md](references/domain-mapping.md) — File extension to stack skill mapping
 
 ## Flags
 
-| Flag | Effect |
-|------|--------|
-| `--validate-plan` | Invoke plan-validator (Opus) to review the plan before coding |
-| `--with-review` | Invoke code-reviewer (Opus) after self-review for deep analysis |
-| `--skip-publish` | Skip push, PR creation, and worktree cleanup (orchestrator handles) |
-| `--auto-merge` | Immediately squash-merge PR (`gh pr merge --squash --delete-branch`) after creation. SUCCESS only — PARTIAL keeps draft PR, FAILED skips |
+| Flag | Default | Effect |
+|------|---------|--------|
+| `--skip-plan-validation` | Off | Skip @plan-validator invocation (plan still created by @planner) |
+| `--skip-review` | Off | Skip @code-reviewer, keep self-review only |
+| `--skip-security` | Off | Skip @security-auditor even if patterns detected |
+| `--skip-qa` | Off | Skip @qa-reviewer even if threshold met |
+| `--skip-publish` | Off | Skip push, PR creation, and worktree cleanup |
+| `--auto-merge` | Off | Squash-merge PR immediately (SUCCESS only, PARTIAL keeps draft) |
 
 ## Conventions
 
-The skill relies on the target project's CLAUDE.md and .claude/rules/ for:
-- Architecture patterns
-- Naming conventions
-- Test commands
-- Code style
-
-No stack skills are embedded. This makes the skill portable across any stack.
+The skill loads stack skills dynamically based on file extensions for architecture patterns and testing conventions.
+It also uses the target project's CLAUDE.md and .claude/rules/ for project-specific conventions.
 
 ## Limitations
 
 - No interactive breakpoints (by design)
-- No team mode / multi-agent orchestration
-- No complexity routing (always STANDARD)
+- No team mode / multi-agent orchestration (background reviewer serves similar purpose)
 - Timeout managed externally by orchestrator
-- Self-review is lighter than full code-reviewer
-- Auto-merge requires gh CLI installed + merge permissions on the repository. Merges immediately on SUCCESS only; PARTIAL status keeps the PR as draft
+- Auto-merge requires gh CLI installed + merge permissions

@@ -1,6 +1,6 @@
 ---
 name: step-06-finish-auto
-description: Finalization, commit changes, determine final status
+description: Finalization, commit changes, index.json update, determine final status
 prev_step: steps/step-05-document-auto.md
 next_step: steps/step-07-output-auto.md
 ---
@@ -12,6 +12,7 @@ next_step: steps/step-07-output-auto.md
 - NEVER call AskUserQuestion
 - ALWAYS run final test suite
 - ALWAYS commit changes (if any)
+- ALWAYS update index.json with feature summary
 - ALWAYS determine final status accurately
 
 ## EXECUTION PROTOCOLS:
@@ -87,7 +88,43 @@ old: "| Status | IN_PROGRESS |"
 new: "| Status | {COMPLETED or PARTIAL or FAILED} |"
 ```
 
-### 5. Update JSON Output
+### 5. Update index.json (Feature Memory)
+
+Update `.claude/state/features/index.json` to record this feature in the project's feature history.
+
+```
+## Read existing index.json (or create if not exists)
+index_path = ".claude/state/features/index.json"
+IF NOT exists(index_path):
+  mkdir -p .claude/state/features/
+  Write index_path with { "features": [] }
+
+## Build feature entry
+feature_entry = {
+  "id": "{feature-slug}",
+  "status": "{completed|partial|failed}",
+  "current_phase": "inspect",
+  "complexity": "{STANDARD|LARGE}",
+  "branch": "feature/{feature-slug}",
+  "created_at": "{ISO-8601 from init}",
+  "last_update": "{ISO-8601 now}",
+  "summary": "{1-2 sentences, max 200 chars}",
+  "modified_files": [{list of modified/created files}],
+  "test_count": {total tests added},
+  "feature_doc": "{feature_doc_path}",
+  "source": "implement-auto"
+}
+
+## Add or update entry in index
+IF feature_slug already in index.features:
+  Update existing entry
+ELSE:
+  Append to index.features
+```
+
+The `"source": "implement-auto"` field distinguishes features implemented by the headless workflow from those implemented interactively.
+
+### 6. Update JSON Output
 
 Update `.implement-auto-output.json`:
 - `phases.completed` += "finish"
@@ -99,7 +136,7 @@ Update `.implement-auto-output.json`:
 ## CONTEXT BOUNDARIES:
 
 - This step expects: All implementation results, review findings
-- This step produces: Final status, committed changes, updated JSON
+- This step produces: Final status, committed changes, index.json entry, updated JSON
 
 ## NEXT STEP TRIGGER:
 

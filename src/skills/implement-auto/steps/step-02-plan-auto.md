@@ -1,11 +1,8 @@
 ---
 name: step-02-plan-auto
-description: Create implementation plan without breakpoint [P]
+description: Create implementation plan via @planner + @plan-validator [P]
 prev_step: steps/step-01-explore-auto.md
 next_step: steps/step-03-code-auto.md
-conditional_next:
-  - condition: "plan_validation_failed and flag_validate_plan"
-    step: steps/step-07-output-auto.md
 ---
 
 # Step 02: Plan (Auto) [P]
@@ -14,9 +11,11 @@ conditional_next:
 
 - NEVER call AskUserQuestion
 - NEVER skip test strategy definition
+- ALWAYS invoke @planner (Sonnet) for plan generation
+- ALWAYS invoke @plan-validator (Opus) unless --skip-plan-validation
 - ALWAYS define implementation order with dependencies
 - ALWAYS specify TDD approach per component
-- ALWAYS update Feature Document section 2
+- ALWAYS update Feature Document §2
 
 ## EXECUTION PROTOCOLS:
 
@@ -28,32 +27,53 @@ Review from step-01:
 - Test framework and conventions
 - Files to modify and create
 
-### 2. Create Implementation Plan
+### 2. Invoke @planner Agent
 
-Decompose the feature into atomic components ordered by dependency:
+Invoke @planner (Sonnet) via Task tool to create the implementation plan:
 
-For each component, define:
+```
+LANCE Task({
+  subagent_type: "planner",
+  model: "sonnet",
+  prompt: "
+    ## Feature
+    {feature_slug}: {spec_objective}
 
-| Field | Description |
-|-------|-------------|
-| `name` | Component name (kebab-case) |
-| `file` | Primary file path to create/modify |
-| `type` | `create` or `modify` |
-| `depends_on` | List of component names this depends on |
-| `test_file` | Path to test file |
-| `test_approach` | TDD strategy (unit, integration) |
-| `description` | What this component does |
+    ## Requirements
+    {spec_requirements_and_acceptance_criteria}
 
-### Ordering Rules
+    ## Exploration Findings
+    - Relevant files: {verified_files_with_purposes}
+    - Patterns: {identified_patterns}
+    - Test framework: {test_framework_name}, command: {test_run_command}
+    - Files to modify: {files_to_modify}
+    - Files to create: {files_to_create}
 
-1. Foundation components first (models, types, interfaces)
-2. Core logic second (services, business rules)
-3. Integration third (controllers, API, views)
-4. Configuration last (settings, env)
+    ## Constraints
+    - Follow existing architecture patterns
+    - TDD required: each component needs test_file and test_approach
+    - Dependencies must be acyclic
 
-### 3. Invoke Plan-Validator Agent (--validate-plan)
+    ## Expected Output
+    Ordered list of atomic components with:
+    - name (kebab-case)
+    - file (primary file path)
+    - type (create or modify)
+    - depends_on (list of component names)
+    - test_file (path to test file)
+    - test_approach (unit or integration)
+    - description (what this component does)
 
-IF `flag_validate_plan` is true:
+    Order: foundation first, core logic second, integration third, config last.
+  "
+})
+```
+
+Parse the planner output into the component structure.
+
+### 3. Invoke @plan-validator Agent
+
+IF `flag_skip_plan_validation` is false (default):
 
 ```
 LANCE Task({
@@ -61,57 +81,88 @@ LANCE Task({
   model: "opus",
   prompt: "
     ## Plan to Validate
-    {plan_components}
+    {plan_components_from_planner}
 
     ## Feature Requirements
     {spec_requirements}
 
+    ## Exploration Context
+    - Existing files: {verified_files}
+    - Patterns: {identified_patterns}
+
     ## Validation Checklist
-    - Completeness: All requirements covered
-    - Consistency: No circular dependencies
-    - Feasibility: Files and patterns exist
-    - Quality: TDD strategy per component
+    - Completeness: All requirements and acceptance criteria covered
+    - Consistency: No circular dependencies in depends_on
+    - Feasibility: Referenced files and patterns exist in codebase
+    - Quality: TDD strategy defined per component, tests are meaningful
 
     ## Expected Output
-    APPROVED or NEEDS_REVISION with feedback
+    APPROVED or NEEDS_REVISION with specific feedback per component
   "
 })
 ```
 
-If NEEDS_REVISION: apply feedback, regenerate plan (max 1 retry).
-If still NEEDS_REVISION after retry: add warning, continue anyway.
+**Process validation result:**
+- If APPROVED: continue to step 4
+- If NEEDS_REVISION: apply feedback, re-invoke @planner (max 1 retry)
+  - Pass validator feedback as additional constraints to @planner
+  - Re-validate with @plan-validator
+  - If still NEEDS_REVISION: add warning to JSON, continue anyway
+- Record verdict in JSON: `plan.validator_verdict`
 
-### 4. Update Feature Document §2
+IF `flag_skip_plan_validation` is true:
+- Set `plan.validator_verdict = null`
+- Add warning: "Plan validation skipped (--skip-plan-validation flag)"
+
+### 4. Record Plan Metadata
+
+```
+plan.planner_used = true
+plan.validator_verdict = "{APPROVED or NEEDS_REVISION or null}"
+```
+
+### 5. Update Feature Document §2
 
 Use Edit tool to replace the plan section placeholder in the Feature Document:
 
-```
-## Plan d'implementation
+```markdown
+## §2 — Plan d'implementation
 
-| # | Composant | Fichier | Dependances | Status |
-|---|-----------|---------|-------------|--------|
-{generated plan table}
+### Composants
 
-### Strategie de test
+| # | Composant | Fichier | Dependencies | Status |
+|---|-----------|---------|--------------|--------|
+| 1 | {name} | {file} | {depends_on} | PENDING |
+{... all components}
+
+### Strategie de tests
 - Framework: {detected_framework}
 - Commande: {test_command}
 - Approche: TDD RED-GREEN-REFACTOR par composant
+- Coverage cible: {70% or 80%} line / {60% or 70%} branch
+
+### Validation du plan
+| Champ | Valeur |
+|-------|--------|
+| @planner | Sonnet |
+| @plan-validator | {APPROVED / NEEDS_REVISION / skipped} |
 ```
 
-### 5. Update JSON Output
+### 6. Update JSON Output
 
 Update `.implement-auto-output.json`:
 - `phases.completed` += "plan"
 - `phases.current` = "code"
 - `plan.total_components` = count
-- `plan.components` = [{name, file, status: "pending", ...}]
+- `plan.planner_used` = true
+- `plan.validator_verdict` = "{verdict or null}"
+- `plan.components` = [{name, file, status: "pending", tests_added: 0, retries: 0, error: null}]
 
 ## CONTEXT BOUNDARIES:
 
 - This step expects: Verified exploration data from step-01
-- This step produces: Ordered component plan, updated Feature Doc §2, updated JSON
+- This step produces: Ordered component plan (from @planner), validation verdict (from @plan-validator), updated Feature Doc §2, updated JSON
 
 ## NEXT STEP TRIGGER:
 
 On success, proceed to step-03-code-auto.md.
-If plan validation fails with --validate-plan and no recovery: jump to step-07-output-auto.md.

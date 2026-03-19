@@ -22,7 +22,8 @@ Written incrementally at each step completion. Always valid JSON.
   "feature": {
     "slug": "string",
     "branch": "string",
-    "spec_source": "string"
+    "spec_source": "string",
+    "complexity": "STANDARD | LARGE"
   },
   "phases": {
     "completed": ["init", "explore", "plan", "code", "review", "document", "finish"],
@@ -32,6 +33,8 @@ Written incrementally at each step completion. Always valid JSON.
   },
   "plan": {
     "total_components": 0,
+    "planner_used": true,
+    "validator_verdict": "APPROVED | NEEDS_REVISION | null",
     "components": [
       {
         "name": "string",
@@ -58,6 +61,28 @@ Written incrementally at each step completion. Always valid JSON.
       "items_passed": 0,
       "items_warned": 0,
       "findings": []
+    },
+    "deep_review": {
+      "status": "pass | warn | fail | skip",
+      "verdict": "APPROVED | CHANGES_REQUIRED | SECURITY_REVIEW_NEEDED | null",
+      "findings_count": 0,
+      "critical_count": 0,
+      "skipped_reason": "string | null"
+    },
+    "security_review": {
+      "status": "pass | warn | fail | skip",
+      "verdict": "PASS | FAIL_CRITICAL | FAIL_HIGH | null",
+      "vulnerabilities": 0,
+      "owasp_categories": [],
+      "skipped_reason": "string | null"
+    },
+    "qa_review": {
+      "status": "pass | warn | fail | skip",
+      "verdict": "PASS | FAIL | null",
+      "ac_passed": 0,
+      "ac_total": 0,
+      "defects_found": 0,
+      "skipped_reason": "string | null"
     }
   },
   "feature_doc": "string (path)",
@@ -132,6 +157,20 @@ Written incrementally at each step completion. Always valid JSON.
 | `current` | string? | Step currently executing (null when done) |
 | `skipped` | string[] | Steps skipped |
 
+### feature.complexity
+
+| Value | Coverage Targets | Security Review |
+|-------|-----------------|-----------------|
+| `STANDARD` | 70% line / 60% branch | Conditional (auth patterns) |
+| `LARGE` | 80% line / 70% branch | Mandatory |
+
+### plan Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `planner_used` | boolean | Whether @planner agent was invoked |
+| `validator_verdict` | string? | `APPROVED`, `NEEDS_REVISION`, or null if skipped |
+
 ### plan.components Array
 
 Each component from the implementation plan:
@@ -144,6 +183,37 @@ Each component from the implementation plan:
 | `tests_added` | number | Number of tests written |
 | `retries` | number | Number of retry attempts (0-2) |
 | `error` | string? | Error message if FAILED |
+
+### checks.deep_review Object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | enum | `pass`, `warn`, `fail`, or `skip` |
+| `verdict` | string? | `APPROVED`, `CHANGES_REQUIRED`, `SECURITY_REVIEW_NEEDED`, or null |
+| `findings_count` | number | Total findings from @code-reviewer |
+| `critical_count` | number | Critical/blocking findings |
+| `skipped_reason` | string? | Reason if skipped (e.g., `"--skip-review flag"`, `"timeout"`) |
+
+### checks.security_review Object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | enum | `pass`, `warn`, `fail`, or `skip` |
+| `verdict` | string? | `PASS`, `FAIL_CRITICAL`, `FAIL_HIGH`, or null |
+| `vulnerabilities` | number | Total vulnerabilities found |
+| `owasp_categories` | string[] | OWASP categories with findings (e.g., `["A01", "A03"]`) |
+| `skipped_reason` | string? | Reason if skipped (e.g., `"no_security_patterns"`, `"--skip-security flag"`) |
+
+### checks.qa_review Object
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | enum | `pass`, `warn`, `fail`, or `skip` |
+| `verdict` | string? | `PASS` or `FAIL` |
+| `ac_passed` | number | Acceptance criteria verified |
+| `ac_total` | number | Total acceptance criteria |
+| `defects_found` | number | Defects found |
+| `skipped_reason` | string? | Reason if skipped (e.g., `"below_threshold"`, `"--skip-qa flag"`) |
 
 ### publish Object
 
@@ -169,7 +239,7 @@ step-00-init-auto    -> Write initial JSON (status: null, current: "init")
 step-01-explore-auto -> Update phases.completed += "explore"
 step-02-plan-auto    -> Update phases.completed += "plan", add plan.components
 step-03-code-auto    -> Update per-component (most frequent updates)
-step-04-review-auto  -> Update checks.self_review
+step-04-review-auto  -> Update checks.self_review, checks.deep_review, checks.security_review, checks.qa_review
 step-05-document-auto -> Update feature_doc path
 step-06-finish-auto  -> Update final status, metrics
 step-07-output-auto  -> Final write with complete data
