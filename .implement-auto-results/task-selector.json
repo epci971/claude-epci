@@ -1,0 +1,67 @@
+{
+  "$schema": "implement-auto-output-v1",
+  "version": 1,
+  "timestamp": "2026-02-13T11:12:00Z",
+  "status": "SUCCESS",
+  "exit_reason": null,
+  "feature": {
+    "slug": "task-selector",
+    "branch": "feature/task-selector",
+    "spec_source": "docs/specs/notion-runner/task-003-task-selector.md"
+  },
+  "phases": {
+    "completed": ["init", "explore", "plan", "code", "review", "document", "finish"],
+    "failed": [],
+    "current": "output",
+    "skipped": []
+  },
+  "plan": {
+    "total_components": 3,
+    "components": [
+      {
+        "name": "task-parser",
+        "file": "src/openclaw/task_selector.py",
+        "status": "SUCCESS",
+        "tests_added": 6,
+        "retries": 0,
+        "error": null
+      },
+      {
+        "name": "priority-sorter",
+        "file": "src/openclaw/task_selector.py",
+        "status": "SUCCESS",
+        "tests_added": 3,
+        "retries": 0,
+        "error": null
+      },
+      {
+        "name": "dependency-resolver",
+        "file": "src/openclaw/task_selector.py",
+        "status": "SUCCESS",
+        "tests_added": 15,
+        "retries": 0,
+        "error": null
+      }
+    ]
+  },
+  "metrics": {
+    "files_created": 2,
+    "files_modified": 0,
+    "tests_added": 24,
+    "tests_passing": 24,
+    "tests_failing": 0
+  },
+  "checks": {
+    "tests": { "status": "pass", "count": 24, "failures": 0 },
+    "self_review": {
+      "status": "pass",
+      "items_checked": 9,
+      "items_passed": 9,
+      "items_warned": 0,
+      "findings": []
+    }
+  },
+  "feature_doc": "docs/features/task-selector-20260213-110724.md",
+  "errors": [],
+  "warnings": []
+}
