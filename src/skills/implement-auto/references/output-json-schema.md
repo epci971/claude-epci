@@ -5,7 +5,7 @@
 ## File Location
 
 ```
-{worktree_path}/.implement-auto-output.json
+{working_directory}/.implement-auto-output.json
 ```
 
 Written incrementally at each step completion. Always valid JSON.
@@ -23,7 +23,8 @@ Written incrementally at each step completion. Always valid JSON.
     "slug": "string",
     "branch": "string",
     "spec_source": "string",
-    "complexity": "STANDARD | LARGE"
+    "complexity": "STANDARD | LARGE",
+    "worktree_enabled": "boolean"
   },
   "phases": {
     "completed": ["init", "explore", "plan", "code", "review", "document", "finish"],
@@ -109,7 +110,7 @@ Written incrementally at each step completion. Always valid JSON.
     "auto_merge_enabled": "boolean",
     "merged": "boolean",
     "merge_error": "string | null",
-    "worktree_cleaned": "boolean",
+    "worktree_cleaned": "boolean | null",
     "skipped": "boolean"
   }
 }
@@ -162,6 +163,13 @@ Written incrementally at each step completion. Always valid JSON.
 | Value | Coverage Targets | Security Review |
 |-------|-----------------|-----------------|
 | `STANDARD` | 70% line / 60% branch | Conditional (auth patterns) |
+
+### feature.worktree_enabled
+
+| Value | Meaning |
+|-------|---------|
+| `true` | Worktree isolation active (--worktree flag used) |
+| `false` | In-place execution (default) |
 | `LARGE` | 80% line / 70% branch | Mandatory |
 
 ### plan Fields
@@ -227,7 +235,7 @@ Each component from the implementation plan:
 | `auto_merge_enabled` | boolean | Whether auto-merge was activated on the PR |
 | `merged` | boolean | Whether PR was immediately squash-merged (SUCCESS only) |
 | `merge_error` | string? | Error message if merge failed, or `"skipped_partial_status"` for PARTIAL |
-| `worktree_cleaned` | boolean | Whether worktree was successfully removed |
+| `worktree_cleaned` | boolean? | Whether worktree was successfully removed. Null if --worktree not used |
 | `skipped` | boolean | True if --skip-publish flag was used |
 
 ## Incremental Write Protocol
@@ -248,11 +256,14 @@ step-08-publish-auto -> Update publish section (incl. merge status), phases.comp
 
 ## File Persistence
 
-After step-08, the worktree is removed. The JSON output is copied to a persistent location:
+After step-08, the JSON output is copied to a persistent location:
 
 ```
-{main_repo}/.implement-auto-results/{feature-slug}.json
+.implement-auto-results/{feature-slug}.json
 ```
+
+If `--worktree` was used, the worktree is removed and the JSON is copied to the main repo.
+If working in-place (default), the JSON is copied to `.implement-auto-results/` in the current directory.
 
 The orchestrator should read from this location after execution completes.
 
@@ -263,4 +274,4 @@ The orchestrator should read from this location after execution completes.
 - If `phases.current` is set, that step is in progress
 - `errors[]` accumulates — check length for failure count
 - `metrics` may be incomplete during execution
-- After completion, read from `.implement-auto-results/` (worktree is removed)
+- After completion, read from `.implement-auto-results/` (worktree is removed if --worktree was used)

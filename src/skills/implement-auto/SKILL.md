@@ -10,7 +10,7 @@ description: >-
   Triggers: pipeline automation, cron job, autonomous implementation, batch processing.
   Not for: interactive development (use /implement), quick fixes (use /quick), debugging (use /debug).
 user-invocable: true
-argument-hint: "<feature-slug> [@<spec-path> | @<plan-path>] [--skip-plan-validation] [--skip-review] [--skip-security] [--skip-qa] [--skip-publish] [--auto-merge]"
+argument-hint: "<feature-slug> [@<spec-path> | @<plan-path>] [--worktree] [--skip-plan-validation] [--skip-review] [--skip-security] [--skip-qa] [--skip-publish] [--auto-merge]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Task
 ---
 
@@ -22,8 +22,11 @@ Functionally equivalent to `/implement` — same subagents, stack skills, and re
 ## Quick Start
 
 ```bash
-# With spec (full EPCI workflow)
+# With spec (full EPCI workflow, in-place)
 claude --dangerously-skip-permissions -p "/implement-auto feature-slug @path/to/spec.md"
+
+# With worktree isolation (isolated git worktree)
+claude --dangerously-skip-permissions -p "/implement-auto feature-slug @path/to/spec.md --worktree"
 
 # With plan (skip Explore + Plan phases)
 claude --dangerously-skip-permissions -p "/implement-auto feature-slug @.claude/plans/feature-plan.md"
@@ -39,6 +42,7 @@ claude --dangerously-skip-permissions -p "/implement-auto feature-slug @spec.md 
 | `feature-slug` | Yes | Kebab-case feature identifier |
 | `@spec-path` | Yes* | Path to spec/PRD file (Markdown). *Required unless @plan-path provided |
 | `@plan-path` | No | Path to Claude Code plan (.claude/plans/*.md). Skips Explore + Plan phases |
+| `--worktree` | No | Enable git worktree isolation. Default: disabled (work in-place) |
 
 ### Input Detection
 
@@ -53,7 +57,7 @@ INPUT
 
 ## Output
 
-JSON file at `{worktree}/.implement-auto-output.json`. See [references/output-json-schema.md](references/output-json-schema.md).
+JSON file at `.implement-auto-output.json` in the working directory. See [references/output-json-schema.md](references/output-json-schema.md).
 
 Status values: `SUCCESS`, `PARTIAL`, `FAILED`.
 
@@ -73,7 +77,7 @@ Status values: `SUCCESS`, `PARTIAL`, `FAILED`.
 ## Workflow
 
 ```
-step-00-init-auto     Parse args, complexity detection, worktree, Feature Doc, JSON init
+step-00-init-auto     Parse args, complexity detection, branch setup (+ worktree if --worktree), Feature Doc, JSON init
        |
        ├── @plan-path provided? → Skip to step-03-code-auto
        |
@@ -91,7 +95,7 @@ step-06-finish-auto   Final validation, commit, index.json update, status determ
        |
 step-07-output-auto   Final JSON write
        |
-step-08-publish-auto  Push branch, create PR, cleanup worktree
+step-08-publish-auto  Push branch, create PR, cleanup worktree (if --worktree)
 ```
 
 ## EXECUTION PROTOCOLS:
@@ -159,7 +163,7 @@ See [references/review-checklist.md](references/review-checklist.md).
 
 | Step | Name | Phase | Description |
 |------|------|-------|-------------|
-| 00 | init-auto | - | Parse args, complexity detection, worktree, Feature Doc, JSON |
+| 00 | init-auto | - | Parse args, complexity detection, branch setup (+ worktree if --worktree), Feature Doc, JSON |
 | 01 | explore-auto | [E] | Explore + sanity check (skippable via @plan-path) |
 | 02 | plan-auto | [P] | @planner + @plan-validator (skippable via @plan-path) |
 | 03 | code-auto | [C] | TDD + stack skills + circuit breaker + background reviewer |
@@ -167,7 +171,7 @@ See [references/review-checklist.md](references/review-checklist.md).
 | 05 | document-auto | - | Feature Document + summary |
 | 06 | finish-auto | - | Finalization + commit + index.json update |
 | 07 | output-auto | - | Final JSON output |
-| 08 | publish-auto | - | Push, PR, worktree cleanup |
+| 08 | publish-auto | - | Push, PR, worktree cleanup (if --worktree) |
 
 ## Step Files
 
@@ -194,6 +198,7 @@ See [references/review-checklist.md](references/review-checklist.md).
 
 | Flag | Default | Effect |
 |------|---------|--------|
+| `--worktree` | Off | Enable git worktree isolation. Without this flag, works in-place on current directory |
 | `--skip-plan-validation` | Off | Skip @plan-validator invocation (plan still created by @planner) |
 | `--skip-review` | Off | Skip @code-reviewer, keep self-review only |
 | `--skip-security` | Off | Skip @security-auditor even if patterns detected |

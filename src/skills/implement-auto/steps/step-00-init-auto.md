@@ -23,7 +23,8 @@ conditional_next:
 - NEVER display breakpoint boxes
 - ALWAYS parse and validate all arguments
 - ALWAYS detect complexity via epci:complexity-calculator
-- ALWAYS create worktree from origin's default branch (dynamically detected)
+- Create worktree from origin's default branch IF --worktree flag is set
+- Without --worktree, create feature branch in-place (git checkout -b)
 - ALWAYS create Feature Document
 - ALWAYS initialize JSON output file
 
@@ -40,6 +41,7 @@ Extract from the invocation prompt:
 - `--skip-review` (optional) — skip @code-reviewer (keep self-review)
 - `--skip-security` (optional) — skip @security-auditor
 - `--skip-qa` (optional) — skip @qa-reviewer
+- `--worktree` (optional) — enable git worktree isolation (default: disabled, work in-place)
 - `--skip-publish` (optional) — skip push/PR/cleanup
 - `--auto-merge` (optional) — enable auto-merge after PR creation
 
@@ -55,6 +57,7 @@ context = {
   flag_skip_review: boolean,
   flag_skip_security: boolean,
   flag_skip_qa: boolean,
+  flag_worktree: boolean,
   flag_skip_publish: boolean,
   flag_auto_merge: boolean
 }
@@ -104,13 +107,16 @@ Perform these checks sequentially:
   - QA review threshold: lower for LARGE
 - Store `complexity` in execution context
 
-### 4. Create Git Worktree
-
-Create an isolated worktree for this feature:
+### 4. Create Feature Branch (+ Worktree if --worktree)
 
 ```bash
 git fetch origin
 DEFAULT_BRANCH=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null || echo "main")
+```
+
+**IF flag_worktree is true** — Create an isolated worktree:
+
+```bash
 git worktree add ../worktrees/{feature-slug} -b feature/{feature-slug} origin/$DEFAULT_BRANCH
 ```
 
@@ -120,6 +126,18 @@ If worktree already exists:
 - If exists and dirty: log warning, reuse anyway
 
 Change working context to worktree path.
+
+**ELSE (default)** — Create feature branch in-place:
+
+```bash
+git checkout -b feature/{feature-slug} origin/$DEFAULT_BRANCH
+```
+
+If branch already exists:
+- Check if branch exists: `git branch --list feature/{feature-slug}`
+- If exists: `git checkout feature/{feature-slug}`
+
+Working context remains the current directory.
 
 ### 5. Create Feature Document
 
@@ -141,7 +159,7 @@ Store `feature_doc_path` for all subsequent steps.
 
 ### 6. Initialize JSON Output
 
-Write initial JSON to `{worktree_path}/.implement-auto-output.json`:
+Write initial JSON to `.implement-auto-output.json` in the current working directory:
 
 ```json
 {
@@ -154,7 +172,8 @@ Write initial JSON to `{worktree_path}/.implement-auto-output.json`:
     "slug": "{feature-slug}",
     "branch": "feature/{feature-slug}",
     "spec_source": "{spec-path or plan-path}",
-    "complexity": "{STANDARD or LARGE}"
+    "complexity": "{STANDARD or LARGE}",
+    "worktree_enabled": "{flag_worktree}"
   },
   "phases": {
     "completed": ["init"],
@@ -208,16 +227,16 @@ Output to stdout (for pipeline logging):
   Complexity: {STANDARD|LARGE}
   Input: {spec-path or plan-path}
   Workflow: {spec-first or plan-first}
-  Worktree: {worktree_path}
+  Worktree: {enabled → worktree_path | disabled (in-place)}
   Branch: feature/{feature-slug}
   Feature Doc: {feature_doc_path}
-  Flags: skip-plan-validation={flag}, skip-review={flag}, skip-security={flag}, skip-qa={flag}, skip-publish={flag}, auto-merge={flag}
+  Flags: worktree={flag}, skip-plan-validation={flag}, skip-review={flag}, skip-security={flag}, skip-qa={flag}, skip-publish={flag}, auto-merge={flag}
 ```
 
 ## CONTEXT BOUNDARIES:
 
 - This step expects: User prompt with feature-slug and @spec-path or @plan-path
-- This step produces: Worktree, Feature Document, initial JSON, execution context with complexity
+- This step produces: Feature branch (+ worktree if --worktree), Feature Document, initial JSON, execution context with complexity
 
 ## NEXT STEP TRIGGER:
 
