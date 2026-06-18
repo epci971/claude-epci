@@ -6,6 +6,8 @@ Cette référence définit les patterns de génération de prompts Perplexity po
 
 **Philosophie** : Exploiter les forces de chaque outil — Perplexity pour la recherche web actualisée, Claude pour l'analyse et la synthèse.
 
+**web_search natif vs Perplexity** : le `web_search` natif couvre les vérifications factuelles rapides en cours d'itération (un fait, un prix, une version). Les prompts Perplexity couvrent la recherche profonde / large que l'utilisateur exécute en parallèle (état de l'art, multi-sources, 🔬 Deep Research).
+
 ## Workflow Integration
 
 ```

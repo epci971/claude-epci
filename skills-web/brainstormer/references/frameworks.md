@@ -23,6 +23,7 @@ Les frameworks sont des méthodes de pensée structurée que Brainstormer peut a
 | **Scoring** | Décision | Évaluer et classer des idées | `scoring` |
 | **Starbursting** | Exploration | Générer des questions (Who/What/Where/When/Why/How) | `framework starbursting` |
 | **Reverse Brainstorming** | Créatif | Trouver des solutions en inversant le problème | `framework reverse` |
+| **HMW Generation** | Cadrage | Reformuler un besoin en questions "How Might We" exploitables | auto (init) / `--no-hmw` |
 
 ---
 
@@ -458,6 +459,42 @@ Score = (Impact × 0.35) + ((6-Effort) × 0.25) + ((6-Risk) × 0.20) + (Alignmen
 
 ---
 
+## HMW Generation
+
+**Purpose** : Reformuler un problème/besoin validé en 3-5 questions "How Might We" qui ouvrent
+l'espace de solutions sans le contraindre prématurément.
+
+**Quand l'utiliser** :
+- Phase d'initialisation, juste après validation du brief (auto-généré sauf `--no-hmw`)
+- Au début d'un deep dive pour cadrer un sous-sujet
+
+**Process** :
+1. Repartir de la reformulation du problème/besoin
+2. Produire 3-5 questions selon le pattern générique ci-dessous
+3. Laisser l'utilisateur choisir celle(s) à explorer (multiple ou reformulation possible)
+
+**Pattern générique** (HMW par template : voir [templates.md](templates.md)) :
+
+```markdown
+💡 **Questions "How Might We"**
+
+Based on your need: "[reformulation du problème]"
+
+1. HMW [verbe d'action] [bénéfice utilisateur] sans [contrainte négative] ?
+2. HMW transformer [problème] en [opportunité] ?
+3. HMW [simplifier/automatiser] [processus actuel] ?
+4. HMW [garantir] [objectif qualité] même si [obstacle] ?
+5. HMW permettre à [utilisateur] de [action désirée] dans [contexte difficile] ?
+
+📌 Laquelle résonne le plus ? On peut en explorer plusieurs ou reformuler.
+```
+
+**Désactivation** : flag `--no-hmw`
+
+**Best for** : tous templates (HMW spécifiques fournis par template dans [templates.md](templates.md))
+
+---
+
 ## Suggestions Automatiques
 
 Brainstormer suggère proactivement les frameworks selon le contexte :
@@ -472,6 +509,7 @@ Brainstormer suggère proactivement les frameworks selon le contexte :
 | Blocage créatif | Reverse Brainstorming |
 | Début d'exploration | Starbursting |
 | Évaluation stratégique | SWOT |
+| Brief validé (init) | HMW Generation |
 
 ---
 
