@@ -637,10 +637,9 @@ When resuming, Brainstormer should:
 
 ---
 
-## Validation Checksum
+## Integrity Counters
 
 ```
-checkpoint_hash: [MD5 of core configuration section]
 iteration_count: [N]
 decision_count: [X]
 thread_count: [Y]
@@ -649,7 +648,7 @@ phase: [divergent/convergent]
 persona: [persona_name]
 ```
 
-*Use checksum to detect corruption. If validation fails, inform user and offer to start fresh with readable content summary.*
+*On resume, cross-check these counters against the readable content (decision_count vs listed decisions, thread_count vs open threads, iteration_count vs iteration summaries, ems_score vs last iteration). If a counter is inconsistent with the content, inform the user and offer to start fresh with a readable content summary.*
 
 ---
 
