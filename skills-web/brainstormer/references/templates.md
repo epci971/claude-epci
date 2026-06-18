@@ -11,7 +11,7 @@ Les templates pré-configurent Brainstormer pour différents types d'exploration
 - Les frameworks suggérés
 - Le nombre d'itérations typique
 - Les critères de succès par défaut
-- Les questions HMW typiques (NOUVEAU v3.2)
+- Les questions HMW typiques
 
 **Nouveaux templates v3.2** : `decision`, `problem`, `strategy`
 
@@ -65,7 +65,7 @@ Les templates pré-configurent Brainstormer pour différents types d'exploration
 - [ ] [Critère mesurable 2]
 ```
 
-### HMW Typiques (NOUVEAU v3.2)
+### HMW Typiques
 
 ```markdown
 💡 **Questions "How Might We"**
@@ -130,7 +130,7 @@ Les templates pré-configurent Brainstormer pour différents types d'exploration
 - [ ] [Livrable 2]
 ```
 
-### HMW Typiques (NOUVEAU v3.2)
+### HMW Typiques
 
 ```markdown
 💡 **Questions "How Might We"**
@@ -201,7 +201,7 @@ Les templates pré-configurent Brainstormer pour différents types d'exploration
 - [Risque 2]
 ```
 
-### HMW Typiques (NOUVEAU v3.2)
+### HMW Typiques
 
 ```markdown
 💡 **Questions "How Might We"**
@@ -269,7 +269,7 @@ Les templates pré-configurent Brainstormer pour différents types d'exploration
 - [ ] Pouvoir décider si [Z]
 ```
 
-### HMW Typiques (NOUVEAU v3.2)
+### HMW Typiques
 
 ```markdown
 💡 **Questions "How Might We"**
@@ -302,7 +302,7 @@ Les templates pré-configurent Brainstormer pour différents types d'exploration
 
 ---
 
-## Template: Decision (NOUVEAU v3.2)
+## Template: Decision
 
 **Usage** : Choix binaire (go/no-go) ou sélection parmi N options.
 
@@ -339,7 +339,7 @@ Les templates pré-configurent Brainstormer pour différents types d'exploration
 - [Contrainte 2]
 ```
 
-### HMW Typiques (NOUVEAU v3.2)
+### HMW Typiques
 
 ```markdown
 💡 **Questions "How Might We"**
@@ -378,7 +378,7 @@ Le rapport pour `decision` inclut :
 
 ---
 
-## Template: Problem (NOUVEAU v3.2)
+## Template: Problem
 
 **Usage** : Quelque chose est cassé, ne fonctionne pas comme prévu. Trouver la cause et la solution.
 
@@ -411,7 +411,7 @@ Le rapport pour `decision` inclut :
 - [ ] Plan de prévention établi
 ```
 
-### HMW Typiques (NOUVEAU v3.2)
+### HMW Typiques
 
 ```markdown
 💡 **Questions "How Might We"**
@@ -451,7 +451,7 @@ Le rapport pour `problem` inclut :
 
 ---
 
-## Template: Strategy (NOUVEAU v3.2)
+## Template: Strategy
 
 **Usage** : Vision long terme, positionnement, roadmap multi-années.
 
@@ -486,7 +486,7 @@ Le rapport pour `problem` inclut :
 - [Question stratégique 2]
 ```
 
-### HMW Typiques (NOUVEAU v3.2)
+### HMW Typiques
 
 ```markdown
 💡 **Questions "How Might We"**

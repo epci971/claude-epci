@@ -12,6 +12,7 @@ L'EMS (Exploration Maturity Score) est un indicateur composite qui mesure la pro
 - Ancres objectives par axe (critères observables)
 - Intégration avec les phases Divergent/Convergent
 - Recommandations contextuelles selon la phase
+- Scoring **directionnel** contre les ancres, sans addition de points (Lot P1)
 
 ---
 
@@ -34,9 +35,11 @@ EMS = (Clarté × 0.25) + (Profondeur × 0.25) + (Couverture × 0.20)
 
 ---
 
-## Ancres Objectives (NOUVEAU v3.2)
+## Ancres Objectives
 
-Chaque axe dispose maintenant de **critères observables** pour un scoring plus cohérent.
+Chaque axe dispose de **critères observables** qui définissent ses paliers (20/40/60/80/100).
+
+> **Comment noter** : le modèle **évalue chaque axe globalement contre ces ancres**. Il choisit le palier dont la description correspond le mieux à l'état réel de l'exploration, puis ajuste finement entre deux paliers. **Ce n'est pas une addition de points** — les listes « Ce qui fait progresser cet axe » indiquent *ce qui fait monter l'axe*, pas un barème à cumuler.
 
 ### Clarté (25%)
 
@@ -48,11 +51,11 @@ Chaque axe dispose maintenant de **critères observables** pour un scoring plus 
 | **80** | + Objectifs SMART + parties prenantes identifiées |
 | **100** | Zéro question ouverte sur le "quoi" — définition cristalline |
 
-**Signaux de progression** :
-- User valide la reformulation → +20
-- Contraintes explicites mentionnées → +10 par contrainte (max 2)
-- Critères de succès définis → +10
-- Parties prenantes listées → +10
+**Ce qui fait progresser cet axe** :
+- User valide la reformulation
+- Contraintes explicites mentionnées
+- Critères de succès définis
+- Parties prenantes listées
 
 ### Profondeur (25%)
 
@@ -64,12 +67,12 @@ Chaque axe dispose maintenant de **critères observables** pour un scoring plus 
 | **80** | Insights non-évidents + connexions cross-domain |
 | **100** | Cause racine identifiée + validée + implications tracées |
 
-**Signaux de progression** :
-- Premier "pourquoi" creusé → +20
-- Deuxième niveau de "pourquoi" → +15
-- Framework appliqué (5 Whys, Fishbone...) → +15
-- Analogie pertinente d'un autre domaine → +10
-- Cause racine explicitement nommée → +15
+**Ce qui fait progresser cet axe** :
+- Premier "pourquoi" creusé
+- Deuxième niveau de "pourquoi"
+- Framework appliqué (5 Whys, Fishbone...)
+- Analogie pertinente d'un autre domaine
+- Cause racine explicitement nommée
 
 ### Couverture (20%)
 
@@ -81,11 +84,11 @@ Chaque axe dispose maintenant de **critères observables** pour un scoring plus 
 | **80** | Six Hats complet OU ≥3 alternatives avec critères OU multi-stakeholders |
 | **100** | Aucun angle mort identifiable — exploration exhaustive |
 
-**Signaux de progression** :
-- Nouvel angle exploré → +15 par angle (max 3)
-- Section risques abordée → +15
-- Alternative comparée → +10 par alternative (max 2)
-- Perspective stakeholder ajoutée → +10
+**Ce qui fait progresser cet axe** :
+- Nouvel angle exploré
+- Section risques abordée
+- Alternative comparée
+- Perspective stakeholder ajoutée
 
 ### Décisions (20%)
 
@@ -97,11 +100,11 @@ Chaque axe dispose maintenant de **critères observables** pour un scoring plus 
 | **80** | Arbitrages faits + priorisation établie |
 | **100** | Toutes les décisions du scope prises, fils fermés |
 
-**Signaux de progression** :
-- Première orientation prise → +20
-- Décision explicite avec justification → +15 par décision
-- Priorisation établie (MoSCoW, scoring...) → +15
-- Thread fermé explicitement → +10 par thread
+**Ce qui fait progresser cet axe** :
+- Première orientation prise
+- Décision explicite avec justification
+- Priorisation établie (MoSCoW, scoring...)
+- Thread fermé explicitement
 
 ### Actionnabilité (10%)
 
@@ -113,16 +116,16 @@ Chaque axe dispose maintenant de **critères observables** pour un scoring plus 
 | **80** | Actions + owner + timeline + dépendances |
 | **100** | Plan d'action complet, prêt à exécuter |
 
-**Signaux de progression** :
-- Première action concrète nommée → +20
-- Owner assigné → +15
-- Timeline définie → +15
-- Dépendances identifiées → +10
-- Quick win identifié → +10
+**Ce qui fait progresser cet axe** :
+- Première action concrète nommée
+- Owner assigné
+- Timeline définie
+- Dépendances identifiées
+- Quick win identifié
 
 ---
 
-## Intégration avec les Phases (NOUVEAU v3.2)
+## Intégration avec les Phases
 
 Les recommandations EMS s'adaptent à la phase actuelle.
 
@@ -291,14 +294,14 @@ Options :
 
 ## Initialisation
 
-L'EMS démarre à **0** et est initialisé après validation du brief :
+L'EMS démarre à **0** et est initialisé après validation du brief, en plaçant chaque axe sur l'ancre qui correspond à l'état de départ :
 
-| Condition | Score initial |
-|-----------|---------------|
-| Brief validé | Clarté: 40, autres: 20 |
-| + Sources analysées | Profondeur: +10, Couverture: +10 |
-| + Historique trouvé | Clarté: +10 |
-| + HMW générés | Couverture: +5 |
+| Condition | Effet sur les ancres |
+|-----------|----------------------|
+| Brief validé | Clarté ≈ palier 40 ; autres axes ≈ palier 20 |
+| + Sources analysées | Profondeur et Couverture relevées d'un cran |
+| + Historique trouvé | Clarté relevée |
+| + HMW générés | Couverture relevée |
 
 ---
 

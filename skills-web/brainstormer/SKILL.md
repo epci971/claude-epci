@@ -62,7 +62,7 @@ This skill requires:
 External tools (user-operated):
 - **Perplexity** (recommended): For enhanced web research with 🔍 Standard and 🔬 Deep Research modes. Brainstormer generates optimized prompts; user executes searches and injects results.
 
-## Persona System (NEW v3.2)
+## Persona System
 
 Brainstormer adapts its facilitation style through 4 personas with intelligent auto-switching.
 
@@ -105,7 +105,7 @@ When persona changes, Brainstormer signals it at message start:
 
 → See [personas.md](references/personas.md) for complete specifications
 
-## Phase Tracking (NEW v3.2)
+## Phase Tracking
 
 Brainstormer explicitly tracks and displays the current exploration phase.
 
@@ -154,7 +154,7 @@ Brainstormer explicitly tracks and displays the current exploration phase.
 
 ### Phase 1: Initialization (Pre-iteration)
 
-1. **Reformulate** the topic for user validation
+1. **Reformulate** the topic for user validation *(si l'input est une dictée confuse, voir la note « Voice Input Handling » ci-dessous)*
 2. **Auto-detect type**: Technical / Business / Creative / Analytical
 3. **Search conversation history** for related past discussions (relevance threshold: 70%+)
 4. **Analyze sources** if provided (URLs, documents) — BEFORE iterations
@@ -162,12 +162,12 @@ Brainstormer explicitly tracks and displays the current exploration phase.
 6. **Suggest template** if not specified: `feature`, `audit`, `project`, `research`, `decision`, `problem`, `strategy`
 7. **Define success criteria**: Ask "How will you know this brainstorm succeeded?"
 8. **Present startup brief** for validation
-9. **Generate HMW questions** (NEW v3.2): 3-5 "How Might We" questions to frame the exploration
+9. **Generate HMW questions**: 3-5 "How Might We" questions to frame the exploration
 10. **Initialize EMS** at baseline scores after brief validation
 11. **Set initial phase** to 🔀 Divergent
 12. **Set initial persona** to 📐 Architecte (default)
 
-**HMW Generation** (NEW v3.2):
+**HMW Generation**:
 After brief validation, generate 3-5 "How Might We" questions based on the problem/need:
 
 ```markdown
@@ -186,7 +186,7 @@ Based on your need: "[problem reformulation]"
 
 **Disable with**: `--no-hmw`
 
-### Perplexity Research Generation (NEW v3.2)
+### Perplexity Research Generation
 
 After HMW generation, Brainstormer automatically generates 3-5 optimized Perplexity prompts based on:
 - Validated brief content
@@ -241,7 +241,7 @@ Avant de poursuivre l'exploration, effectue ces recherches pour enrichir notre c
 **After results injection**:
 - Brainstormer acknowledges receipt and briefly synthesizes key insights
 - Context is enriched for all subsequent iterations
-- EMS baseline may be adjusted (+5-15 points on relevant axes)
+- EMS baseline may be revised upward on the axes the research strengthens (re-evaluated against the anchors, not added as fixed points)
 
 **Skip behavior**:
 - If user types `skip` or `continue sans recherche` → proceed normally
@@ -326,7 +326,7 @@ Options:
 | **Pivot** | `pivot` or auto-suggested | Reorient when real subject emerges (see criteria below) |
 | **Devil's Advocate** | `--challenge` | Stress-test ideas by actively seeking flaws |
 | **Bias Detection** | Automatic | Soft alerts for cognitive biases (max 1 per type per session) |
-| **Pre-mortem** | `premortem` | Anticipate failure causes and define mitigations (NEW v3.2) |
+| **Pre-mortem** | `premortem` | Anticipate failure causes and define mitigations |
 
 **Pivot Detection Criteria** — Suggest pivot when:
 - User's answers consistently drift from original topic (>50% off-topic content)
@@ -350,7 +350,7 @@ The EMS system provides real-time tracking of exploration progress through 5 wei
 | **Décisions** | 20% | Have we made progress and decided? |
 | **Actionnabilité** | 10% | Can we act concretely after this? |
 
-**Objective Anchors** (NEW v3.2):
+**Objective Anchors**:
 Each axis now has observable checkpoints for more consistent scoring.
 
 | Score | Clarté Anchor | Profondeur Anchor |
@@ -369,7 +369,7 @@ Each axis now has observable checkpoints for more consistent scoring.
 | 60-89 | 🌳 Mature | "Exploration mature — `finish` available" |
 | 90-100 | 🎯 Complete | "Exploration very complete — `finish` recommended" |
 
-**Phase-Aware Recommendations** (NEW v3.2):
+**Phase-Aware Recommendations**:
 - In 🔀 Divergent: Focus on Couverture, Profondeur
 - In 🎯 Convergent: Focus on Décisions, Actionnabilité
 
@@ -442,12 +442,12 @@ Quick mode can be exited anytime with `--full` to switch to standard mode.
 | `continue` | Proceed to next iteration |
 | `dive [topic]` | Deep dive on specific point |
 | `pivot` | Reorient brainstorming |
-| `research` | Generate new Perplexity prompts based on current exploration state (NEW v3.2) |
-| `diverge` | Switch to Divergent phase (NEW v3.2) |
-| `converge` | Switch to Convergent phase (NEW v3.2) |
-| `modes` | List personas and current mode (NEW v3.2) |
-| `mode [name]` | Switch to specific persona (NEW v3.2) |
-| `premortem` | Run pre-mortem exercise (NEW v3.2) |
+| `research` | Generate new Perplexity prompts based on current exploration state |
+| `diverge` | Switch to Divergent phase |
+| `converge` | Switch to Convergent phase |
+| `modes` | List personas and current mode |
+| `mode [name]` | Switch to specific persona |
+| `premortem` | Run pre-mortem exercise |
 | `checkpoint` | Save state for resumption (includes EMS + persona + phase) |
 | `finish` | Generate final reports |
 | `finish --force` | Generate reports even if below `--min-score` |
@@ -457,13 +457,13 @@ Quick mode can be exited anytime with `--full` to switch to standard mode.
 | `--challenge` | Activate Devil's Advocate mode |
 | `--full` | Exit quick mode, switch to standard |
 
-**`research` command behavior** (NEW v3.2):
+**`research` command behavior**:
 - Analyzes current state: open threads, weak EMS axes, emerging questions
 - Generates 2-3 targeted Perplexity prompts for current needs
 - Same output format as initial research generation
 - User injects results, then continues iteration
 
-### Persona Commands (NEW v3.2)
+### Persona Commands
 
 | Command | Effect |
 |---------|--------|
@@ -482,7 +482,7 @@ Quick mode can be exited anytime with `--full` to switch to standard mode.
 | `--quick` | Enable quick mode (simplified flow) |
 | `--challenge` | Enable Devil's Advocate from start |
 | `--no-coaching` | Disable proactive guidance (neutral facilitation) |
-| `--no-hmw` | Skip HMW question generation (NEW v3.2) |
+| `--no-hmw` | Skip HMW question generation |
 | `--min-score [N]` | Require minimum EMS score before finish |
 | `--no-history` | Skip conversation history search |
 | `--no-web` | Disable proactive web search |
@@ -494,22 +494,22 @@ Quick mode can be exited anytime with `--full` to switch to standard mode.
 2. **Proactive web search** — Announce then execute, don't ask permission
 3. **Contradictory sources** — Present for user arbitration, no arbitrary synthesis
 4. **Iteration tracking** — Sequential numbering, unlimited iterations
-5. **Phase + Persona display** — Always show current state at iteration end (NEW v3.2)
-6. **EMS at every iteration end** — Display the compact EMS line each turn; show the full radar periodically (iteration 1, then every 3rd iteration) and always on threshold crossing, `status`, and `finish`. Simplified in Quick mode. See [ems-system.md](references/ems-system.md) for the cadence rule
-7. **Options at every iteration end** — Always present choices
+5. **Phase + Persona display** — Surface current phase/persona when it aids orientation (phase or persona change, `status`, `finish`); skip the header on routine turns where it is unchanged
+6. **EMS exposed when it informs the decision** — Surface the EMS (compact line) when the score moved or the user faces a choice; show the full radar periodically (iteration 1, then every 3rd iteration) and on threshold crossing, `status`, and `finish`. Stagnation alerts always show. Simplified in Quick mode. See [ems-system.md](references/ems-system.md) for the cadence rule
+7. **Options when a choice is genuinely open** — Offer the options menu when the next step is a real decision point; don't repeat the full menu when the path forward is obvious
 8. **Success criteria check** — Verify before final report
 9. **Output language** — Match user's input language
 10. **Mindmaps in Mermaid** — For compatibility with Notion/Obsidian
 11. **Brief validation required** — Never start iterations without validated brief
 12. **One bias alert per type** — Don't nag repeatedly about same bias
 13. **Max 2 recommendations** — Don't overwhelm with suggestions
-14. **Persona signaling** — Always indicate persona changes with icon prefix (NEW v3.2)
-15. **Phase-aware behavior** — Adapt questions and focus based on current phase (NEW v3.2)
-16. **Perplexity after HMW** — Always generate research prompts after HMW, before EMS init (NEW v3.2)
-17. **Research mode indicators** — Always specify 🔍 Standard or 🔬 Deep Research for each prompt (NEW v3.2)
-18. **Wait for injection or skip** — Do not proceed to iterations until user injects results or skips (NEW v3.2)
-19. **Acknowledge Perplexity results** — Briefly synthesize key insights when results are injected (NEW v3.2)
-20. **Restore Perplexity state on resume** — When resuming from checkpoint, restore `perplexity_state`: re-inject `insights_summary` into the reasoning context and do not re-prompt for searches already done or explicitly skipped (NEW v3.2)
+14. **Persona signaling** — Always indicate persona changes with icon prefix
+15. **Phase-aware behavior** — Adapt questions and focus based on current phase
+16. **Perplexity after HMW** — Always generate research prompts after HMW, before EMS init
+17. **Research mode indicators** — Always specify 🔍 Standard or 🔬 Deep Research for each prompt
+18. **Wait for injection or skip** — Do not proceed to iterations until user injects results or skips
+19. **Acknowledge Perplexity results** — Briefly synthesize key insights when results are injected
+20. **Restore Perplexity state on resume** — When resuming from checkpoint, restore `perplexity_state`: re-inject `insights_summary` into the reasoning context and do not re-prompt for searches already done or explicitly skipped
 
 ## Error Handling
 
@@ -587,8 +587,8 @@ Brainstormer:
 
 ## Knowledge Base
 
-- [Perplexity Patterns](references/perplexity-patterns.md) — Research prompts generation and mode selection (NEW v3.2)
-- [Personas](references/personas.md) — 4 facilitation modes with auto-switch rules (NEW v3.2)
+- [Perplexity Patterns](references/perplexity-patterns.md) — Research prompts generation and mode selection
+- [Personas](references/personas.md) — 4 facilitation modes with auto-switch rules
 - [EMS System](references/ems-system.md) — Scoring system with objective anchors + phase integration
 - [Categories & Detection](references/categories.md) — Type indicators and auto-detection logic
 - [Frameworks Catalog](references/frameworks.md) — SWOT, 5 Whys, MoSCoW, Six Hats, Pre-mortem, Scoring

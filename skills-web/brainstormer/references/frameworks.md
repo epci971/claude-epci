@@ -8,8 +8,6 @@
 
 Les frameworks sont des méthodes de pensée structurée que Brainstormer peut appliquer pour approfondir l'exploration. Ils sont suggérés proactivement ou activés sur demande.
 
-**Nouveau v3.2** : Pre-mortem ajouté comme framework d'anticipation des risques.
-
 ---
 
 ## Catalogue des Frameworks
@@ -20,7 +18,7 @@ Les frameworks sont des méthodes de pensée structurée que Brainstormer peut a
 | **5 Whys** | Analytique | Trouver la cause racine d'un problème | `framework 5whys` |
 | **MoSCoW** | Décision | Prioriser des fonctionnalités ou tâches | `framework moscow` |
 | **Six Hats** | Exploration | Explorer un sujet sous tous les angles | `framework hats` |
-| **Pre-mortem** | Risques | Anticiper les causes d'échec (NOUVEAU v3.2) | `premortem` |
+| **Pre-mortem** | Risques | Anticiper les causes d'échec | `premortem` |
 | **Weighted Criteria** | Décision | Comparer des options avec critères pondérés | `framework weighted` |
 | **Scoring** | Décision | Évaluer et classer des idées | `scoring` |
 | **Starbursting** | Exploration | Générer des questions (Who/What/Where/When/Why/How) | `framework starbursting` |
@@ -207,7 +205,7 @@ Les frameworks sont des méthodes de pensée structurée que Brainstormer peut a
 
 ---
 
-## Pre-mortem (NOUVEAU v3.2)
+## Pre-mortem
 
 **Purpose** : Anticiper les causes d'échec en imaginant que le projet a échoué, puis définir des mitigations préventives.
 

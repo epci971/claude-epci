@@ -248,15 +248,15 @@ Avant de poursuivre l'exploration, effectue ces recherches pour enrichir notre c
 
 ## Integration with EMS
 
-Les résultats Perplexity impactent l'EMS initial :
+Les résultats Perplexity peuvent relever l'EMS initial sur les axes concernés (réévalués contre les ancres) :
 
-| Axe EMS | Impact des recherches |
+| Axe EMS | Effet des recherches |
 |---------|----------------------|
-| **Clarté** | +5-10 si les recherches clarifient le périmètre |
-| **Profondeur** | +10-15 si état de l'art ou REX détaillés |
-| **Couverture** | +5-10 si angles multiples couverts |
-| **Décisions** | +5 si critères de décision fournis |
-| **Actionnabilité** | +5 si exemples concrets/implémentables |
+| **Clarté** | Renforcée si les recherches clarifient le périmètre |
+| **Profondeur** | Nettement renforcée si état de l'art ou REX détaillés |
+| **Couverture** | Renforcée si angles multiples couverts |
+| **Décisions** | Renforcée si critères de décision fournis |
+| **Actionnabilité** | Renforcée si exemples concrets/implémentables |
 
 ## Skip Behavior
 
