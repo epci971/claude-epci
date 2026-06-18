@@ -18,7 +18,27 @@ Brainstormer produces up to 3 artifacts:
 
 ## End of Iteration Display (v3.2)
 
-### Full Format (Standard Mode)
+### Display Cadence (Lot P1 — radar périodique)
+
+Pour alléger le mobilier par tour, le radar complet est affiché **périodiquement**
+en mode Standard ; une **ligne compacte** est affichée le reste du temps.
+
+| Tour / déclencheur | Format affiché |
+|--------------------|----------------|
+| Itération 1 (baseline) | **Radar complet** |
+| Itération multiple de 3 (3, 6, 9…) | **Radar complet** |
+| Franchissement de seuil (🌱→🌿→🌳→🎯) | **Radar complet** (forcé) |
+| Commande `status` | **Radar complet** (toujours forcé) |
+| `finish` / fin de session | **Radar complet** (forcé) |
+| Tous les autres tours | **Ligne compacte** |
+| Quick Mode (tous tours) | **Format simplifié** (inchangé) |
+
+> L'**alerte stagnation** est affichée si déclenchée, quel que soit le format.
+
+Règle de calcul : radar complet si `iteration == 1` **OU** `iteration % 3 == 0`
+**OU** franchissement de seuil **OU** `status` **OU** `finish`.
+
+### Full Radar Format (Standard — périodique)
 
 ```markdown
 ───────────────────────────────────────────────────────────────
@@ -58,6 +78,35 @@ Brainstormer produces up to 3 artifacts:
 
 ───────────────────────────────────────────────────────────────
 ```
+
+### Compact Format (Standard — entre deux radars)
+
+Affiché aux tours sans radar complet. Le flag d'axe faible apparaît si au moins
+un axe est < 50 (cf. légende `ems-system.md`) ; si plusieurs axes sont faibles,
+n'afficher que le plus bas. L'alerte stagnation, si déclenchée, suit la ligne.
+
+```markdown
+───────────────────────────────────────────────────────────────
+
+📍 **Fin d'Itération [N]**
+
+📊 **EMS : [SCORE]/100 ([+/-DELTA])** [🌱/🌿/🌳/🎯]  ⚠️ [Axe le plus faible] [SCORE]
+
+[⚠️ STAGNATION ALERT if delta < 5 for 2 consecutive iterations]
+
+**Exploré** : [brief summary]
+**Options** : `continue` | `dive [sujet]` | `status` | `finish`
+
+───────────────────────────────────────────────────────────────
+```
+
+Sans axe faible (tous ≥ 50), la ligne EMS se réduit à :
+
+```markdown
+📊 **EMS : [SCORE]/100 ([+/-DELTA])** [🌱/🌿/🌳/🎯]
+```
+
+> `status` rebascule toujours vers le **Full Radar Format** ci-dessus.
 
 ### Simplified Format (Quick Mode)
 
@@ -343,6 +392,16 @@ Final axes:
 |--------|-----------|------|
 | [Past topic] | [X]% | Yes/No |
 
+### Recherches Perplexity (v3.2)
+
+| # | Catégorie | Mode | Itération | Status | Key Insights |
+|---|-----------|------|-----------|--------|--------------|
+| R1 | [Catégorie] | 🔍 Standard | Init | injected/skipped | [Insights synthétisés] |
+| R2 | [Catégorie] | 🔬 Deep Research | It.[N] | injected/skipped | [Insights synthétisés] |
+
+> Si aucune recherche n'a été effectuée : « Recherches Perplexity : skipped ».
+> Colonne **Itération** : `Init` = recherches générées après les HMW ; `It.[N]` = recherches issues de la commande `research` en cours d'itération.
+
 ---
 
 ## Iteration History
@@ -510,6 +569,23 @@ saved_at: "[ISO datetime]"
 - [HMW 1]
 - [HMW 2]
 
+### Perplexity Research State (v3.2)
+```yaml
+perplexity_state:
+  status: "[done | skipped]"        # skipped = utilisateur a tapé `skip`
+  searches:
+    - id: R1
+      category: "[Catégorie]"
+      mode: "[standard | deep]"     # 🔍 Standard / 🔬 Deep Research
+      origin_iteration: 0           # 0 = initial (après HMW), N = via commande `research`
+      injected: [true | false]
+  insights_summary: "[Résumé court des insights injectés ayant enrichi le contexte]"
+  ems_impact: "[Axes EMS ajustés, ex: 'Profondeur +10, Couverture +5' ou null]"
+```
+
+> Si `status: skipped`, `searches` peut être `[]` et `insights_summary: null`.
+> `origin_iteration` distingue les recherches initiales (0) de celles générées via la commande `research` en cours de session.
+
 ---
 
 ## EMS State
@@ -613,6 +689,7 @@ When resuming, Brainstormer should:
    📊 EMS restored: [X]/100 [STATUS]
    🔀/🎯 Phase: [Phase]
    [Persona emoji] Persona: [Persona]
+   🔍 Recherche: [done — N injectées / skipped]
    ```
 
 3. **Summarize state**:
@@ -620,6 +697,7 @@ When resuming, Brainstormer should:
    - Key decisions so far: [List]
    - Open threads: [List]
    - Weak axes: [If any]
+   - Perplexity research: [done — N recherches injectées | skipped]
 
 4. **Present options**:
    ```
@@ -631,7 +709,7 @@ When resuming, Brainstormer should:
    → modes — View/change persona
    ```
 
-5. **Maintain continuity**: Reference past decisions naturally, don't re-ask resolved questions.
+5. **Maintain continuity**: Reference past decisions naturally, don't re-ask resolved questions. Re-inject `insights_summary` from `perplexity_state` into the reasoning context (not just display it), and do not re-prompt for searches already done or explicitly skipped.
 
 6. **Restore phase & persona**: Continue with saved phase and persona mode.
 

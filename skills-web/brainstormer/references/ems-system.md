@@ -176,7 +176,29 @@ On pourrait passer en mode 🎯 Convergent pour commencer à trancher.
 
 ## Affichage EMS
 
-### Format Standard (fin d'itération)
+### Cadence d'affichage (NOUVEAU — Lot P1)
+
+Pour alléger le mobilier par tour (progressive disclosure), le radar complet est
+affiché **périodiquement** en mode Standard ; une ligne compacte est affichée le
+reste du temps.
+
+**Mode Standard — fin d'itération :**
+
+- **Radar complet** (5 axes + deltas + recommandations) si **au moins une** de
+  ces conditions est vraie :
+  - `iteration == 1` (établir la baseline), **OU**
+  - `iteration % 3 == 0` (it. 3, 6, 9, …), **OU**
+  - **franchissement de seuil** : l'icône de statut change vs l'itération
+    précédente (🌱 → 🌿 → 🌳 → 🎯), **OU**
+  - commande **`status`** (force toujours le radar complet), **OU**
+  - **`finish` / fin de session**.
+- **Ligne compacte** à tous les autres tours.
+- **Alerte stagnation** : toujours affichée si déclenchée, quel que soit le
+  format (signal indépendant du radar).
+
+**Quick Mode** : inchangé — toujours la ligne simplifiée (score global seul).
+
+### Format Standard — radar complet (périodique)
 
 ```
 📊 EMS: 68/100 (+12) ████████████████░░░░
@@ -192,6 +214,22 @@ On pourrait passer en mode 🎯 Convergent pour commencer à trancher.
 💡 Recommandations :
    → Décisions faible : 3 points clés restent à trancher
    → Actionnabilité : Commençons à définir des actions concrètes
+```
+
+### Format Standard — ligne compacte (entre deux radars)
+
+Affichée aux tours sans radar complet. Le flag d'axe faible reprend le seuil de
+la légende ci-dessous (⚠️ < 50) ; si plusieurs axes sont < 50, n'afficher que le
+plus bas.
+
+```
+📊 EMS: 58/100 (+6) 🌿  ⚠️ Décisions 45
+```
+
+Sans axe faible (tous ≥ 50) :
+
+```
+📊 EMS: 72/100 (+8) 🌳
 ```
 
 ### Format Quick Mode (simplifié)

@@ -48,6 +48,7 @@ Brainstormer transforms vague ideas into structured, actionable deliverables thr
    + EMS tracking      Restore EMS state   (3 iterations max)
    + Personas          Continue at N+1     EMS simplified
    + Phases            + Persona state     Single persona
+                       + Perplexity state
 ```
 
 ## Dependencies
@@ -269,7 +270,14 @@ Each iteration follows 4 steps:
 | **Enrich** | Web research, knowledge connections, analogous examples |
 | **Synthesize** | Summary of explored points, decisions, open threads |
 
-**End of each iteration** — Includes phase, persona, and EMS:
+**End of each iteration** — Includes phase, persona, and EMS.
+
+**Radar cadence (Lot P1)**: In Standard mode the full radar below is shown
+**periodically** — at iteration 1, then every 3rd iteration (3, 6, 9…), and
+always forced on threshold crossing (🌱→🌿→🌳→🎯), `status`, and `finish`. On all
+other turns, show only the compact EMS line (`📊 EMS: [SCORE]/100 ([DELTA]) [icon]`
++ `⚠️ [weakest axis] [score]` if any axis < 50). Stagnation alerts always show.
+The template below is the **full radar** variant:
 
 ```
 ───────────────────────────────────────────────────────────────
@@ -445,7 +453,7 @@ Quick mode can be exited anytime with `--full` to switch to standard mode.
 | `finish --force` | Generate reports even if below `--min-score` |
 | `framework [name]` | Apply specific framework |
 | `scoring` | Evaluate and prioritize ideas |
-| `status` | Show current iteration, EMS, phase, persona, decisions made, open threads |
+| `status` | Show current iteration, EMS (always forces full radar), phase, persona, decisions made, open threads |
 | `--challenge` | Activate Devil's Advocate mode |
 | `--full` | Exit quick mode, switch to standard |
 
@@ -487,7 +495,7 @@ Quick mode can be exited anytime with `--full` to switch to standard mode.
 3. **Contradictory sources** — Present for user arbitration, no arbitrary synthesis
 4. **Iteration tracking** — Sequential numbering, unlimited iterations
 5. **Phase + Persona display** — Always show current state at iteration end (NEW v3.2)
-6. **EMS at every iteration end** — Always display full radar (simplified in Quick mode)
+6. **EMS at every iteration end** — Display the compact EMS line each turn; show the full radar periodically (iteration 1, then every 3rd iteration) and always on threshold crossing, `status`, and `finish`. Simplified in Quick mode. See [ems-system.md](references/ems-system.md) for the cadence rule
 7. **Options at every iteration end** — Always present choices
 8. **Success criteria check** — Verify before final report
 9. **Output language** — Match user's input language
@@ -501,6 +509,7 @@ Quick mode can be exited anytime with `--full` to switch to standard mode.
 17. **Research mode indicators** — Always specify 🔍 Standard or 🔬 Deep Research for each prompt (NEW v3.2)
 18. **Wait for injection or skip** — Do not proceed to iterations until user injects results or skips (NEW v3.2)
 19. **Acknowledge Perplexity results** — Briefly synthesize key insights when results are injected (NEW v3.2)
+20. **Restore Perplexity state on resume** — When resuming from checkpoint, restore `perplexity_state`: re-inject `insights_summary` into the reasoning context and do not re-prompt for searches already done or explicitly skipped (NEW v3.2)
 
 ## Error Handling
 
@@ -529,7 +538,7 @@ Brainstormer:
 User: [validates brief]
 
 Brainstormer:
-[Initializes EMS at baseline]
+[Initializes EMS at baseline ≈25/100 (post-brief + HMW)]
 [Sets phase: 🔀 Divergent]
 [Sets persona: 📐 Architecte]
 [Generates HMW questions]
@@ -552,7 +561,7 @@ Brainstormer:
 [Proactive web search on Notion API]
 [End iteration with EMS radar + recommendations]
 
-📊 EMS: 35/100 (+35)
+📊 EMS: 35/100 (+10)
    Clarté       ████████████░░░░░░░░ 58/100
    Profondeur   ██████░░░░░░░░░░░░░░ 28/100 ⚠️
    ...
