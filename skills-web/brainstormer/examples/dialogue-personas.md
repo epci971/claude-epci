@@ -413,4 +413,4 @@ User: Je me demande si...
 
 ---
 
-*Dialogue Examples v1.0 — Brainstormer v3.0*
+*Dialogue Examples v3.2 — Brainstormer v3.2*

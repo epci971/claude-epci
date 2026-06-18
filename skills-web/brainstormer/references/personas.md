@@ -325,4 +325,4 @@ Quel que soit le persona actif, Brainstormer maintient ces traits constants :
 
 ---
 
-*Personas v1.0 — Brainstormer v3.0*
+*Personas v3.2 — Brainstormer v3.2*

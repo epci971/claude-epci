@@ -252,11 +252,11 @@ Les résultats Perplexity impactent l'EMS initial :
 
 | Axe EMS | Impact des recherches |
 |---------|----------------------|
-| **Clarity** | +5-10 si les recherches clarifient le périmètre |
-| **Depth** | +10-15 si état de l'art ou REX détaillés |
-| **Coverage** | +5-10 si angles multiples couverts |
-| **Decisions** | +5 si critères de décision fournis |
-| **Actionability** | +5 si exemples concrets/implémentables |
+| **Clarté** | +5-10 si les recherches clarifient le périmètre |
+| **Profondeur** | +10-15 si état de l'art ou REX détaillés |
+| **Couverture** | +5-10 si angles multiples couverts |
+| **Décisions** | +5 si critères de décision fournis |
+| **Actionnabilité** | +5 si exemples concrets/implémentables |
 
 ## Skip Behavior
 

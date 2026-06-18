@@ -8,7 +8,7 @@
 
 L'EMS (Exploration Maturity Score) est un indicateur composite qui mesure la progression d'un brainstorming vers un résultat exploitable. Il est calculé à chaque fin d'itération et affiché sous forme de radar.
 
-**Nouveautés v3.0** :
+**Nouveautés v3.2** :
 - Ancres objectives par axe (critères observables)
 - Intégration avec les phases Divergent/Convergent
 - Recommandations contextuelles selon la phase
@@ -34,7 +34,7 @@ EMS = (Clarté × 0.25) + (Profondeur × 0.25) + (Couverture × 0.20)
 
 ---
 
-## Ancres Objectives (NOUVEAU v3.0)
+## Ancres Objectives (NOUVEAU v3.2)
 
 Chaque axe dispose maintenant de **critères observables** pour un scoring plus cohérent.
 
@@ -122,7 +122,7 @@ Chaque axe dispose maintenant de **critères observables** pour un scoring plus 
 
 ---
 
-## Intégration avec les Phases (NOUVEAU v3.0)
+## Intégration avec les Phases (NOUVEAU v3.2)
 
 Les recommandations EMS s'adaptent à la phase actuelle.
 
@@ -271,11 +271,11 @@ Le checkpoint sauvegarde l'état complet :
 ```yaml
 ems_state:
   global: 68
-  clarity: 78
-  depth: 65
-  coverage: 72
-  decisions: 52
-  actionability: 45
+  clarté: 78
+  profondeur: 65
+  couverture: 72
+  décisions: 52
+  actionnabilité: 45
   history:
     - iteration: 1
       score: 32
@@ -360,4 +360,4 @@ Score EMS
 
 ---
 
-*EMS System v2.0 — Brainstormer v3.0*
+*EMS System v3.2 — Brainstormer v3.2*
