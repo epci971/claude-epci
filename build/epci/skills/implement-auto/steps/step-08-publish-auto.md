@@ -10,7 +10,7 @@ next_step: null
 ## MANDATORY EXECUTION RULES:
 
 - NEVER call AskUserQuestion
-- ALWAYS clean up worktree (except with --skip-publish)
+- Clean up worktree IF --worktree was used (except with --skip-publish)
 - ALWAYS update JSON output with publish results BEFORE worktree removal
 - ALWAYS print publish summary to stdout
 - NEVER push or create PR for FAILED status
@@ -223,7 +223,7 @@ Also update:
 - `phases.completed` += "publish"
 - `phases.current` = null
 
-Copy the JSON to a persistent location in the main repo:
+**IF flag_worktree is true** — Copy JSON to persistent location in the main repo:
 
 ```bash
 MAIN_REPO=$(git worktree list | head -1 | awk '{print $1}')
@@ -231,9 +231,16 @@ mkdir -p "$MAIN_REPO/.implement-auto-results"
 cp .implement-auto-output.json "$MAIN_REPO/.implement-auto-results/{feature-slug}.json"
 ```
 
-### 7. Clean Up Worktree
+**ELSE (no worktree)** — Copy JSON to results directory in-place:
 
-This step ALWAYS executes (for SUCCESS, PARTIAL, and FAILED).
+```bash
+mkdir -p .implement-auto-results
+cp .implement-auto-output.json .implement-auto-results/{feature-slug}.json
+```
+
+### 7. Clean Up Worktree (if --worktree)
+
+**IF flag_worktree is true** — Clean up the worktree. This executes for SUCCESS, PARTIAL, and FAILED.
 
 ```bash
 # Resolve main repo path
@@ -253,6 +260,8 @@ Error handling:
 - On failure, do NOT attempt more aggressive cleanup (leave for manual intervention).
 
 Update JSON copy: set `publish.worktree_cleaned` = true (update the copy in `.implement-auto-results/`).
+
+**ELSE (no worktree)** — No cleanup needed. Set `publish.worktree_cleaned` = null (N/A).
 
 The branch is NOT deleted — it is preserved for the PR.
 
