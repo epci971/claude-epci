@@ -1,17 +1,19 @@
 ---
 name: briefor
 description: >-
-  Transform voice dictations or raw text into structured, ready-to-paste prompts
-  for any LLM task: development briefs (Claude Code plan/brainstorm mode), emails,
-  analysis, content writing, or any other use case. Cleans vocal artifacts, infers
-  role when relevant, structures intent into RTF++ format (Role / Objectif / Directives
-  / Format attendu). Proactively suggests functional improvements before producing
-  the final prompt. Session mode active by default: processes multiple dictations in
-  sequence, each producing an independent prompt. Detects multiple tasks in a single
-  dictation and splits them. Use when user says "briefor", "brief pour claude code",
-  "transforme ma dictée", "mode session briefor", or provides a raw voice transcription
-  to turn into a structured prompt. Not for email writing (use corrector), meeting
-  minutes (use resumator), project estimation (use estimator), or executing tasks.
+  Transform voice dictations, raw text, or multimodal input (annotated screenshots,
+  client brief) into structured, paste-ready prompts for any LLM task: development
+  briefs, emails, analysis, content. Multimodal input is read at the functional level
+  only (intent, scope, outcome — no technical audit). Context-agnostic:
+  produces a prompt for another instance that holds the project/technical context.
+  Cleans vocal artifacts, infers role when relevant, structures intent into
+  RTF++ format (Role / Objectif / Directives / Format attendu), and suggests
+  functional improvements before output. Session mode active by default:
+  multiple dictations in sequence, each an independent prompt; splits multiple tasks
+  in one dictation. Use when user says "briefor", "brief pour claude code", "transforme ma
+  dictée", "mode session briefor", provides a raw voice transcription, or shares an
+  annotated screenshot / client brief. Not for email writing (corrector), meeting
+  minutes (resumator), project estimation (estimator), or executing tasks.
 ---
 
 # Briefor — Voice to Structured Prompt
@@ -43,7 +45,20 @@ any use case. No assumptions beyond what was dictated.
 ## Full Workflow (per dictation)
 
 ```
-DICTATION RECEIVED
+INPUT RECEIVED
+ (dictation + optional
+  screenshots / client brief)
+      │
+      ▼
+ Images or brief? ── No ──┐   ◀── CONDITIONAL
+      │ Yes               │
+      ▼                   │
+ STEP 0                   │
+ Multimodal analysis      │
+ (functional context      │
+  only — no audit)        │
+      │                   │
+      ◀───────────────────◀
       │
       ▼
  Clean voice artifacts
@@ -85,6 +100,40 @@ DICTATION RECEIVED
 
 ---
 
+## Step 0 — Multimodal Analysis (CONDITIONAL)
+
+**Triggered only when the input includes screenshots and/or a client brief.**
+If there is no image and no brief → **skip entirely**, go straight to Step 1.
+When skipped, Step 0 is **never mentioned** in the output.
+
+When triggered, extract **only functional context**:
+
+| Extract (✅ functional) | Examples |
+|---|---|
+| Visible UI elements | buttons, forms, lists, menus, tabs |
+| Annotations | arrows, boxes, highlights, handwritten notes |
+| Labels / wording | on-screen text expressing what the user sees or wants |
+| Screen states | error / empty / loading / success |
+| Client intent | what the brief or capture is asking for |
+
+**Never extract (❌ technical)** — Step 0 does **not** perform a technical audit:
+- Stack, frameworks, libraries
+- Files, paths, architecture
+- Anything covered by the **Multimodal blacklist** (see *Step 4 — Directives*):
+  stack traces, class/method names, technical URLs, DB fields, code, log lines
+
+> **Functional vs technical**: read the capture for its **meaning** (what is broken
+> or wanted), never transcribe the technical text it happens to display. Same
+> guiding rule as the multimodal blacklist.
+
+The extracted functional context **feeds**:
+- **Step 2** — multi-task detection (a capture may reveal several distinct intents)
+- **Step 3** — functional suggestions (richer, capture-aware improvements)
+
+It is working context only — it produces **no separate output block** of its own.
+
+---
+
 ## Step 1 — Voice Cleaning
 
 Remove without altering intent:
@@ -112,6 +161,27 @@ When a single dictation contains multiple independent tasks, split into separate
 | Explicit | "aussi", "et puis", "autre chose", "ah et", "sinon", "deuxième point" | High |
 | Implicit | Subject change, domain change | Medium |
 
+### Capture ↔ Dictée Correlation (only when Step 0 ran)
+
+When Step 0 produced functional context, cross-check it against the dictation
+**before** building the checkpoint. Two directions:
+
+| Direction | Situation | Action |
+|---|---|---|
+| Capture → manque dictée | A screenshot reveals a **bug or request the dictation never mentions** | Add it as a **candidate task** in the checkpoint, with the suffix `(détecté sur capture)` |
+| Dictée → manque capture | The dictation evokes a **screen/element absent from the captures** provided | Flag it in **one line** below the list — purely informative, never blocks |
+
+Rules:
+- A candidate task is a **normal numbered item** — accept/reject/merge/drop it with
+  the same commands as any other task.
+- Stay at the **functional level**: the candidate describes the observable symptom
+  or wanted outcome, never the technical detail legible on the capture
+  (same Multimodal blacklist as *Step 4 — Directives*).
+- Propose a candidate **only** for something genuinely absent from the dictation —
+  never duplicate a task already heard.
+- **No capture / Step 0 skipped → this whole sub-step is inert**: standard
+  detection only, no suffix, no flag line, checkpoint identical to before.
+
 ### Checkpoint (when multi-task detected)
 
 ```
@@ -119,9 +189,16 @@ When a single dictation contains multiple independent tasks, split into separate
 
   1. [Suggested title] — [one-line summary]
   2. [Suggested title] — [one-line summary]
+  3. [Suggested title] (détecté sur capture) — [one-line summary]   ◀ if applicable
+
+  ⚠️ Dicté mais absent des captures : [écran/élément en une ligne]   ◀ if applicable
 
 Commandes: ok | ok 1,2 | merge 1,2 | drop N
 ```
+
+> Lines marked `◀ if applicable` appear **only** when the correlation surfaces
+> something; otherwise the checkpoint is exactly the standard list above.
+> Commands are unchanged — a candidate task validates like any other.
 
 > After validation, process all tasks: suggestions first (grouped), then prompts (grouped).
 
@@ -129,8 +206,9 @@ Commandes: ok | ok 1,2 | merge 1,2 | drop N
 
 ## Step 3 — Functional Suggestions (per task)
 
-Before writing the prompt, Briefor proposes **2–3 functional improvements** the user
-may not have thought of. Shown as a grouped block in multi-task, one block per task.
+Before writing the prompt, Briefor proposes **3–5 functional improvements** the user
+may not have thought of (tiered — see *How many suggestions* below for the exact range).
+Shown as a grouped block in multi-task, one block per task.
 
 ### What makes a good suggestion
 
@@ -139,23 +217,57 @@ may not have thought of. Shown as a grouped block in multi-task, one block per t
 - Is plausible given the stated context — not generic filler
 - Could have been said by a product owner or smart colleague, not a developer
 
+### Ancrage visuel (uniquement si Step 0 a tourné)
+
+Quand une capture est fournie, une suggestion **peut s'ancrer sur un élément visible
+ou une annotation** de la capture pour gagner en pertinence
+(ex : « le bouton X est sous la ligne de flottaison », « le champ marqué d'une flèche »).
+
+**Garde-fou** : l'ancrage reste **fonctionnel** et respecte la **Multimodal blacklist**
+(voir *Step 4 — Directives*). On parle de l'élément et de son **comportement attendu**,
+jamais du détail technique affiché (stack trace, nom de classe, chemin, champ DB, URL technique).
+
+- **Pas de capture / Step 0 sauté → règle inerte** : suggestions non ancrées comme avant.
+- Self-check : « Mon ancrage décrit-il le *sens* de ce que je vois, ou le texte technique
+  qu'il affiche ? » SENS → valide. TEXTE TECHNIQUE → reformuler au niveau fonctionnel.
+
+Exemple conforme (fonctionnel + tiering) :
+> `[confort] Rendre le bouton "Voir le site" visible sans défilement — il apparaît
+> actuellement sous la ligne de flottaison sur la capture`
+
+### Tiering — niveau de chaque suggestion
+
+Chaque suggestion porte un **niveau** préfixé, pour que l'utilisateur trie vite :
+
+| Niveau | Sens | Quand l'attribuer |
+|---|---|---|
+| `[essentiel]` | Manque qui rend le résultat incomplet ou fragile | L'objectif est mal servi sans ça |
+| `[confort]` | Amélioration nette de l'usage ou de la robustesse | Utile, pas bloquant |
+| `[edge case]` | Cas limite, rare mais coûteux s'il survient | Optionnel, à considérer |
+
+> Le tag est purement indicatif : il éclaire le tri (`ok 1,3`) sans changer les commandes.
+
 ### Suggestion format
 
 ```
 💡 Suggestions — [Task title]
 
-  1. [Concrete improvement]
-  2. [Concrete improvement]
-  3. [Concrete improvement]
+  1. [essentiel] [Concrete improvement]
+  2. [confort] [Concrete improvement]
+  3. [edge case] [Concrete improvement]
 
 Valider : ok (toutes) | ok 1,3 | non
 ```
 
 ### How many suggestions
 
-- **2–3** if the dictation leaves meaningful room for improvement
+- **3–5** if the dictation leaves meaningful room for improvement
 - **1–2** if already well-specified
 - **0** if truly complete — skip block entirely, produce prompt directly
+
+**Session-mode cap: 4 by default.** Stay at 4 to keep the session fast.
+Go up to **5 only when a single capture reveals several distinct angles**
+worth surfacing.
 
 ---
 
@@ -217,6 +329,10 @@ Role is omitted if:
   Générer, Analyser, Rédiger, Vérifier, Conserver, Expliquer...)
 - Accepted suggestions integrated here at the same functional level
 - **Only what was said or validated** — nothing invented
+- A URL given in the dictation may be **transmitted verbatim** as a locator
+  (e.g. « Corriger l'affichage sur la page [URL] ») — Briefor passes it along,
+  it **never reads or analyzes** the page. The page audit is the target
+  instance's job (it has web access and the working context).
 
 **Absolute blacklist — never in any directive or suggestion**:
 - Class/method/function names (e.g. `GiteAdmin`, `get_view_site_url`)
@@ -227,9 +343,59 @@ Role is omitted if:
 - Code snippets of any kind
 - Package/library names unless stated verbatim in the dictation
 
+**Multimodal — extends the blacklist to readable image content**:
+Any technical detail **legible on a screenshot** is treated exactly like textual
+technical vocabulary → forbidden in directives AND suggestions:
+- Stack traces and raw exception messages
+- Class/method names, file paths, DB column/field names visible in the capture
+- Technical admin URLs, internal endpoints, query strings
+- Any code, log line, or config value shown on screen
+
+> **Guiding rule**: Briefor describes the **observable symptom**, never the technical
+> detail displayed. A screenshot is read for its *meaning* (what is broken / wanted),
+> not transcribed for the technical text it happens to show.
+
 **Self-check before each directive**:
 > "Could a non-specialist understand this without knowing the tech stack?"
 > YES → valid. NO → rewrite at functional/intent level.
+
+**Self-check (visual variant) — when input includes a screenshot**:
+> "Does what I'm reporting come from the *meaning* of the capture, or from the
+> technical text it displays?"
+> MEANING → valid. TECHNICAL TEXT → rewrite as the observable symptom.
+
+**Examples — symptom vs technical transcription**:
+
+| Source | Directive |
+|---|---|
+| ✅ OK — functional symptom | `Corriger l'erreur qui empêche la validation du formulaire de réservation` |
+| ❌ NON — technical transcription of a capture | `Corriger le NullPointerException levé dans ReservationController.validate() ligne 142` |
+| ✅ OK — functional symptom | `Permettre l'accès à la page liste sans message d'erreur` |
+| ❌ NON — technical transcription of a capture | `Réparer la 500 sur /admin/gite/?status__icontains visible dans la stack trace` |
+
+---
+
+### Captures — référencer, ne pas paraphraser
+
+When the input includes screenshots, the output **references** them instead of
+re-describing them at length. The user resends the **same captures** to the target
+instance (Claude Code, etc.), which will **re-audit them itself** — so a long
+paraphrase only **inflates the output and duplicates** an audit the target will
+redo anyway, working against session speed.
+
+| ✅ Reference | ❌ Long paraphrase |
+|---|---|
+| `cf. capture annotée fournie` | Re-describing every visible element, label and annotation in prose |
+| `voir l'écran joint (état erreur)` | Transcribing the whole screen state line by line |
+
+- Extract from a capture **only what frames the intent and the directives** — enough
+  to make the prompt self-standing, nothing more.
+- The **fine visual audit stays the target instance's job**, not Briefor's.
+- Applies whatever the output form — **mode prompt** *and* **mode note**: in both,
+  captures are pointed to, never paraphrased at length.
+
+> Combine with the Multimodal blacklist: reference the capture for its **meaning**,
+> never transcribe the technical text it displays.
 
 ---
 
@@ -285,15 +451,15 @@ User: `ok`
 ```
 💡 Suggestions — Filtres avancés
 
-  1. Permettre de combiner plusieurs filtres simultanément pour affiner les résultats
-  2. Mémoriser les filtres actifs entre les sessions
-  3. Afficher le nombre de résultats en temps réel au fur et à mesure du filtrage
+  1. [essentiel] Permettre de combiner plusieurs filtres simultanément pour affiner les résultats
+  2. [confort] Mémoriser les filtres actifs entre les sessions
+  3. [edge case] Afficher le nombre de résultats en temps réel au fur et à mesure du filtrage
 
 💡 Suggestions — Bouton "Voir le site"
 
-  1. Ouvrir directement la fiche publique concernée si on est sur la page
+  1. [essentiel] Ouvrir directement la fiche publique concernée si on est sur la page
      d'édition d'un objet (ex : édition d'un gîte → ouvre ce gîte sur le site)
-  2. Désactiver ou masquer le bouton si l'objet n'est pas encore publié
+  2. [confort] Désactiver ou masquer le bouton si l'objet n'est pas encore publié
 
 Valider : ok (toutes) | t1: ok 1,3 / t2: ok | t1: non / t2: ok 2
 ```
@@ -337,6 +503,104 @@ d'accéder au site public en un clic depuis n'importe quelle page d'administrati
 
 ---
 
+## Full Example — Multimodal (dictée + capture annotée)
+
+**Input** : une dictée vocale **et** une capture annotée jointe.
+
+> 🎙️ "Sur le back office faut clarifier le formulaire de réservation, le rendre
+> plus lisible. Je te joins une capture annotée."
+>
+> 🖼️ *Capture* : le formulaire de réservation, une flèche manuscrite pointant le
+> bouton "Valider" placé tout en bas, et derrière, l'écran liste affichant un état
+> d'erreur.
+
+---
+
+**Step 0 — Analyse multimodale** *(contexte de travail, aucun bloc de sortie)* :
+Briefor lit la capture **au niveau fonctionnel** : un formulaire de réservation,
+une annotation (flèche) sur le bouton "Valider" situé sous la ligne de flottaison,
+et — en arrière-plan — un **écran liste en erreur que la dictée ne mentionne jamais**.
+Aucun texte technique affiché n'est transcrit (Multimodal blacklist).
+
+---
+
+**Checkpoint** :
+```
+📋 2 tâches détectées
+
+  1. Clarifier le formulaire de réservation — améliorer la lisibilité
+  2. Corriger l'écran liste en erreur (détecté sur capture) — accès bloqué par un message
+
+Commandes: ok | ok 1,2 | merge 1,2 | drop N
+```
+User: `ok`
+
+> La tâche 2 vient de la **corrélation capture ↔ dictée** (Step 2) : un symptôme
+> visible sur la capture, absent de la dictée → tâche candidate, validée comme une autre.
+
+---
+
+**Suggestions (grouped, tierées — dont une ancrée visuellement)** :
+```
+💡 Suggestions — Formulaire de réservation
+
+  1. [essentiel] Regrouper les champs par étape pour réduire la charge visuelle à la saisie
+  2. [confort] Rendre le bouton "Valider" visible sans défilement — il apparaît
+     actuellement sous la ligne de flottaison sur la capture
+  3. [edge case] Afficher un récapitulatif avant la validation finale
+
+💡 Suggestions — Écran liste en erreur
+
+  1. [essentiel] Permettre l'accès à la liste sans message d'erreur bloquant
+  2. [confort] Afficher un état vide explicite quand aucune réservation n'existe
+
+Valider : ok (toutes) | t1: ok 1,3 / t2: ok | t1: non / t2: ok 2
+```
+User: `t1: ok 1,2 / t2: ok`
+
+> La suggestion 2 de la tâche 1 est **ancrée sur la capture** (élément visible + flèche),
+> mais reste au niveau du **comportement attendu** — jamais du texte technique affiché.
+
+---
+
+**Prompts produits (même réponse) — l'output RÉFÉRENCE la capture, sans la paraphraser** :
+
+```markdown
+--- Prompt 1 ---
+
+## Rôle
+Intégrateur / Spécialiste UI-UX
+
+## Objectif
+Clarifier le formulaire de réservation du back office pour le rendre plus lisible
+et plus simple à remplir.
+
+## Directives
+- Réorganiser le formulaire pour améliorer la lisibilité à la saisie
+- Regrouper les champs par étape pour réduire la charge visuelle
+- Rendre le bouton "Valider" visible sans défilement
+- cf. capture annotée fournie pour le détail des éléments concernés
+
+--- Prompt 2 ---
+
+## Rôle
+Ingénieur backend senior
+
+## Objectif
+Rétablir l'accès à l'écran liste, actuellement bloqué par un message d'erreur.
+
+## Directives
+- Permettre l'accès à la liste sans message d'erreur bloquant
+- Afficher un état vide explicite quand aucune réservation n'existe
+- voir l'écran joint (état erreur)
+```
+
+> L'instance cible reçoit **les mêmes captures** et fait son propre audit visuel fin.
+> Briefor pointe (`cf. capture annotée fournie`, `voir l'écran joint`) au lieu de
+> re-décrire — l'output reste léger, fidèle au mode session.
+
+---
+
 ## Session Commands
 
 | Command | Action |
@@ -350,15 +614,17 @@ d'accéder au site public en un clic depuis n'importe quelle page d'administrati
 
 1. **No context injection** — Never add project name, stack, framework, file references
 2. **Intent only, never implementation** — The receiving LLM determines how
-3. **Absolute blacklist** — Zero technical vocabulary in directives or suggestions
+3. **Absolute blacklist** — Zero technical vocabulary in directives or suggestions, including any technical detail legible on a screenshot (describe the symptom, not the displayed detail)
 4. **Role is inferred, never invented or asked** — Omit if no clear signal
 5. **Format attendu only when implied** — Omit if obvious or not specified
 6. **Suggestions are functional only** — Intent/UX/product level, never developer level
+6b. **Every suggestion is tiered** — Préfixer chaque suggestion par `[essentiel]`, `[confort]` ou `[edge case]` ; le tag éclaire le tri sans modifier les commandes de validation
 7. **Grouped in multi-task** — All suggestions in one response, all prompts in one response
 8. **Faithful only** — Only what was said or validated gets into the prompt
 9. **Each dictation = isolated context** — No carryover between prompts in session
 10. **Last stated wins** — If user corrects mid-dictation, keep the correction
 11. **Format is fixed** — RTF++ always, nothing added outside the four fields
+12. **Captures referenced, not paraphrased** — When screenshots are provided, point to them (`cf. capture fournie`); extract only what frames intent, leave the fine visual audit to the receiving LLM — avoids inflating the output and duplicating the target's audit (mode prompt and mode note)
 
 ---
 
@@ -366,7 +632,9 @@ d'accéder au site public en un clic depuis n'importe quelle page d'administrati
 
 Briefor does NOT:
 - Execute tasks
-- Read URLs, documentation, or external resources
+- Read or analyze the content of URLs, documentation, or external resources —
+  **but transmits a dictated URL verbatim** (e.g. « sur la page [URL] ») so the
+  target instance, which has web access and the working context, can analyze it
 - Inject project or stack context
 - Produce meeting minutes or documentation (use resumator)
 - Write emails directly (use corrector)
@@ -384,8 +652,14 @@ Briefor does NOT:
 | 2.0.0 | 2026-04 | Suggestions phase — proactive functional enrichment per brief |
 | 2.1.0 | 2026-04 | Multi-task UX fix — grouped suggestions + grouped briefs |
 | 3.0.0 | 2026-04 | Universal scope + RTF++ format (Role / Objectif / Directives / Format attendu) |
+| 3.1.0 | 2026-06 | Step 2 capture ↔ dictée correlation — candidate tasks from captures + missing-screen flag |
+| 3.2.0 | 2026-06 | Suggestion tiering — niveau `[essentiel]` / `[confort]` / `[edge case]` préfixé à chaque suggestion |
+| 3.3.0 | 2026-06 | Ancrage visuel des suggestions — une suggestion peut référencer un élément visible/annoté d'une capture, garde-fou Multimodal blacklist |
+| 3.4.0 | 2026-06 | Captures référencées, non paraphrasées — l'output pointe vers les captures (`cf. capture fournie`) au lieu de les re-décrire ; évite l'inflation et la duplication de l'audit refait par l'instance cible (mode prompt et mode note) |
+| 3.5.0 | 2026-06 | URL transmise sans être lue — une URL dictée est transmise verbatim comme localisateur (« sur la page [URL] »), jamais lue ni analysée ; l'audit de page reste le rôle de l'instance cible (accès web + contexte) |
+| 5.0.0 | 2026-06 | **Refonte multimodale** — entrée multimodale (captures annotées + brief client) ; **Step 0** d'analyse fonctionnelle conditionnelle (jamais d'audit technique) ; **blacklist visuelle** étendant la blacklist au texte technique lisible à l'écran ; suggestions **3–5 tierées** (`[essentiel]` / `[confort]` / `[edge case]`, cap session 4) dont une **ancrée visuellement** ; **URL transmise non lue** ; output qui **référence les captures** sans les paraphraser (mode prompt et mode note) |
 
-## Current: v3.0.0
+## Current: v5.0.0
 
 ## Owner
 - **Author**: Édouard
